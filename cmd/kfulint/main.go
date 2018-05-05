@@ -20,24 +20,33 @@ func blame(format string, args ...interface{}) {
 	os.Exit(1)
 }
 
-func main() {
-	fset := token.NewFileSet()
-	dir := flag.String("dir", "", "project directory")
-	flag.Parse()
+// parseArgv processes command-line arguments and fills ctx argument with them.
+// Terminates program on error.
+func parseArgv(ctx *lint.Context) {
+	flag.StringVar(&ctx.PkgDir, "dir", "", "package directory")
 
-	if *dir == "" {
+	if ctx.PkgDir == "" {
 		blame("Illegal empty -dir argument\n")
 	}
 
-	parser.ParseDir(fset, *dir, nil, parser.ParseComments)
+	flag.Parse()
+}
 
-	ct := lint.Context{}
-	ct.FileSet = fset
-	ct.Flags = nil
+func parsePackage(ctx *lint.Context) {
+	// TODO: save ParseDir results into ctx.
+	parser.ParseDir(ctx.Fset, ctx.PkgDir, nil, parser.ParseComments)
+}
+
+func main() {
+	ctx := lint.Context{
+		Fset: token.NewFileSet(),
+	}
+
+	parseArgv(&ctx)
+	parsePackage(&ctx)
 
 	for _, c := range checkers() {
-
-		if err := c.Run(&ct); err != nil {
+		if err := c.Run(&ctx); err != nil {
 			log.Print(err)
 		}
 	}

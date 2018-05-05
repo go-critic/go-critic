@@ -2,20 +2,18 @@ package lint
 
 import "go/token"
 
-// Flags ...
-// TODO: Add description
-type Flags struct {
-}
-
 // Context ...
 // TODO: Add description
 type Context struct {
+	// FileSet is a file set that was used during package parsing.
 	FileSet *token.FileSet
-	Flags   *Flags
+
+	// PkgDir is a path to package being checked.
+	PkgDir string
 }
 
 // Checker ...
 // TODO: Add description
 type Checker interface {
-	Run(c *Context) error
+	Run(ctx *Context) error
 }
