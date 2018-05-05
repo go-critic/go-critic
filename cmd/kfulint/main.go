@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/pieselbois/kfulint/lint"
+	"github.com/PieselBois/kfulint/lint"
 )
 
 func checkers() []lint.Checker {
