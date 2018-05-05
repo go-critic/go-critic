@@ -34,12 +34,12 @@ func parseArgv(ctx *lint.Context) {
 
 func parsePackage(ctx *lint.Context) {
 	// TODO: save ParseDir results into ctx.
-	parser.ParseDir(ctx.Fset, ctx.PkgDir, nil, parser.ParseComments)
+	parser.ParseDir(ctx.FileSet, ctx.PkgDir, nil, parser.ParseComments)
 }
 
 func main() {
 	ctx := lint.Context{
-		Fset: token.NewFileSet(),
+		FileSet: token.NewFileSet(),
 	}
 
 	parseArgv(&ctx)
