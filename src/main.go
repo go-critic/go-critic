@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/parser"
 	"go/token"
+	"log"
 	"os"
 )
 
@@ -25,14 +26,19 @@ func (c consoleLogger) log(format string, args ...interface{}) error {
 
 var checkers = []checker{}
 
+func blame(format string, args ...interface{}) {
+	log.Printf(format, args...)
+	flag.Usage()
+	os.Exit(1)
+}
+
 func main() {
 	fset := token.NewFileSet()
 	dir := flag.String("dir", "", "project directory")
 	flag.Parse()
 
 	if *dir == "" {
-		flag.Usage()
-		os.Exit(1)
+		blame("illegal empty -dir argument\n")
 	}
 
 	parser.ParseDir(fset, *dir, nil, parser.ParseComments)
