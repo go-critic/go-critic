@@ -1,0 +1,10 @@
+language: go
+go:
+  - 1.x
+install:
+  - # Prevent default install action "go get -t -v ./...".
+script:
+  - go get -t -v ./...
+  - diff -u <(echo -n) <(gofmt -d -s .)
+  - go tool vet .
+  - go test -v -race ./...
