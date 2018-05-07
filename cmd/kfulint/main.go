@@ -110,6 +110,7 @@ type linter struct {
 func (l *linter) InitCheckers() {
 	l.checkers = []checker{
 		{"param-name", lint.NewParamNameChecker(l.ctx)},
+		{"type-guard", lint.NewTypeGuardChecker(l.ctx)},
 	}
 }
 
