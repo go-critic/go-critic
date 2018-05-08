@@ -138,7 +138,11 @@ func (l *linter) CheckFile(f *ast.File) {
 			}()
 			for _, w := range c.Check(f) {
 				pos := l.ctx.FileSet.Position(w.Node.Pos())
-				log.Printf("%s: %s/%s: %v\n", pos, c.name, w.Kind, w.Text)
+				name := c.name
+				if w.Kind != "" {
+					name += "/" + string(w.Kind)
+				}
+				log.Printf("%s: %s: %v\n", pos, name, w.Text)
 			}
 		}(c)
 	}
