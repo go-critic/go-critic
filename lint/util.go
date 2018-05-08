@@ -1,7 +1,10 @@
 package lint
 
 import (
+	"bytes"
 	"go/ast"
+	"go/printer"
+	"go/token"
 )
 
 func collectFuncDecls(f *ast.File) []*ast.FuncDecl {
@@ -12,4 +15,10 @@ func collectFuncDecls(f *ast.File) []*ast.FuncDecl {
 		}
 	}
 	return decls
+}
+
+func nodeString(fset *token.FileSet, x ast.Node) string {
+	var buf bytes.Buffer
+	printer.Fprint(&buf, fset, x)
+	return buf.String()
 }
