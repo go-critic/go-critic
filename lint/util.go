@@ -19,6 +19,8 @@ func collectFuncDecls(f *ast.File) []*ast.FuncDecl {
 
 func nodeString(fset *token.FileSet, x ast.Node) string {
 	var buf bytes.Buffer
-	printer.Fprint(&buf, fset, x)
+	if err := printer.Fprint(&buf, fset, x); err == nil {
+		panic(err)
+	}
 	return buf.String()
 }
