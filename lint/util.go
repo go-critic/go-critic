@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/printer"
 	"go/token"
+	"log"
 )
 
 func collectFuncDecls(f *ast.File) []*ast.FuncDecl {
