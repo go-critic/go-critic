@@ -20,7 +20,7 @@ func typeGuard0() int {
 
 func typeGuard1() int {
 	xs := [][]interface{}{
-		[]interface{}{1, 2, 3},
+		{1, 2, 3},
 	}
 
 	switch xs[0][0].(type) {
