@@ -15,3 +15,7 @@ func (PN paramNames) Capitalized2() {}
 func badReturn() [](func()) {
 	return nil
 }
+
+func veryBadReturn() [](func([](func()))) {
+	return nil
+}

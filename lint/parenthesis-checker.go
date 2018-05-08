@@ -5,19 +5,26 @@ import (
 	"go/ast"
 )
 
-// ParenthesisChecker ...
+// ParenthesisChecker detects some cases where parenthesis are unnecessary
 type ParenthesisChecker struct {
 	ctx *Context
 
 	warnings []Warning
 }
 
+// NewParenthesisChecker returns initialized checker for Go functions param names.
 func NewParenthesisChecker(ctx *Context) *ParenthesisChecker {
 	return &ParenthesisChecker{
 		ctx: ctx,
 	}
 }
 
+// Check runs parenthesis checks for f.
+//
+// Features
+//
+// Detects parenthesis statements which could be simplified
+// and offsers the way how to do it.
 func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
 	c.warnings = c.warnings[:0]
 	for _, decl := range collectFuncDecls(f) {
@@ -32,6 +39,8 @@ func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
 }
 
 func (c *ParenthesisChecker) validateResultDecl(f *ast.Field) {
+	// TODO improve suggestions for complex cases like (func([](func())))
+
 	ast.Inspect(f.Type, func(n ast.Node) bool {
 		expr, ok := n.(*ast.ParenExpr)
 		if !ok {
