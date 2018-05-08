@@ -12,7 +12,7 @@ type ParenthesisChecker struct {
 	warnings []Warning
 }
 
-// NewParenthesisChecker returns initialized checker for Go functions param names.
+// NewParenthesisChecker returns initialized checker for type expressions.
 func NewParenthesisChecker(ctx *Context) *ParenthesisChecker {
 	return &ParenthesisChecker{
 		ctx: ctx,
