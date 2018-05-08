@@ -6,7 +6,7 @@ import (
 	"go/types"
 )
 
-// WarkingKind describes checker warning category.
+// WarningKind describes checker warning category.
 // Useful for checkers that can find different kinds of issues.
 //
 // Should be human-readable, not cryptic.

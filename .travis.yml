@@ -1,6 +1,9 @@
 language: go
 go:
   - 1.x
+before install:
+  - go get -u gopkg.in/alecthomas/gometalinter.v2
+  - gometalinter.v2 --install
 install:
   - # Prevent default install action "go get -t -v ./...".
 script:
@@ -8,3 +11,4 @@ script:
   - diff -u <(echo -n) <(gofmt -d -s .)
   - go tool vet .
   - go test -v -race ./...
+  - gometalinter.v2 --skip=testdata --vendor ./...
