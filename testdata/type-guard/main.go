@@ -63,3 +63,23 @@ func typeGuard3(v interface{}) {
 }
 
 func typeGuard4()
+
+func typeGuard5(v interface{}) int {
+	switch v.(type) {
+	case int:
+		return v.(int)
+	case float32, float64:
+		switch v.(type) {
+		case float32:
+			return int(v.(float32))
+		case float64:
+			return int(v.(float64))
+		}
+	default:
+		switch v.(type) {
+		case int32:
+			return int(v.(int32))
+		}
+	}
+	return 0
+}

@@ -36,7 +36,7 @@ func (c *TypeGuardChecker) Check(f *ast.File) []Warning {
 				c.check(stmt)
 				return false
 			}
-			return false
+			return true
 		})
 	}
 	return c.warnings
@@ -78,7 +78,7 @@ func (c *TypeGuardChecker) findTypeAssert(root ast.Stmt, expr, typ ast.Expr) boo
 				astcmp.EqualExpr(typ, assert.Type)
 			return !found
 		}
-		return false
+		return true
 	})
 	return found
 }
