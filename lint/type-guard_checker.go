@@ -28,12 +28,15 @@ func (c *TypeGuardChecker) Check(f *ast.File) []Warning {
 	// may have other type switches inside their clauses that
 	// can trigger warnings as well.
 	for _, decl := range collectFuncDecls(f) {
+		if decl.Body == nil {
+			continue
+		}
 		ast.Inspect(decl.Body, func(x ast.Node) bool {
 			if stmt, ok := x.(*ast.TypeSwitchStmt); ok {
 				c.check(stmt)
 				return false
 			}
-			return x != nil
+			return false
 		})
 	}
 	return c.warnings
@@ -75,7 +78,7 @@ func (c *TypeGuardChecker) findTypeAssert(root ast.Stmt, expr, typ ast.Expr) boo
 				astcmp.EqualExpr(typ, assert.Type)
 			return !found
 		}
-		return x != nil
+		return false
 	})
 	return found
 }
