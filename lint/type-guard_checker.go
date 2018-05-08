@@ -24,44 +24,44 @@ func NewTypeGuardChecker(ctx *Context) *TypeGuardChecker {
 // Check runs type switch checks for f.
 func (c *TypeGuardChecker) Check(f *ast.File) []Warning {
 	c.warnings = c.warnings[:0]
-	// TODO(quasilyte): do recursive analysis. Type switches
-	// may have other type switches inside their clauses that
-	// can trigger warnings as well.
-	for _, decl := range collectFuncDecls(f) {
-		if decl.Body == nil {
-			continue
-		}
-		ast.Inspect(decl.Body, func(x ast.Node) bool {
-			if stmt, ok := x.(*ast.TypeSwitchStmt); ok {
-				c.check(stmt)
-				return false
-			}
-			return true
-		})
-	}
+	inspectFuncBodies(f, c.inspectNode)
 	return c.warnings
 }
 
-func (c *TypeGuardChecker) check(root *ast.TypeSwitchStmt) {
-	if _, ok := root.Assign.(*ast.ExprStmt); !ok {
-		return
+func (c *TypeGuardChecker) inspectNode(x ast.Node) bool {
+	if _, ok := x.(ast.Stmt); !ok {
+		return false
 	}
-	assert, ok := root.Assign.(*ast.ExprStmt).X.(*ast.TypeAssertExpr)
-	if !ok {
-		return
+	if stmt, ok := x.(*ast.TypeSwitchStmt); ok {
+		c.checkTypeSwitch(stmt)
+	}
+	return true
+}
+
+func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
+	if _, ok := root.Assign.(*ast.AssignStmt); ok {
+		return // Already with type guard
+	}
+	// Must be a *ast.ExprStmt then.
+	expr := root.Assign.(*ast.ExprStmt).X.(*ast.TypeAssertExpr).X
+	object := c.ctx.TypesInfo.ObjectOf(c.identOf(expr))
+	if object == nil {
+		return // Give up: can't handle shadowing without object
 	}
 
 	for i, clause := range root.Body.List {
 		clause := clause.(*ast.CaseClause)
 		// Multiple types in a list mean that assert.X will have
-		// a type of interface{} inside body.
+		// a type of interface{} inside clause body.
 		// We are looking for precise type case.
 		if len(clause.List) != 1 {
 			continue
 		}
-		typ := clause.List[0]
+		// Create artifical node just for matching.
+		assert1 := ast.TypeAssertExpr{X: expr, Type: clause.List[0]}
 		for _, stmt := range clause.Body {
-			if c.findTypeAssert(stmt, assert.X, typ) {
+			assert2 := c.findEqual(stmt, &assert1)
+			if object == c.ctx.TypesInfo.ObjectOf(c.identOf(assert2)) {
 				c.warn(root, i)
 				break
 			}
@@ -69,18 +69,50 @@ func (c *TypeGuardChecker) check(root *ast.TypeSwitchStmt) {
 	}
 }
 
-func (c *TypeGuardChecker) findTypeAssert(root ast.Stmt, expr, typ ast.Expr) bool {
-	found := false
-	// TODO(quasilyte): inspect does not end the traverse after false is returned.
-	ast.Inspect(root, func(x ast.Node) bool {
-		if assert, ok := x.(*ast.TypeAssertExpr); ok {
-			found = astcmp.EqualExpr(expr, assert.X) &&
-				astcmp.EqualExpr(typ, assert.Type)
-			return !found
+// findEqual walks tree root trying to find node that is equal to x.
+// Matched node is returned.
+func (c *TypeGuardChecker) findEqual(root, x ast.Node) (found ast.Node) {
+	defer func() {
+		if r := recover(); r != nil {
+			panic(r)
+		}
+	}()
+
+	ast.Inspect(root, func(y ast.Node) bool {
+		if x == nil {
+			return false
+		}
+		if astcmp.Equal(x, y) {
+			found = y
+			panic(nil)
 		}
 		return true
 	})
-	return found
+
+	return nil // Non-nil return only happens if there was a panic
+}
+
+// identOf returns identifier for x that can be used to obtain associated types.Object.
+// Returns nil for expressions that yield temporary results, like `f().field`.
+func (c *TypeGuardChecker) identOf(x ast.Node) *ast.Ident {
+	switch x := x.(type) {
+	case *ast.Ident:
+		// Found ident.
+		return x
+	case *ast.TypeAssertExpr:
+		// x.(type) - x may contain ident.
+		return c.identOf(x.X)
+	case *ast.IndexExpr:
+		// x[i] - x may contain ident.
+		return c.identOf(x.X)
+	case *ast.SelectorExpr:
+		// x.y - x may contain ident.
+		return c.identOf(x.X)
+
+	default:
+		// Note that this function is not comprehensive.
+		return nil
+	}
 }
 
 func (c *TypeGuardChecker) warn(stmt *ast.TypeSwitchStmt, caseIndex int) {
