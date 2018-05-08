@@ -111,6 +111,7 @@ func (l *linter) InitCheckers() {
 	l.checkers = []checker{
 		{"param-name", lint.NewParamNameChecker(l.ctx)},
 		{"type-guard", lint.NewTypeGuardChecker(l.ctx)},
+		{"parenthesis", lint.NewParenthesisChecker(l.ctx)},
 	}
 }
 
