@@ -12,7 +12,7 @@ type UnderefChecker struct {
 	warnings []Warning
 }
 
-// NewUnderefChecker returns initialized checker for underef expressions.
+// NewUnderefChecker returns initialized checker for deref (ast.Star) expressions.
 func NewUnderefChecker(ctx *Context) *UnderefChecker {
 	return &UnderefChecker{
 		ctx: ctx,
