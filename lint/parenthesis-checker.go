@@ -60,7 +60,6 @@ func (c *ParenthesisChecker) validateType(n ast.Node) {
 	// TODO improve linter output to write full type, not just place
 	// where it could be simplified
 
-	fmt.Printf("%s\n", nodeString(c.ctx.FileSet, n))
 	ast.Inspect(n, func(n ast.Node) bool {
 		expr, ok := n.(*ast.ParenExpr)
 		if !ok {
