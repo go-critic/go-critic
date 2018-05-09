@@ -19,3 +19,5 @@ var (
 )
 
 const _ (int) = 5
+
+type _ (int)
