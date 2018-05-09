@@ -59,7 +59,7 @@ func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 		if len(clause.List) != 1 {
 			continue
 		}
-		// Create artifical node just for matching.
+		// Create artificial node just for matching.
 		assert1 := ast.TypeAssertExpr{X: expr, Type: clause.List[0]}
 		for _, stmt := range clause.Body {
 			assert2 := c.find(stmt, func(x ast.Node) bool {
