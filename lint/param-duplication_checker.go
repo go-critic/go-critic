@@ -40,7 +40,6 @@ func (c *ParamDuplicationChecker) Check(f *ast.File) []Warning {
 }
 
 // TODO(fexolm) don't create multiple warnings on the same function.
-// TODO(fexolm) create warning in other function.
 func (c *ParamDuplicationChecker) checkParamDuplication(decl *ast.FuncDecl) {
 	params := decl.Type.Params.List
 	if len(params) < 2 {
