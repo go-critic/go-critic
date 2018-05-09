@@ -1,0 +1,25 @@
+{
+	"DisableAll": true,
+	"Enable": [
+		"deadcode",
+		"dupl",
+		"errcheck",
+		"gas",
+		"goconst",
+		"gocyclo",
+		"goimports",
+		"golint",
+		"gotype",
+		"gotypex",
+		"ineffassign",
+		"maligned",
+		"megacheck",
+		"misspell",
+		"nakedret",
+		"safesql",
+		"structcheck",
+		"unconvert",
+		"varcheck",
+		"vet"
+	]
+}
