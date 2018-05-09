@@ -1,0 +1,15 @@
+* Contributing to kfulint
+
+Here would be a set of guidelines that we follow when contributing to
+kfulint. You could propose changes in this document if you would like.
+
+** Accepted abbreviations
+    *LGTM* — looks good to me
+    *SGTM* — sounds good to me
+    *PTAL* — please take a look
+    *s/foo/bar/* — replace foo with bar; this is sed syntax
+    *s/foo/bar/g* — replace foo with bar throughout your entire change
+
+** How to write issues
+*** Issues naming guidelines
+*** How to choose correct label
