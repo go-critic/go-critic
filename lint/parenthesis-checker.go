@@ -3,6 +3,7 @@ package lint
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
 )
 
 // ParenthesisChecker detects some cases where parenthesis are unnecessary
@@ -27,21 +28,40 @@ func NewParenthesisChecker(ctx *Context) *ParenthesisChecker {
 // and offsers the way how to do it.
 func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
 	c.warnings = c.warnings[:0]
-	for _, decl := range collectFuncDecls(f) {
-		if decl.Type.Results == nil {
-			continue
-		}
-		for _, res := range decl.Type.Results.List {
-			c.validateResultDecl(res)
+
+	for _, decl := range f.Decls {
+		switch decl := decl.(type) {
+		case *ast.FuncDecl:
+			if decl.Type.Results == nil {
+				continue
+			}
+			for _, res := range decl.Type.Results.List {
+				c.validateType(res.Type)
+			}
+		case *ast.GenDecl:
+			if decl.Tok == token.IMPORT {
+				continue
+			}
+			for _, spec := range decl.Specs {
+				if spec, ok := spec.(*ast.ValueSpec); ok {
+					c.validateType(spec.Type)
+					continue
+				}
+				// TODO add check for token.TYPE
+			}
 		}
 	}
+
 	return c.warnings
 }
 
-func (c *ParenthesisChecker) validateResultDecl(f *ast.Field) {
+func (c *ParenthesisChecker) validateType(n ast.Node) {
 	// TODO improve suggestions for complex cases like (func([](func())))
+	// TODO improve linter output to write full type, not just place
+	// where it could be simplified
 
-	ast.Inspect(f.Type, func(n ast.Node) bool {
+	fmt.Printf("%s\n", nodeString(c.ctx.FileSet, n))
+	ast.Inspect(n, func(n ast.Node) bool {
 		expr, ok := n.(*ast.ParenExpr)
 		if !ok {
 			return true
