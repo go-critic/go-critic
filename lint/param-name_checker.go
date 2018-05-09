@@ -97,7 +97,7 @@ func (c *ParamNameChecker) checkParamDuplication(decl *ast.FuncDecl) {
 			c.warnings = append(c.warnings, Warning{
 				Kind: "Duplication",
 				Node: decl,
-				Text: fmt.Sprintf(winfo),
+				Text: fmt.Sprint(winfo),
 			})
 		}
 	}
