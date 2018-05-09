@@ -53,7 +53,7 @@ func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
 func (c *ParenthesisChecker) validateExpr(n ast.Node) {
 	// TODO improve suggestions for complex cases like (func([](func())))
 	// TODO improve linter output to write full type, not just place
-	// whereit could be simplified
+	// where it could be simplified
 
 	ast.Inspect(n, func(n ast.Node) bool {
 		expr, ok := n.(*ast.ParenExpr)
