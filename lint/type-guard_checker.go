@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"go/ast"
 
+	"github.com/PieselBois/kfulint/lint/internal/astfilter"
 	"github.com/Quasilyte/astcmp"
+	"golang.org/x/tools/go/ast/astutil"
 )
 
 // TypeGuardChecker finds type switches that may benefit from type guard clause.
@@ -24,15 +26,15 @@ func NewTypeGuardChecker(ctx *Context) *TypeGuardChecker {
 // Check runs type switch checks for f.
 func (c *TypeGuardChecker) Check(f *ast.File) []Warning {
 	c.warnings = c.warnings[:0]
-	inspectFuncBodies(f, c.inspectNode)
+	pre := astfilter.Or(astfilter.FuncDecl, astfilter.Stmt)
+	for _, decl := range f.Decls {
+		astutil.Apply(decl, pre, c.apply)
+	}
 	return c.warnings
 }
 
-func (c *TypeGuardChecker) inspectNode(x ast.Node) bool {
-	if _, ok := x.(ast.Stmt); !ok {
-		return false
-	}
-	if stmt, ok := x.(*ast.TypeSwitchStmt); ok {
+func (c *TypeGuardChecker) apply(cur *astutil.Cursor) bool {
+	if stmt, ok := cur.Node().(*ast.TypeSwitchStmt); ok {
 		c.checkTypeSwitch(stmt)
 	}
 	return true
@@ -60,7 +62,9 @@ func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 		// Create artifical node just for matching.
 		assert1 := ast.TypeAssertExpr{X: expr, Type: clause.List[0]}
 		for _, stmt := range clause.Body {
-			assert2 := c.findEqual(stmt, &assert1)
+			assert2 := c.find(stmt, func(x ast.Node) bool {
+				return astcmp.Equal(&assert1, x)
+			})
 			if object == c.ctx.TypesInfo.ObjectOf(c.identOf(assert2)) {
 				c.warn(root, i)
 				break
@@ -69,31 +73,35 @@ func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 	}
 }
 
-// findEqual walks tree root trying to find node that is equal to x.
-// Matched node is returned.
-func (c *TypeGuardChecker) findEqual(root, x ast.Node) (found ast.Node) {
-	defer func() {
-		if r := recover(); r != nil {
-			panic(r)
-		}
-	}()
+func (c *TypeGuardChecker) warn(stmt *ast.TypeSwitchStmt, caseIndex int) {
+	s := "case %d can benefit from type switch with assignment"
+	c.warnings = append(c.warnings, Warning{
+		Node: stmt,
+		Text: fmt.Sprintf(s, caseIndex),
+	})
+}
 
-	ast.Inspect(root, func(y ast.Node) bool {
-		if x == nil {
+// find applies pred for root and all it's childs until it returns true.
+// Matched node is returned.
+// If none of the nodes matched predicate, nil is returned.
+//
+// TODO: is this generally useful and can be placed in util.go?
+func (c *TypeGuardChecker) find(root ast.Node, pred func(ast.Node) bool) ast.Node {
+	var found ast.Node
+	astutil.Apply(root, nil, func(cur *astutil.Cursor) bool {
+		if pred(cur.Node()) {
+			found = cur.Node()
 			return false
-		}
-		if astcmp.Equal(x, y) {
-			found = y
-			panic(nil)
 		}
 		return true
 	})
-
-	return nil // Non-nil return only happens if there was a panic
+	return found
 }
 
 // identOf returns identifier for x that can be used to obtain associated types.Object.
 // Returns nil for expressions that yield temporary results, like `f().field`.
+//
+// TODO: is this generally useful and can be placed in util.go?
 func (c *TypeGuardChecker) identOf(x ast.Node) *ast.Ident {
 	switch x := x.(type) {
 	case *ast.Ident:
@@ -113,12 +121,4 @@ func (c *TypeGuardChecker) identOf(x ast.Node) *ast.Ident {
 		// Note that this function is not comprehensive.
 		return nil
 	}
-}
-
-func (c *TypeGuardChecker) warn(stmt *ast.TypeSwitchStmt, caseIndex int) {
-	s := "case %d can benefit from type switch with assignment"
-	c.warnings = append(c.warnings, Warning{
-		Node: stmt,
-		Text: fmt.Sprintf(s, caseIndex),
-	})
 }
