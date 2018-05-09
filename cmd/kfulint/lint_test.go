@@ -122,13 +122,16 @@ var (
 	// warningDirectiveRE describes pattern used to match "///" directives inside
 	// end-to-end test files.
 	//
+	// Directive line contain only special comment itself, no other
+	// syntax elements (whitespace is permitted).
+	//
 	// matcher = "///" [kind] ":" text
 	// kind = \w*
 	// text = .*
 	//
 	// Example: "///Label: remove unused label"
 	// Example: "///: can replace s[:] with s"
-	warningDirectiveRE = regexp.MustCompile(`///(\w*?): (.*)`)
+	warningDirectiveRE = regexp.MustCompile(`^\s*///(\w*?): (.*)`)
 )
 
 // warning is a decoded warning directive that is used to match actual

@@ -6,7 +6,6 @@
 		"errcheck",
 		"gas",
 		"goconst",
-		"gocyclo",
 		"goimports",
 		"golint",
 		"gotype",
