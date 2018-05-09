@@ -12,7 +12,6 @@
 		"gotype",
 		"gotypex",
 		"ineffassign",
-		"lll",
 		"maligned",
 		"megacheck",
 		"misspell",
@@ -20,7 +19,6 @@
 		"safesql",
 		"structcheck",
 		"unconvert",
-		"unparam",
 		"varcheck",
 		"vet"
   ]
