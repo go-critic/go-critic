@@ -35,7 +35,6 @@ func (c *UnderefChecker) Check(f *ast.File) []Warning {
 		ast.Inspect(decl.Body, func(n ast.Node) bool {
 			switch n := n.(type) {
 			case *ast.SelectorExpr:
-				println(nodeString(c.ctx.FileSet, n.X))
 				expr, ok := n.X.(*ast.ParenExpr)
 				if !ok {
 					return true
