@@ -139,7 +139,11 @@ func (l *linter) CheckFile(f *ast.File) {
 			}()
 			for _, w := range c.Check(f) {
 				pos := l.ctx.FileSet.Position(w.Node.Pos())
-				log.Printf("%s: %s/%s: %v\n", pos, c.name, w.Kind, w.Text)
+				name := c.name
+				if w.Kind != "" {
+					name += "/" + string(w.Kind)
+				}
+				log.Printf("%s: %s: %v\n", pos, name, w.Text)
 			}
 		}(c)
 	}
@@ -148,7 +152,12 @@ func (l *linter) CheckFile(f *ast.File) {
 
 func (l *linter) CollectTypesInfo(files []*ast.File) error {
 	info := &types.Info{
-		Types: make(map[ast.Expr]types.TypeAndValue),
+		Types:      make(map[ast.Expr]types.TypeAndValue),
+		Defs:       make(map[*ast.Ident]types.Object),
+		Uses:       make(map[*ast.Ident]types.Object),
+		Implicits:  make(map[ast.Node]types.Object),
+		Selections: make(map[*ast.SelectorExpr]*types.Selection),
+		Scopes:     make(map[ast.Node]*types.Scope),
 	}
 	l.ctx.TypesInfo = info
 	// TODO: if lint.Context needs types.Scope or types.Package, assign it here.
