@@ -57,7 +57,6 @@ func (c *UnderefChecker) warn(expr *ast.SelectorExpr) {
 		Text: fmt.Sprintf("could simplify %s to %s.%s",
 			nodeString(c.ctx.FileSet, expr),
 			nodeString(c.ctx.FileSet, expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X),
-
 			expr.Sel.Name),
 	})
 }
