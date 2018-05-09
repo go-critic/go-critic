@@ -69,7 +69,7 @@ func (c *ParamNameChecker) collectFuncParams(decl *ast.FuncDecl) []*ast.Field {
 	return params
 }
 
-func (c *ParamNameChecker) warnCapitalized(id *ast.Ident) {
+func (c *ParamNameChecker) warnCapitalized(id ast.Node) {
 	c.warnings = append(c.warnings, Warning{
 		Kind: "Capitalized",
 		Node: id,
