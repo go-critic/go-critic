@@ -5,7 +5,7 @@ import (
 	"go/ast"
 )
 
-// UnderefChecker detects expressions, with C style filed selection.
+// UnderefChecker detects expressions, with C style field selection.
 type UnderefChecker struct {
 	ctx *Context
 
