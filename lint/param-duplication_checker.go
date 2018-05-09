@@ -8,7 +8,7 @@ import (
 )
 
 // ParamDuplicationChecker detects functions where parameters declaration
-// could be simplified by combine arguments with same type
+// could be simplified by combine arguments with same type.
 //
 // Example: func f(a int, b int) could be simplified as func f(a, b int)
 type ParamDuplicationChecker struct {
@@ -17,14 +17,14 @@ type ParamDuplicationChecker struct {
 	warnings []Warning
 }
 
-// NewParamDuplicationChecker returns initialized ParamDuplicationChecker
+// NewParamDuplicationChecker returns initialized ParamDuplicationChecker.
 func NewParamDuplicationChecker(ctx *Context) *ParamDuplicationChecker {
 	return &ParamDuplicationChecker{
 		ctx: ctx,
 	}
 }
 
-// Check runs parameter duplication checks for f.
+// Check runs parameter types duplication checks for f.
 //
 // Features
 //
@@ -38,8 +38,8 @@ func (c *ParamDuplicationChecker) Check(f *ast.File) []Warning {
 	return c.warnings
 }
 
-// TODO(fexolm) don't create multiple warnings on the same function
-// TODO(fexolm) create warning in other function
+// TODO(fexolm) don't create multiple warnings on the same function.
+// TODO(fexolm) create warning in other function.
 func (c *ParamDuplicationChecker) checkParamDuplication(decl *ast.FuncDecl) {
 	params := decl.Type.Params.List
 	if len(params) < 2 {
