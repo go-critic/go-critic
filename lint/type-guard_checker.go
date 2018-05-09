@@ -73,10 +73,10 @@ func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 	}
 }
 
-func (c *TypeGuardChecker) warn(stmt *ast.TypeSwitchStmt, caseIndex int) {
+func (c *TypeGuardChecker) warn(node ast.Node, caseIndex int) {
 	s := "case %d can benefit from type switch with assignment"
 	c.warnings = append(c.warnings, Warning{
-		Node: stmt,
+		Node: node,
 		Text: fmt.Sprintf(s, caseIndex),
 	})
 }
