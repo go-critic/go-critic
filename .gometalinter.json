@@ -9,7 +9,6 @@
 		"gocyclo",
 		"goimports",
 		"golint",
-		"gosimple",
 		"gotype",
 		"gotypex",
 		"ineffassign",
@@ -18,12 +17,10 @@
 		"megacheck",
 		"misspell",
 		"nakedret",
-		"safesql",
-		"staticcheck",
+		"safesql",,
 		"structcheck",
 		"unconvert",
 		"unparam",
-		"unused",
 		"varcheck",
 		"vet"
   ]
