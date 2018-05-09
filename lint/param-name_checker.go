@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"go/ast"
 	"strings"
+
+	"github.com/Quasilyte/astcmp"
 )
 
 // ParamNameChecker detects potential issues in function parameter names.
@@ -42,6 +44,7 @@ func NewParamNameChecker(ctx *Context) *ParamNameChecker {
 func (c *ParamNameChecker) Check(f *ast.File) []Warning {
 	c.warnings = c.warnings[:0]
 	for _, decl := range collectFuncDecls(f) {
+		c.checkParamDuplication(decl)
 		for _, param := range c.collectFuncParams(decl) {
 			for _, id := range param.Names {
 				switch {
@@ -67,6 +70,37 @@ func (c *ParamNameChecker) collectFuncParams(decl *ast.FuncDecl) []*ast.Field {
 		params = append(params, decl.Type.Results.List...)
 	}
 	return params
+}
+
+// TODO(fexolm) don't create multiple warnings on the same function
+// TODO(fexolm) create warning in other function
+func (c *ParamNameChecker) checkParamDuplication(decl *ast.FuncDecl) {
+	params := decl.Type.Params.List
+	if len(params) < 2 {
+		return
+	}
+	for i, p := range params[1:] {
+		if astcmp.EqualExpr(p.Type, params[i].Type) {
+			var winfo string
+			winfo += paramNamesStr(params[i].Names) + " "
+			winfo += nodeString(c.ctx.FileSet, params[i].Type) + ", "
+
+			winfo += paramNamesStr(p.Names) + " "
+			winfo += nodeString(c.ctx.FileSet, p.Type)
+
+			winfo += " could be replaced with "
+
+			winfo += paramNamesStr(params[i].Names) + ", "
+			winfo += paramNamesStr(p.Names) + " "
+			winfo += nodeString(c.ctx.FileSet, p.Type)
+
+			c.warnings = append(c.warnings, Warning{
+				Kind: "Duplication",
+				Node: decl,
+				Text: fmt.Sprintf(winfo),
+			})
+		}
+	}
 }
 
 func (c *ParamNameChecker) warnCapitalized(id ast.Node) {
