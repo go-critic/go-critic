@@ -8,6 +8,14 @@ func veryBadReturn() [](func([](func()))) {
 	return nil
 }
 
-var badVar [](func())
+var _ [](func())
+var _ [5](*int)
+var _ [](func())
 
-var badVar2 [5](*int)
+var (
+	_ int
+	_ [5](*int)
+	_ [](func())
+)
+
+const _ (int) = 5
