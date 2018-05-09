@@ -27,21 +27,35 @@ func NewParenthesisChecker(ctx *Context) *ParenthesisChecker {
 // and offsers the way how to do it.
 func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
 	c.warnings = c.warnings[:0]
-	for _, decl := range collectFuncDecls(f) {
-		if decl.Type.Results == nil {
-			continue
-		}
-		for _, res := range decl.Type.Results.List {
-			c.validateResultDecl(res)
+
+	for _, decl := range f.Decls {
+		switch decl := decl.(type) {
+		case *ast.FuncDecl:
+			if decl.Type.Results == nil {
+				continue
+			}
+			for _, res := range decl.Type.Results.List {
+				c.validateExpr(res.Type)
+			}
+		case *ast.GenDecl:
+			for _, spec := range decl.Specs {
+				spec, ok := spec.(*ast.ValueSpec)
+				if !ok {
+					continue
+				}
+				c.validateExpr(spec.Type)
+			}
 		}
 	}
 	return c.warnings
 }
 
-func (c *ParenthesisChecker) validateResultDecl(f *ast.Field) {
+func (c *ParenthesisChecker) validateExpr(n ast.Node) {
 	// TODO improve suggestions for complex cases like (func([](func())))
+	// TODO improve linter output to write full type, not just place
+	// whereit could be simplified
 
-	ast.Inspect(f.Type, func(n ast.Node) bool {
+	ast.Inspect(n, func(n ast.Node) bool {
 		expr, ok := n.(*ast.ParenExpr)
 		if !ok {
 			return true
