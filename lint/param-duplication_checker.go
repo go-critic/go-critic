@@ -3,6 +3,7 @@ package lint
 import (
 	"fmt"
 	"go/ast"
+	"strings"
 
 	"github.com/Quasilyte/astcmp"
 )
@@ -47,24 +48,40 @@ func (c *ParamDuplicationChecker) checkParamDuplication(decl *ast.FuncDecl) {
 	}
 	for i, p := range params[1:] {
 		if astcmp.EqualExpr(p.Type, params[i].Type) {
-			var winfo string
-			winfo += paramNamesStr(params[i].Names) + " "
-			winfo += nodeString(c.ctx.FileSet, params[i].Type) + ", "
-
-			winfo += paramNamesStr(p.Names) + " "
-			winfo += nodeString(c.ctx.FileSet, p.Type)
-
-			winfo += " could be replaced with "
-
-			winfo += paramNamesStr(params[i].Names) + ", "
-			winfo += paramNamesStr(p.Names) + " "
-			winfo += nodeString(c.ctx.FileSet, p.Type)
-
-			c.warnings = append(c.warnings, Warning{
-				Kind: "Duplication",
-				Node: decl,
-				Text: fmt.Sprint(winfo),
-			})
+			c.warn(params[i], p, decl)
 		}
 	}
+}
+
+func (c *ParamDuplicationChecker) warn(a, b *ast.Field, decl *ast.FuncDecl) {
+	var winfo string
+	winfo += c.paramNamesStr(a.Names) + " "
+	winfo += nodeString(c.ctx.FileSet, a.Type) + ", "
+
+	winfo += c.paramNamesStr(b.Names) + " "
+	winfo += nodeString(c.ctx.FileSet, b.Type)
+
+	winfo += " could be replaced with "
+
+	winfo += c.paramNamesStr(a.Names) + ", "
+	winfo += c.paramNamesStr(b.Names) + " "
+	winfo += nodeString(c.ctx.FileSet, b.Type)
+
+	c.warnings = append(c.warnings, Warning{
+		Kind: "Duplication",
+		Node: decl,
+		Text: fmt.Sprint(winfo),
+	})
+
+}
+
+func (c *ParamDuplicationChecker) paramNamesStr(idents []*ast.Ident) string {
+	if idents == nil {
+		return "_"
+	}
+	names := []string{}
+	for _, id := range idents {
+		names = append(names, id.Name)
+	}
+	return strings.Join(names, " ,")
 }
