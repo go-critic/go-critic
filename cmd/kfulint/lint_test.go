@@ -30,17 +30,36 @@ func TestMain(m *testing.M) {
 	os.Exit(exitStatus)
 }
 
-func TestOutput(t *testing.T) {
-	tests := []struct {
-		checker string
-	}{
-		{"param-name"},
-		{"type-guard"},
-		{"parenthesis"},
-		{"param-duplication"},
-		{"underef"},
-	}
+var tests = []*struct {
+	checker string
+}{
+	{"param-name"},
+	{"type-guard"},
+	{"parenthesis"},
+	{"param-duplication"},
+	{"underef"},
+}
 
+func runChecker(name, dir string) (output []byte, err error) {
+	return exec.Command("./"+binary, "-dir", dir, "-enable", name).CombinedOutput()
+}
+
+func TestSanity(t *testing.T) {
+	saneTests := tests[:0]
+	for _, test := range tests {
+		testDir := filepath.Join("testdata", "_sanity")
+		output, err := runChecker(test.checker, testDir)
+		if err != nil {
+			t.Errorf("%s failed sanity checks: %v:\n%s",
+				test.checker, err, output)
+			continue
+		}
+		saneTests = append(saneTests, test)
+	}
+	tests = saneTests
+}
+
+func TestOutput(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.checker, func(t *testing.T) {
 			testDir := filepath.Join("testdata", test.checker)
@@ -48,7 +67,7 @@ func TestOutput(t *testing.T) {
 			f := parseTestFile(t, testFilename)
 
 			// Running the linter.
-			output, err := exec.Command("./"+binary, "-dir", testDir).CombinedOutput()
+			output, err := runChecker(test.checker, testDir)
 			if err != nil {
 				t.Fatalf("run linter: %v: %s", err, output)
 			}
