@@ -9,7 +9,9 @@ import (
 	"go/types"
 	"log"
 	"os"
+	"regexp"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/PieselBois/kfulint/lint"
@@ -54,12 +56,34 @@ func blame(format string, args ...interface{}) {
 // Terminates program on error.
 func parseArgv(l *linter) {
 	flag.StringVar(&l.targetDir, "dir", "", "target package(s) directory")
+	enable := flag.String("enable", "all", "comma-separated list of enabled checkers")
 
 	flag.Parse()
 
 	if l.targetDir == "" {
 		blame("Illegal empty -dir argument\n")
 	}
+
+	switch *enable {
+	case "all":
+		// Special case. l.enableSet remains nil.
+	case "":
+		// Empty set. Semantically "disable-all".
+		// Can be used to run all pipelines without actual checkers.
+		l.enabledSet = map[string]bool{}
+	default:
+		// Comma-separated list of names.
+		l.enabledSet = make(map[string]bool)
+		nameRE := regexp.MustCompile(`[a-z][a-z0-9_\-]*`)
+		for i, s := range strings.Split(*enable, ",") {
+			s = strings.TrimSpace(s)
+			l.enabledSet[s] = true
+			if !nameRE.MatchString(s) {
+				log.Fatalf("-enable element #%d: invalid %q checker name", i, s)
+			}
+		}
+	}
+
 }
 
 func parseDir(fset *token.FileSet, path string) []*ast.Package {
@@ -104,16 +128,24 @@ type linter struct {
 
 	// Command line flags:
 
-	targetDir string
+	targetDir  string
+	enabledSet map[string]bool
 }
 
 func (l *linter) InitCheckers() {
-	l.checkers = []checker{
+	checkers := []checker{
 		{"param-name", lint.NewParamNameChecker(l.ctx)},
 		{"type-guard", lint.NewTypeGuardChecker(l.ctx)},
 		{"parenthesis", lint.NewParenthesisChecker(l.ctx)},
 		{"underef", lint.NewUnderefChecker(l.ctx)},
 		{"param-duplication", lint.NewParamDuplicationChecker(l.ctx)},
+	}
+
+	for _, c := range checkers {
+		// Nil enabledSet means "all checkers are enabled".
+		if l.enabledSet == nil || l.enabledSet[c.name] {
+			l.checkers = append(l.checkers, c)
+		}
 	}
 }
 
