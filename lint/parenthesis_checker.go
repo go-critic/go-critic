@@ -44,6 +44,9 @@ func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
 			}
 			for _, spec := range decl.Specs {
 				if spec, ok := spec.(*ast.ValueSpec); ok {
+					if spec.Type == nil {
+						continue
+					}
 					c.validateType(spec.Type)
 					continue
 				}
@@ -59,7 +62,6 @@ func (c *ParenthesisChecker) validateType(n ast.Node) {
 	// TODO improve suggestions for complex cases like (func([](func())))
 	// TODO improve linter output to write full type, not just place
 	// where it could be simplified
-
 	ast.Inspect(n, func(n ast.Node) bool {
 		expr, ok := n.(*ast.ParenExpr)
 		if !ok {
