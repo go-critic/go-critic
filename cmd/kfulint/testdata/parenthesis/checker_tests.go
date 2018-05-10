@@ -5,7 +5,7 @@ func badReturn() [](func()) {
 	return nil
 }
 
-//TODO: cound simplify [](func[](func())) to []func([]func())
+//TODO: could simplify [](func[](func())) to []func([]func())
 ///: could simplify (func([](func()))) to func([](func()))
 func veryBadReturn() [](func([](func()))) {
 	return nil
