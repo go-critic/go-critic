@@ -1,18 +1,20 @@
 * Contributing to kfulint
 
-Here would be a set of guidelines that we follow when contributing to
-kfulint. You could propose changes in this document if you would like.
+Most of the conventions and rules are derived from [[https://github.com/golang/go][Go]] project.
 
 ** Accepted abbreviations
+
     *LGTM* — looks good to me
-    
+
     *SGTM* — sounds good to me
-    
+
     *PTAL* — please take a look
-    
+
     *s/foo/bar/* — replace foo with bar; this is sed syntax
-    
+
     *s/foo/bar/g* — replace foo with bar throughout your entire change
+
+    See [[https://github.com/golang/go/wiki/CodeReview][CodeReview]].
 
 ** How to write issues
 *** Issues naming guidelines
