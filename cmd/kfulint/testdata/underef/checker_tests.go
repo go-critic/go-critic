@@ -36,3 +36,25 @@ func sampleCase3() {
 	//TODO: could simplify (*k)[5] to k[5]
 	(*k)[2] = 3
 }
+
+func multipleIndir1() {
+	type point struct{ x, y int }
+	pt := point{}
+
+	pt1 := &pt
+	pt2 := &pt1
+	pt3 := &pt2
+	pt4 := &pt3
+
+	//TODO: should not trigger (#68)
+	///: could simplify (*pt2).x to pt2.x
+	_ = (*pt2).x
+
+	//TODO: should not trigger (#68)
+	///: could simplify (**pt3).x to *pt3.x
+	_ = (**pt3).x
+
+	//TODO: should not trigger (#68)
+	///: could simplify (***pt4).x to **pt4.x
+	_ = (***pt4).x
+}
