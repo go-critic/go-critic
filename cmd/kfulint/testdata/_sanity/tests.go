@@ -40,6 +40,73 @@ func emptySpecs() {
 	type ()
 }
 
+func forRange() {
+	var xs []int
+
+	for range xs {
+	}
+	for _ = range xs {
+	}
+	for _, _ = range xs {
+	}
+}
+
+func emptyStatements() {
+	goto L0
+
+	for {
+	}
+	for {
+		break
+	}
+	for {
+		continue
+	}
+
+	switch {
+	}
+	switch {
+	case false:
+	case true:
+	default:
+	}
+	switch {
+	case false:
+		fallthrough
+	case true:
+		break
+	default:
+	}
+
+	if true {
+	}
+	if false {
+	} else {
+	}
+	if false {
+	} else if false {
+	} else {
+	}
+
+	select {}
+L0:
+}
+
+func initStatements() {
+	for _ = 0; ; {
+	}
+	for _, _ = 0, 0; ; {
+	}
+
+	switch _ = 0; {
+	}
+
+	if _ = 0; true {
+	}
+
+	// select can't have init statement.
+}
+
 type intAlias = int
 
 type structType struct {
@@ -56,4 +123,19 @@ type ifaceType interface {
 	A() func()
 	B() func() func()
 	c(func(func()) func()) func(func() func() func()) func()
+}
+
+type (
+	_ chan [2]int
+	_ chan chan int
+	_ chan<- int
+	_ <-chan int
+	_ <-chan <-chan bool
+	_ chan []chan []chan<- int
+)
+
+type myString string
+
+func convertPtr(x string) *myString {
+	return (*myString)(&x)
 }
