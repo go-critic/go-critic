@@ -51,16 +51,25 @@ func forRange() {
 	}
 }
 
-func emptyStatements() {
-	goto L0
+func emptyFor1() {
+	for {
+	}
+}
 
-	for {
-	}
-	for {
-		break
-	}
+func emptyFor2() {
 	for {
 		continue
+	}
+}
+
+func emptySelect() {
+	select {}
+}
+
+func emptyStatements() {
+
+	for {
+		break
 	}
 
 	switch {
@@ -88,14 +97,16 @@ func emptyStatements() {
 	} else {
 	}
 
-	select {}
+	goto L0
 L0:
 }
 
 func initStatements() {
 	for _ = 0; ; {
+		break
 	}
 	for _, _ = 0, 0; ; {
+		break
 	}
 
 	switch _ = 0; {
