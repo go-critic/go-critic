@@ -29,7 +29,7 @@ type mathConstant struct {
 
 	// imprecise is a common "short" value form.
 	// Zero for constatns that don't have well-known short form.
-	 imprecise float64
+	imprecise float64
 }
 
 // StddefChecker finds expressions and types that can be replaced
