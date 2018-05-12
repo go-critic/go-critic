@@ -22,6 +22,10 @@ import (
 // literals like 0x7fffffff => math.MaxInt32, because bitwise masks
 // are not used in this way.
 
+// TODO(quasilyte): should handle packages that define named constants
+// specifically. For example, it's invalid to suggest math.* consts
+// for math package itself.
+
 // mathConstant describes named constant value defined in "math" package.
 type mathConstant struct {
 	name  string
