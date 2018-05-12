@@ -2,47 +2,29 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"go/ast"
-	"go/importer"
 	"go/parser"
-	"go/token"
-	"go/types"
 	"log"
 	"os"
 	"regexp"
-	"sort"
 	"strings"
 	"sync"
 
 	"github.com/PieselBois/kfulint/lint"
+	"golang.org/x/tools/go/loader"
 )
 
 func main() {
 	log.SetFlags(0)
 
-	l := linter{
-		ctx: &lint.Context{
-			FileSet: token.NewFileSet(),
-		},
-		typesChecker: &types.Config{
-			Importer: importer.Default(),
-		},
-	}
-
+	var l linter
 	parseArgv(&l)
-	pkgs := parseDir(l.ctx.FileSet, l.targetDir)
-
+	l.LoadProgram()
+	l.InitContext()
 	l.InitCheckers()
-	for _, pkg := range pkgs {
-		// TODO: if linters require ast.Package, assign it here.
-		files := sortedPackageFiles(pkg)
-		if err := l.CollectTypesInfo(files); err != nil {
-			log.Printf("skip %s: type check error: %v", pkg.Name, err)
-			continue
-		}
-		for _, f := range files {
-			l.CheckFile(f)
-		}
+	for _, pkgPath := range l.packages {
+		l.CheckPackage(pkgPath)
 	}
 }
 
@@ -55,13 +37,18 @@ func blame(format string, args ...interface{}) {
 // parseArgv processes command-line arguments and fills ctx argument with them.
 // Terminates program on error.
 func parseArgv(l *linter) {
-	flag.StringVar(&l.targetDir, "dir", "", "target package(s) directory")
+	flag.Usage = func() {
+		fmt.Fprintln(os.Stderr, "usage: kfulint [flags] [package ...]")
+		flag.PrintDefaults()
+	}
+
 	enable := flag.String("enable", "all", "comma-separated list of enabled checkers")
 
 	flag.Parse()
 
-	if l.targetDir == "" {
-		blame("Illegal empty -dir argument\n")
+	l.packages = flag.Args()
+	if len(l.packages) == 0 {
+		blame("no packages specified\n")
 	}
 
 	switch *enable {
@@ -86,34 +73,6 @@ func parseArgv(l *linter) {
 
 }
 
-func parseDir(fset *token.FileSet, path string) []*ast.Package {
-	pkgMap, err := parser.ParseDir(fset, path, nil, parser.ParseComments)
-	if err != nil {
-		log.Fatalf("parse dir error: %v", err)
-	}
-
-	var pkgList []*ast.Package
-	for _, pkg := range pkgMap {
-		pkgList = append(pkgList, pkg)
-	}
-
-	sort.Slice(pkgList, func(i, j int) bool {
-		return pkgList[i].Name < pkgList[j].Name
-	})
-	return pkgList
-}
-
-func sortedPackageFiles(pkg *ast.Package) []*ast.File {
-	var files []*ast.File
-	for _, f := range pkg.Files {
-		files = append(files, f)
-	}
-	sort.Slice(files, func(i, j int) bool {
-		return files[i].Name.Name < files[j].Name.Name
-	})
-	return files
-}
-
 type checker struct {
 	name string
 	lint.Checker
@@ -122,14 +81,36 @@ type checker struct {
 type linter struct {
 	ctx *lint.Context
 
-	typesChecker *types.Config
+	prog *loader.Program
 
 	checkers []checker
 
 	// Command line flags:
 
-	targetDir  string
+	packages   []string
 	enabledSet map[string]bool
+}
+
+func (l *linter) LoadProgram() {
+	conf := loader.Config{
+		ParserMode: parser.ParseComments,
+	}
+
+	if _, err := conf.FromArgs(l.packages, true); err != nil {
+		log.Fatalf("resolve packages: %v", err)
+	}
+	prog, err := conf.Load()
+	if err != nil {
+		log.Fatalf("load program: %v", err)
+	}
+
+	l.prog = prog
+}
+
+func (l *linter) InitContext() {
+	l.ctx = &lint.Context{
+		FileSet: l.prog.Fset,
+	}
 }
 
 func (l *linter) InitCheckers() {
@@ -149,7 +130,19 @@ func (l *linter) InitCheckers() {
 	}
 }
 
-func (l *linter) CheckFile(f *ast.File) {
+func (l *linter) CheckPackage(pkgPath string) {
+	pkgInfo := l.prog.Imported[pkgPath]
+	if pkgInfo == nil || !pkgInfo.TransitivelyErrorFree {
+		log.Fatalf("%s package is not properly loaded", pkgPath)
+	}
+
+	l.ctx.TypesInfo = &pkgInfo.Info
+	for _, f := range pkgInfo.Files {
+		l.checkFile(f)
+	}
+}
+
+func (l *linter) checkFile(f *ast.File) {
 	var wg sync.WaitGroup
 	wg.Add(len(l.checkers))
 	for _, c := range l.checkers {
@@ -165,6 +158,7 @@ func (l *linter) CheckFile(f *ast.File) {
 				}
 				if err, ok := r.(error); ok {
 					log.Printf("%s: error: %v\n", c.name, err)
+					panic(err)
 				} else {
 					// Some other kind of run-time panic.
 					// Undo the recover and resume panic.
@@ -182,19 +176,4 @@ func (l *linter) CheckFile(f *ast.File) {
 		}(c)
 	}
 	wg.Wait()
-}
-
-func (l *linter) CollectTypesInfo(files []*ast.File) error {
-	info := &types.Info{
-		Types:      make(map[ast.Expr]types.TypeAndValue),
-		Defs:       make(map[*ast.Ident]types.Object),
-		Uses:       make(map[*ast.Ident]types.Object),
-		Implicits:  make(map[ast.Node]types.Object),
-		Selections: make(map[*ast.SelectorExpr]*types.Selection),
-		Scopes:     make(map[ast.Node]*types.Scope),
-	}
-	l.ctx.TypesInfo = info
-	// TODO: if lint.Context needs types.Scope or types.Package, assign it here.
-	_, err := l.typesChecker.Check(l.targetDir, l.ctx.FileSet, files, info)
-	return err
 }
