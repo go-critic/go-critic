@@ -58,3 +58,9 @@ func multipleIndir1() {
 	///: could simplify (***pt4).x to **pt4.x
 	_ = (***pt4).x
 }
+
+type myString string
+
+func convertPtr(x string) *myString {
+	return (*myString)(&x)
+}

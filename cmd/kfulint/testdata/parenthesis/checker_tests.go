@@ -41,3 +41,9 @@ const ALAST = 1
 var opindex [(ALAST + 1) & 3]*int
 
 var _ func(int, string)
+
+type myString string
+
+func convertPtr(x string) *myString {
+	return (*myString)(&x)
+}
