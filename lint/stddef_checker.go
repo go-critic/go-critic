@@ -156,7 +156,7 @@ func (c *StddefChecker) checkExpr(expr ast.Expr) bool {
 
 	switch expr := expr.(type) {
 	case *ast.BasicLit:
-		return c.checkBasicLit(expr, val)
+		return c.checkBasicLit(val)
 	case *ast.ParenExpr:
 		return c.checkExpr(expr.X)
 	case *ast.BinaryExpr:
@@ -173,7 +173,7 @@ func (c *StddefChecker) checkExpr(expr ast.Expr) bool {
 	return false
 }
 
-func (c *StddefChecker) checkBasicLit(lit *ast.BasicLit, val constant.Value) bool {
+func (c *StddefChecker) checkBasicLit(val constant.Value) bool {
 	const epsilon = 0.00001
 
 	switch val.Kind() {
