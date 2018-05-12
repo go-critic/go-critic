@@ -247,10 +247,7 @@ func (c *StddefChecker) matchCallFunc(call *ast.CallExpr, pkgName, funcName stri
 			return false
 		}
 		pkg, ok := fnExpr.X.(*ast.Ident)
-		if !ok || pkg.Name != pkgName {
-			return false
-		}
-		return fnExpr.Sel.Name == funcName
+		return ok && pkg.Name == pkgName && fnExpr.Sel.Name == funcName
 	}
 	fnExpr, ok := call.Fun.(*ast.Ident)
 	return ok && fnExpr.Name == funcName
