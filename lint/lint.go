@@ -48,12 +48,13 @@ var checkers = map[string]func(c *Context) Checker{
 	"param-duplication": newParamDuplicationChecker,
 }
 
-// NewChecker returns Checker with specified name.
+// NewChecker returns checker that implements check of specified name.
 func NewChecker(name string, ctx *Context) Checker {
 	return checkers[name](ctx)
 }
 
-// AvailableCheckers returns sorted slice of checkers names.
+// AvailableCheckers returns all check names that are supported.
+// Strings returned from this function can be safely used in NewChecker call.
 func AvailableCheckers() []string {
 	var names []string
 	for name := range checkers {

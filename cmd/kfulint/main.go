@@ -115,6 +115,7 @@ func (l *linter) InitContext() {
 
 func (l *linter) InitCheckers() {
 	for _, name := range lint.AvailableCheckers() {
+		// Nil enabledSet means "all checkers are enabled".
 		if l.enabledSet == nil || l.enabledSet[name] {
 			l.checkers = append(l.checkers, checker{name, lint.NewChecker(name, l.ctx)})
 		}
