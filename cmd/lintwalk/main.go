@@ -55,6 +55,7 @@ func main() {
 	for pkg := range packages {
 		args = append(args, pkg)
 	}
+	/* #nosec */
 	cmd := exec.Command(*linter, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
