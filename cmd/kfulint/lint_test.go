@@ -13,9 +13,14 @@ import (
 	"testing"
 )
 
-// binary is test linter executable name.
-// Using "exe" suffix to make it work on Windows as well.
-const binary = "testlint.exe"
+const (
+	// binary is test linter executable name.
+	// Using "exe" suffix to make it work on Windows as well.
+	binary = "testlint.exe"
+
+	// linterCmdPath holds full path to linter main pkg path.
+	linterCmdPath = "github.com/PieselBois/kfulint/cmd/kfulint/"
+)
 
 func TestMain(m *testing.M) {
 	// Before all tests are executed, we need to build linter first.
@@ -40,15 +45,15 @@ var tests = []*struct {
 	{"underef"},
 }
 
-func runChecker(name, dir string) (output []byte, err error) {
-	return exec.Command("./"+binary, "-dir", dir, "-enable", name).CombinedOutput()
+func runChecker(name, pkgPath string) (output []byte, err error) {
+	return exec.Command("./"+binary, "-enable", name, pkgPath).CombinedOutput()
 }
 
 func TestSanity(t *testing.T) {
 	saneTests := tests[:0]
 	for _, test := range tests {
-		testDir := filepath.Join("testdata", "_sanity")
-		output, err := runChecker(test.checker, testDir)
+		pkgPath := linterCmdPath + "testdata/_sanity"
+		output, err := runChecker(test.checker, pkgPath)
 		if err != nil {
 			t.Errorf("%s failed sanity checks: %v:\n%s",
 				test.checker, err, output)
@@ -62,12 +67,13 @@ func TestSanity(t *testing.T) {
 func TestOutput(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.checker, func(t *testing.T) {
-			testDir := filepath.Join("testdata", test.checker)
-			testFilename := filepath.Join(testDir, "checker_tests.go")
+			pkgPath := linterCmdPath + "testdata/" + test.checker
+			testFilename := filepath.Join(
+				"testdata", test.checker, "checker_tests.go")
 			f := parseTestFile(t, testFilename)
 
 			// Running the linter.
-			output, err := runChecker(test.checker, testDir)
+			output, err := runChecker(test.checker, pkgPath)
 			if err != nil {
 				t.Fatalf("run linter: %v: %s", err, output)
 			}

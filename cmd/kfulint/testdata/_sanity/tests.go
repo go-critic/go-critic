@@ -1,19 +1,19 @@
 package sanity_test
 
 import (
-	. "fmt"
-	_ "fmt"
-	fmtpkg1 "fmt"
-	fmtpkg2 "fmt"
+	. "errors"
+	_ "errors"
+	errorspkg1 "errors"
+	errorspkg2 "errors"
 )
 
-import "fmt"
+import "errors"
 import "unsafe"
 
 var (
-	_    = Printf
-	_, _ = fmtpkg1.Printf, fmtpkg2.Printf
-	_    = fmt.Printf
+	_    = New
+	_, _ = errorspkg1.New, errorspkg2.New
+	_    = errors.New
 	_    = unsafe.Sizeof(int(0))
 )
 
