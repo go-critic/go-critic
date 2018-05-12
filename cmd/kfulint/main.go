@@ -120,6 +120,7 @@ func (l *linter) InitCheckers() {
 		{"parenthesis", lint.NewParenthesisChecker(l.ctx)},
 		{"underef", lint.NewUnderefChecker(l.ctx)},
 		{"param-duplication", lint.NewParamDuplicationChecker(l.ctx)},
+		{"elseif", lint.NewElseifChecker(l.ctx)},
 	}
 
 	for _, c := range checkers {

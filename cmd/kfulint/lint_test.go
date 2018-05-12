@@ -43,6 +43,7 @@ var tests = []*struct {
 	{"parenthesis"},
 	{"param-duplication"},
 	{"underef"},
+	{"elseif"},
 }
 
 func runChecker(name, pkgPath string) (output []byte, err error) {
