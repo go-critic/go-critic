@@ -38,6 +38,7 @@ var tests = []*struct {
 	{"parenthesis"},
 	{"param-duplication"},
 	{"underef"},
+	{"stddef"},
 }
 
 func runChecker(name, dir string) (output []byte, err error) {
