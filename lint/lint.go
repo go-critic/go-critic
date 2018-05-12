@@ -27,6 +27,10 @@ type Context struct {
 
 	// TypesInfo carries parsed packages types information.
 	TypesInfo *types.Info
+
+	// SizesInfo carries alignment and type size information.
+	// Arch-dependent.
+	SizesInfo types.Sizes
 }
 
 // Checker analyzes given file for potential issues.
