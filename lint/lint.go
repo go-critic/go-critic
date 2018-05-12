@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+	"sort"
 )
 
 // WarningKind describes checker warning category.
@@ -37,4 +38,25 @@ type Context struct {
 // but it should never call something like os.Exit or log.Fatal.
 type Checker interface {
 	Check(f *ast.File) []Warning
+}
+
+var checkers = map[string]func(c *Context) Checker{
+	"param-name":        newParamNameChecker,
+	"type-guard":        newTypeGuardChecker,
+	"parenthesis":       newParenthesisChecker,
+	"underef":           newUnderefChecker,
+	"param-duplication": newParamDuplicationChecker,
+}
+
+func NewChecker(name string, ctx *Context) Checker {
+	return checkers[name](ctx)
+}
+
+func AvailableCheckers() []string {
+	var names []string
+	for name := range checkers {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names
 }

@@ -114,18 +114,9 @@ func (l *linter) InitContext() {
 }
 
 func (l *linter) InitCheckers() {
-	checkers := []checker{
-		{"param-name", lint.NewParamNameChecker(l.ctx)},
-		{"type-guard", lint.NewTypeGuardChecker(l.ctx)},
-		{"parenthesis", lint.NewParenthesisChecker(l.ctx)},
-		{"underef", lint.NewUnderefChecker(l.ctx)},
-		{"param-duplication", lint.NewParamDuplicationChecker(l.ctx)},
-	}
-
-	for _, c := range checkers {
-		// Nil enabledSet means "all checkers are enabled".
-		if l.enabledSet == nil || l.enabledSet[c.name] {
-			l.checkers = append(l.checkers, c)
+	for _, name := range lint.AvailableCheckers() {
+		if l.enabledSet == nil || l.enabledSet[name] {
+			l.checkers = append(l.checkers, checker{name, lint.NewChecker(name, l.ctx)})
 		}
 	}
 }

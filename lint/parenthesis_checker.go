@@ -14,7 +14,7 @@ type ParenthesisChecker struct {
 }
 
 // NewParenthesisChecker returns initialized checker for type expressions.
-func NewParenthesisChecker(ctx *Context) *ParenthesisChecker {
+func newParenthesisChecker(ctx *Context) Checker {
 	return &ParenthesisChecker{
 		ctx: ctx,
 	}
