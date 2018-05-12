@@ -1,12 +1,13 @@
 {
 	"DisableAll": true,
 	"Enable": [
-		"goimports",
 		"deadcode",
 		"dupl",
 		"errcheck",
 		"gas",
 		"goconst",
+		"gofmt",
+		"goimports",
 		"golint",
 		"gotype",
 		"gotypex",

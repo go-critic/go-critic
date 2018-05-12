@@ -115,11 +115,13 @@ func NewStddefChecker(ctx *Context) *StddefChecker {
 			"Mon, 02 Jan 2006 15:04:05 -0700":     "time.RFC1123Z",
 			"2006-01-02T15:04:05Z07:00":           "time.RFC3339",
 			"2006-01-02T15:04:05.999999999Z07:00": "time.RFC3339Nano",
-			"3:04PM":                              "time.Kitchen",
-			"Jan _2 15:04:05":                     "time.Stamp",
-			"Jan _2 15:04:05.000":                 "time.StampMilli",
-			"Jan _2 15:04:05.000000":              "time.StampMicro",
-			"Jan _2 15:04:05.000000000":           "time.StampNano",
+
+			"Jan _2 15:04:05":           "time.Stamp",
+			"Jan _2 15:04:05.000":       "time.StampMilli",
+			"Jan _2 15:04:05.000000":    "time.StampMicro",
+			"Jan _2 15:04:05.000000000": "time.StampNano",
+
+			"3:04PM": "time.Kitchen",
 		},
 	}
 }
