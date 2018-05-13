@@ -19,7 +19,7 @@ type TypeGuardChecker struct {
 }
 
 // NewTypeGuardChecker returns initialized checker for Go type switch statements.
-func NewTypeGuardChecker(ctx *Context) *TypeGuardChecker {
+func newTypeGuardChecker(ctx *Context) Checker {
 	return &TypeGuardChecker{ctx: ctx}
 }
 
