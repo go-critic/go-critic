@@ -46,6 +46,7 @@ var checkers = map[string]func(c *Context) Checker{
 	"parenthesis":       newParenthesisChecker,
 	"underef":           newUnderefChecker,
 	"param-duplication": newParamDuplicationChecker,
+	"builtin-shadow":    newBuiltinShadowsChecker,
 }
 
 // NewChecker returns checker that implements check of specified name.

@@ -12,8 +12,7 @@ type BuiltinShadows struct {
 	warnings []Warning
 }
 
-// NewBuiltinShadows returns initialized checker for Go functions param names.
-func NewBuiltinShadows(ctx *Context) *BuiltinShadows {
+func newBuiltinShadowsChecker(ctx *Context) Checker {
 	return &BuiltinShadows{
 		ctx: ctx,
 	}
