@@ -5,6 +5,7 @@ import (
 	"go/token"
 	"go/types"
 	"sort"
+	"sync"
 )
 
 // WarningKind describes checker warning category.
@@ -28,6 +29,17 @@ type Context struct {
 
 	// TypesInfo carries parsed packages types information.
 	TypesInfo *types.Info
+
+	// Warnings contains warnings from all checkers
+	Warnings []Warning
+
+	mutex sync.Mutex
+}
+
+func (c *Context) addWarning(w Warning) {
+	c.mutex.Lock()
+	c.Warnings = append(c.Warnings, w)
+	c.mutex.Unlock()
 }
 
 // Checker analyzes given file for potential issues.
@@ -37,7 +49,7 @@ type Context struct {
 // signal it using panic with argument of "error" type,
 // but it should never call something like os.Exit or log.Fatal.
 type Checker interface {
-	Check(f *ast.File) []Warning
+	Check(f *ast.File)
 }
 
 var checkers = map[string]func(c *Context) Checker{
