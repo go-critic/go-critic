@@ -34,3 +34,16 @@ Add linter to your `$PATH` or run it directly:
 ```
 
 Run `./bin/kfulint -help` for more info.
+
+## Contributing
+
+This project aims to be contributing-friendly.
+
+We're using optimistic merging strategy most of the time.
+In short, this means that if your contribution has some flaws, we can still merge it and then
+fix them by ourselves. Experimental and work-in-progress checkers are isolated, so nothing bad will happen.
+
+Code style is the same as in Go project, see [CodeReviewComments](https://github.com/golang/go/wiki/codereviewcomments).
+
+See [CONTRIBUTING.org](CONTRIBUTING.org) for more details.
+It also describes how to develop a new checker for the linter.

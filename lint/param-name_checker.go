@@ -18,7 +18,7 @@ type ParamNameChecker struct {
 }
 
 // NewParamNameChecker returns initialized checker for Go functions param names.
-func NewParamNameChecker(ctx *Context) *ParamNameChecker {
+func newParamNameChecker(ctx *Context) Checker {
 	return &ParamNameChecker{
 		ctx: ctx,
 		loudNames: map[string]bool{
