@@ -9,8 +9,6 @@ import (
 // ParenthesisChecker detects some cases where parenthesis are unnecessary
 type ParenthesisChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
 // NewParenthesisChecker returns initialized checker for type expressions.

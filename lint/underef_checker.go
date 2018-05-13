@@ -8,8 +8,6 @@ import (
 // UnderefChecker detects expressions, with C style field selection.
 type UnderefChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
 // NewUnderefChecker returns initialized checker for deref (ast.Star) expressions.

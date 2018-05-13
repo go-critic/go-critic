@@ -14,8 +14,6 @@ import (
 // Rationale: code readability.
 type TypeGuardChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
 // NewTypeGuardChecker returns initialized checker for Go type switch statements.
