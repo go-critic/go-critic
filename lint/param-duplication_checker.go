@@ -19,7 +19,7 @@ type ParamDuplicationChecker struct {
 }
 
 // NewParamDuplicationChecker returns initialized ParamDuplicationChecker.
-func NewParamDuplicationChecker(ctx *Context) *ParamDuplicationChecker {
+func newParamDuplicationChecker(ctx *Context) Checker {
 	return &ParamDuplicationChecker{
 		ctx: ctx,
 	}

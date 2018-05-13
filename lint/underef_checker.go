@@ -13,7 +13,7 @@ type UnderefChecker struct {
 }
 
 // NewUnderefChecker returns initialized checker for deref (ast.Star) expressions.
-func NewUnderefChecker(ctx *Context) *UnderefChecker {
+func newUnderefChecker(ctx *Context) Checker {
 	return &UnderefChecker{
 		ctx: ctx,
 	}
