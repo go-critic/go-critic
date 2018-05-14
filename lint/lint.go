@@ -30,6 +30,10 @@ type Context struct {
 	// TypesInfo carries parsed packages types information.
 	TypesInfo *types.Info
 
+	// SizesInfo carries alignment and type size information.
+	// Arch-dependent.
+	SizesInfo types.Sizes
+
 	mutex sync.Mutex // Protects the rest of the fields
 
 	// Warnings contains warnings from all checkers
@@ -58,6 +62,7 @@ var checkers = map[string]func(c *Context) Checker{
 	"parenthesis":       newParenthesisChecker,
 	"underef":           newUnderefChecker,
 	"param-duplication": newParamDuplicationChecker,
+	"big-copy":          newBigCopyChecker,
 }
 
 // NewChecker returns checker that implements check of specified name.
