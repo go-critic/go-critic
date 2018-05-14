@@ -15,6 +15,24 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
+type checker struct {
+	name string
+	lint.Checker
+}
+
+type linter struct {
+	ctx *lint.Context
+
+	prog *loader.Program
+
+	checkers []checker
+
+	// Command line flags:
+
+	packages   []string
+	enabledSet map[string]bool
+}
+
 func main() {
 	log.SetFlags(0)
 
@@ -23,6 +41,7 @@ func main() {
 	l.LoadProgram()
 	l.InitContext()
 	l.InitCheckers()
+
 	for _, pkgPath := range l.packages {
 		l.CheckPackage(pkgPath)
 	}
@@ -73,24 +92,6 @@ func parseArgv(l *linter) {
 
 }
 
-type checker struct {
-	name string
-	lint.Checker
-}
-
-type linter struct {
-	ctx *lint.Context
-
-	prog *loader.Program
-
-	checkers []checker
-
-	// Command line flags:
-
-	packages   []string
-	enabledSet map[string]bool
-}
-
 func (l *linter) LoadProgram() {
 	conf := loader.Config{
 		ParserMode: parser.ParseComments,
@@ -132,6 +133,11 @@ func (l *linter) CheckPackage(pkgPath string) {
 	for _, f := range pkgInfo.Files {
 		l.checkFile(f)
 	}
+
+	for _, w := range l.ctx.Warnings {
+		pos := l.ctx.FileSet.Position(w.Node.Pos())
+		log.Printf("%s: %s: %v\n", pos, string(w.Kind), w.Text)
+	}
 }
 
 func (l *linter) checkFile(f *ast.File) {
@@ -157,14 +163,7 @@ func (l *linter) checkFile(f *ast.File) {
 					panic(r)
 				}
 			}()
-			for _, w := range c.Check(f) {
-				pos := l.ctx.FileSet.Position(w.Node.Pos())
-				name := c.name
-				if w.Kind != "" {
-					name += "/" + string(w.Kind)
-				}
-				log.Printf("%s: %s: %v\n", pos, name, w.Text)
-			}
+			c.Check(f)
 		}(c)
 	}
 	wg.Wait()

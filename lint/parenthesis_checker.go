@@ -9,8 +9,6 @@ import (
 // ParenthesisChecker detects some cases where parenthesis are unnecessary
 type ParenthesisChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
 // NewParenthesisChecker returns initialized checker for type expressions.
@@ -26,9 +24,7 @@ func newParenthesisChecker(ctx *Context) Checker {
 //
 // Detects parenthesis statements which could be simplified
 // and offsers the way how to do it.
-func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
-
+func (c *ParenthesisChecker) Check(f *ast.File) {
 	for _, decl := range f.Decls {
 		switch decl := decl.(type) {
 		case *ast.FuncDecl:
@@ -54,8 +50,6 @@ func (c *ParenthesisChecker) Check(f *ast.File) []Warning {
 			}
 		}
 	}
-
-	return c.warnings
 }
 
 func (c *ParenthesisChecker) validateType(n ast.Node) {
@@ -67,7 +61,8 @@ func (c *ParenthesisChecker) validateType(n ast.Node) {
 		if !ok {
 			return true
 		}
-		c.warnings = append(c.warnings, Warning{
+		c.ctx.addWarning(Warning{
+			Kind: "parenthesis",
 			Node: expr,
 			Text: fmt.Sprintf("could simplify %s to %s", nodeString(c.ctx.FileSet, expr), nodeString(c.ctx.FileSet, expr.X)),
 		})

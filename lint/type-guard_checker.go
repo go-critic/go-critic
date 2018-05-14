@@ -14,8 +14,6 @@ import (
 // Rationale: code readability.
 type TypeGuardChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
 // NewTypeGuardChecker returns initialized checker for Go type switch statements.
@@ -24,13 +22,11 @@ func newTypeGuardChecker(ctx *Context) Checker {
 }
 
 // Check runs type switch checks for f.
-func (c *TypeGuardChecker) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
+func (c *TypeGuardChecker) Check(f *ast.File) {
 	pre := astfilter.Or(astfilter.FuncDecl, astfilter.Stmt)
 	for _, decl := range f.Decls {
 		astutil.Apply(decl, pre, c.apply)
 	}
-	return c.warnings
 }
 
 func (c *TypeGuardChecker) apply(cur *astutil.Cursor) bool {
@@ -75,7 +71,8 @@ func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 
 func (c *TypeGuardChecker) warn(node ast.Node, caseIndex int) {
 	s := "case %d can benefit from type switch with assignment"
-	c.warnings = append(c.warnings, Warning{
+	c.ctx.addWarning(Warning{
+		Kind: "type-guard",
 		Node: node,
 		Text: fmt.Sprintf(s, caseIndex),
 	})
