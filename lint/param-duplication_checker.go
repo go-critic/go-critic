@@ -14,12 +14,10 @@ import (
 // Example: func f(a int, b int) could be simplified as func f(a, b int)
 type ParamDuplicationChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
 // NewParamDuplicationChecker returns initialized ParamDuplicationChecker.
-func NewParamDuplicationChecker(ctx *Context) *ParamDuplicationChecker {
+func newParamDuplicationChecker(ctx *Context) Checker {
 	return &ParamDuplicationChecker{
 		ctx: ctx,
 	}
@@ -31,12 +29,10 @@ func NewParamDuplicationChecker(ctx *Context) *ParamDuplicationChecker {
 //
 // Detects if function parameters could be combined by type
 // and suggest the way to do it.
-func (c *ParamDuplicationChecker) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
+func (c *ParamDuplicationChecker) Check(f *ast.File) {
 	for _, decl := range collectFuncDecls(f) {
 		c.checkParamDuplication(decl)
 	}
-	return c.warnings
 }
 
 // TODO(fexolm) don't create multiple warnings on the same function.
@@ -66,8 +62,8 @@ func (c *ParamDuplicationChecker) warn(a, b *ast.Field, decl *ast.FuncDecl) {
 	winfo += c.paramNamesStr(b.Names) + " "
 	winfo += nodeString(c.ctx.FileSet, b.Type)
 
-	c.warnings = append(c.warnings, Warning{
-		Kind: "Duplication",
+	c.ctx.addWarning(Warning{
+		Kind: "param-duplication/Duplication",
 		Node: decl,
 		Text: fmt.Sprint(winfo),
 	})

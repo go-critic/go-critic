@@ -8,12 +8,10 @@ import (
 // UnderefChecker detects expressions, with C style field selection.
 type UnderefChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
 // NewUnderefChecker returns initialized checker for deref (ast.Star) expressions.
-func NewUnderefChecker(ctx *Context) *UnderefChecker {
+func newUnderefChecker(ctx *Context) Checker {
 	return &UnderefChecker{
 		ctx: ctx,
 	}
@@ -25,9 +23,7 @@ func NewUnderefChecker(ctx *Context) *UnderefChecker {
 //
 // Detects expressions with C style field selection and
 // suggest Go style correction.
-func (c *UnderefChecker) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
-
+func (c *UnderefChecker) Check(f *ast.File) {
 	for _, decl := range collectFuncDecls(f) {
 		if decl.Body == nil {
 			continue
@@ -47,12 +43,12 @@ func (c *UnderefChecker) Check(f *ast.File) []Warning {
 			return true
 		})
 	}
-	return c.warnings
 }
 
 // TODO add () to function output.
 func (c *UnderefChecker) warn(expr *ast.SelectorExpr) {
-	c.warnings = append(c.warnings, Warning{
+	c.ctx.addWarning(Warning{
+		Kind: "underef",
 		Node: expr,
 		Text: fmt.Sprintf("could simplify %s to %s.%s",
 			nodeString(c.ctx.FileSet, expr),
