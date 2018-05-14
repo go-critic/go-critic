@@ -44,9 +44,13 @@ func (c *ParenthesisChecker) Check(f *ast.File) {
 						continue
 					}
 					c.validateType(spec.Type)
-					continue
 				}
-				// TODO add check for token.TYPE
+				if spec, ok := spec.(*ast.TypeSpec); ok {
+					if spec.Type == nil {
+						continue
+					}
+					c.validateType(spec.Type)
+				}
 			}
 		}
 	}

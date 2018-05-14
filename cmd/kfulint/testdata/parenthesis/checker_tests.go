@@ -31,7 +31,7 @@ var (
 ///: could simplify (int) to int
 const _ (int) = 5
 
-//TODO: could simplify (int) to int
+///: could simplify (int) to int
 type _ (int)
 
 const ALAST = 1
