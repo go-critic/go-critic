@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"go/ast"
 	"go/parser"
+	"go/types"
 	"log"
 	"os"
 	"regexp"
+	"runtime"
 	"strings"
 	"sync"
 
@@ -39,7 +41,6 @@ func main() {
 	var l linter
 	parseArgv(&l)
 	l.LoadProgram()
-	l.InitContext()
 	l.InitCheckers()
 
 	for _, pkgPath := range l.packages {
@@ -93,8 +94,16 @@ func parseArgv(l *linter) {
 }
 
 func (l *linter) LoadProgram() {
+	sizes := types.SizesFor("gc", runtime.GOARCH)
+	if sizes == nil {
+		log.Fatalf("can't find sizes info for %s", runtime.GOARCH)
+	}
+
 	conf := loader.Config{
 		ParserMode: parser.ParseComments,
+		TypeChecker: types.Config{
+			Sizes: sizes,
+		},
 	}
 
 	if _, err := conf.FromArgs(l.packages, true); err != nil {
@@ -106,11 +115,10 @@ func (l *linter) LoadProgram() {
 	}
 
 	l.prog = prog
-}
 
-func (l *linter) InitContext() {
 	l.ctx = &lint.Context{
-		FileSet: l.prog.Fset,
+		FileSet:   prog.Fset,
+		SizesInfo: sizes,
 	}
 }
 
