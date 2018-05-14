@@ -36,9 +36,10 @@ type _ (int)
 
 const ALAST = 1
 
-//TODO: shouldn't create warning
-///: could simplify (ALAST + 1) to ALAST + 1
 var opindex [(ALAST + 1) & 3]*int
+
+///: could simplify (ALAST + 100 - 20*5) to ALAST + 100 - 20*5
+var _ [(ALAST + 100 - 20*5)]*int
 
 var _ func(int, string)
 
