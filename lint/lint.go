@@ -60,7 +60,7 @@ var checkers = map[string]func(c *Context) Checker{
 	"param-duplication": newParamDuplicationChecker,
 }
 
-// NewChecker rnnneturns checker that implements check of specified name.
+// NewChecker returns checker that implements check of specified name.
 func NewChecker(name string, ctx *Context) Checker {
 	return checkers[name](ctx)
 }
