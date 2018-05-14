@@ -33,7 +33,7 @@ func sampleCase2(k sampleInterface) {
 func sampleCase3() {
 	var k *[5]int
 
-	//TODO: could simplify (*k)[5] to k[5]
+	///: could simplify (*k)[2] to k[2]
 	(*k)[2] = 3
 }
 
