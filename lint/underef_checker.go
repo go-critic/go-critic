@@ -3,6 +3,7 @@ package lint
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 )
 
 // UnderefChecker detects expressions, with C style field selection.
@@ -35,9 +36,11 @@ func (c *UnderefChecker) Check(f *ast.File) {
 				if !ok {
 					return true
 				}
-				if _, ok := expr.X.(*ast.StarExpr); ok {
-					c.warn(n)
-					return false
+				if expr, ok := expr.X.(*ast.StarExpr); ok {
+					if c.checkStarExpr(expr) {
+						c.warn(n)
+						return false
+					}
 				}
 			}
 			return true
@@ -55,4 +58,20 @@ func (c *UnderefChecker) warn(expr *ast.SelectorExpr) {
 			nodeString(c.ctx.FileSet, expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X),
 			expr.Sel.Name),
 	})
+}
+
+// checkStarExpr checks if ast.StarExpr could be simplified
+func (c *UnderefChecker) checkStarExpr(expr *ast.StarExpr) bool {
+	// checks if expr is pointer type
+	typ, ok := c.ctx.TypesInfo.TypeOf(expr.X).(*types.Pointer)
+	if !ok {
+		return false
+	}
+
+	// checks if dereference of typ is pointer
+	if _, ok := typ.Elem().(*types.Pointer); ok {
+		return false
+	}
+
+	return true
 }

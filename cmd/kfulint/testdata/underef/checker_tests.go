@@ -46,16 +46,10 @@ func multipleIndir1() {
 	pt3 := &pt2
 	pt4 := &pt3
 
-	//TODO: should not trigger (#68)
-	///: could simplify (*pt2).x to pt2.x
 	_ = (*pt2).x
 
-	//TODO: should not trigger (#68)
-	///: could simplify (**pt3).x to *pt3.x
 	_ = (**pt3).x
 
-	//TODO: should not trigger (#68)
-	///: could simplify (***pt4).x to **pt4.x
 	_ = (***pt4).x
 }
 
