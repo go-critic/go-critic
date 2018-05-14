@@ -38,12 +38,12 @@ func main() {
 
 	var l linter
 	parseArgv(&l)
-	l.loadProgram()
-	l.initContext()
-	l.initCheckers()
+	l.LoadProgram()
+	l.InitContext()
+	l.InitCheckers()
 
 	for _, pkgPath := range l.packages {
-		l.checkPackage(pkgPath)
+		l.CheckPackage(pkgPath)
 	}
 }
 
@@ -92,7 +92,7 @@ func parseArgv(l *linter) {
 
 }
 
-func (l *linter) loadProgram() {
+func (l *linter) LoadProgram() {
 	conf := loader.Config{
 		ParserMode: parser.ParseComments,
 	}
@@ -108,13 +108,13 @@ func (l *linter) loadProgram() {
 	l.prog = prog
 }
 
-func (l *linter) initContext() {
+func (l *linter) InitContext() {
 	l.ctx = &lint.Context{
 		FileSet: l.prog.Fset,
 	}
 }
 
-func (l *linter) initCheckers() {
+func (l *linter) InitCheckers() {
 	for _, name := range lint.AvailableCheckers() {
 		// Nil enabledSet means "all checkers are enabled".
 		if l.enabledSet == nil || l.enabledSet[name] {
@@ -123,7 +123,7 @@ func (l *linter) initCheckers() {
 	}
 }
 
-func (l *linter) checkPackage(pkgPath string) {
+func (l *linter) CheckPackage(pkgPath string) {
 	pkgInfo := l.prog.Imported[pkgPath]
 	if pkgInfo == nil || !pkgInfo.TransitivelyErrorFree {
 		log.Fatalf("%s package is not properly loaded", pkgPath)
@@ -164,7 +164,6 @@ func (l *linter) checkFile(f *ast.File) {
 				}
 			}()
 			c.Check(f)
-
 		}(c)
 	}
 	wg.Wait()

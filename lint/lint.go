@@ -30,10 +30,10 @@ type Context struct {
 	// TypesInfo carries parsed packages types information.
 	TypesInfo *types.Info
 
+	mutex sync.Mutex // Protects the rest of the fields
+
 	// Warnings contains warnings from all checkers
 	Warnings []Warning
-
-	mutex sync.Mutex
 }
 
 func (c *Context) addWarning(w Warning) {
@@ -60,7 +60,7 @@ var checkers = map[string]func(c *Context) Checker{
 	"param-duplication": newParamDuplicationChecker,
 }
 
-// NewChecker returns checker that implements check of specified name.
+// NewChecker rnnneturns checker that implements check of specified name.
 func NewChecker(name string, ctx *Context) Checker {
 	return checkers[name](ctx)
 }
