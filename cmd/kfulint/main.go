@@ -17,6 +17,24 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
+type checker struct {
+	name string
+	lint.Checker
+}
+
+type linter struct {
+	ctx *lint.Context
+
+	prog *loader.Program
+
+	checkers []checker
+
+	// Command line flags:
+
+	packages   []string
+	enabledSet map[string]bool
+}
+
 func main() {
 	log.SetFlags(0)
 
@@ -24,6 +42,7 @@ func main() {
 	parseArgv(&l)
 	l.LoadProgram()
 	l.InitCheckers()
+
 	for _, pkgPath := range l.packages {
 		l.CheckPackage(pkgPath)
 	}
@@ -74,24 +93,6 @@ func parseArgv(l *linter) {
 
 }
 
-type checker struct {
-	name string
-	lint.Checker
-}
-
-type linter struct {
-	ctx *lint.Context
-
-	prog *loader.Program
-
-	checkers []checker
-
-	// Command line flags:
-
-	packages   []string
-	enabledSet map[string]bool
-}
-
 func (l *linter) LoadProgram() {
 	sizes := types.SizesFor("gc", runtime.GOARCH)
 	if sizes == nil {
@@ -122,19 +123,10 @@ func (l *linter) LoadProgram() {
 }
 
 func (l *linter) InitCheckers() {
-	checkers := []checker{
-		{"param-name", lint.NewParamNameChecker(l.ctx)},
-		{"type-guard", lint.NewTypeGuardChecker(l.ctx)},
-		{"parenthesis", lint.NewParenthesisChecker(l.ctx)},
-		{"underef", lint.NewUnderefChecker(l.ctx)},
-		{"param-duplication", lint.NewParamDuplicationChecker(l.ctx)},
-		{"big-copy", lint.NewBigCopyChecker(l.ctx)},
-	}
-
-	for _, c := range checkers {
+	for _, name := range lint.AvailableCheckers() {
 		// Nil enabledSet means "all checkers are enabled".
-		if l.enabledSet == nil || l.enabledSet[c.name] {
-			l.checkers = append(l.checkers, c)
+		if l.enabledSet == nil || l.enabledSet[name] {
+			l.checkers = append(l.checkers, checker{name, lint.NewChecker(name, l.ctx)})
 		}
 	}
 }
@@ -148,6 +140,11 @@ func (l *linter) CheckPackage(pkgPath string) {
 	l.ctx.TypesInfo = &pkgInfo.Info
 	for _, f := range pkgInfo.Files {
 		l.checkFile(f)
+	}
+
+	for _, w := range l.ctx.Warnings {
+		pos := l.ctx.FileSet.Position(w.Node.Pos())
+		log.Printf("%s: %s: %v\n", pos, string(w.Kind), w.Text)
 	}
 }
 
@@ -174,14 +171,7 @@ func (l *linter) checkFile(f *ast.File) {
 					panic(r)
 				}
 			}()
-			for _, w := range c.Check(f) {
-				pos := l.ctx.FileSet.Position(w.Node.Pos())
-				name := c.name
-				if w.Kind != "" {
-					name += "/" + string(w.Kind)
-				}
-				log.Printf("%s: %s: %v\n", pos, name, w.Text)
-			}
+			c.Check(f)
 		}(c)
 	}
 	wg.Wait()

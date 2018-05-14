@@ -7,27 +7,20 @@ import (
 	"strings"
 )
 
-// BigCopyChecker finds places where big value copy could be unexpected.
-//
-// Rationale: performance.
-type BigCopyChecker struct {
+type bigCopyChecker struct {
 	ctx *Context
-
-	warnings []Warning
 }
 
-// NewBigCopyChecker returns initialized checker for range statements.
-func NewBigCopyChecker(ctx *Context) *BigCopyChecker {
-	return &BigCopyChecker{ctx: ctx}
+func newBigCopyChecker(ctx *Context) Checker {
+	return &bigCopyChecker{ctx: ctx}
 }
 
-// Check runs range statement inspections for f.
+// Check finds places where big value copy could be unexpected.
 //
 // Features
 //
 // Detects large value copies in non-testing functions.
-func (c *BigCopyChecker) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
+func (c *bigCopyChecker) Check(f *ast.File) {
 	for _, decl := range collectFuncDecls(f) {
 		if c.isUnitTestFunc(decl) {
 			continue
@@ -39,11 +32,9 @@ func (c *BigCopyChecker) Check(f *ast.File) []Warning {
 			return true
 		})
 	}
-
-	return c.warnings
 }
 
-func (c *BigCopyChecker) checkRangeStmt(rng *ast.RangeStmt) {
+func (c *bigCopyChecker) checkRangeStmt(rng *ast.RangeStmt) {
 	if rng.Value == nil {
 		return
 	}
@@ -59,7 +50,7 @@ func (c *BigCopyChecker) checkRangeStmt(rng *ast.RangeStmt) {
 }
 
 // isUnitTestFunc reports whether decl declares testing function.
-func (c *BigCopyChecker) isUnitTestFunc(decl *ast.FuncDecl) bool {
+func (c *bigCopyChecker) isUnitTestFunc(decl *ast.FuncDecl) bool {
 	if !strings.HasPrefix(decl.Name.Name, "Test") {
 		return false
 	}
@@ -71,9 +62,9 @@ func (c *BigCopyChecker) isUnitTestFunc(decl *ast.FuncDecl) bool {
 	return false
 }
 
-func (c *BigCopyChecker) warnRangeValue(node ast.Node, size int64) {
-	c.warnings = append(c.warnings, Warning{
-		Kind: "RangeValue",
+func (c *bigCopyChecker) warnRangeValue(node ast.Node, size int64) {
+	c.ctx.addWarning(Warning{
+		Kind: "big-copy/RangeValue",
 		Node: node,
 		Text: fmt.Sprintf("each iteration copies %d bits (consider pointers or indexing)", size),
 	})

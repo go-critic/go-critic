@@ -13,12 +13,10 @@ type ParamNameChecker struct {
 	ctx *Context
 
 	loudNames map[string]bool
-
-	warnings []Warning
 }
 
 // NewParamNameChecker returns initialized checker for Go functions param names.
-func NewParamNameChecker(ctx *Context) *ParamNameChecker {
+func newParamNameChecker(ctx *Context) Checker {
 	return &ParamNameChecker{
 		ctx: ctx,
 		loudNames: map[string]bool{
@@ -39,8 +37,7 @@ func NewParamNameChecker(ctx *Context) *ParamNameChecker {
 // 2. If capitalized name is not recognized as "loud",
 //    treat it as "redundantly exported".
 //    Suggests to use non-capitalized identifier.
-func (c *ParamNameChecker) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
+func (c *ParamNameChecker) Check(f *ast.File) {
 	for _, decl := range collectFuncDecls(f) {
 		for _, param := range c.collectFuncParams(decl) {
 			for _, id := range param.Names {
@@ -53,7 +50,6 @@ func (c *ParamNameChecker) Check(f *ast.File) []Warning {
 			}
 		}
 	}
-	return c.warnings
 }
 
 func (c *ParamNameChecker) collectFuncParams(decl *ast.FuncDecl) []*ast.Field {
@@ -70,16 +66,16 @@ func (c *ParamNameChecker) collectFuncParams(decl *ast.FuncDecl) []*ast.Field {
 }
 
 func (c *ParamNameChecker) warnCapitalized(id ast.Node) {
-	c.warnings = append(c.warnings, Warning{
-		Kind: "Capitalized",
+	c.ctx.addWarning(Warning{
+		Kind: "param-name/Capitalized",
 		Node: id,
 		Text: fmt.Sprintf("`%s' should not be capitalized", id),
 	})
 }
 
 func (c *ParamNameChecker) warnLoud(id *ast.Ident) {
-	c.warnings = append(c.warnings, Warning{
-		Kind: "Loud",
+	c.ctx.addWarning(Warning{
+		Kind: "param-name/Loud",
 		Node: id,
 		Text: fmt.Sprintf("consider `%s' name instead of `%s'",
 			strings.ToLower(id.Name), id),
