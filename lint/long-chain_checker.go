@@ -35,14 +35,12 @@ func (c *longChainChecker) Check(f *ast.File) {
 
 func (c *longChainChecker) checkSwitch(stmt *ast.SwitchStmt) {
 	exprs := []ast.Expr{}
-	for _, s := range stmt.Body.List {
-		cas := s.(*ast.CaseClause)
-		if cas.List == nil {
+	for _, st := range stmt.Body.List {
+		s := st.(*ast.CaseClause)
+		if s.List == nil {
 			continue
 		}
-		for _, expr := range cas.List {
-			exprs = append(exprs, expr)
-		}
+		exprs = append(exprs, s.List...)
 	}
 	if len(exprs) < 2 {
 		return
@@ -70,15 +68,19 @@ func (c *longChainChecker) exprToList(expr ast.Expr) []ast.Expr {
 			tmp = t.X
 		default:
 			res = append(res, tmp)
-
-			for i := len(res)/2 - 1; i >= 0; i-- {
-				opp := len(res) - 1 - i
-				res[i], res[opp] = res[opp], res[i]
-			}
+			res = reverseExprSlice(res)
 			return res
 
 		}
 	}
+}
+
+func reverseExprSlice(e []ast.Expr) []ast.Expr {
+	for i := len(e)/2 - 1; i >= 0; i-- {
+		j := len(e) - 1 - i
+		e[i], e[j] = e[j], e[i]
+	}
+	return e
 }
 
 func (c *longChainChecker) commonPrefix(a, b []ast.Expr) []ast.Expr {
