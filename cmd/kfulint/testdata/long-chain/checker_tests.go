@@ -10,6 +10,22 @@ type t struct {
 					}
 				}
 			}
+
+			c1 struct {
+				d struct {
+					e struct {
+						p1, p2, p3, p4 int
+					}
+				}
+			}
+
+			c2 struct {
+				d struct {
+					e struct {
+						p1, p2, p3, p4 int
+					}
+				}
+			}
 		}
 	}
 }
@@ -23,5 +39,11 @@ func sample() {
 	case b.a.b.c.d.e.p2:
 	case b.a.b.c.d.e.p3:
 	case b.a.b.c.d.e.p4:
+	}
+
+	switch a {
+	case b.a.b.c.d.e.p1:
+	case b.a.b.c1.d.e.p1:
+	case b.a.b.c2.d.e.p1:
 	}
 }
