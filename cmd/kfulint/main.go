@@ -74,7 +74,7 @@ func parseArgv(l *linter) {
 	case "all":
 		// Special case. l.enabledCheckers remains nil.
 	case "":
-		// Empty set. Semantically "disable-all".
+		// Empty slice. Semantically "disable-all".
 		// Can be used to run all pipelines without actual checkers.
 		l.enabledCheckers = []string{}
 	default:
