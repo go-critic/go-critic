@@ -118,6 +118,7 @@ func (l *linter) InitCheckers() {
 			c, _ := lint.NewChecker(name, l.ctx)
 			l.checkers = append(l.checkers, checker{name, c})
 		}
+		return
 	}
 
 	for _, s := range l.enabledCheckers {
