@@ -66,8 +66,12 @@ var checkers = map[string]func(c *Context) Checker{
 }
 
 // NewChecker returns checker that implements check of specified name.
-func NewChecker(name string, ctx *Context) Checker {
-	return checkers[name](ctx)
+func NewChecker(name string, ctx *Context) (Checker, bool) {
+	c, ok := checkers[name]
+	if !ok {
+		return nil, false
+	}
+	return c(ctx), true
 }
 
 // AvailableCheckers returns all check names that are supported.
