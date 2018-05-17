@@ -123,9 +123,9 @@ func (l *linter) InitCheckers() {
 
 	for _, s := range l.enabledCheckers {
 		name := strings.TrimSpace(s)
-		c, ok := lint.NewChecker(name, l.ctx)
-		if !ok {
-			log.Fatalf("%s: checker not found", name)
+		c, err := lint.NewChecker(name, l.ctx)
+		if err != nil {
+			log.Fatalf("%s: %v", name, err)
 		}
 		l.checkers = append(l.checkers, checker{name, c})
 	}
