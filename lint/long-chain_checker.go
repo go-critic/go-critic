@@ -68,29 +68,28 @@ func (c *longChainChecker) exprToList(expr ast.Expr) []ast.Expr {
 			tmp = t.X
 		default:
 			res = append(res, tmp)
-			res = reverseExprSlice(res)
+			reverseExprSlice(res)
 			return res
 
 		}
 	}
 }
 
-func reverseExprSlice(e []ast.Expr) []ast.Expr {
+func reverseExprSlice(e []ast.Expr) {
 	for i := len(e)/2 - 1; i >= 0; i-- {
 		j := len(e) - 1 - i
 		e[i], e[j] = e[j], e[i]
 	}
-	return e
 }
 
-func (c *longChainChecker) commonPrefix(a, b []ast.Expr) []ast.Expr {
+func (c *longChainChecker) commonPrefix(xs, ys []ast.Expr) []ast.Expr {
 	res := []ast.Expr{}
 
-	len := c.min(len(a), len(b))
+	l := c.min(len(xs), len(ys))
 
-	for i := 0; i < len; i++ {
-		if astcmp.EqualExpr(a[i], b[i]) {
-			res = append(res, a[i])
+	for i := 0; i < l; i++ {
+		if astcmp.EqualExpr(xs[i], ys[i]) {
+			res = append(res, xs[i])
 		} else {
 			break
 		}
@@ -107,9 +106,9 @@ func (c *longChainChecker) min(a, b int) int {
 }
 
 func (c *longChainChecker) warn(exprs []ast.Expr, stmt ast.Stmt) {
-	var s []string
-	for _, e := range exprs {
-		s = append(s, nodeString(c.ctx.FileSet, e))
+	s := make([]string, len(exprs))
+	for i, e := range exprs {
+		s[i] = nodeString(c.ctx.FileSet, e)
 	}
 
 	c.ctx.addWarning(Warning{
