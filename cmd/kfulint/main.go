@@ -123,7 +123,7 @@ func (l *linter) InitCheckers() {
 
 	for _, s := range l.enabledCheckers {
 		name := strings.TrimSpace(s)
-		c, ok := lint.NewChecker(strings.TrimSpace(name), l.ctx)
+		c, ok := lint.NewChecker(name, l.ctx)
 		if !ok {
 			log.Fatalf("%s: checker not found", name)
 		}
