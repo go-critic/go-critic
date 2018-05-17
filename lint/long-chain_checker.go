@@ -18,6 +18,12 @@ func newLongChainChecker(ctx *Context) Checker {
 	}
 }
 
+// Check runs long-chain checker for f.
+//
+// Features
+//
+// Find long expression chains that are repeated more than N times
+// and consist of multiple selector/index expressions.
 func (c *longChainChecker) Check(f *ast.File) {
 	for _, decl := range f.Decls {
 		if decl, ok := decl.(*ast.FuncDecl); ok {
@@ -32,6 +38,16 @@ func (c *longChainChecker) Check(f *ast.File) {
 		}
 	}
 }
+
+// The general idea is to find greatest common prefix of case expression
+// statements. To do that, we split each case expression by "." (only for
+// SelectorExpr) and compare each ith element of every case expression.
+// If they all equal, we continue algorithm on i+1. If they are not
+// we assume prefix length = i-1
+// If prefix length greater then n we create warning
+//
+// TODO: warn if at least m case expressions have common prefix with
+// length > n
 
 func (c *longChainChecker) checkSwitch(stmt *ast.SwitchStmt) {
 	exprs := []ast.Expr{}
@@ -51,13 +67,16 @@ func (c *longChainChecker) checkSwitch(stmt *ast.SwitchStmt) {
 		cp = c.commonPrefix(cp, c.exprToList(e))
 	}
 
-	const n = 3
+	const n = 2
 
 	if len(cp) > n {
 		c.warn(cp, stmt)
 	}
 }
 
+// exprToList split case expression by "." (SelectorExpr)
+//
+// TODO: split not only on SelectorExpr
 func (c *longChainChecker) exprToList(expr ast.Expr) []ast.Expr {
 	res := []ast.Expr{}
 	tmp := expr
