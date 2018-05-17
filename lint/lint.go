@@ -63,6 +63,7 @@ var checkers = map[string]func(c *Context) Checker{
 	"underef":           newUnderefChecker,
 	"param-duplication": newParamDuplicationChecker,
 	"big-copy":          newBigCopyChecker,
+	"long-chain":        newLongChainChecker,
 }
 
 // NewChecker returns checker that implements check of specified name.

@@ -48,3 +48,7 @@ type myString string
 func convertPtr(x string) *myString {
 	return (*myString)(&x)
 }
+
+func multipleReturn() (int, bool) {
+	return 1, true
+}
