@@ -44,6 +44,7 @@ var tests = []*struct {
 	{"param-duplication"},
 	{"underef"},
 	{"big-copy"},
+	{"long-chain"},
 }
 
 func runChecker(name, pkgPath string) (output []byte, err error) {
