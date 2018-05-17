@@ -72,7 +72,7 @@ func parseArgv(l *linter) {
 
 	switch *enable {
 	case "all":
-		// Special case. l.enableSet remains nil.
+		// Special case. l.enabledCheckers remains nil.
 	case "":
 		// Empty set. Semantically "disable-all".
 		// Can be used to run all pipelines without actual checkers.
@@ -113,8 +113,16 @@ func (l *linter) LoadProgram() {
 }
 
 func (l *linter) InitCheckers() {
-	for _, name := range l.enabledCheckers {
-		c, ok := lint.NewChecker(name, l.ctx)
+	if l.enabledCheckers == nil {
+		for _, name := range lint.AvailableCheckers() {
+			c, _ := lint.NewChecker(name, l.ctx)
+			l.checkers = append(l.checkers, checker{name, c})
+		}
+	}
+
+	for _, s := range l.enabledCheckers {
+		name := strings.TrimSpace(s)
+		c, ok := lint.NewChecker(strings.TrimSpace(name), l.ctx)
 		if !ok {
 			log.Fatalf("%s: checker not found", name)
 		}
