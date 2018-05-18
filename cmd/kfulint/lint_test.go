@@ -43,6 +43,7 @@ var tests = []*struct {
 	{"parenthesis"},
 	{"param-duplication"},
 	{"underef"},
+	{"elseif"},
 	{"big-copy"},
 	{"long-chain"},
 }
