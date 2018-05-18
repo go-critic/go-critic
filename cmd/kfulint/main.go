@@ -8,7 +8,6 @@ import (
 	"go/types"
 	"log"
 	"os"
-	"regexp"
 	"runtime"
 	"strings"
 	"sync"
@@ -31,8 +30,8 @@ type linter struct {
 
 	// Command line flags:
 
-	packages   []string
-	enabledSet map[string]bool
+	packages        []string
+	enabledCheckers []string
 }
 
 func main() {
@@ -73,24 +72,15 @@ func parseArgv(l *linter) {
 
 	switch *enable {
 	case "all":
-		// Special case. l.enableSet remains nil.
+		// Special case. l.enabledCheckers remains nil.
 	case "":
-		// Empty set. Semantically "disable-all".
+		// Empty slice. Semantically "disable-all".
 		// Can be used to run all pipelines without actual checkers.
-		l.enabledSet = map[string]bool{}
+		l.enabledCheckers = []string{}
 	default:
 		// Comma-separated list of names.
-		l.enabledSet = make(map[string]bool)
-		nameRE := regexp.MustCompile(`[a-z][a-z0-9_\-]*`)
-		for i, s := range strings.Split(*enable, ",") {
-			s = strings.TrimSpace(s)
-			l.enabledSet[s] = true
-			if !nameRE.MatchString(s) {
-				log.Fatalf("-enable element #%d: invalid %q checker name", i, s)
-			}
-		}
+		l.enabledCheckers = strings.Split(*enable, ",")
 	}
-
 }
 
 func (l *linter) LoadProgram() {
@@ -123,11 +113,21 @@ func (l *linter) LoadProgram() {
 }
 
 func (l *linter) InitCheckers() {
-	for _, name := range lint.AvailableCheckers() {
-		// Nil enabledSet means "all checkers are enabled".
-		if l.enabledSet == nil || l.enabledSet[name] {
-			l.checkers = append(l.checkers, checker{name, lint.NewChecker(name, l.ctx)})
+	if l.enabledCheckers == nil {
+		for _, name := range lint.AvailableCheckers() {
+			c, _ := lint.NewChecker(name, l.ctx)
+			l.checkers = append(l.checkers, checker{name, c})
 		}
+		return
+	}
+
+	for _, s := range l.enabledCheckers {
+		name := strings.TrimSpace(s)
+		c, err := lint.NewChecker(name, l.ctx)
+		if err != nil {
+			log.Fatalf("%s: %v", name, err)
+		}
+		l.checkers = append(l.checkers, checker{name, c})
 	}
 }
 
