@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"errors"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -64,11 +65,16 @@ var checkers = map[string]func(c *Context) Checker{
 	"param-duplication": newParamDuplicationChecker,
 	"elseif":            newElseifChecker,
 	"big-copy":          newBigCopyChecker,
+	"long-chain":        newLongChainChecker,
 }
 
 // NewChecker returns checker that implements check of specified name.
-func NewChecker(name string, ctx *Context) Checker {
-	return checkers[name](ctx)
+func NewChecker(name string, ctx *Context) (Checker, error) {
+	c, ok := checkers[name]
+	if !ok {
+		return nil, errors.New("checker not found")
+	}
+	return c(ctx), nil
 }
 
 // AvailableCheckers returns all check names that are supported.

@@ -44,9 +44,13 @@ func (c *ParenthesisChecker) Check(f *ast.File) {
 						continue
 					}
 					c.validateType(spec.Type)
-					continue
 				}
-				// TODO add check for token.TYPE
+				if spec, ok := spec.(*ast.TypeSpec); ok {
+					if spec.Type == nil {
+						continue
+					}
+					c.validateType(spec.Type)
+				}
 			}
 		}
 	}
@@ -57,15 +61,29 @@ func (c *ParenthesisChecker) validateType(n ast.Node) {
 	// TODO improve linter output to write full type, not just place
 	// where it could be simplified
 	ast.Inspect(n, func(n ast.Node) bool {
+		if n, ok := n.(*ast.ArrayType); ok {
+			c.validateType(n.Elt)
+
+			if expr, ok := n.Len.(*ast.ParenExpr); ok {
+				c.warn(expr)
+			}
+			return false
+		}
+
 		expr, ok := n.(*ast.ParenExpr)
 		if !ok {
 			return true
 		}
-		c.ctx.addWarning(Warning{
-			Kind: "parenthesis",
-			Node: expr,
-			Text: fmt.Sprintf("could simplify %s to %s", nodeString(c.ctx.FileSet, expr), nodeString(c.ctx.FileSet, expr.X)),
-		})
+		c.warn(expr)
 		return false
 	})
+}
+
+func (c *ParenthesisChecker) warn(expr *ast.ParenExpr) {
+	c.ctx.addWarning(Warning{
+		Kind: "parenthesis",
+		Node: expr,
+		Text: fmt.Sprintf("could simplify %s to %s", nodeString(c.ctx.FileSet, expr), nodeString(c.ctx.FileSet, expr.X)),
+	})
+
 }
