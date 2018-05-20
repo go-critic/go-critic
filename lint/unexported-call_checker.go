@@ -6,8 +6,6 @@ import (
 	"go/types"
 )
 
-var _ = types.Universe
-
 type unexportedCallChecker struct {
 	ctx *Context
 }
