@@ -46,6 +46,7 @@ var tests = []*struct {
 	{"elseif"},
 	{"big-copy"},
 	{"long-chain"},
+	{"unexported-call"},
 }
 
 func runChecker(name, pkgPath string) (output []byte, err error) {
