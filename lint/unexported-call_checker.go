@@ -29,9 +29,7 @@ func (c *unexportedCallChecker) Check(f *ast.File) {
 		}
 		name := ""
 		cond := decl.Recv != nil &&
-			decl.Recv.List != nil &&
 			len(decl.Recv.List) == 1 &&
-			decl.Recv.List[0].Names != nil &&
 			len(decl.Recv.List[0].Names) == 1
 		if cond {
 			name = decl.Recv.List[0].Names[0].Name
@@ -63,11 +61,11 @@ func (c *unexportedCallChecker) checkCall(name string, call *ast.CallExpr) {
 	if sig.Recv() == nil || sig.Recv().Type() == nil {
 		return
 	}
-	typ2, ok := sig.Recv().Type().(*types.Named)
+	recvTyp, ok := sig.Recv().Type().(*types.Named)
 	if !ok {
 		return
 	}
-	if typ2.Obj().Name() != name {
+	if recvTyp.Obj().Name() != name {
 		c.warn(call)
 	}
 }
