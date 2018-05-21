@@ -15,9 +15,10 @@ func newSwitchifChecker(ctx *Context) Checker {
 
 func (c *switchifChecker) Check(f *ast.File) {
 	ast.Inspect(f, func(x ast.Node) bool {
-		if stmt, ok := x.(*ast.SwitchStmt); ok {
+		switch stmt := x.(type) {
+		case *ast.SwitchStmt:
 			c.checkSwitchStmt(stmt, stmt.Body)
-		} else if stmt, ok := x.(*ast.TypeSwitchStmt); ok {
+		case *ast.TypeSwitchStmt:
 			c.checkSwitchStmt(stmt, stmt.Body)
 		}
 		return true
