@@ -1,7 +1,10 @@
 package checker_test
 
+// TODO: add tests for "no warnings" cases.
+// TODO: add tests for expression switch statement.
+
 func intValue(x interface{}) int {
-	///: should rewrite switch statement to if statement
+	/// should rewrite switch statement to if statement
 	switch x := x.(type) {
 	case int:
 		return x
@@ -10,7 +13,7 @@ func intValue(x interface{}) int {
 }
 
 func switchDefault(x interface{}) {
-	///: found switch with default case only
+	/// found switch with default case only
 	switch x.(type) {
 	default:
 	}
