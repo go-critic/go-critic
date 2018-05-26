@@ -26,6 +26,7 @@ var checkFunctions = map[string]struct {
 	"big-copy":          {new: bigCopyCheck},
 	"long-chain":        {new: longChainCheck, experimental: true},
 	"switchif":          {new: switchifCheck},
+	"comments":          {new: commentsCheck},
 }
 
 // RuleList returns a slice of all rules that can be used to create checkers.
