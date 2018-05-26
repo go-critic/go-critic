@@ -1,63 +1,63 @@
 package checker_test
 
 func assigningToBuiltinFunctions() {
-	///Shadowing: append shadowing
+	/// assigning to builtin function: append
 	append := 1
 	_ = append
 
-	///Shadowing: cap shadowing
+	/// assigning to builtin function: cap
 	cap := 1
 	_ = cap
 
-	///Shadowing: close shadowing
+	/// assigning to builtin function: close
 	close := 1
 	_ = close
 
-	///Shadowing: complex shadowing
+	/// assigning to builtin function: complex
 	complex := 1
 	_ = complex
 
-	///Shadowing: copy shadowing
+	/// assigning to builtin function: copy
 	copy := 1
 	_ = copy
 
-	///Shadowing: delete shadowing
+	/// assigning to builtin function: delete
 	delete := 1
 	_ = delete
 
-	///Shadowing: imag shadowing
+	/// assigning to builtin function: imag
 	imag := 1
 	_ = imag
 
-	///Shadowing: len shadowing
+	/// assigning to builtin function: len
 	len := 1
 	_ = len
 
-	///Shadowing: make shadowing
+	/// assigning to builtin function: make
 	make := 1
 	_ = make
 
-	///Shadowing: new shadowing
+	/// assigning to builtin function: new
 	new := 1
 	_ = new
 
-	///Shadowing: panic shadowing
+	/// assigning to builtin function: panic
 	panic := 1
 	_ = panic
 
-	///Shadowing: print shadowing
+	/// assigning to builtin function: print
 	print := 1
 	_ = print
 
-	///Shadowing: println shadowing
+	/// assigning to builtin function: println
 	println := 1
 	_ = println
 
-	///Shadowing: real shadowing
+	/// assigning to builtin function: real
 	real := 1
 	_ = real
 
-	///Shadowing: recover shadowing
+	/// assigning to builtin function: recover
 	recover := 1
 	_ = recover
 }

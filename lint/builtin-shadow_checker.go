@@ -1,65 +1,53 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
 )
 
-// BuiltinShadows detects when builtin functions shadowed in assignments
-type BuiltinShadows struct {
-	ctx *Context
+// builtinShadowCheck detects when builtin functions shadowed in assignments
+//
+// Rationale: avoid bugs.
+func builtinShadowCheck(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&builtinShadowChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
 
-	warnings []Warning
+		builtins: map[string]bool{
+			"append":  true,
+			"cap":     true,
+			"close":   true,
+			"complex": true,
+			"copy":    true,
+			"delete":  true,
+			"imag":    true,
+			"len":     true,
+			"make":    true,
+			"new":     true,
+			"panic":   true,
+			"print":   true,
+			"println": true,
+			"real":    true,
+			"recover": true,
+		},
+	})
 }
 
-func newBuiltinShadowsChecker(ctx *Context) Checker {
-	return &BuiltinShadows{
-		ctx: ctx,
-	}
+type builtinShadowChecker struct {
+	baseStmtChecker
+
+	builtins map[string]bool
 }
 
-// Check runs builtin functions shadow check on assignments for f
-func (c *BuiltinShadows) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
-
-	builtinFuncs := map[string]struct{}{
-		"append":  struct{}{},
-		"cap":     struct{}{},
-		"close":   struct{}{},
-		"complex": struct{}{},
-		"copy":    struct{}{},
-		"delete":  struct{}{},
-		"imag":    struct{}{},
-		"len":     struct{}{},
-		"make":    struct{}{},
-		"new":     struct{}{},
-		"panic":   struct{}{},
-		"print":   struct{}{},
-		"println": struct{}{},
-		"real":    struct{}{},
-		"recover": struct{}{},
-	}
-
-	ast.Inspect(f, func(x ast.Node) bool {
-		if stmt, ok := x.(*ast.AssignStmt); ok {
-			for _, v := range stmt.Lhs {
-				identificator := v.(*ast.Ident)
-				if _, isBuiltin := builtinFuncs[identificator.Name]; isBuiltin {
-					c.warn(identificator)
-					return false
-				}
+func (c *builtinShadowChecker) CheckStmt(stmt ast.Stmt) {
+	if assignStmt, ok := stmt.(*ast.AssignStmt); ok {
+		for _, v := range assignStmt.Lhs {
+			identificator := v.(*ast.Ident)
+			if _, isBuiltin := c.builtins[identificator.Name]; isBuiltin {
+				c.warn(identificator)
 			}
 		}
-		return true
-	})
-
-	return c.warnings
+	}
 }
 
-func (c *BuiltinShadows) warn(x *ast.Ident) {
-	c.warnings = append(c.warnings, Warning{
-		Kind: "Shadowing",
-		Node: x,
-		Text: fmt.Sprintf("%s shadowing", x.Name),
-	})
+func (c *builtinShadowChecker) warn(ident *ast.Ident) {
+	c.ctx.Warn(ident, "assigning to builtin function: %s", ident.String())
 }
