@@ -9,7 +9,7 @@ import (
 type unexportedCallChecker struct {
 	baseLocalExprChecker
 
-	funcName string
+	recvName string
 }
 
 func unexportedCallCheck(ctx *context) func(*ast.File) {
@@ -22,12 +22,12 @@ func (c *unexportedCallChecker) PerFuncInit(decl *ast.FuncDecl) bool {
 	if decl.Body == nil {
 		return false
 	}
-	c.funcName = ""
+	c.recvName = ""
 	cond := decl.Recv != nil &&
 		len(decl.Recv.List) == 1 &&
 		len(decl.Recv.List[0].Names) == 1
 	if cond {
-		c.funcName = decl.Recv.List[0].Names[0].Name
+		c.recvName = decl.Recv.List[0].Names[0].Name
 	}
 	return true
 }
@@ -35,7 +35,7 @@ func (c *unexportedCallChecker) PerFuncInit(decl *ast.FuncDecl) bool {
 // Check finds calls of unexported method from unexported type
 // outside that type.
 //
-//TODO: update description and warning message
+// TODO: update description and warning message
 func (c *unexportedCallChecker) CheckLocalExpr(expr ast.Expr) {
 	if call, ok := expr.(*ast.CallExpr); ok {
 		c.checkCall(call)
@@ -63,7 +63,7 @@ func (c *unexportedCallChecker) checkCall(call *ast.CallExpr) {
 	if !ok {
 		return
 	}
-	if recvTyp.Obj().Name() != c.funcName {
+	if recvTyp.Obj().Name() != c.recvName {
 		c.warn(call)
 	}
 }
