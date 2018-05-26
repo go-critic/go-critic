@@ -4,7 +4,8 @@ import (
 	"go/ast"
 )
 
-// builtinShadowCheck detects when builtin functions shadowed in assignments.
+// builtinShadowCheck detects when predeclared identifiers
+// shadowed in assignments.
 //
 // Rationale: avoid bugs.
 func builtinShadowCheck(ctx *context) func(*ast.File) {
@@ -12,6 +13,37 @@ func builtinShadowCheck(ctx *context) func(*ast.File) {
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 
 		builtins: map[string]bool{
+			// Types
+			"bool":       true,
+			"byte":       true,
+			"complex64":  true,
+			"complex128": true,
+			"error":      true,
+			"float32":    true,
+			"float64":    true,
+			"int":        true,
+			"int8":       true,
+			"int16":      true,
+			"int32":      true,
+			"int64":      true,
+			"rune":       true,
+			"string":     true,
+			"uint":       true,
+			"uint8":      true,
+			"uint16":     true,
+			"uint32":     true,
+			"uint64":     true,
+			"uintptr":    true,
+
+			// Constants
+			"true":  true,
+			"false": true,
+			"iota":  true,
+
+			// Zero value
+			"nil": true,
+
+			// Functions
 			"append":  true,
 			"cap":     true,
 			"close":   true,
@@ -49,5 +81,5 @@ func (c *builtinShadowChecker) CheckStmt(stmt ast.Stmt) {
 }
 
 func (c *builtinShadowChecker) warn(ident *ast.Ident) {
-	c.ctx.Warn(ident, "assigning to builtin function: %s", ident)
+	c.ctx.Warn(ident, "assigning to predeclared identifier: %s", ident)
 }

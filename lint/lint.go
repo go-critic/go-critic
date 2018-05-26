@@ -27,6 +27,7 @@ var checkFunctions = map[string]struct {
 	"long-chain":        {new: longChainCheck, experimental: true},
 	"switchif":          {new: switchifCheck},
 	"unslice":           {new: unsliceCheck},
+	"comments":          {new: commentsCheck},
 	"unexported-call":   {new: unexportedCallCheck},
 	"builtin-shadow":    {new: builtinShadowCheck},
 }
