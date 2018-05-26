@@ -27,6 +27,8 @@ var checkFunctions = map[string]struct {
 	"long-chain":        {new: longChainCheck, experimental: true},
 	"switchif":          {new: switchifCheck},
 	"comments":          {new: commentsCheck},
+	"unexported-call":   {new: unexportedCallCheck},
+	"builtin-shadow":    {new: builtinShadowCheck},
 }
 
 // RuleList returns a slice of all rules that can be used to create checkers.
@@ -122,7 +124,6 @@ type Context struct {
 // Fields that are not from Context itself are writeable.
 type context struct {
 	*Context
-
 	warnings []Warning
 }
 
