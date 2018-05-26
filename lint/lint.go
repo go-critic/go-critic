@@ -67,6 +67,7 @@ var checkers = map[string]func(c *Context) Checker{
 	"big-copy":          newBigCopyChecker,
 	"long-chain":        newLongChainChecker,
 	"unexported-call":   newUnexportedCallChecker,
+	"switchif":          newSwitchifChecker,
 }
 
 // NewChecker returns checker that implements check of specified name.

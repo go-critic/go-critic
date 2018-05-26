@@ -41,31 +41,46 @@ func (c *ParamDuplicationChecker) checkParamDuplication(decl *ast.FuncDecl) {
 	if len(params) < 2 {
 		return
 	}
+	equalRange := [][]*ast.Field{}
+	equalRange = append(equalRange, []*ast.Field{params[0]})
+	warn := false
 	for i, p := range params[1:] {
 		if astcmp.EqualExpr(p.Type, params[i].Type) {
-			c.warn(params[i], p, decl)
+			equalRange[len(equalRange)-1] =
+				append(equalRange[len(equalRange)-1], p)
+			warn = true
+		} else {
+			equalRange = append(equalRange, []*ast.Field{p})
 		}
 	}
+	if warn {
+		c.warn(equalRange, decl)
+	}
 }
+func (c *ParamDuplicationChecker) warn(fields [][]*ast.Field, decl *ast.FuncDecl) {
+	paramsBefore := []string{}
+	paramsAfter := []string{}
+	for _, flist := range fields {
+		typeBefore := []string{}
+		typeAfter := []string{}
 
-func (c *ParamDuplicationChecker) warn(a, b *ast.Field, decl *ast.FuncDecl) {
-	var winfo string
-	winfo += c.paramNamesStr(a.Names) + " "
-	winfo += nodeString(c.ctx.FileSet, a.Type) + ", "
+		for _, f := range flist {
+			typeBefore = append(typeBefore,
+				c.paramNamesStr(f.Names)+" "+nodeString(c.ctx.FileSet, f.Type))
+			typeAfter = append(typeAfter,
+				c.paramNamesStr(f.Names))
+		}
 
-	winfo += c.paramNamesStr(b.Names) + " "
-	winfo += nodeString(c.ctx.FileSet, b.Type)
-
-	winfo += " could be replaced with "
-
-	winfo += c.paramNamesStr(a.Names) + ", "
-	winfo += c.paramNamesStr(b.Names) + " "
-	winfo += nodeString(c.ctx.FileSet, b.Type)
-
+		paramsBefore = append(paramsBefore, strings.Join(typeBefore, ", "))
+		paramsAfter = append(paramsAfter,
+			strings.Join(typeAfter, ", ")+" "+nodeString(c.ctx.FileSet, flist[0].Type))
+	}
 	c.ctx.addWarning(Warning{
 		Kind: "param-duplication/Duplication",
 		Node: decl,
-		Text: fmt.Sprint(winfo),
+		Text: fmt.Sprintf("%s could be replaced with %s",
+			strings.Join(paramsBefore, ", "),
+			strings.Join(paramsAfter, ", ")),
 	})
 
 }
@@ -78,5 +93,5 @@ func (c *ParamDuplicationChecker) paramNamesStr(idents []*ast.Ident) string {
 	for _, id := range idents {
 		names = append(names, id.Name)
 	}
-	return strings.Join(names, " ,")
+	return strings.Join(names, ", ")
 }
