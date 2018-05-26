@@ -1,139 +1,142 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
+	"go/types"
 	"strings"
 
-	"github.com/Quasilyte/astcmp"
+	"golang.org/x/tools/go/ast/astutil"
 )
 
+// longChainCheck detects repeated expression chains and suggest to refactor them.
+//
+// Rationale: code readability.
+//
+// Experimental because gives false-positives for:
+//	- Cases with re-assignment. See $GOROOT/src/crypto/md5/md5block.go for example.
+func longChainCheck(ctx *context) func(*ast.File) {
+	return wrapLocalExprChecker(&longChainChecker{
+		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	})
+}
+
 type longChainChecker struct {
-	ctx *Context
+	baseLocalExprChecker
+
+	// chains is a {expr string => count} mapping.
+	chains map[string]int
+
+	// reported is a set of reported expression strings.
+	// Used to avoid duplicated warnings.
+	reported map[string]bool
 }
 
-func newLongChainChecker(ctx *Context) Checker {
-	return &longChainChecker{
-		ctx: ctx,
+func (c *longChainChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+	// Avoid checking functions of 1 statement.
+	// Both performance and false-positives reasons.
+	if fn.Body == nil || len(fn.Body.List) == 1 {
+		return false
 	}
+
+	c.chains = make(map[string]int)
+	c.reported = make(map[string]bool)
+	return true
 }
 
-// Check runs long-chain checker for f.
-//
-// Features
-//
-// Find long expression chains that are repeated more than N times
-// and consist of multiple selector/index expressions.
-func (c *longChainChecker) Check(f *ast.File) {
-	for _, decl := range f.Decls {
-		if decl, ok := decl.(*ast.FuncDecl); ok {
-			if decl.Body == nil {
-				continue
-			}
-			for _, stmt := range decl.Body.List {
-				if stmt, ok := stmt.(*ast.SwitchStmt); ok {
-					c.checkSwitch(stmt)
-				}
-			}
-		}
-	}
-}
+func (c *longChainChecker) CheckLocalExpr(expr ast.Expr) {
+	// These constants are purely heuristical.
+	//
+	// TODO: for very big functions should increase minChainLen
+	// threshould or consider matching expressions only inside limited "window".
+	// This may not be worthwhile. Needs discussion.
+	const (
+		minComplexity = 6
+		minChainLen   = 3
+	)
 
-// The general idea is to find greatest common prefix of case expression
-// statements. To do that, we split each case expression by "." (only for
-// SelectorExpr) and compare each ith element of every case expression.
-// If they all equal, we continue algorithm on i+1. If they are not
-// we assume prefix length = i-1
-// If prefix length greater then n we create warning
-//
-// TODO: warn if at least m case expressions have common prefix with
-// length > n
-
-func (c *longChainChecker) checkSwitch(stmt *ast.SwitchStmt) {
-	exprs := []ast.Expr{}
-	for _, st := range stmt.Body.List {
-		s := st.(*ast.CaseClause)
-		if s.List == nil {
-			continue
-		}
-		exprs = append(exprs, s.List...)
-	}
-	if len(exprs) < 2 {
+	if c.exprComplexity(expr) < minComplexity {
 		return
 	}
 
-	cp := c.exprToList(exprs[0])
-	for _, e := range exprs[1:] {
-		cp = c.commonPrefix(cp, c.exprToList(e))
+	s := nodeString(c.ctx.FileSet, expr)
+	if c.reported[s] {
+		return
 	}
+	c.chains[s]++
+	if c.chains[s] >= minChainLen {
+		isSubExpr := false
+		for s2 := range c.reported {
+			if strings.Contains(s2, s) {
+				isSubExpr = true
+				break
+			}
+		}
 
-	const n = 2
-
-	if len(cp) > n {
-		c.warn(cp, stmt)
+		// We don't report sub-expression repetitions
+		// of already reported expressions.
+		// That means if we already reported "a.b.c.d.e",
+		// don't bother reporting repeated "b.c.d".
+		if !isSubExpr {
+			c.warn(expr, s)
+		}
+		c.reported[s] = true
 	}
 }
 
-// exprToList split case expression by "." (SelectorExpr)
-//
-// TODO: split not only on SelectorExpr
-func (c *longChainChecker) exprToList(expr ast.Expr) []ast.Expr {
-	res := []ast.Expr{}
-	tmp := expr
-	for {
-		switch t := tmp.(type) {
-		case *ast.SelectorExpr:
-			res = append(res, t.Sel)
-			tmp = t.X
+// exprComplexity returns simplified "cost" value of expression.
+// This is not evaluation complexity but rather syntactical weight of the expression.
+func (c *longChainChecker) exprComplexity(expr ast.Expr) int {
+	cost := 0
+	astutil.Apply(expr, nil, func(cur *astutil.Cursor) bool {
+		switch expr := cur.Node().(type) {
+		case *ast.ParenExpr:
+			// Does not increase cost.
+		case *ast.CallExpr:
+			// Consider type conversions as safe call expressions.
+			// All other call expressions forbid further analysis.
+			if !c.isTypeConversion(expr) {
+				cost = 0
+				return false
+			}
+			cost++
 		default:
-			res = append(res, tmp)
-			reverseExprSlice(res)
-			return res
-
+			cost++
 		}
-	}
-}
-
-func reverseExprSlice(e []ast.Expr) {
-	for i := len(e)/2 - 1; i >= 0; i-- {
-		j := len(e) - 1 - i
-		e[i], e[j] = e[j], e[i]
-	}
-}
-
-func (c *longChainChecker) commonPrefix(xs, ys []ast.Expr) []ast.Expr {
-	res := []ast.Expr{}
-
-	l := c.min(len(xs), len(ys))
-
-	for i := 0; i < l; i++ {
-		if astcmp.EqualExpr(xs[i], ys[i]) {
-			res = append(res, xs[i])
-		} else {
-			break
-		}
-	}
-
-	return res
-}
-
-func (c *longChainChecker) min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func (c *longChainChecker) warn(exprs []ast.Expr, stmt ast.Stmt) {
-	s := make([]string, len(exprs))
-	for i, e := range exprs {
-		s[i] = nodeString(c.ctx.FileSet, e)
-	}
-
-	c.ctx.addWarning(Warning{
-		Kind: "long-chain",
-		Node: stmt,
-		Text: fmt.Sprintf("Expression chain %s repeated multiple times consider assigning it to local variable",
-			strings.Join(s, ".")),
+		return true
 	})
+	return cost
+}
+
+// isTypeConversion reports whether call is a type conversion expression.
+// That is, T(v) expression that has no side-effects.
+func (c *longChainChecker) isTypeConversion(call *ast.CallExpr) bool {
+	// Three main conversion cases:
+	//	1. T(v)   - call.Fun is *ast.Ident
+	//	2. p.T(V) - call.Fun is *ast.SelectorExpr
+	//	3. (x)(V) - x if either (1) or (2)
+	// T is a type name.
+
+	switch fn := unparen(call.Fun).(type) {
+	case *ast.Ident:
+		_, ok := c.ctx.TypesInfo.ObjectOf(fn).(*types.TypeName)
+		return ok
+
+	case *ast.SelectorExpr:
+		pkg, ok := fn.X.(*ast.Ident)
+		if !ok {
+			return false
+		}
+		if _, ok := c.ctx.TypesInfo.ObjectOf(pkg).(*types.PkgName); !ok {
+			return false
+		}
+		_, ok = c.ctx.TypesInfo.ObjectOf(fn.Sel).(*types.TypeName)
+		return ok
+
+	default:
+		return false
+	}
+}
+
+func (c *longChainChecker) warn(node ast.Node, s string) {
+	c.ctx.Warn(node, "%s repeated multiple times, consider assigning it to local variable", s)
 }

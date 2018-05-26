@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/PieselBois/kfulint/lint"
 )
 
 const (
@@ -35,19 +37,18 @@ func TestMain(m *testing.M) {
 	os.Exit(exitStatus)
 }
 
-var tests = []*struct {
-	checker string
-}{
-	{"param-name"},
-	{"type-guard"},
-	{"parenthesis"},
-	{"param-duplication"},
-	{"underef"},
-	{"elseif"},
-	{"big-copy"},
-	{"long-chain"},
-	{"unexported-call"},
-	{"switchif"},
+type ruleTest struct {
+	name string
+}
+
+var ruleList []ruleTest
+
+func init() {
+	for _, rule := range lint.RuleList() {
+		ruleList = append(ruleList, ruleTest{
+			name: rule.Name(),
+		})
+	}
 }
 
 func runChecker(name, pkgPath string) (output []byte, err error) {
@@ -55,30 +56,30 @@ func runChecker(name, pkgPath string) (output []byte, err error) {
 }
 
 func TestSanity(t *testing.T) {
-	saneTests := tests[:0]
-	for _, test := range tests {
+	saneRules := ruleList[:0]
+	for _, rule := range ruleList {
 		pkgPath := linterCmdPath + "testdata/_sanity"
-		output, err := runChecker(test.checker, pkgPath)
+		output, err := runChecker(rule.name, pkgPath)
 		if err != nil {
 			t.Errorf("%s failed sanity checks: %v:\n%s",
-				test.checker, err, output)
+				rule.name, err, output)
 			continue
 		}
-		saneTests = append(saneTests, test)
+		saneRules = append(saneRules, rule)
 	}
-	tests = saneTests
+	ruleList = saneRules
 }
 
 func TestOutput(t *testing.T) {
-	for _, test := range tests {
-		t.Run(test.checker, func(t *testing.T) {
-			pkgPath := linterCmdPath + "testdata/" + test.checker
+	for _, rule := range ruleList {
+		t.Run(rule.name, func(t *testing.T) {
+			pkgPath := linterCmdPath + "testdata/" + rule.name
 			testFilename := filepath.Join(
-				"testdata", test.checker, "checker_tests.go")
+				"testdata", rule.name, "checker_tests.go")
 			f := parseTestFile(t, testFilename)
 
 			// Running the linter.
-			output, err := runChecker(test.checker, pkgPath)
+			output, err := runChecker(rule.name, pkgPath)
 			if err != nil {
 				t.Fatalf("run linter: %v: %s", err, output)
 			}
@@ -97,20 +98,19 @@ func TestOutput(t *testing.T) {
 					unexpectedLines = append(unexpectedLines, l)
 					continue
 				}
-				var lineString, tag, text string
-				unpackSubmatches(l, warningRE, &lineString, &tag, &text)
+				var lineString, ruleName, text string
+				unpackSubmatches(l, warningRE, &lineString, &ruleName, &text)
 				line, err := strconv.Atoi(lineString)
 				if err != nil {
 					t.Errorf("%s: invalid line number in %s",
 						testFilename, lineString)
 				}
-				checker, kind := splitWarningTag(tag)
-				if checker != test.checker {
+				if ruleName != rule.name {
 					t.Errorf("%s: unexpected checker name: %s",
-						testFilename, checker)
+						testFilename, ruleName)
 					continue
 				}
-				if w := f.Find(line, kind, text); w != nil {
+				if w := f.Find(line, text); w != nil {
 					if w.matched {
 						t.Errorf("%s:%d: multiple matches for %s",
 							testFilename, line, w)
@@ -155,25 +155,19 @@ var (
 	// Directive line contain only special comment itself, no other
 	// syntax elements (whitespace is permitted).
 	//
-	// matcher = "///" [kind] ":" text
-	// kind = \w*
-	// text = .*
-	//
-	// Example: "///Label: remove unused label"
-	// Example: "///: can replace s[:] with s"
-	warningDirectiveRE = regexp.MustCompile(`^\s*///(\w*?): (.*)`)
+	// Example: "/// can replace s[:] with s".
+	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
 )
 
 // warning is a decoded warning directive that is used to match actual
 // linter warnings against expected results.
 type warning struct {
 	matched bool
-	kind    string
 	text    string
 }
 
 func (w warning) String() string {
-	return "///" + w.kind + ": " + w.text
+	return "/// " + w.text
 }
 
 type testFileParser struct {
@@ -203,7 +197,7 @@ func (p *testFileParser) collectWarnings(lines []string, f *testFile) {
 			continue
 		}
 		var m warning
-		unpackSubmatches(l, warningDirectiveRE, &m.kind, &m.text)
+		unpackSubmatches(l, warningDirectiveRE, &m.text)
 		pending = append(pending, &m)
 	}
 }
@@ -223,9 +217,9 @@ type testFile struct {
 }
 
 // Find seeks for matching warning.
-func (f *testFile) Find(line int, kind, text string) *warning {
+func (f *testFile) Find(line int, text string) *warning {
 	for _, y := range f.warnings[line] {
-		if kind == y.kind && text == y.text {
+		if text == y.text {
 			return y
 		}
 	}
@@ -239,16 +233,6 @@ func unpackSubmatches(s string, re *regexp.Regexp, dst ...*string) {
 	for i, submatch := range submatches[1:] {
 		*dst[i] = submatch
 	}
-}
-
-// splitWarningTag returns warning tag components, namely: checker name and warning kind.
-func splitWarningTag(tag string) (checkerName, warningKind string) {
-	parts := strings.Split(tag, "/")
-	checkerName = parts[0]
-	if len(parts) > 1 {
-		warningKind = parts[1]
-	}
-	return checkerName, warningKind
 }
 
 func buildLinter() {

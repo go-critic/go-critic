@@ -16,13 +16,13 @@ func (s *sampleStruct) method() {
 
 func sampleCase() {
 	var k *sampleStruct
-	///: could simplify (*k).field to k.field
+	/// could simplify (*k).field to k.field
 	(*k).field = 5
 	//TODO: could simplify (*k).method() to k.method()
-	///: could simplify (*k).method to k.method
+	/// could simplify (*k).method to k.method
 	(*k).method()
 	//TODO: could simplify (*k).nestedStruct.nestedField to k.nestedStruct.nestedField
-	///: could simplify (*k).nestedStruct to k.nestedStruct
+	/// could simplify (*k).nestedStruct to k.nestedStruct
 	(*k).nestedStruct.nestedField = 6
 }
 
@@ -33,7 +33,7 @@ func sampleCase2(k sampleInterface) {
 func sampleCase3() {
 	var k *[5]int
 
-	///: could simplify (*k)[2] to k[2]
+	/// could simplify (*k)[2] to k[2]
 	(*k)[2] = 3
 }
 
