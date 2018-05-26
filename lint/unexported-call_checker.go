@@ -7,42 +7,42 @@ import (
 )
 
 type unexportedCallChecker struct {
-	ctx *Context
+	baseLocalExprChecker
+
+	funcName string
 }
 
-func newUnexportedCallChecker(ctx *Context) Checker {
-	return &unexportedCallChecker{
-		ctx: ctx,
+func unexportedCallCheck(ctx *context) func(*ast.File) {
+	return wrapLocalExprChecker(&unexportedCallChecker{
+		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	})
+}
+
+func (c *unexportedCallChecker) PerFuncInit(decl *ast.FuncDecl) bool {
+	if decl.Body == nil {
+		return false
 	}
+	c.funcName = ""
+	cond := decl.Recv != nil &&
+		len(decl.Recv.List) == 1 &&
+		len(decl.Recv.List[0].Names) == 1
+	if cond {
+		c.funcName = decl.Recv.List[0].Names[0].Name
+	}
+	return true
 }
 
 // Check finds calls of unexported method from unexported type
 // outside that type.
 //
 //TODO: update description and warning message
-func (c *unexportedCallChecker) Check(f *ast.File) {
-	for _, decl := range collectFuncDecls(f) {
-		if decl.Body == nil {
-			continue
-		}
-		name := ""
-		cond := decl.Recv != nil &&
-			len(decl.Recv.List) == 1 &&
-			len(decl.Recv.List[0].Names) == 1
-		if cond {
-			name = decl.Recv.List[0].Names[0].Name
-		}
-		ast.Inspect(decl.Body, func(n ast.Node) bool {
-			if call, ok := n.(*ast.CallExpr); ok {
-				c.checkCall(name, call)
-			}
-			return true
-		})
-
+func (c *unexportedCallChecker) CheckLocalExpr(expr ast.Expr) {
+	if call, ok := expr.(*ast.CallExpr); ok {
+		c.checkCall(call)
 	}
 }
 
-func (c *unexportedCallChecker) checkCall(name string, call *ast.CallExpr) {
+func (c *unexportedCallChecker) checkCall(call *ast.CallExpr) {
 	sel, ok := call.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return
@@ -63,15 +63,12 @@ func (c *unexportedCallChecker) checkCall(name string, call *ast.CallExpr) {
 	if !ok {
 		return
 	}
-	if recvTyp.Obj().Name() != name {
+	if recvTyp.Obj().Name() != c.funcName {
 		c.warn(call)
 	}
 }
 
 func (c *unexportedCallChecker) warn(n *ast.CallExpr) {
-	c.ctx.addWarning(Warning{
-		Kind: "unexported-call",
-		Node: n,
-		Text: fmt.Sprintf("%s should be exported", nodeString(c.ctx.FileSet, n)),
-	})
+	c.ctx.Warn(n, fmt.Sprintf("%s should be exported",
+		nodeString(c.ctx.FileSet, n)))
 }
