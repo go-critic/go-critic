@@ -1,44 +1,52 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
 )
 
-type elseifChecker struct {
-	ctx *Context
-
-	rootStmt ast.Stmt
-}
-
-func newElseifChecker(ctx *Context) Checker {
-	return &elseifChecker{ctx: ctx}
-}
-
-// Check finds repeated if-else statements and suggests to replace
+// elseifCheck finds repeated if-else statements and suggests to replace
 // them with switch statement.
 //
-// Features
+// Rationale: code readability.
 //
 // Permits single else or else-if; repeated else-if or else + else-if
 // will trigger suggestion to use switch statement.
-func (c *elseifChecker) Check(f *ast.File) {
-	ast.Inspect(f, func(x ast.Node) bool {
-		if stmt, ok := x.(*ast.IfStmt); ok {
-			c.rootStmt = stmt
-			return !c.checkIfStmt(stmt)
-		}
-		return true
+func elseifCheck(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&elseifChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})
 }
 
-func (c *elseifChecker) checkIfStmt(stmt *ast.IfStmt) bool {
+type elseifChecker struct {
+	baseStmtChecker
+
+	cause   *ast.IfStmt
+	visited map[*ast.IfStmt]bool
+}
+
+func (c *elseifChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+	if fn.Body == nil {
+		return false
+	}
+	c.visited = make(map[*ast.IfStmt]bool)
+	return true
+}
+
+func (c *elseifChecker) CheckStmt(stmt ast.Stmt) {
+	if stmt, ok := stmt.(*ast.IfStmt); ok {
+		if c.visited[stmt] {
+			return
+		}
+		c.cause = stmt
+		c.checkIfStmt(stmt)
+	}
+}
+
+func (c *elseifChecker) checkIfStmt(stmt *ast.IfStmt) {
 	const minThreshold = 2
 	if c.countIfelseLen(stmt) >= minThreshold {
 		c.warn()
-		return true
 	}
-	return false
 }
 
 func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
@@ -49,6 +57,7 @@ func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
 			// Else if.
 			stmt = e
 			count++
+			c.visited[e] = true
 		case *ast.BlockStmt:
 			// Else branch.
 			return count + 1
@@ -60,9 +69,5 @@ func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
 }
 
 func (c *elseifChecker) warn() {
-	c.ctx.addWarning(Warning{
-		Kind: "elseif",
-		Node: c.rootStmt,
-		Text: fmt.Sprintf("should rewrite if-else to switch statement"),
-	})
+	c.ctx.Warn(c.cause, "should rewrite if-else to switch statement")
 }

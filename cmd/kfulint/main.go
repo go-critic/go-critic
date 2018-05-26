@@ -16,17 +16,12 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
-type checker struct {
-	name string
-	lint.Checker
-}
-
 type linter struct {
 	ctx *lint.Context
 
 	prog *loader.Program
 
-	checkers []checker
+	checkers []*lint.Checker
 
 	// Command line flags:
 
@@ -113,21 +108,35 @@ func (l *linter) LoadProgram() {
 }
 
 func (l *linter) InitCheckers() {
+	requested := make(map[string]bool)
+	available := lint.RuleList()
+
 	if l.enabledCheckers == nil {
-		for _, name := range lint.AvailableCheckers() {
-			c, _ := lint.NewChecker(name, l.ctx)
-			l.checkers = append(l.checkers, checker{name, c})
+		for _, rule := range available {
+			// Exclude experimental checkers from default list.
+			if !rule.Experimental() {
+				requested[rule.Name()] = true
+			}
 		}
-		return
+	} else {
+		for _, name := range l.enabledCheckers {
+			requested[name] = true
+		}
 	}
 
-	for _, s := range l.enabledCheckers {
-		name := strings.TrimSpace(s)
-		c, err := lint.NewChecker(name, l.ctx)
-		if err != nil {
-			log.Fatalf("%s: %v", name, err)
+	for _, rule := range available {
+		if !requested[rule.Name()] {
+			continue
 		}
-		l.checkers = append(l.checkers, checker{name, c})
+		l.checkers = append(l.checkers, lint.NewChecker(rule, l.ctx))
+		delete(requested, rule.Name())
+	}
+
+	if len(requested) != 0 {
+		for name := range requested {
+			log.Printf("%s: checker not found", name)
+		}
+		log.Fatalf("exiting due to initialization failure")
 	}
 }
 
@@ -141,11 +150,6 @@ func (l *linter) CheckPackage(pkgPath string) {
 	for _, f := range pkgInfo.Files {
 		l.checkFile(f)
 	}
-
-	for _, w := range l.ctx.Warnings {
-		pos := l.ctx.FileSet.Position(w.Node.Pos())
-		log.Printf("%s: %s: %v\n", pos, string(w.Kind), w.Text)
-	}
 }
 
 func (l *linter) checkFile(f *ast.File) {
@@ -154,7 +158,7 @@ func (l *linter) checkFile(f *ast.File) {
 	for _, c := range l.checkers {
 		// All checkers are expected to use *lint.Context
 		// as read-only structure, so no copying is required.
-		go func(c checker) {
+		go func(c *lint.Checker) {
 			defer func() {
 				wg.Done()
 				// Checker signals unexpected error with panic(error).
@@ -163,7 +167,7 @@ func (l *linter) checkFile(f *ast.File) {
 					return // There were no panic
 				}
 				if err, ok := r.(error); ok {
-					log.Printf("%s: error: %v\n", c.name, err)
+					log.Printf("%s: error: %v\n", c.Rule, err)
 					panic(err)
 				} else {
 					// Some other kind of run-time panic.
@@ -171,7 +175,11 @@ func (l *linter) checkFile(f *ast.File) {
 					panic(r)
 				}
 			}()
-			c.Check(f)
+
+			for _, warn := range c.Check(f) {
+				pos := l.ctx.FileSet.Position(warn.Node.Pos())
+				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)
+			}
 		}(c)
 	}
 	wg.Wait()

@@ -2,7 +2,6 @@
 	"DisableAll": true,
 	"Enable": [
 		"deadcode",
-		"dupl",
 		"errcheck",
 		"gas",
 		"goconst",

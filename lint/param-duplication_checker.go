@@ -1,43 +1,36 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
 	"strings"
 
 	"github.com/Quasilyte/astcmp"
 )
 
-// ParamDuplicationChecker detects functions where parameters declaration
-// could be simplified by combine arguments with same type.
+// paramDuplicationCheck detects if function parameters could be combined by type
+// and suggest the way to do it.
+//
+// Rationale: better godoc; code readability.
 //
 // Example: func f(a int, b int) could be simplified as func f(a, b int)
-type ParamDuplicationChecker struct {
-	ctx *Context
+func paramDuplicationCheck(ctx *context) func(*ast.File) {
+	return wrapParamListChecker(&paramDuplicationChecker{
+		baseParamListChecker: baseParamListChecker{ctx: ctx},
+	})
 }
 
-// NewParamDuplicationChecker returns initialized ParamDuplicationChecker.
-func newParamDuplicationChecker(ctx *Context) Checker {
-	return &ParamDuplicationChecker{
-		ctx: ctx,
-	}
+type paramDuplicationChecker struct {
+	baseParamListChecker
+
+	cause *ast.FuncDecl
 }
 
-// Check runs parameter types duplication checks for f.
-//
-// Features
-//
-// Detects if function parameters could be combined by type
-// and suggest the way to do it.
-func (c *ParamDuplicationChecker) Check(f *ast.File) {
-	for _, decl := range collectFuncDecls(f) {
-		c.checkParamDuplication(decl)
-	}
+func (c *paramDuplicationChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+	c.cause = fn
+	return true
 }
 
-// TODO(fexolm) don't create multiple warnings on the same function.
-func (c *ParamDuplicationChecker) checkParamDuplication(decl *ast.FuncDecl) {
-	params := decl.Type.Params.List
+func (c *paramDuplicationChecker) CheckParamList(params []*ast.Field) {
 	if len(params) < 2 {
 		return
 	}
@@ -54,10 +47,11 @@ func (c *ParamDuplicationChecker) checkParamDuplication(decl *ast.FuncDecl) {
 		}
 	}
 	if warn {
-		c.warn(equalRange, decl)
+		c.warn(equalRange)
 	}
 }
-func (c *ParamDuplicationChecker) warn(fields [][]*ast.Field, decl *ast.FuncDecl) {
+
+func (c *paramDuplicationChecker) warn(fields [][]*ast.Field) {
 	paramsBefore := []string{}
 	paramsAfter := []string{}
 	for _, flist := range fields {
@@ -75,17 +69,12 @@ func (c *ParamDuplicationChecker) warn(fields [][]*ast.Field, decl *ast.FuncDecl
 		paramsAfter = append(paramsAfter,
 			strings.Join(typeAfter, ", ")+" "+nodeString(c.ctx.FileSet, flist[0].Type))
 	}
-	c.ctx.addWarning(Warning{
-		Kind: "param-duplication/Duplication",
-		Node: decl,
-		Text: fmt.Sprintf("%s could be replaced with %s",
-			strings.Join(paramsBefore, ", "),
-			strings.Join(paramsAfter, ", ")),
-	})
-
+	c.ctx.Warn(c.cause, "%s could be replaced with %s",
+		strings.Join(paramsBefore, ", "),
+		strings.Join(paramsAfter, ", "))
 }
 
-func (c *ParamDuplicationChecker) paramNamesStr(idents []*ast.Ident) string {
+func (c *paramDuplicationChecker) paramNamesStr(idents []*ast.Ident) string {
 	if idents == nil {
 		return "_"
 	}
