@@ -1,7 +1,7 @@
 package checker_test
 
 // Foo ...
-/// comment should contain function name
+/// silencing go lint doc-comment warnings is unadvised
 func Foo() {
 
 }
