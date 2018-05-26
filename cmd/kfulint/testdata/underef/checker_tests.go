@@ -16,13 +16,13 @@ func (s *sampleStruct) method() {
 
 func sampleCase() {
 	var k *sampleStruct
-	///: could simplify (*k).field to k.field
+	/// could simplify (*k).field to k.field
 	(*k).field = 5
 	//TODO: could simplify (*k).method() to k.method()
-	///: could simplify (*k).method to k.method
+	/// could simplify (*k).method to k.method
 	(*k).method()
 	//TODO: could simplify (*k).nestedStruct.nestedField to k.nestedStruct.nestedField
-	///: could simplify (*k).nestedStruct to k.nestedStruct
+	/// could simplify (*k).nestedStruct to k.nestedStruct
 	(*k).nestedStruct.nestedField = 6
 }
 
@@ -33,7 +33,7 @@ func sampleCase2(k sampleInterface) {
 func sampleCase3() {
 	var k *[5]int
 
-	//TODO: could simplify (*k)[5] to k[5]
+	/// could simplify (*k)[2] to k[2]
 	(*k)[2] = 3
 }
 
@@ -46,16 +46,10 @@ func multipleIndir1() {
 	pt3 := &pt2
 	pt4 := &pt3
 
-	//TODO: should not trigger (#68)
-	///: could simplify (*pt2).x to pt2.x
 	_ = (*pt2).x
 
-	//TODO: should not trigger (#68)
-	///: could simplify (**pt3).x to *pt3.x
 	_ = (**pt3).x
 
-	//TODO: should not trigger (#68)
-	///: could simplify (***pt4).x to **pt4.x
 	_ = (***pt4).x
 }
 

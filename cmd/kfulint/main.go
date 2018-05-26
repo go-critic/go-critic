@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"go/ast"
 	"go/parser"
+	"go/types"
 	"log"
 	"os"
-	"regexp"
+	"runtime"
 	"strings"
 	"sync"
 
@@ -15,14 +16,27 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
+type linter struct {
+	ctx *lint.Context
+
+	prog *loader.Program
+
+	checkers []*lint.Checker
+
+	// Command line flags:
+
+	packages        []string
+	enabledCheckers []string
+}
+
 func main() {
 	log.SetFlags(0)
 
 	var l linter
 	parseArgv(&l)
 	l.LoadProgram()
-	l.InitContext()
 	l.InitCheckers()
+
 	for _, pkgPath := range l.packages {
 		l.CheckPackage(pkgPath)
 	}
@@ -53,47 +67,28 @@ func parseArgv(l *linter) {
 
 	switch *enable {
 	case "all":
-		// Special case. l.enableSet remains nil.
+		// Special case. l.enabledCheckers remains nil.
 	case "":
-		// Empty set. Semantically "disable-all".
+		// Empty slice. Semantically "disable-all".
 		// Can be used to run all pipelines without actual checkers.
-		l.enabledSet = map[string]bool{}
+		l.enabledCheckers = []string{}
 	default:
 		// Comma-separated list of names.
-		l.enabledSet = make(map[string]bool)
-		nameRE := regexp.MustCompile(`[a-z][a-z0-9_\-]*`)
-		for i, s := range strings.Split(*enable, ",") {
-			s = strings.TrimSpace(s)
-			l.enabledSet[s] = true
-			if !nameRE.MatchString(s) {
-				log.Fatalf("-enable element #%d: invalid %q checker name", i, s)
-			}
-		}
+		l.enabledCheckers = strings.Split(*enable, ",")
 	}
-
-}
-
-type checker struct {
-	name string
-	lint.Checker
-}
-
-type linter struct {
-	ctx *lint.Context
-
-	prog *loader.Program
-
-	checkers []checker
-
-	// Command line flags:
-
-	packages   []string
-	enabledSet map[string]bool
 }
 
 func (l *linter) LoadProgram() {
+	sizes := types.SizesFor("gc", runtime.GOARCH)
+	if sizes == nil {
+		log.Fatalf("can't find sizes info for %s", runtime.GOARCH)
+	}
+
 	conf := loader.Config{
 		ParserMode: parser.ParseComments,
+		TypeChecker: types.Config{
+			Sizes: sizes,
+		},
 	}
 
 	if _, err := conf.FromArgs(l.packages, true); err != nil {
@@ -105,20 +100,43 @@ func (l *linter) LoadProgram() {
 	}
 
 	l.prog = prog
-}
 
-func (l *linter) InitContext() {
 	l.ctx = &lint.Context{
-		FileSet: l.prog.Fset,
+		FileSet:   prog.Fset,
+		SizesInfo: sizes,
 	}
 }
 
 func (l *linter) InitCheckers() {
-	for _, name := range lint.AvailableCheckers() {
-		// Nil enabledSet means "all checkers are enabled".
-		if l.enabledSet == nil || l.enabledSet[name] {
-			l.checkers = append(l.checkers, checker{name, lint.NewChecker(name, l.ctx)})
+	requested := make(map[string]bool)
+	available := lint.RuleList()
+
+	if l.enabledCheckers == nil {
+		for _, rule := range available {
+			// Exclude experimental checkers from default list.
+			if !rule.Experimental() {
+				requested[rule.Name()] = true
+			}
 		}
+	} else {
+		for _, name := range l.enabledCheckers {
+			requested[name] = true
+		}
+	}
+
+	for _, rule := range available {
+		if !requested[rule.Name()] {
+			continue
+		}
+		l.checkers = append(l.checkers, lint.NewChecker(rule, l.ctx))
+		delete(requested, rule.Name())
+	}
+
+	if len(requested) != 0 {
+		for name := range requested {
+			log.Printf("%s: checker not found", name)
+		}
+		log.Fatalf("exiting due to initialization failure")
 	}
 }
 
@@ -140,7 +158,7 @@ func (l *linter) checkFile(f *ast.File) {
 	for _, c := range l.checkers {
 		// All checkers are expected to use *lint.Context
 		// as read-only structure, so no copying is required.
-		go func(c checker) {
+		go func(c *lint.Checker) {
 			defer func() {
 				wg.Done()
 				// Checker signals unexpected error with panic(error).
@@ -149,7 +167,7 @@ func (l *linter) checkFile(f *ast.File) {
 					return // There were no panic
 				}
 				if err, ok := r.(error); ok {
-					log.Printf("%s: error: %v\n", c.name, err)
+					log.Printf("%s: error: %v\n", c.Rule, err)
 					panic(err)
 				} else {
 					// Some other kind of run-time panic.
@@ -157,13 +175,10 @@ func (l *linter) checkFile(f *ast.File) {
 					panic(r)
 				}
 			}()
-			for _, w := range c.Check(f) {
-				pos := l.ctx.FileSet.Position(w.Node.Pos())
-				name := c.name
-				if w.Kind != "" {
-					name += "/" + string(w.Kind)
-				}
-				log.Printf("%s: %s: %v\n", pos, name, w.Text)
+
+			for _, warn := range c.Check(f) {
+				pos := l.ctx.FileSet.Position(warn.Node.Pos())
+				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)
 			}
 		}(c)
 	}

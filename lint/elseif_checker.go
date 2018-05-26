@@ -1,0 +1,73 @@
+package lint
+
+import (
+	"go/ast"
+)
+
+// elseifCheck finds repeated if-else statements and suggests to replace
+// them with switch statement.
+//
+// Rationale: code readability.
+//
+// Permits single else or else-if; repeated else-if or else + else-if
+// will trigger suggestion to use switch statement.
+func elseifCheck(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&elseifChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
+	})
+}
+
+type elseifChecker struct {
+	baseStmtChecker
+
+	cause   *ast.IfStmt
+	visited map[*ast.IfStmt]bool
+}
+
+func (c *elseifChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+	if fn.Body == nil {
+		return false
+	}
+	c.visited = make(map[*ast.IfStmt]bool)
+	return true
+}
+
+func (c *elseifChecker) CheckStmt(stmt ast.Stmt) {
+	if stmt, ok := stmt.(*ast.IfStmt); ok {
+		if c.visited[stmt] {
+			return
+		}
+		c.cause = stmt
+		c.checkIfStmt(stmt)
+	}
+}
+
+func (c *elseifChecker) checkIfStmt(stmt *ast.IfStmt) {
+	const minThreshold = 2
+	if c.countIfelseLen(stmt) >= minThreshold {
+		c.warn()
+	}
+}
+
+func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
+	count := 0
+	for {
+		switch e := stmt.Else.(type) {
+		case *ast.IfStmt:
+			// Else if.
+			stmt = e
+			count++
+			c.visited[e] = true
+		case *ast.BlockStmt:
+			// Else branch.
+			return count + 1
+		default:
+			// No else or else if.
+			return count
+		}
+	}
+}
+
+func (c *elseifChecker) warn() {
+	c.ctx.Warn(c.cause, "should rewrite if-else to switch statement")
+}

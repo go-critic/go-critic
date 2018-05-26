@@ -1,46 +1,32 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
 
-	"github.com/PieselBois/kfulint/lint/internal/astfilter"
 	"github.com/Quasilyte/astcmp"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-// TypeGuardChecker finds type switches that may benefit from type guard clause.
+// typeGuardCheck finds type switches that may benefit from type guard clause.
 //
 // Rationale: code readability.
-type TypeGuardChecker struct {
-	ctx *Context
-
-	warnings []Warning
+func typeGuardCheck(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&typeGuardChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
+	})
 }
 
-// NewTypeGuardChecker returns initialized checker for Go type switch statements.
-func newTypeGuardChecker(ctx *Context) Checker {
-	return &TypeGuardChecker{ctx: ctx}
+type typeGuardChecker struct {
+	baseStmtChecker
 }
 
-// Check runs type switch checks for f.
-func (c *TypeGuardChecker) Check(f *ast.File) []Warning {
-	c.warnings = c.warnings[:0]
-	pre := astfilter.Or(astfilter.FuncDecl, astfilter.Stmt)
-	for _, decl := range f.Decls {
-		astutil.Apply(decl, pre, c.apply)
-	}
-	return c.warnings
-}
-
-func (c *TypeGuardChecker) apply(cur *astutil.Cursor) bool {
-	if stmt, ok := cur.Node().(*ast.TypeSwitchStmt); ok {
+func (c *typeGuardChecker) CheckStmt(stmt ast.Stmt) {
+	if stmt, ok := stmt.(*ast.TypeSwitchStmt); ok {
 		c.checkTypeSwitch(stmt)
 	}
-	return true
 }
 
-func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
+func (c *typeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 	if _, ok := root.Assign.(*ast.AssignStmt); ok {
 		return // Already with type guard
 	}
@@ -73,12 +59,8 @@ func (c *TypeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 	}
 }
 
-func (c *TypeGuardChecker) warn(node ast.Node, caseIndex int) {
-	s := "case %d can benefit from type switch with assignment"
-	c.warnings = append(c.warnings, Warning{
-		Node: node,
-		Text: fmt.Sprintf(s, caseIndex),
-	})
+func (c *typeGuardChecker) warn(node ast.Node, caseIndex int) {
+	c.ctx.Warn(node, "case %d can benefit from type switch with assignment", caseIndex)
 }
 
 // find applies pred for root and all it's childs until it returns true.
@@ -86,7 +68,7 @@ func (c *TypeGuardChecker) warn(node ast.Node, caseIndex int) {
 // If none of the nodes matched predicate, nil is returned.
 //
 // TODO: is this generally useful and can be placed in util.go?
-func (c *TypeGuardChecker) find(root ast.Node, pred func(ast.Node) bool) ast.Node {
+func (c *typeGuardChecker) find(root ast.Node, pred func(ast.Node) bool) ast.Node {
 	var found ast.Node
 	astutil.Apply(root, nil, func(cur *astutil.Cursor) bool {
 		if pred(cur.Node()) {
@@ -102,7 +84,7 @@ func (c *TypeGuardChecker) find(root ast.Node, pred func(ast.Node) bool) ast.Nod
 // Returns nil for expressions that yield temporary results, like `f().field`.
 //
 // TODO: is this generally useful and can be placed in util.go?
-func (c *TypeGuardChecker) identOf(x ast.Node) *ast.Ident {
+func (c *typeGuardChecker) identOf(x ast.Node) *ast.Ident {
 	switch x := x.(type) {
 	case *ast.Ident:
 		// Found ident.
