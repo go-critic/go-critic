@@ -26,6 +26,7 @@ var checkFunctions = map[string]struct {
 	"big-copy":          {new: bigCopyCheck},
 	"long-chain":        {new: longChainCheck, experimental: true},
 	"switchif":          {new: switchifCheck},
+	"unexported-call":   {new: unexportedCallCheck},
 	"builtin-shadow":    {new: builtinShadowCheck},
 }
 
@@ -122,7 +123,6 @@ type Context struct {
 // Fields that are not from Context itself are writeable.
 type context struct {
 	*Context
-
 	warnings []Warning
 }
 
