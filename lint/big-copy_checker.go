@@ -59,5 +59,5 @@ func (c *bigCopyChecker) isUnitTestFunc(fn *ast.FuncDecl) bool {
 }
 
 func (c *bigCopyChecker) warnRangeValue(node ast.Node, size int64) {
-	c.ctx.Warn(node, "each iteration copies %d bits (consider pointers or indexing)", size)
+	c.ctx.Warn(node, "each iteration copies %d bytes (consider pointers or indexing)", size)
 }
