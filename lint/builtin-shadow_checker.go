@@ -72,7 +72,10 @@ type builtinShadowChecker struct {
 func (c *builtinShadowChecker) CheckStmt(stmt ast.Stmt) {
 	if assignStmt, ok := stmt.(*ast.AssignStmt); ok {
 		for _, v := range assignStmt.Lhs {
-			ident := v.(*ast.Ident)
+			ident, ok := v.(*ast.Ident)
+			if !ok {
+				continue
+			}
 			if _, isBuiltin := c.builtins[ident.Name]; isBuiltin {
 				c.warn(ident)
 			}
