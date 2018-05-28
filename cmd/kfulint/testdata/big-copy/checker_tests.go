@@ -23,7 +23,7 @@ func TestFoo(t *testing.T) {
 
 func BenchmarkFoo(b *testing.B) {
 	var xs []bigObject
-	/// each iteration copies 1032 bits (consider pointers or indexing)
+	/// each iteration copies 1032 bytes (consider pointers or indexing)
 	for _, x := range xs {
 		_ = x.x
 	}
@@ -31,7 +31,7 @@ func BenchmarkFoo(b *testing.B) {
 
 func bigCopy(xs []bigObject) int32 {
 	v := int32(0)
-	/// each iteration copies 1032 bits (consider pointers or indexing)
+	/// each iteration copies 1032 bytes (consider pointers or indexing)
 	for _, x := range xs {
 		v += x.x
 	}
