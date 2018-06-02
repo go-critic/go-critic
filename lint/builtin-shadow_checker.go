@@ -4,10 +4,6 @@ import (
 	"go/ast"
 )
 
-// builtinShadowCheck detects when predeclared identifiers
-// shadowed in assignments.
-//
-// Rationale: avoid bugs.
 func builtinShadowCheck(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&builtinShadowChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
