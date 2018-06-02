@@ -6,8 +6,6 @@ switch x := x.(type) {
 case int:
      ...
 }
-return 0
-
 ```
 
 **After:**
