@@ -16,7 +16,7 @@ func baz() {
 ```go
 type foo struct{}
 
-func (f foo) Bar() int { return 1 }
+func (f foo) Bar() int { return 1 } // now Bar is exported
 func baz() {
 	var fo foo
 	fo.Bar()
