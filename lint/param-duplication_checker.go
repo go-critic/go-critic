@@ -7,12 +7,6 @@ import (
 	"github.com/Quasilyte/astcmp"
 )
 
-// paramDuplicationCheck detects if function parameters could be combined by type
-// and suggest the way to do it.
-//
-// Rationale: better godoc; code readability.
-//
-// Example: func f(a int, b int) could be simplified as func f(a, b int)
 func paramDuplicationCheck(ctx *context) func(*ast.File) {
 	return wrapParamListChecker(&paramDuplicationChecker{
 		baseParamListChecker: baseParamListChecker{ctx: ctx},
