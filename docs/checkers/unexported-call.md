@@ -4,10 +4,10 @@ Finds calls of unexported method from unexported type outside that type.
 ```go
 type foo struct{}
 
-func (f foo) f() int { return 1 }
-func f() {
+func (f foo) bar() int { return 1 }
+func baz() {
 	var fo foo
-	fo.f()
+	fo.bar()
 }
 
 ```
@@ -16,9 +16,9 @@ func f() {
 ```go
 type foo struct{}
 
-func (f foo) unexported() int { return 1 }
-func f() {
+func (f foo) Bar() int { return 1 }
+func baz() {
 	var fo foo
-	fo.F()
+	fo.Bar()
 }
 ```
