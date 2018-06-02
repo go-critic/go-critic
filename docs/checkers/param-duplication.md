@@ -1,5 +1,3 @@
-## param-duplication
-
 Detects if function parameters could be combined by type and suggest the way to do it.
 
 **before:**
