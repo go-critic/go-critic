@@ -5,16 +5,6 @@ import (
 	"strings"
 )
 
-// paramNameCheck detects potential issues in function parameter names.
-//
-// Rationale: better godoc; code readability.
-//
-// Detects somewhat common "loud" identifiers, like IN or OUT.
-// Suggests to replace them with down-case versions (in, out).
-//
-// If capitalized name is not recognized as "loud",
-// treat it as "redundantly exported".
-// Suggests to use non-capitalized identifier.
 func paramNameCheck(ctx *context) func(*ast.File) {
 	return wrapParamListChecker(&paramNameChecker{
 		baseParamListChecker: baseParamListChecker{ctx: ctx},
