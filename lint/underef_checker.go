@@ -5,10 +5,6 @@ import (
 	"go/types"
 )
 
-// underefCheck detects expressions with C style field selection and
-// suggest Go style correction.
-//
-// Rationale: code readability.
 func underefCheck(ctx *context) func(*ast.File) {
 	// TODO: should be global expr checker, but we don't have such right now.
 	return wrapLocalExprChecker(&underefChecker{
