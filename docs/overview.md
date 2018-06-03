@@ -51,11 +51,7 @@ Detects when
 [predeclared identifiers](https://golang.org/ref/spec#Predeclared_identifiers)
 shadowed in assignments.
 
-Avoid situations when using this identifiers like local variables.
-Later you can add code trying to access this identifier like a language identifier.
-It can take you some time before you figuring it out.
-
-**Before**
+**Before:**
 ```go
 func main() {
     // shadowing len function
@@ -64,7 +60,7 @@ func main() {
 }
 ```
 
-**After**
+**After:**
 ```go
 func main() {
     // change identificator name
@@ -72,6 +68,7 @@ func main() {
     println(length)
 }
 ```
+
 <a name="comments-ref"></a>
 ## comments
 Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
@@ -344,6 +341,20 @@ func baz() {
 <a name="unslice-ref"></a>
 ## unslice
 Detects slice expressions that can be simplified to sliced expression itself.
+
+**Before:**
+```go
+f(s[:]) // s is string
+copy(b[:], values...) // b is []byte
+```
+
+**After:**
+```go
+f(s)
+copy(b, values...)
+```
+
+ts slice expressions that can be simplified to sliced expression itself.
 
 **Before:**
 ```go
