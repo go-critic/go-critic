@@ -1,10 +1,10 @@
 package main
 
 import (
-	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
+	"text/template"
 
 	"github.com/PieselBois/kfulint/lint"
 )

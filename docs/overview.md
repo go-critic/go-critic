@@ -40,7 +40,7 @@ for _, x := range xs {
 ```go
 xs := make([][1024]byte, length)
 for i := range xs {
-	x := &amp;xs[i]
+	x := &xs[i]
 	// Loop body.
 }
 ```
@@ -95,7 +95,7 @@ func Foo() {
 ## elseif
 Detects repeated if-else statements and suggests to replace them with switch statement.
 
-Permits single else or else-if; repeated else-if or else &#43; else-if
+Permits single else or else-if; repeated else-if or else + else-if
 will trigger suggestion to use switch statement.
 
 **Before:**
@@ -127,20 +127,20 @@ Detects repeated expression chains and suggest to refactor them.
 
 **Before:**
 ```go
-a := q.w.e.r.t &#43; 1
-b := q.w.e.r.t &#43; 2
-c := q.w.e.r.t &#43; 3
-v := (a&#43;xs[i&#43;1]) &#43; (b&#43;xs[i&#43;1]) &#43; (c&#43;xs[i&#43;1])
+a := q.w.e.r.t + 1
+b := q.w.e.r.t + 2
+c := q.w.e.r.t + 3
+v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
 ```
 
 **After**
 ```go
-x := xs[i&#43;1]
+x := xs[i+1]
 qwert := q.w.e.r.t
-a := qwert &#43; 1
-b := qwert &#43; 2
-c := qwert &#43; 3
-v := (a&#43;x) &#43; (b&#43;x) &#43; (c&#43;x)
+a := qwert + 1
+b := qwert + 2
+c := qwert + 3
+v := (a+x) + (b+x) + (c+x)
 ```
 
 **Experimental**
@@ -203,7 +203,7 @@ func foo() []func([]func()) {
 Detects `for` statements with range expressions that perform excessive
 copying (big arrays can cause it).
 
-Suggests to use pointer to array to avoid the copy using `&amp;` on range expression.
+Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
 **Before:**
 ```go
@@ -216,7 +216,7 @@ for _, x := range xs {
 **After:**
 ```go
 var xs [256]byte
-for _, x := range &amp;xs {
+for _, x := range &xs {
 	// Loop body.
 }
 ```
@@ -229,7 +229,7 @@ from standard library, like `math.MaxInt32`.
 **Before:**
 ```go
 intBytes := make([]byte, unsafe.Sizeof(0))
-maxVal := 1&lt;&lt;7 - 1
+maxVal := 1<<7 - 1
 ```
 
 **After:**
@@ -271,7 +271,7 @@ func f() int {
 	case int:
 		return v.(int)
 	case point:
-		return v.(point).x &#43; v.(point).y
+		return v.(point).x + v.(point).y
 	default:
 		return 0
 	}
@@ -288,7 +288,7 @@ func f() int {
 	case int:
 		return v
 	case point:
-		return v.x &#43; v.y
+		return v.x + v.y
 	default:
 		return 0
 	}
@@ -345,6 +345,16 @@ Detects slice expressions that can be simplified to sliced expression itself.
 **Before:**
 ```go
 f(s[:]) // s is string
+copy(b[:], values...) // b is []byte
+```
+
+**After:**
+```go
+f(s)
+copy(b, values...)
+```
+
+(s[:]) // s is string
 copy(b[:], values...) // b is []byte
 ```
 
