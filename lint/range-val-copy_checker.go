@@ -4,21 +4,21 @@ import (
 	"go/ast"
 )
 
-func bigCopyCheck(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&bigCopyChecker{
+func rangeValCopyCheck(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&rangeValCopyChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})
 }
 
-type bigCopyChecker struct {
+type rangeValCopyChecker struct {
 	baseStmtChecker
 }
 
-func (c *bigCopyChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+func (c *rangeValCopyChecker) PerFuncInit(fn *ast.FuncDecl) bool {
 	return fn.Body != nil && !c.ctx.IsUnitTestFuncDecl(fn)
 }
 
-func (c *bigCopyChecker) CheckStmt(stmt ast.Stmt) {
+func (c *rangeValCopyChecker) CheckStmt(stmt ast.Stmt) {
 	rng, ok := stmt.(*ast.RangeStmt)
 	if !ok || rng.Value == nil {
 		return
@@ -33,6 +33,6 @@ func (c *bigCopyChecker) CheckStmt(stmt ast.Stmt) {
 	}
 }
 
-func (c *bigCopyChecker) warn(node ast.Node, size int64) {
+func (c *rangeValCopyChecker) warn(node ast.Node, size int64) {
 	c.ctx.Warn(node, "each iteration copies %d bytes (consider pointers or indexing)", size)
 }
