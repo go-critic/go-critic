@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"io/ioutil"
 	"log"
-	"os"
 	"text/template"
 
 	"github.com/PieselBois/kfulint/lint"
@@ -38,11 +38,12 @@ func main() {
 			Description:  desc,
 		})
 	}
-	file, err := os.OpenFile(docsPath+"overview.md", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = tmpl.Execute(file, struct {
+
+	buf := bytes.Buffer{}
+	err = tmpl.Execute(&buf, struct {
 		Checkers []checker
 	}{
 		Checkers: checkers,
@@ -50,10 +51,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = file.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
+	ioutil.WriteFile(checkersPath+"overview.md", buf.Bytes(), 0600)
 }
 
 func getDesc(name string) (string, error) {
