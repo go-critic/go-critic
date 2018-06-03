@@ -51,7 +51,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	ioutil.WriteFile(checkersPath+"overview.md", buf.Bytes(), 0600)
+	ioutil.WriteFile(docsPath+"overview.md", buf.Bytes(), 0600)
 }
 
 func getDesc(name string) (string, error) {
