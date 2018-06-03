@@ -32,9 +32,6 @@ func (c *unexportedCallChecker) PerFuncInit(decl *ast.FuncDecl) bool {
 	return true
 }
 
-// Check finds calls of unexported method from unexported type
-// outside that type.
-//
 // TODO: update description and warning message
 func (c *unexportedCallChecker) CheckLocalExpr(expr ast.Expr) {
 	if call, ok := expr.(*ast.CallExpr); ok {

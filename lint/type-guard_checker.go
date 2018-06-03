@@ -7,9 +7,6 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-// typeGuardCheck finds type switches that may benefit from type guard clause.
-//
-// Rationale: code readability.
 func typeGuardCheck(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&typeGuardChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},

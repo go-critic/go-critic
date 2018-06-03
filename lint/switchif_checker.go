@@ -4,10 +4,6 @@ import (
 	"go/ast"
 )
 
-// switchifCheck detects switch statements that could be better
-// written as if statements.
-//
-// Rationale: code readability.
 func switchifCheck(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&switchifChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
