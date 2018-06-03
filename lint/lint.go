@@ -23,7 +23,7 @@ var checkFunctions = map[string]struct {
 	"underef":           {new: underefCheck},
 	"param-duplication": {new: paramDuplicationCheck},
 	"elseif":            {new: elseifCheck},
-	"big-copy":          {new: bigCopyCheck},
+	"range-val-copy":    {new: rangeValCopyCheck},
 	"long-chain":        {new: longChainCheck, experimental: true},
 	"switchif":          {new: switchifCheck},
 	"unslice":           {new: unsliceCheck},
