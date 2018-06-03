@@ -5,12 +5,6 @@ import (
 	"go/types"
 )
 
-// rangeExprCopyCheck detects for statements with range expressions
-// that perform excessive copying (big arrays can cause it).
-//
-// Suggested fix is to use & and doing a range over pointer to array.
-//
-// Rationale: performance.
 func rangeExprCopyCheck(ctx *context) func(*ast.File) {
 	// TODO(quasilyte): there is some annoying code duplication with other
 	// range statement checker. We should consider refactoring if
