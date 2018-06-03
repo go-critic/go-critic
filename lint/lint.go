@@ -23,13 +23,15 @@ var checkFunctions = map[string]struct {
 	"underef":           {new: underefCheck},
 	"param-duplication": {new: paramDuplicationCheck},
 	"elseif":            {new: elseifCheck},
-	"big-copy":          {new: bigCopyCheck},
+	"range-val-copy":    {new: rangeValCopyCheck},
 	"long-chain":        {new: longChainCheck, experimental: true},
 	"switchif":          {new: switchifCheck},
 	"unslice":           {new: unsliceCheck},
 	"comments":          {new: commentsCheck},
 	"unexported-call":   {new: unexportedCallCheck},
 	"builtin-shadow":    {new: builtinShadowCheck},
+	"range-expr-copy":   {new: rangeExprCopyCheck},
+	"stddef":            {new: stddefCheck},
 }
 
 // RuleList returns a slice of all rules that can be used to create checkers.
