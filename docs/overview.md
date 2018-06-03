@@ -8,7 +8,6 @@ TODO: add some useful content here
 
 Name | Experimental
 -----|------------
-   [big-copy](#big-copy-ref) | false
    [builtin-shadow](#builtin-shadow-ref) | false
    [comments](#comments-ref) | false
    [elseif](#elseif-ref) | false
@@ -17,34 +16,13 @@ Name | Experimental
    [param-name](#param-name-ref) | false
    [parenthesis](#parenthesis-ref) | false
    [range-expr-copy](#range-expr-copy-ref) | false
+   [range-val-copy](#range-val-copy-ref) | false
    [stddef](#stddef-ref) | false
    [switchif](#switchif-ref) | false
    [type-guard](#type-guard-ref) | false
    [underef](#underef-ref) | false
    [unexported-call](#unexported-call-ref) | false
    [unslice](#unslice-ref) | false
-<a name="big-copy-ref"></a>
-## big-copy
-Detects loops that copy big objects during each iteration.
-Suggests to use index access or take address and make use pointer instead.
-
-**Before:**
-```go
-xs := make([][1024]byte, length)
-for _, x := range xs {
-	// Loop body.
-}
-```
-
-**After:**
-```go
-xs := make([][1024]byte, length)
-for i := range xs {
-	x := &xs[i]
-	// Loop body.
-}
-```
-
 <a name="builtin-shadow-ref"></a>
 ## builtin-shadow
 Detects when
@@ -217,6 +195,28 @@ for _, x := range xs {
 ```go
 var xs [256]byte
 for _, x := range &xs {
+	// Loop body.
+}
+```
+
+<a name="range-val-copy-ref"></a>
+## range-val-copy
+Detects loops that copy big objects during each iteration.
+Suggests to use index access or take address and make use pointer instead.
+
+**Before:**
+```go
+xs := make([][1024]byte, length)
+for _, x := range xs {
+	// Loop body.
+}
+```
+
+**After:**
+```go
+xs := make([][1024]byte, length)
+for i := range xs {
+	x := &xs[i]
 	// Loop body.
 }
 ```
