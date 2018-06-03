@@ -30,6 +30,7 @@ var checkFunctions = map[string]struct {
 	"comments":          {new: commentsCheck},
 	"unexported-call":   {new: unexportedCallCheck},
 	"builtin-shadow":    {new: builtinShadowCheck},
+	"range-expr-copy":   {new: rangeExprCopyCheck},
 	"stddef":            {new: stddefCheck},
 }
 
