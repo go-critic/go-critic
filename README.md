@@ -21,6 +21,10 @@ You can use this tool to make whole codebase checks from time to time.
 
 There is never too much static code analysis. Try it out.
 
+## Documentation
+
+Latest documentation is available in [docs/overview.md](docs/overview.md).
+
 ## Quick start / installation
 
 ```
