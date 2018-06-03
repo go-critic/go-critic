@@ -38,10 +38,6 @@ func main() {
 			Description:  desc,
 		})
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	buf := bytes.Buffer{}
 	err = tmpl.Execute(&buf, struct {
 		Checkers []checker
