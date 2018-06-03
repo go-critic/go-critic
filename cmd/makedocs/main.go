@@ -59,8 +59,5 @@ func main() {
 
 func getDesc(name string) (string, error) {
 	b, err := ioutil.ReadFile(checkersPath + name + ".md")
-	if err != nil {
-		return "", err
-	}
-	return string(b), nil
+	return string(b), err
 }
