@@ -42,12 +42,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tmpl.Execute(file, struct {
+	err = tmpl.Execute(file, struct {
 		Checkers []checker
 	}{
 		Checkers: checkers,
 	})
-	file.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = file.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getDesc(name string) (string, error) {

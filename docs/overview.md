@@ -1,3 +1,5 @@
+[//]: # (This is generated file, please don't edit it yourself.)
+
 ## Overview
 
 TODO: add some useful content here
@@ -6,23 +8,27 @@ TODO: add some useful content here
 
 Name | Experimental
 -----|------------
-   big-copy | false
-   builtin-shadow | false
-   comments | false
-   elseif | false
-   long-chain | true
-   param-duplication | false
-   param-name | false
-   parenthesis | false
-   switchif | false
-   type-guard | false
-   underef | false
-   unexported-call | false
-   unslice | false
+   [big-copy](#big-copy-ref) | false
+   [builtin-shadow](#builtin-shadow-ref) | false
+   [comments](#comments-ref) | false
+   [elseif](#elseif-ref) | false
+   [long-chain](#long-chain-ref) | true
+   [param-duplication](#param-duplication-ref) | false
+   [param-name](#param-name-ref) | false
+   [parenthesis](#parenthesis-ref) | false
+   [range-expr-copy](#range-expr-copy-ref) | false
+   [stddef](#stddef-ref) | false
+   [switchif](#switchif-ref) | false
+   [type-guard](#type-guard-ref) | false
+   [underef](#underef-ref) | false
+   [unexported-call](#unexported-call-ref) | false
+   [unslice](#unslice-ref) | false
+<a name="big-copy-ref"></a>
 ## big-copy
 Detects loops that copy big objects during each iteration.
 Suggests to use index access or take address and make use pointer instead.
 
+**Before:**
 ```go
 xs := make([][1024]byte, length)
 for _, x := range xs {
@@ -30,6 +36,7 @@ for _, x := range xs {
 }
 ```
 
+**After:**
 ```go
 xs := make([][1024]byte, length)
 for i := range xs {
@@ -38,6 +45,7 @@ for i := range xs {
 }
 ```
 
+<a name="builtin-shadow-ref"></a>
 ## builtin-shadow
 Detects when
 [predeclared identifiers](https://golang.org/ref/spec#Predeclared_identifiers)
@@ -64,6 +72,7 @@ func main() {
     println(length)
 }
 ```
+<a name="comments-ref"></a>
 ## comments
 Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
 
@@ -85,6 +94,7 @@ func Foo() {
 
 ```
 
+<a name="elseif-ref"></a>
 ## elseif
 Detects repeated if-else statements and suggests to replace them with switch statement.
 
@@ -114,6 +124,7 @@ default:
 }
 ```
 
+<a name="long-chain-ref"></a>
 ## long-chain
 Detects repeated expression chains and suggest to refactor them.
 
@@ -140,6 +151,7 @@ v := (a&#43;x) &#43; (b&#43;x) &#43; (c&#43;x)
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
 
+<a name="param-duplication-ref"></a>
 ## param-duplication
 Detects if function parameters could be combined by type and suggest the way to do it.
 
@@ -153,6 +165,7 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 func foo(a, b, c, d, e, f, g int) {}
 ```
 
+<a name="param-name-ref"></a>
 ## param-name
 Detects potential issues in function parameter names.
 
@@ -169,6 +182,7 @@ func f(IN int, OUT *int) (ERR error) {}
 func f(in int, out *int) (err error) {}
 ```
 
+<a name="parenthesis-ref"></a>
 ## parenthesis
 Detects unneded parenthesis inside type expressions and suggests to remove them.
 
@@ -187,6 +201,47 @@ func foo() []func([]func()) {
 ```
 
 
+<a name="range-expr-copy-ref"></a>
+## range-expr-copy
+Detects `for` statements with range expressions that perform excessive
+copying (big arrays can cause it).
+
+Suggests to use pointer to array to avoid the copy using `&amp;` on range expression.
+
+**Before:**
+```go
+var xs [256]byte
+for _, x := range xs {
+	// Loop body.
+}
+```
+
+**After:**
+```go
+var xs [256]byte
+for _, x := range &amp;xs {
+	// Loop body.
+}
+```
+
+<a name="stddef-ref"></a>
+## stddef
+Detects constant expressions that can be replaced by a named constant
+from standard library, like `math.MaxInt32`.
+
+**Before:**
+```go
+intBytes := make([]byte, unsafe.Sizeof(0))
+maxVal := 1&lt;&lt;7 - 1
+```
+
+**After:**
+```go
+intBytes := make([]byte, bits.IntSize)
+maxVal := math.MaxInt8
+```
+
+<a name="switchif-ref"></a>
 ## switchif
 Detects switch statements that could be better written as if statements.
 
@@ -205,6 +260,7 @@ if x, ok := x.(int); ok {
 }
 ```
 
+<a name="type-guard-ref"></a>
 ## type-guard
 Detects type switches that cab benefit from type guard clause.
 
@@ -242,6 +298,7 @@ func f() int {
 }
 ```
 
+<a name="underef-ref"></a>
 ## underef
 Detects expressions with C style field selection and suggest Go style correction.
 
@@ -257,6 +314,7 @@ k.field = 5
 _ := a[5]
 ```
 
+<a name="unexported-call-ref"></a>
 ## unexported-call
 Finds calls of unexported method from unexported type outside that type.
 
@@ -283,6 +341,7 @@ func baz() {
 }
 ```
 
+<a name="unslice-ref"></a>
 ## unslice
 Detects slice expressions that can be simplified to sliced expression itself.
 
@@ -297,3 +356,4 @@ copy(b[:], values...) // b is []byte
 f(s)
 copy(b, values...)
 ```
+

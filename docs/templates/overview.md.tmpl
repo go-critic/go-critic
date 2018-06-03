@@ -1,3 +1,5 @@
+[//]: # (This is generated file, please don't edit it yourself.)
+
 ## Overview
 
 TODO: add some useful content here
@@ -7,10 +9,11 @@ TODO: add some useful content here
 Name | Experimental
 -----|------------
 {{- range .Checkers }}
-   {{ .Name }} | {{ .Experimental }}
+   [ {{- .Name -}} ](# {{- .Name -}} -ref) | {{ .Experimental }}
 {{- end }}
 
 {{- range .Checkers }}
+<a name=" {{- .Name -}} -ref"></a>
 ## {{ .Name }}
 {{ .Description }}
 {{- end }}
