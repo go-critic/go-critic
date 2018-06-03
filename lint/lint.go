@@ -31,6 +31,7 @@ var checkFunctions = map[string]struct {
 	"unexported-call":   {new: unexportedCallCheck},
 	"builtin-shadow":    {new: builtinShadowCheck},
 	"range-expr-copy":   {new: rangeExprCopyCheck},
+	"stddef":            {new: stddefCheck},
 }
 
 // RuleList returns a slice of all rules that can be used to create checkers.
