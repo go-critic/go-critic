@@ -43,6 +43,28 @@ func wrapParamListChecker(c paramListChecker) func(*ast.File) {
 	}
 }
 
+type funcDeclChecker interface {
+	CheckFuncDecl(*ast.FuncDecl)
+}
+
+type baseFuncDeclChecker struct {
+	ctx *context
+}
+
+// wrapFuncDeclChecker returns a check function that visits every
+// top-level function declaration.
+//
+// CheckLocalExpr calls on every function declaration.
+func wrapFuncDeclChecker(c funcDeclChecker) func(*ast.File) {
+	return func(f *ast.File) {
+		for _, decl := range f.Decls {
+			if decl, ok := decl.(*ast.FuncDecl); ok {
+				c.CheckFuncDecl(decl)
+			}
+		}
+	}
+}
+
 type localExprChecker interface {
 	PerFuncInit(*ast.FuncDecl) bool
 	CheckLocalExpr(ast.Expr)
