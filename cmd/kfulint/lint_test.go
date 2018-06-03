@@ -75,7 +75,7 @@ func TestOutput(t *testing.T) {
 		t.Run(rule.name, func(t *testing.T) {
 			pkgPath := linterCmdPath + "testdata/" + rule.name
 			testFilename := filepath.Join(
-				"testdata", rule.name, "checker_tests.go")
+				"testdata", rule.name, "positive_tests.go")
 			f := parseTestFile(t, testFilename)
 
 			// Running the linter.
