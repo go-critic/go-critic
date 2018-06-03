@@ -4,10 +4,6 @@ import (
 	"go/ast"
 )
 
-// parenthesisCheck detects unneded parenthesis inside type expressions
-// and suggests to remove them.
-//
-// Rationale: code readability.
 func parenthesisCheck(ctx *context) func(*ast.File) {
 	return wrapTypeExprChecker(&parenthesisChecker{
 		baseTypeExprChecker: baseTypeExprChecker{ctx: ctx},
