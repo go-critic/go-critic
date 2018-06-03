@@ -47,8 +47,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = ioutil.WriteFile(docsPath+"overview.md", buf.Bytes(), 0600)
-	if err != nil {
+	if err := ioutil.WriteFile(docsPath+"overview.md", buf.Bytes(), 0600); err != nil {
 		log.Fatal(err)
 	}
 }
