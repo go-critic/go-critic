@@ -25,13 +25,9 @@ import (
 // specifically. For example, it's invalid to suggest math.* consts
 // for math package itself.
 
-// stddefCheck runs constexpr checks for to find whether they can
-// be replaced by a named constant from stdlib, like math.MaxInt32.
-//
-// Rationale: code readability.
-//
-// TODO: variables, types.
+// TODO(quasilyte): variables, types.
 // For example: func(http.ResponseWriter, *http.Request) => http.HandlerFunc.
+
 func stddefCheck(ctx *context) func(*ast.File) {
 	expr := func(s string) ast.Expr {
 		x, err := parser.ParseExpr(s)
