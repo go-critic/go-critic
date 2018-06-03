@@ -8,12 +8,6 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-// longChainCheck detects repeated expression chains and suggest to refactor them.
-//
-// Rationale: code readability.
-//
-// Experimental because gives false-positives for:
-//	- Cases with re-assignment. See $GOROOT/src/crypto/md5/md5block.go for example.
 func longChainCheck(ctx *context) func(*ast.File) {
 	return wrapLocalExprChecker(&longChainChecker{
 		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},

@@ -5,8 +5,6 @@ import (
 	"go/types"
 )
 
-// unsliceCheck finds slice expressions that can be
-// simplified to sliced expression.
 func unsliceCheck(ctx *context) func(*ast.File) {
 	return wrapLocalExprChecker(&unsliceChecker{
 		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},

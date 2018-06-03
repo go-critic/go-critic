@@ -4,13 +4,6 @@ import (
 	"go/ast"
 )
 
-// elseifCheck finds repeated if-else statements and suggests to replace
-// them with switch statement.
-//
-// Rationale: code readability.
-//
-// Permits single else or else-if; repeated else-if or else + else-if
-// will trigger suggestion to use switch statement.
 func elseifCheck(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&elseifChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},

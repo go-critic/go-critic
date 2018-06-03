@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-// bigCopyCheck finds places where big value copy could be unexpected.
-// Detects large value copies in non-testing functions.
-//
-// Rationale: performance.
 func bigCopyCheck(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&bigCopyChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
