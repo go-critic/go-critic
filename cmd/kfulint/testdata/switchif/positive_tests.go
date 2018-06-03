@@ -18,3 +18,10 @@ func switchDefault(x interface{}) {
 	default:
 	}
 }
+
+func switchWithOneCase(x int) {
+	/// should rewrite switch statement to if statement
+	switch x {
+	case 1:
+	}
+}
