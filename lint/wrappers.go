@@ -54,7 +54,7 @@ type baseFuncDeclChecker struct {
 // wrapFuncDeclChecker returns a check function that visits every
 // top-level function declaration.
 //
-// CheckLocalExpr calls on every function declaration.
+// CheckLocalExpr is called on every function declaration.
 func wrapFuncDeclChecker(c funcDeclChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {

@@ -17,31 +17,27 @@ type paramDuplicationChecker struct {
 }
 
 func (c *paramDuplicationChecker) CheckFuncDecl(decl *ast.FuncDecl) {
-	opt := c.optimiseFuncType(decl.Type)
-	if !astcmp.EqualExpr(opt, decl.Type) {
-		c.warn(decl.Type, opt)
+	typ := c.optimizeFuncType(decl.Type)
+	if !astcmp.EqualExpr(typ, decl.Type) {
+		c.warn(decl.Type, typ)
 	}
 }
 
-func (c *paramDuplicationChecker) optimiseFuncType(f *ast.FuncType) *ast.FuncType {
-	res := c.optimiseParams(f.Results)
-	par := c.optimiseParams(f.Params)
+func (c *paramDuplicationChecker) optimizeFuncType(f *ast.FuncType) *ast.FuncType {
 	return &ast.FuncType{
-		Params:  par,
-		Results: res,
+		Params:  c.optimizeParams(f.Params),
+		Results: c.optimizeParams(f.Results),
 	}
 }
-func (c *paramDuplicationChecker) optimiseParams(params *ast.FieldList) *ast.FieldList {
+func (c *paramDuplicationChecker) optimizeParams(params *ast.FieldList) *ast.FieldList {
 	if params == nil || len(params.List) < 2 {
 		return params
 	}
 
-	newParams := &ast.FieldList{
-		List: []*ast.Field{},
-	}
+	list := []*ast.Field{}
 	names := make([]*ast.Ident, len(params.List[0].Names))
 	copy(names, params.List[0].Names)
-	newParams.List = append(newParams.List, &ast.Field{
+	list = append(list, &ast.Field{
 		Names: names,
 		Type:  params.List[0].Type,
 	})
@@ -49,16 +45,18 @@ func (c *paramDuplicationChecker) optimiseParams(params *ast.FieldList) *ast.Fie
 		names = make([]*ast.Ident, len(p.Names))
 		copy(names, p.Names)
 		if astcmp.EqualExpr(p.Type, params.List[i].Type) {
-			newParams.List[len(newParams.List)-1].Names =
-				append(newParams.List[len(newParams.List)-1].Names, names...)
+			list[len(list)-1].Names =
+				append(list[len(list)-1].Names, names...)
 		} else {
-			newParams.List = append(newParams.List, &ast.Field{
+			list = append(list, &ast.Field{
 				Names: names,
 				Type:  params.List[i+1].Type,
 			})
 		}
 	}
-	return newParams
+	return &ast.FieldList{
+		List: list,
+	}
 }
 
 func (c *paramDuplicationChecker) warn(f1, f2 *ast.FuncType) {
