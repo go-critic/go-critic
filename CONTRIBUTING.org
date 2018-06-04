@@ -8,7 +8,7 @@ Some sections are copied from [[https://rfc.zeromq.org/spec:42/C4/][ZeroMQ C4]] 
 
 There are three main ways to contribute:
 
-1. Join [[https://github.com/PieselBois/kfulint/issues][issue tracker]] and help us witt
+1. Join [[https://github.com/PieselBois/kfulint/issues][issue tracker]] and help us with
    feature requests, bug reports (including false-positive results), etc.
 
 2. Submit code patches: you can add a new checker, fix or improve already existing checkers
@@ -54,3 +54,31 @@ like typo or missing doc comment. You can also filter issues by using
 ** How to write issues
 *** Issues naming guidelines
 *** How to choose correct label
+
+** How to add new checker
+
+1. Come up with checker idea. Concentrate on what it checks.
+2. Select one of the base checkers kind (example: expr checker, stmt checker, etc.).
+3. Define checker type and constructor function.
+4. Add entry to checkers list in 
+#+BEGIN_SRC golang 
+lint.go 
+#+END_SRC.
+It could be a good idea to mark recently added checker as 
+#+BEGIN_SRC golang
+experimental.
+#+END_SRC.
+5. Add test directory that is named after the checker in 
+#+BEGIN_SRC golang
+cmd/kfulint/testdata.
+#+END_SRC.
+6. Add 
+#+BEGIN_SRC golang
+positive_tests.go and negative_tests.go
+#+END_SRC.
+files in that directory and add some positive and negative tests there.
+7. Run tests. They must fail as your checker does not check anything yet. Tests can be run with 
+#+BEGIN_SRC golang
+go test -v github.com/PieselBois/kfulint/cmd/kfulint.
+#+END_SRC.
+8. Implement checker itself. Make tests pass.
