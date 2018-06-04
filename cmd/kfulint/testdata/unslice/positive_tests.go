@@ -6,11 +6,3 @@ func withWarning() {
 	/// could simplify s[:] to s
 	_ = s[:]
 }
-
-func noWarning() {
-	var s string
-
-	_ = s[1:]
-	_ = s[:1]
-	_ = s
-}

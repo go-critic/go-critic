@@ -5,8 +5,3 @@ package checker_test
 func Foo() {
 
 }
-
-// Bar returns string.
-func Bar() {
-
-}
