@@ -49,5 +49,5 @@ fix them by ourselves. Experimental and work-in-progress checkers are isolated, 
 
 Code style is the same as in Go project, see [CodeReviewComments](https://github.com/golang/go/wiki/codereviewcomments).
 
-See [CONTRIBUTING.org](CONTRIBUTING.org) for more details.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 It also describes how to develop a new checker for the linter.
