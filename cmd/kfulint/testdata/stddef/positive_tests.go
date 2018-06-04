@@ -1,12 +1,8 @@
 package checker_test
 
 import (
-	"math"
-	"math/bits"
 	"unsafe"
 )
-
-func returnZero() int { return 0 }
 
 type myInt int
 
@@ -20,11 +16,6 @@ func sizeofBasicLit() {
 }
 
 func sizeofCallExpr() {
-	// Arbitrary int expressions should not trigger warnings,
-	_ = unsafe.Sizeof(returnZero())
-	_ = unsafe.Sizeof(myInt(0))
-	_ = unsafe.Sizeof(intVar)
-
 	/// can replace unsafe.Sizeof(uint(1)) with math/bits.UintSize
 	_ = unsafe.Sizeof(uint(1))
 	/// can replace unsafe.Sizeof(int(2)) with math/bits.UintSize
@@ -32,11 +23,6 @@ func sizeofCallExpr() {
 }
 
 func maxValue() {
-	// Literals should not trigger warnings because they're
-	// frequently used to specify bit masks.
-	_ = 0xff
-	_ = 0xffff
-
 	/// can replace 1<<7 - 1 with math.MaxInt8
 	_ = 1<<7 - 1
 	/// can replace -1 << 7 with math.MinInt8
@@ -106,8 +92,6 @@ func mathPi() {
 }
 
 func mathE() {
-	// Not precise enough to trigger a warning:
-	_ = 2.7182
 	// But this is a special (common) case:
 	/// can replace 2.71 with math.E
 	_ = 2.71
@@ -154,19 +138,4 @@ func timeStrings() {
 	_ = "Mon Jan _2 15:04:05 MST 2006"
 	/// can replace "3:04PM" with time.Kitchen
 	_ = "3:04PM"
-}
-
-func baitFalsePositives() {
-	// No warnings should occur if constatns are used.
-
-	// Note: avoid importing packages that have many dependencies
-	// because it will slow testing down significantly.
-	// For example, importing net/http can make test run a few seconds
-	// longer than without it.
-
-	_ = math.MaxInt32
-	_ = math.MaxInt16
-	_ = math.Pi
-	_ = math.E
-	_ = bits.UintSize
 }

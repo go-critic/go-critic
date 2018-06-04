@@ -1,12 +1,5 @@
 package checker_test
 
-func good1(a, b int)                {}
-func good2(a, b int, c int32)       {}
-func good3(a, b, c int)             {}
-func good4(a int, b int32, c int64) {}
-func good5(a int)                   {}
-func good6()                        {}
-
 /// func(a int, b int, c int) could be replaced with func(a, b, c int)
 func simple1(a int, b int, c int) {}
 
@@ -39,8 +32,6 @@ func mixedStyle7() (a, b int, c, d int) { return 0, 0, 0, 0 }
 
 /// func(a int, b, c int) (d int, e int) could be replaced with func(a, b, c int) (d, e int)
 func mixedStyle8(a int, b, c int) (d int, e int) { return a, c }
-
-func mixedTypes(a, b int, c, d int64) {}
 
 /// func(a int, b int, c int64, d int, e, f int64, _, g int64, h int, k int) could be replaced with func(a, b int, c int64, d int, e, f, _, g int64, h, k int)
 func mixedTypeWarn(a int, b int, c int64, d int, e, f int64, _, g int64, h int, k int) {}
