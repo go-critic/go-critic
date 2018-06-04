@@ -25,17 +25,17 @@ like typo or missing doc comment. You can also filter issues by using
 
 ### Code review: accepted abbreviations
 
-    **LGTM** — looks good to me
+**LGTM** — looks good to me
 
-    **SGTM** — sounds good to me
+**SGTM** — sounds good to me
 
-    **PTAL** — please take a look
+**PTAL** — please take a look
 
-    **s/foo/bar/** — replace foo with bar; this is sed syntax
+**s/foo/bar/** — replace foo with bar; this is sed syntax
 
-    **s/foo/bar/g** — replace foo with bar throughout your entire change
+**s/foo/bar/g** — replace foo with bar throughout your entire change
 
-    See [CodeReview](https://github.com/golang/go/wiki/CodeReview).
+See [CodeReview](https://github.com/golang/go/wiki/CodeReview).
 
 ### Code review: main rules
 
