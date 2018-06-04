@@ -60,10 +60,18 @@ See [CodeReview](https://github.com/golang/go/wiki/CodeReview).
 ## How to add new checker
 
 1. Come up with checker idea. Concentrate on what it checks.
+
 2. Select one of the base checkers kind (example: expr checker, stmt checker, etc.).
+
 3. Define checker type and constructor function.
+
 4. Add entry to checkers list in `lint.go`. It could be a good idea to mark recently added checker as `experimental`.
+
 5. Add test directory that is named after the checker in `cmd/kfulint/testdata`.
+
 6. Add `positive_tests.go` and `negative_tests.go` files in that directory and add some positive and negative tests there.
-7. Run tests. They must fail as your checker does not check anything yet. Tests can be run with `go test -v github.com/PieselBois/kfulint/cmd/kfulint`.
+
+7. Run tests. They must fail as your checker does not check anything yet.  
+Tests can be run with `go test -v github.com/PieselBois/kfulint/cmd/kfulint`.
+
 8. Implement checker itself. Make tests pass.
