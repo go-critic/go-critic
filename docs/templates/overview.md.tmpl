@@ -2,7 +2,7 @@
 
 ## Overview
 
-TODO: add some useful content here
+Go source code linter that brings checks that are currently not implemented in other linters.
 
 ## Checkers
 
