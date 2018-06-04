@@ -34,24 +34,6 @@ const _ (int) = 5
 /// could simplify (int) to int
 type _ (int)
 
-const ALAST = 1
-
-var opindex [(ALAST + 1) & 3]*int
-
-var _ [(ALAST + 100 - 20*5)]*int
-
-var _ func(int, string)
-
-type myString string
-
-func convertPtr(x string) *myString {
-	return (*myString)(&x)
-}
-
-func multipleReturn() (int, bool) {
-	return 1, true
-}
-
 type myStruct1 struct {
 	/// could simplify (int) to int
 	x (int)

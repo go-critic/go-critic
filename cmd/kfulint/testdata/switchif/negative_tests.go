@@ -10,14 +10,14 @@ func intValue1(x interface{}) int {
 	return 0
 }
 
-func switchWithOneCaseDefault(x int) {
+func switchWithOneCaseAndDefault(x int) {
 	switch x {
 	default:
 	case 1:
 	}
 }
 
-func switchWithTwoCase(x int) {
+func switchWithTwoCases(x int) {
 	switch x {
 	case 1:
 	case 2:
