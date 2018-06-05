@@ -39,7 +39,7 @@ Add linter to your `$PATH` or run it directly:
 ./bin/kfulint package/path/to/lint
 ```
 
-Usage of **kfulint**: `kfulint [flags] [package ...]`
+Usage of **kfulint**: `kfulint [flags] [package]`
 
 Package: package name (one package for now)
 
