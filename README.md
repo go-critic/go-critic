@@ -25,11 +25,13 @@ There is never too much static code analysis. Try it out.
 
 Latest documentation is available in [docs/overview.md](docs/overview.md).
 
-## Quick start / installation
+## Installation
 
 ```
 go get -u github.com/PieselBois/kfulint/...
 ```
+
+## Usage
 
 Add linter to your `$PATH` or run it directly:
 
@@ -37,7 +39,22 @@ Add linter to your `$PATH` or run it directly:
 ./bin/kfulint package/path/to/lint
 ```
 
-Run `./bin/kfulint -help` for more info.
+Usage of **kfulint**: `kfulint [flags] [package]`
+
+Flags:
+```
+  -help
+        for more information
+  -enable string
+        comma-separated list of enabled checkers (default "all")
+```
+Examples:
+```
+  kfulint fmt
+        Runs all checkers on package.
+  kfulint -enable elseif,param-name fmt
+        Runs specified checkers on package. 
+```
 
 ## Contributing
 
