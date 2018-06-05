@@ -44,9 +44,9 @@ Run `kfulint -help` for more information.
 Usage of **kfulint**: `kfulint [flags] [package]`
 
 Examples:  
-| `kfulint fmt`                            | Runs all checkers on fmt package.
-|------------------------------------------|--------------------------------------
-| `kfulint -enable elseif,param-name fmt`  | Runs specified checkers on package.
+| `kfulint fmt`                            | Runs all checkers on fmt package.    |
+|------------------------------------------|--------------------------------------|
+| `kfulint -enable elseif,param-name fmt`  | Runs specified checkers on package.  |
 
 ## Contributing
 
