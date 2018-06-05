@@ -39,22 +39,13 @@ Add linter to your `$PATH` or run it directly:
 ./bin/kfulint package/path/to/lint
 ```
 
+Run `kfulint -help` for more information.
+
 Usage of **kfulint**: `kfulint [flags] [package]`
 
-Flags:
-```
-  -help
-        for more information
-  -enable string
-        comma-separated list of enabled checkers (default "all")
-```
 Examples:
-```
-  kfulint fmt
-        Runs all checkers on package.
-  kfulint -enable elseif,param-name fmt
-        Runs specified checkers on package. 
-```
+`kfulint fmt`                                  Runs all checkers on fmt package.
+`kfulint -enable elseif,param-name fmt`        Runs specified checkers on package.
 
 ## Contributing
 
