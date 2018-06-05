@@ -32,7 +32,7 @@ var checkFunctions = map[string]struct {
 	"builtin-shadow":    {new: builtinShadowCheck},
 	"range-expr-copy":   {new: rangeExprCopyCheck},
 	"stddef":            {new: stddefCheck},
-	"ptr-to-ref-param":  {new: ptrToRefTypeParamCheck},
+	"ptr-to-ref-param":  {new: ptrToRefParamCheck},
 }
 
 // RuleList returns a slice of all rules that can be used to create checkers.
