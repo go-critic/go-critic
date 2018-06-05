@@ -41,8 +41,6 @@ Add linter to your `$PATH` or run it directly:
 
 Usage of **kfulint**: `kfulint [flags] [package]`
 
-Package: package name (one package for now)
-
 Flags:
 ```
   -help
