@@ -49,7 +49,7 @@ func (c *ptrToRefTypeParamChecker) warn(id *ast.Ident) {
 
 func isRefType(x types.Type) bool {
 	switch x.(type) {
-	case *types.Map, *types.Chan:
+	case *types.Map, *types.Chan, *types.Slice:
 		return true
 	default:
 		return false

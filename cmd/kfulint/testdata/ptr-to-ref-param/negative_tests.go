@@ -1,20 +1,20 @@
 package checker_test
 
-// OK: returned valus is not addressible, can't take address.
-func ok1(m map[int]string) (k chan float64) {
+// OK: regular reference types
+func ok1(m map[int]string, c []string) (k chan float64) {
 	return nil
 }
 
-/// OK: 1
+/// OK: just a regular chan
 func ok2(ch chan string) {}
 
-/// OK: 1231
+/// OK: fine
 func ok3(a *int, ch chan string) {}
 
-/// OK: 13123
+/// OK: pointers to underlaying types are acceptable
 func ok4(ch chan *string) chan *int {
 	return nil
 }
 
-/// OK: 131
+/// OK: just a func
 func ok5() {}
