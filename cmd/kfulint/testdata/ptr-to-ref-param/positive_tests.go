@@ -12,9 +12,9 @@ func f2(ch *chan string) {}
 /// consider `m' to be of non-pointer type
 func f3(a int, m *map[int]string, s string) {}
 
+/// consider `slice' to be of non-pointer type
 /// consider `ch' to be of non-pointer type
-/// consider `ch2' to be of non-pointer type
-func f4(ch *[]string) (ch2 *chan *int) {
+func f4(slice *[]string) (ch *chan *int) {
 	return nil
 }
 
