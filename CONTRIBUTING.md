@@ -64,7 +64,7 @@ Incorrect naming:
 please add some useful content about issues in our contributing.md
 ```
 
-2. Issue description should contain detailed information about it. If it is bug request please write steps to reproduce it.
+2. Issue description should contain detailed information about it. If it is bug request, please write steps to reproduce it.
 If it is feature request, please describe problem it could solve. Also you could tell us your solution to that problem.
 
 These rules aslo applies to **pull requests**.
