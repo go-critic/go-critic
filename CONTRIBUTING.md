@@ -52,10 +52,22 @@ See [CodeReview](https://github.com/golang/go/wiki/CodeReview).
 - Any Contributor who has value judgments on a patch SHOULD express these via their own patches.
 
 ## How to write issues
+1. Choose correct name to the issue. It should start with path to the checker/folder/doc/etc... it belongs to. Then should be short description of the issue.
 
-### Issues naming guidelines
+Correct naming: 
+```
+docs/contributing.md: add info about issues.
+```
 
-### How to choose correct label
+Incorrect naming: 
+```
+please add some useful content about issues in our contributing.md
+```
+
+2. Issue description should contain detailed information about it. If it is bug request, please write steps to reproduce it.
+If it is feature request, please describe problem it could solve. Also you could tell us your solution to that problem.
+
+These rules aslo applies to **pull requests**.
 
 ## How to add new checker
 
