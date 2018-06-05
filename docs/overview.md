@@ -15,6 +15,7 @@ Name | Experimental
    [param-duplication](#param-duplication-ref) | false
    [param-name](#param-name-ref) | false
    [parenthesis](#parenthesis-ref) | false
+   [ptr-to-ref-param](#ptr-to-ref-param-ref) | false
    [range-expr-copy](#range-expr-copy-ref) | false
    [range-val-copy](#range-val-copy-ref) | false
    [stddef](#stddef-ref) | false
@@ -175,6 +176,23 @@ func foo() []func([]func()) {
 }
 ```
 
+
+<a name="ptr-to-ref-param-ref"></a>
+## ptr-to-ref-param
+Detects input and output parameters that have a type of pointer to referential type.
+
+**Before:**
+```go
+func f(m *map[string]int) (ch *chan *int)
+```
+
+**After:**
+```go
+func f(m map[string]int) (ch chan *int)
+```
+
+> Slices are not as referential as maps or channels, but it's usually
+> better to return them by value rather than modyfing them by pointer.
 
 <a name="range-expr-copy-ref"></a>
 ## range-expr-copy
