@@ -16,9 +16,7 @@ type ptrToRefTypeParamChecker struct {
 }
 
 func (c *ptrToRefTypeParamChecker) CheckFuncDecl(fn *ast.FuncDecl) {
-	if fn.Type.Params != nil {
-		c.checkParams(fn.Type.Params.List)
-	}
+	c.checkParams(fn.Type.Params.List)
 	if fn.Type.Results != nil {
 		c.checkParams(fn.Type.Results.List)
 	}
@@ -33,7 +31,7 @@ func (c *ptrToRefTypeParamChecker) checkParams(params []*ast.Field) {
 
 		if isRefType(ptr.Elem().Underlying()) {
 			if len(param.Names) == 0 {
-				c.ctx.Warn(param, "consider to make returning type of non-pointer type")
+				c.ctx.Warn(param, "consider to make non-pointer type for `%s`", ptr.String())
 			} else {
 				for i := range param.Names {
 					c.warn(param.Names[i])

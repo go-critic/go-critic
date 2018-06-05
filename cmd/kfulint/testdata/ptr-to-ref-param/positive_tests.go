@@ -20,7 +20,7 @@ func f4(ch *[]string) (ch2 *chan *int) {
 
 /// consider `a' to be of non-pointer type
 /// consider `b' to be of non-pointer type
-/// consider to make returning type of non-pointer type
+/// consider to make non-pointer type for `*chan *int`
 func f5(a, b *chan string) *chan *int {
 	return nil
 }
