@@ -56,7 +56,7 @@ See [CodeReview](https://github.com/golang/go/wiki/CodeReview).
 
 Correct naming: 
 ```
-docs/conributing.md: add info about issues.
+docs/contributing.md: add info about issues.
 ```
 
 Incorrect naming: 
@@ -64,10 +64,10 @@ Incorrect naming:
 please add some useful content about issues in our contributing.md
 ```
 
-2. In issue description provide detailed information about it. If it is bug request, please write steps, how to reproduce it.
-If it is feature request, please describe problem it could solve. Also you could tell us your solution of that problem.
+2. In issue description provide detailed information about it. If it is bug request please write steps to reproduce it.
+If it is feature request, please describe problem it could solve. Also you could tell us your solution to that problem.
 
-The above said is also applied to **pull requests**.
+These rules aslo applies to **pull requests**.
 
 ## How to add new checker
 
