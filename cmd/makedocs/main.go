@@ -6,7 +6,7 @@ import (
 	"log"
 	"text/template"
 
-	"github.com/PieselBois/kfulint/lint"
+	"github.com/go-critic/go-critic/lint"
 )
 
 const (

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/PieselBois/kfulint/lint"
+	"github.com/go-critic/go-critic/lint"
 	"golang.org/x/tools/go/loader"
 )
 
