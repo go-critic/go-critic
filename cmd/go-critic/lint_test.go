@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/PieselBois/kfulint/lint"
+	"github.com/go-critic/go-critic/lint"
 )
 
 const (
@@ -21,7 +21,7 @@ const (
 	binary = "testlint.exe"
 
 	// linterCmdPath holds full path to linter main pkg path.
-	linterCmdPath = "github.com/PieselBois/kfulint/cmd/kfulint/"
+	linterCmdPath = "github.com/go-critic/go-critic/cmd/go-critic/"
 )
 
 func TestMain(m *testing.M) {
