@@ -110,7 +110,7 @@ func (c *longChainChecker) isTypeConversion(call *ast.CallExpr) bool {
 	//	3. (x)(V) - x if either (1) or (2)
 	// T is a type name.
 
-	switch fn := unparen(call.Fun).(type) {
+	switch fn := astutil.Unparen(call.Fun).(type) {
 	case *ast.Ident:
 		_, ok := c.ctx.TypesInfo.ObjectOf(fn).(*types.TypeName)
 		return ok
