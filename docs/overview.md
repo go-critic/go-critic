@@ -6,24 +6,76 @@ Go source code linter that brings checks that are currently not implemented in o
 
 ## Checkers
 
-Name | Experimental
------|------------
-   [builtin-shadow](#builtin-shadow-ref) | false
-   [comments](#comments-ref) | false
-   [elseif](#elseif-ref) | false
-   [long-chain](#long-chain-ref) | true
-   [param-duplication](#param-duplication-ref) | false
-   [param-name](#param-name-ref) | false
-   [parenthesis](#parenthesis-ref) | false
-   [ptr-to-ref-param](#ptr-to-ref-param-ref) | false
-   [range-expr-copy](#range-expr-copy-ref) | false
-   [range-val-copy](#range-val-copy-ref) | false
-   [stddef](#stddef-ref) | false
-   [switchif](#switchif-ref) | false
-   [type-guard](#type-guard-ref) | false
-   [underef](#underef-ref) | false
-   [unexported-call](#unexported-call-ref) | false
-   [unslice](#unslice-ref) | false
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Experimental</th>
+  </tr>
+  <tr>
+    <td><a href="#builtin-shadow-ref">builtin-shadow</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#comments-ref">comments</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#elseif-ref">elseif</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#long-chain-ref">long-chain</a></td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td><a href="#param-duplication-ref">param-duplication</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#param-name-ref">param-name</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#parenthesis-ref">parenthesis</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#ptr-to-ref-param-ref">ptr-to-ref-param</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#range-expr-copy-ref">range-expr-copy</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#range-val-copy-ref">range-val-copy</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#stddef-ref">stddef</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#switchif-ref">switchif</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#type-guard-ref">type-guard</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#underef-ref">underef</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#unexported-call-ref">unexported-call</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td><a href="#unslice-ref">unslice</a></td>
+    <td>false</td>
+  </tr>
+</table>
 <a name="builtin-shadow-ref"></a>
 ## builtin-shadow
 Detects when
