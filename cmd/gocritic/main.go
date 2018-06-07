@@ -52,7 +52,7 @@ func blame(format string, args ...interface{}) {
 // Terminates program on error.
 func parseArgv(l *linter) {
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "usage: kfulint [flags] [package ...]")
+		fmt.Fprintln(os.Stderr, "usage: gocritic [flags] [package]")
 		flag.PrintDefaults()
 	}
 
