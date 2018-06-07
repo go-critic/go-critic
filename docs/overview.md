@@ -24,6 +24,10 @@ Go source code linter that brings checks that are currently not implemented in o
     <td>false</td>
   </tr>
   <tr>
+    <td><a href="#flag-deref-ref">flag-deref</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
     <td><a href="#long-chain-ref">long-chain</a></td>
     <td>true</td>
   </tr>
@@ -154,6 +158,23 @@ case cond2:
 default:
 	// Code C.
 }
+```
+
+
+<a name="flag-deref-ref"></a>
+## flag-deref
+Detects immediate dereferencing of `flag` package pointers.
+Suggests using `XxxVar` functions to achieve desired effect.
+
+**Before:**
+```go
+b := *flag.Bool("b", false, "b docs")
+```
+
+**After:**
+```go
+var b bool
+flag.BoolVar(&b, "b", false, "b docs")
 ```
 
 
