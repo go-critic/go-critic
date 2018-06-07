@@ -136,7 +136,7 @@ type Context struct {
 	//QuickFix true is quickfix mode is enabled
 	QuickFix bool
 
-	// FileMutex protect file to being changed by separate threads
+	// FileMutex protects file of being changed by separate threads
 	// only needs for Fix
 	FileMutex sync.RWMutex
 }
