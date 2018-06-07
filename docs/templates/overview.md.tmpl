@@ -6,14 +6,22 @@ Go source code linter that brings checks that are currently not implemented in o
 
 ## Checkers
 
-Name | Experimental
------|------------
-{{- range .Checkers }}
-   [ {{- .Name -}} ](# {{- .Name -}} -ref) | {{ .Experimental }}
-{{- end }}
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Experimental</th>
+  </tr>
 
-{{- range .Checkers }}
+  {{- range .Checkers }}
+  <tr>
+    <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+    <td>{{.Experimental}}</td>
+  </tr>
+  {{- end }}
+</table>
+
+{{ range .Checkers }}
 <a name=" {{- .Name -}} -ref"></a>
-## {{ .Name }}
-{{ .Description }}
-{{- end }}
+## {{.Name}}
+{{.Description}}
+{{ end }}
