@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"go/ast"
 	"go/parser"
+	"go/printer"
 	"go/types"
 	"log"
 	"os"
@@ -27,6 +29,8 @@ type linter struct {
 
 	packages        []string
 	enabledCheckers []string
+
+	quickFix bool
 }
 
 func main() {
@@ -57,6 +61,7 @@ func parseArgv(l *linter) {
 	}
 
 	enable := flag.String("enable", "all", "comma-separated list of enabled checkers")
+	l.quickFix = *flag.Bool("quickfix", false, "enables quickfix mode")
 
 	flag.Parse()
 
@@ -104,7 +109,11 @@ func (l *linter) LoadProgram() {
 	l.ctx = &lint.Context{
 		FileSet:   prog.Fset,
 		SizesInfo: sizes,
+		QuickFix:  true,
 	}
+
+	log.Print(l.ctx.QuickFix)
+
 }
 
 func (l *linter) InitCheckers() {
@@ -176,11 +185,20 @@ func (l *linter) checkFile(f *ast.File) {
 				}
 			}()
 
-			for _, warn := range c.Check(f) {
-				pos := l.ctx.FileSet.Position(warn.Node.Pos())
-				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)
+			if !l.ctx.QuickFix {
+				for _, warn := range c.Check(f) {
+					pos := l.ctx.FileSet.Position(warn.Node.Pos())
+					log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)
+				}
 			}
 		}(c)
 	}
 	wg.Wait()
+	if l.ctx.QuickFix {
+		var buf bytes.Buffer
+		if err := printer.Fprint(&buf, l.ctx.FileSet, f); err != nil {
+			panic(err)
+		}
+		log.Print(buf.String())
+	}
 }
