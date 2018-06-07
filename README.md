@@ -1,7 +1,7 @@
-# kfulint
+# go-critic
 
-[![Build Status](https://travis-ci.org/PieselBois/kfulint.svg?branch=master)](https://travis-ci.org/PieselBois/kfulint)
-[![Go Report Card](https://goreportcard.com/badge/github.com/PieselBois/kfulint)](https://goreportcard.com/report/github.com/PieselBois/kfulint)
+[![Build Status](https://travis-ci.org/go-critic/go-critic.svg?branch=master)](https://travis-ci.org/go-critic/go-critic)
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-critic/go-critic)](https://goreportcard.com/report/github.com/go-critic/go-critic)
 
 Go source code linter that brings checks that are currently not implemented in other linters.
 
@@ -23,12 +23,12 @@ There is never too much static code analysis. Try it out.
 
 ## Documentation
 
-Latest documentation is available in [docs/overview.md](docs/overview.md).
+Latest documentation is available at [go-critic.github.io](go-critic.github.io/overview).
 
 ## Installation
 
 ```
-go get -u github.com/PieselBois/kfulint/...
+go get -u github.com/go-critic/go-critic/...
 ```
 
 ## Usage
@@ -36,19 +36,19 @@ go get -u github.com/PieselBois/kfulint/...
 Add linter to your `$PATH` or run it directly:
 
 ```
-./bin/kfulint package/path/to/lint
+./bin/gocritic package/path/to/lint
 ```
 
-Run `kfulint -help` for more information.
+Run `gocritic -help` for more information.
 
-Usage of **kfulint**: `kfulint [flags] [package]`
+Usage of **gocritic**: `gocritic [flags] [package]`
 
 Examples:
 
 | Command | Description |
 | --- | --- |
-| `kfulint fmt` | Runs all checkers on fmt package |
-| `kfulint -enable elseif,param-name fmt` | Runs specified checkers on package |
+| `gocritic fmt` | Runs all checkers on fmt package |
+| `gocritic -enable elseif,param-name fmt` | Runs specified checkers on package |
 
 ## Contributing
 
