@@ -21,7 +21,7 @@ const (
 	binary = "testlint.exe"
 
 	// linterCmdPath holds full path to linter main pkg path.
-	linterCmdPath = "github.com/go-critic/go-critic/cmd/go-critic/"
+	linterCmdPath = "github.com/go-critic/go-critic/cmd/gocritic/"
 )
 
 func TestMain(m *testing.M) {
