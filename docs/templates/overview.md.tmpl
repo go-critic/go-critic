@@ -20,8 +20,8 @@ Go source code linter that brings checks that are currently not implemented in o
   {{- end }}
 </table>
 
-{{- range .Checkers }}
+{{ range .Checkers }}
 <a name=" {{- .Name -}} -ref"></a>
-## {{ .Name }}
-{{ .Description }}
-{{- end }}
+## {{.Name}}
+{{.Description}}
+{{ end }}

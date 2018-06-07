@@ -76,6 +76,8 @@ Go source code linter that brings checks that are currently not implemented in o
     <td>false</td>
   </tr>
 </table>
+
+
 <a name="builtin-shadow-ref"></a>
 ## builtin-shadow
 Detects when
@@ -100,6 +102,7 @@ func main() {
 }
 ```
 
+
 <a name="comments-ref"></a>
 ## comments
 Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
@@ -121,6 +124,7 @@ func Foo() {
 }
 
 ```
+
 
 <a name="elseif-ref"></a>
 ## elseif
@@ -152,6 +156,7 @@ default:
 }
 ```
 
+
 <a name="long-chain-ref"></a>
 ## long-chain
 Detects repeated expression chains and suggest to refactor them.
@@ -179,6 +184,7 @@ v := (a+x) + (b+x) + (c+x)
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
 
+
 <a name="param-duplication-ref"></a>
 ## param-duplication
 Detects if function parameters could be combined by type and suggest the way to do it.
@@ -192,6 +198,7 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 ```go
 func foo(a, b, c, d, e, f, g int) {}
 ```
+
 
 <a name="param-name-ref"></a>
 ## param-name
@@ -209,6 +216,7 @@ func f(IN int, OUT *int) (ERR error) {}
 ```go
 func f(in int, out *int) (err error) {}
 ```
+
 
 <a name="parenthesis-ref"></a>
 ## parenthesis
@@ -229,6 +237,7 @@ func foo() []func([]func()) {
 ```
 
 
+
 <a name="ptr-to-ref-param-ref"></a>
 ## ptr-to-ref-param
 Detects input and output parameters that have a type of pointer to referential type.
@@ -245,6 +254,7 @@ func f(m map[string]int) (ch chan *int)
 
 > Slices are not as referential as maps or channels, but it's usually
 > better to return them by value rather than modyfing them by pointer.
+
 
 <a name="range-expr-copy-ref"></a>
 ## range-expr-copy
@@ -269,6 +279,7 @@ for _, x := range &xs {
 }
 ```
 
+
 <a name="range-val-copy-ref"></a>
 ## range-val-copy
 Detects loops that copy big objects during each iteration.
@@ -291,6 +302,7 @@ for i := range xs {
 }
 ```
 
+
 <a name="stddef-ref"></a>
 ## stddef
 Detects constant expressions that can be replaced by a named constant
@@ -307,6 +319,7 @@ maxVal := 1<<7 - 1
 intBytes := make([]byte, bits.IntSize)
 maxVal := math.MaxInt8
 ```
+
 
 <a name="switchif-ref"></a>
 ## switchif
@@ -326,6 +339,7 @@ if x, ok := x.(int); ok {
    ...
 }
 ```
+
 
 <a name="type-guard-ref"></a>
 ## type-guard
@@ -365,6 +379,7 @@ func f() int {
 }
 ```
 
+
 <a name="underef-ref"></a>
 ## underef
 Detects expressions with C style field selection and suggest Go style correction.
@@ -380,6 +395,7 @@ _ := (*a)[5] // only if a is array
 k.field = 5
 _ := a[5]
 ```
+
 
 <a name="unexported-call-ref"></a>
 ## unexported-call
@@ -408,6 +424,7 @@ func baz() {
 }
 ```
 
+
 <a name="unslice-ref"></a>
 ## unslice
 Detects slice expressions that can be simplified to sliced expression itself.
@@ -423,4 +440,5 @@ copy(b[:], values...) // b is []byte
 f(s)
 copy(b, values...)
 ```
+
 
