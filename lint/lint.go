@@ -33,6 +33,7 @@ var checkFunctions = map[string]struct {
 	"range-expr-copy":   {new: rangeExprCopyCheck},
 	"stddef":            {new: stddefCheck},
 	"ptr-to-ref-param":  {new: ptrToRefParamCheck},
+	"flag-deref":        {new: flagDerefCheck},
 }
 
 // RuleList returns a slice of all rules that can be used to create checkers.

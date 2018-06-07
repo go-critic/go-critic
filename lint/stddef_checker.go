@@ -177,7 +177,7 @@ func (c *stddefChecker) checkBasicLit(expr ast.Expr, val constant.Value) {
 }
 
 func (c *stddefChecker) checkCallExpr(call *ast.CallExpr) {
-	if c.matchCallFunc(call, "unsafe", "Sizeof") {
+	if functionName(call) == "unsafe.Sizeof" {
 		switch x := call.Args[0].(type) {
 		case *ast.BasicLit:
 			if x.Kind == token.INT {
@@ -195,20 +195,6 @@ func (c *stddefChecker) checkCallExpr(call *ast.CallExpr) {
 			}
 		}
 	}
-}
-
-// matchCallFunc reports whether call function is of form $funcName or $pkgName.$funcName.
-func (c *stddefChecker) matchCallFunc(call *ast.CallExpr, pkgName, funcName string) bool {
-	if pkgName != "" {
-		fnExpr, ok := call.Fun.(*ast.SelectorExpr)
-		if !ok {
-			return false
-		}
-		pkg, ok := fnExpr.X.(*ast.Ident)
-		return ok && pkg.Name == pkgName && fnExpr.Sel.Name == funcName
-	}
-	fnExpr, ok := call.Fun.(*ast.Ident)
-	return ok && fnExpr.Name == funcName
 }
 
 func (c *stddefChecker) warn(expr ast.Expr, suggestion string) {
