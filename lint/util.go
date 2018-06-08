@@ -31,16 +31,12 @@ func (ctx *context) IsUnitTestFuncDecl(fn *ast.FuncDecl) bool {
 	return false
 }
 
-// functionName returns called function fully-quallified name.
+// qualifiedName returns called expr fully-quallified name.
 //
-// It works for simple function calls like f() => "f" and functions
-// from other package like pkg.f() => "pkg.f".
+// It works for simple identifiers like f => "f" and identifiers
+// from other package like pkg.f => "pkg.f".
 //
 // For all unexpected expressions returns empty string.
-func functionName(x *ast.CallExpr) string {
-	return qualifiedName(x.Fun)
-}
-
 func qualifiedName(x ast.Expr) string {
 	switch x := x.(type) {
 	case *ast.SelectorExpr:
