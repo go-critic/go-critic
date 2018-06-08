@@ -14,4 +14,14 @@ func warnings() {
 	default:
 		println("2")
 	}
+
+	/// replace 'switch true := false; true {}' with 'switch true := false; {}'
+	switch true := false; true {
+	case 1 < 0:
+	case -1 > 0:
+	}
+
+	/// replace 'switch _ = true; true {}' with 'switch _ = true; {}'
+	switch _ = true; true {
+	}
 }
