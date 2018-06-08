@@ -6,6 +6,7 @@ import (
 	"go/token"
 	"go/types"
 	"sort"
+	"sync"
 )
 
 // checkFunctions is a table of all available check functions
@@ -98,8 +99,17 @@ type Checker struct {
 
 // Check runs rule checker over file f.
 func (c *Checker) Check(f *ast.File) []Warning {
-	c.ctx.warnings = c.ctx.warnings[:0]
-	c.check(f)
+	if c.ctx.QuickFix {
+		c.ctx.FileMutex.Lock()
+		c.check(f)
+		c.ctx.FileMutex.Unlock()
+	} else {
+		c.ctx.FileMutex.RLock()
+		c.ctx.warnings = c.ctx.warnings[:0]
+		c.check(f)
+		c.ctx.FileMutex.RUnlock()
+
+	}
 	return c.ctx.warnings
 }
 
@@ -123,6 +133,13 @@ type Context struct {
 	// SizesInfo carries alignment and type size information.
 	// Arch-dependent.
 	SizesInfo types.Sizes
+
+	//QuickFix true is quickfix mode is enabled
+	QuickFix bool
+
+	// FileMutex protects file of being changed by separate threads
+	// only needs for Fix
+	FileMutex sync.RWMutex
 }
 
 // context is checker-local context copy.

@@ -19,7 +19,11 @@ type paramDuplicationChecker struct {
 func (c *paramDuplicationChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 	typ := c.optimizeFuncType(decl.Type)
 	if !astcmp.EqualExpr(typ, decl.Type) {
-		c.warn(decl.Type, typ)
+		if c.ctx.QuickFix {
+			decl.Type = typ
+		} else {
+			c.warn(decl.Type, typ)
+		}
 	}
 }
 
