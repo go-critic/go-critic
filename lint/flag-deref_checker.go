@@ -34,7 +34,7 @@ func (c *flagDerefChecker) CheckLocalExpr(expr ast.Expr) {
 		if !ok {
 			return
 		}
-		called := functionName(call)
+		called := qualifiedName(call.Fun)
 		if c.flagPtrFuncs[called] {
 			c.warn(expr, called+"Var")
 		}

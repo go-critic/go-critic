@@ -34,6 +34,7 @@ var checkFunctions = map[string]struct {
 	"stddef":            {new: stddefCheck},
 	"ptr-to-ref-param":  {new: ptrToRefParamCheck},
 	"flag-deref":        {new: flagDerefCheck},
+	"switch-true":       {new: switchTrueCheck},
 }
 
 // RuleList returns a slice of all rules that can be used to create checkers.

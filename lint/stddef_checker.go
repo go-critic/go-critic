@@ -177,7 +177,7 @@ func (c *stddefChecker) checkBasicLit(expr ast.Expr, val constant.Value) {
 }
 
 func (c *stddefChecker) checkCallExpr(call *ast.CallExpr) {
-	if functionName(call) == "unsafe.Sizeof" {
+	if qualifiedName(call.Fun) == "unsafe.Sizeof" {
 		switch x := call.Args[0].(type) {
 		case *ast.BasicLit:
 			if x.Kind == token.INT {
