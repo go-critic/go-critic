@@ -5,6 +5,10 @@
 
 Go source code linter that brings checks that are currently not implemented in other linters.
 
+![Logo](https://avatars1.githubusercontent.com/u/40007520?s=400&u=b44287d8845a63fb0102d5259710c11ea367bb13&v=4)
+
+
+
 **Project goals:**
 
 - Provide as much useful checks as possible.
