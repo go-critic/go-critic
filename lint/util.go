@@ -38,15 +38,19 @@ func (ctx *context) IsUnitTestFuncDecl(fn *ast.FuncDecl) bool {
 //
 // For all unexpected expressions returns empty string.
 func functionName(x *ast.CallExpr) string {
-	switch fnExpr := x.Fun.(type) {
+	return qualifiedName(x.Fun)
+}
+
+func qualifiedName(x ast.Expr) string {
+	switch x := x.(type) {
 	case *ast.SelectorExpr:
-		pkg, ok := fnExpr.X.(*ast.Ident)
+		pkg, ok := x.X.(*ast.Ident)
 		if !ok {
 			return ""
 		}
-		return pkg.Name + "." + fnExpr.Sel.Name
+		return pkg.Name + "." + x.Sel.Name
 	case *ast.Ident:
-		return fnExpr.Name
+		return x.Name
 	default:
 		return ""
 	}

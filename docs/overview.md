@@ -60,6 +60,10 @@ Go source code linter that brings checks that are currently not implemented in o
     <td>false</td>
   </tr>
   <tr>
+    <td><a href="#switch-true-ref">switch-true</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
     <td><a href="#switchif-ref">switchif</a></td>
     <td>false</td>
   </tr>
@@ -176,6 +180,9 @@ b := *flag.Bool("b", false, "b docs")
 var b bool
 flag.BoolVar(&b, "b", false, "b docs")
 ```
+
+> Dereferencing returned pointers will lead to hard to find errors
+> where flag values are not updated after flag.Parse().
 
 
 <a name="long-chain-ref"></a>
@@ -339,6 +346,27 @@ maxVal := 1<<7 - 1
 ```go
 intBytes := make([]byte, bits.IntSize)
 maxVal := math.MaxInt8
+```
+
+
+<a name="switch-true-ref"></a>
+## switch-true
+Detects switch-over-bool statements that use explicit `true` tag value.
+
+**Before:**
+```go
+switch true {
+case x > y:
+	// ...
+}
+```
+
+**After:**
+```go
+switch {
+case x > y:
+	// ...
+}
 ```
 
 
