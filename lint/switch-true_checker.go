@@ -20,6 +20,11 @@ func (c *switchTrueChecker) CheckStmt(stmt ast.Stmt) {
 	}
 }
 
-func (c *switchTrueChecker) warn(cause ast.Node) {
-	c.ctx.Warn(cause, "replace 'switch true {}' with 'switch {}'")
+func (c *switchTrueChecker) warn(cause *ast.SwitchStmt) {
+	if cause.Init == nil {
+		c.ctx.Warn(cause, "replace 'switch true {}' with 'switch {}'")
+	} else {
+		s := nodeString(c.ctx.FileSet, cause.Init)
+		c.ctx.Warn(cause, "replace 'switch %s; true {}' with 'switch %s; {}'", s, s)
+	}
 }

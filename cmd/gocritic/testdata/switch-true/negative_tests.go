@@ -12,4 +12,9 @@ func noWarnings() {
 	default:
 		println("2")
 	}
+
+	switch x := 0; {
+	case x < 0:
+	case x > 0:
+	}
 }
