@@ -72,9 +72,9 @@ func findSubCommand(name string) *subCommand {
 // terminate prints error specified by reason, runs optional printHelp
 // function and then exists with non-zero status.
 func terminate(reason string, printHelp func()) {
-	fmt.Fprintf(os.Stderr, "error: %s\n", reason)
+	stderrPrintf("error: %s\n", reason)
 	if printHelp != nil {
-		os.Stderr.WriteString("\n")
+		stderrPrintf("\n")
 		printHelp()
 	}
 	os.Exit(1)
@@ -86,8 +86,17 @@ func printUsage() {
 }
 
 func printSupportedSubs() {
-	os.Stderr.WriteString("Supported sub-commands:\n")
+	stderrPrintf("Supported sub-commands:\n")
 	for _, cmd := range subCommands {
-		fmt.Fprintf(os.Stderr, "\t%s - %s\n", cmd.name, cmd.short)
+		stderrPrintf("\t%s - %s\n", cmd.name, cmd.short)
+	}
+}
+
+// stderrPrintf writes formatted message to stderr and checks for error
+// making "not annoying at all" linters happy.
+func stderrPrintf(format string, args ...interface{}) {
+	_, err := fmt.Fprintf(os.Stderr, format, args...)
+	if err != nil {
+		panic(fmt.Sprintf("stderr write error: %v", err))
 	}
 }
