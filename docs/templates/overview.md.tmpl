@@ -4,24 +4,49 @@
 
 Go source code linter that brings checks that are currently not implemented in other linters.
 
-## Checkers
+## Checkers:
 
 <table>
   <tr>
     <th>Name</th>
-    <th>Experimental</th>
   </tr>
-
   {{- range .Checkers }}
+    {{- if not .Experimental}}
+      <tr>
+        <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+      </tr>
+    {{- end }}
+  {{- end }}
+</table>
+
+**Experimental:**
+
+<table>
   <tr>
-    <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
-    <td>{{.Experimental}}</td>
+    <th>Name</th>
   </tr>
+  {{- range .Checkers }}
+    {{- if .Experimental}}
+      <tr>
+        <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+      </tr>
+    {{- end }}
   {{- end }}
 </table>
 
 {{ range .Checkers }}
-<a name=" {{- .Name -}} -ref"></a>
-## {{.Name}}
-{{.Description}}
+  {{- if not .Experimental}}
+    <a name=" {{- .Name -}} -ref"></a>
+    ## {{.Name}}
+    {{.Description}}
+  {{- end}}
+{{ end }}
+
+**Experimental:**
+{{ range .Checkers }}
+  {{- if .Experimental}}
+    <a name=" {{- .Name -}} -ref"></a>
+    ## {{.Name}}
+    {{.Description}}
+  {{- end}}
 {{ end }}
