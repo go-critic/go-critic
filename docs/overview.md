@@ -10,117 +10,60 @@ Go source code linter that brings checks that are currently not implemented in o
   <tr>
     <th>Name</th>
   </tr>
-  
-    
       <tr>
         <td><a href="#append-combine-ref">append-combine</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#builtin-shadow-ref">builtin-shadow</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#comments-ref">comments</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#elseif-ref">elseif</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#flag-deref-ref">flag-deref</a></td>
       </tr>
-    
-  
-    
-  
-    
       <tr>
         <td><a href="#param-duplication-ref">param-duplication</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#param-name-ref">param-name</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#parenthesis-ref">parenthesis</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#ptr-to-ref-param-ref">ptr-to-ref-param</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#range-expr-copy-ref">range-expr-copy</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#range-val-copy-ref">range-val-copy</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#stddef-ref">stddef</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#switch-true-ref">switch-true</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#switchif-ref">switchif</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#type-guard-ref">type-guard</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#underef-ref">underef</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#unexported-call-ref">unexported-call</a></td>
       </tr>
-    
-  
-    
       <tr>
         <td><a href="#unslice-ref">unslice</a></td>
       </tr>
-    
-  
 </table>
 
 **Experimental:**
@@ -129,49 +72,9 @@ Go source code linter that brings checks that are currently not implemented in o
   <tr>
     <th>Name</th>
   </tr>
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
       <tr>
         <td><a href="#long-chain-ref">long-chain</a></td>
       </tr>
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
-    
-  
 </table>
     <a name="append-combine-ref"></a>
     ##append-combine

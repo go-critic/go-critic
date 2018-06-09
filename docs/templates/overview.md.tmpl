@@ -10,13 +10,13 @@ Go source code linter that brings checks that are currently not implemented in o
   <tr>
     <th>Name</th>
   </tr>
-  {{ range .Checkers }}
-    {{ if not .Experimental}}
+  {{- range .Checkers }}
+    {{- if not .Experimental}}
       <tr>
         <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
       </tr>
-    {{ end }}
-  {{ end }}
+    {{- end }}
+  {{- end }}
 </table>
 
 **Experimental:**
@@ -25,13 +25,13 @@ Go source code linter that brings checks that are currently not implemented in o
   <tr>
     <th>Name</th>
   </tr>
-  {{ range .Checkers }}
-    {{ if .Experimental}}
+  {{- range .Checkers }}
+    {{- if .Experimental}}
       <tr>
         <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
       </tr>
-    {{ end }}
-  {{ end }}
+    {{- end }}
+  {{- end }}
 </table>
 
 
