@@ -502,7 +502,6 @@ copy(b, values...)
 
 
 
-**Experimental:**
 
 
 
