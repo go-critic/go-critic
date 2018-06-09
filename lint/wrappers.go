@@ -122,6 +122,8 @@ func wrapBlockChecker(c stmtListChecker) func(*ast.File) {
 					c.CheckStmtList(x.List)
 				case *ast.CaseClause:
 					c.CheckStmtList(x.Body)
+				case *ast.CommClause:
+					c.CheckStmtList(x.Body)
 				}
 				return true
 			})

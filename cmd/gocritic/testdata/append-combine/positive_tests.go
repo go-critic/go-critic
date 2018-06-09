@@ -48,6 +48,27 @@ func warnings1() {
 		xs = append(xs, 9)
 	}
 
+	ch := make(chan bool)
+	select {
+	case <-ch:
+		/// can combine chain of 2 appends into one
+		xs = append(xs, 1)
+		xs = append(xs, 2)
+		if ch != nil {
+			/// can combine chain of 2 appends into one
+			xs = append(xs, 5)
+			xs = append(xs, 6)
+		} else {
+			/// can combine chain of 2 appends into one
+			xs = append(xs, 7)
+			xs = append(xs, 8)
+		}
+	default:
+		/// can combine chain of 2 appends into one
+		xs = append(xs, 3)
+		xs = append(xs, 4)
+	}
+
 	/// can combine chain of 3 appends into one
 	xs = append(xs, 1)
 	// Comments can't break the chain.
