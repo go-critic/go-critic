@@ -52,7 +52,8 @@ func init() {
 }
 
 func runChecker(name, pkgPath string) (output []byte, err error) {
-	return exec.Command("./"+binary, "-enable", name, pkgPath).CombinedOutput()
+	cmd := exec.Command("./"+binary, "check-package", "-enable", name, pkgPath)
+	return cmd.CombinedOutput()
 }
 
 func TestSanity(t *testing.T) {
