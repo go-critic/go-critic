@@ -1,4 +1,4 @@
-package main
+package lintwalk
 
 import (
 	"flag"
@@ -9,7 +9,8 @@ import (
 	"regexp"
 )
 
-func main() {
+// Main implements gocritic sub-command entry point.
+func Main() {
 	srcRoot := flag.String("src-root", "",
 		`path to directory that should be linted recursively`)
 	enable := flag.String("enable", "all",
