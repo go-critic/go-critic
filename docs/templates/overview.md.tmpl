@@ -39,7 +39,7 @@ Go source code linter that brings checks that are currently not implemented in o
 {{- range .Checkers }}
   {{- if not .Experimental}}
     <a name=" {{- .Name -}} -ref"></a>
-    ## {{.Name}}
+    ## {{- .Name}}
     {{.Description}}
   {{ end}}
 {{ end }}
@@ -48,7 +48,7 @@ Go source code linter that brings checks that are currently not implemented in o
 {{- range .Checkers }}
   {{- if .Experimental}}
     <a name=" {{- .Name -}} -ref"></a>
-    ## {{.Name}}
+    ## {{- .Name}}
     {{.Description}}
   {{ end}}
 {{ end }}
