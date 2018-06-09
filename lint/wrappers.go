@@ -98,6 +98,39 @@ func (c baseLocalExprChecker) PerFuncInit(fn *ast.FuncDecl) bool {
 	return fn.Body != nil
 }
 
+type stmtListChecker interface {
+	CheckStmtList([]ast.Stmt)
+}
+
+type baseStmtListChecker struct {
+	ctx *context
+}
+
+// baseStmtListChecker returns a check function that visits every statement
+// list inside file. This includes block statement bodies as well as
+// implicit blocks introduced by case clauses and alike.
+func wrapBlockChecker(c stmtListChecker) func(*ast.File) {
+	return func(f *ast.File) {
+		for _, decl := range f.Decls {
+			decl, ok := decl.(*ast.FuncDecl)
+			if !ok || decl.Body == nil {
+				continue
+			}
+			ast.Inspect(decl.Body, func(x ast.Node) bool {
+				switch x := x.(type) {
+				case *ast.BlockStmt:
+					c.CheckStmtList(x.List)
+				case *ast.CaseClause:
+					c.CheckStmtList(x.Body)
+				case *ast.CommClause:
+					c.CheckStmtList(x.Body)
+				}
+				return true
+			})
+		}
+	}
+}
+
 type stmtChecker interface {
 	PerFuncInit(*ast.FuncDecl) bool
 	CheckStmt(ast.Stmt)
