@@ -4,90 +4,81 @@
 
 Go source code linter that brings checks that are currently not implemented in other linters.
 
-## Checkers
+## Checkers:
 
 <table>
   <tr>
     <th>Name</th>
-    <th>Experimental</th>
   </tr>
-  <tr>
-    <td><a href="#append-combine-ref">append-combine</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#builtin-shadow-ref">builtin-shadow</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#comments-ref">comments</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#elseif-ref">elseif</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#flag-deref-ref">flag-deref</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#long-chain-ref">long-chain</a></td>
-    <td>true</td>
-  </tr>
-  <tr>
-    <td><a href="#param-duplication-ref">param-duplication</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#param-name-ref">param-name</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#parenthesis-ref">parenthesis</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#ptr-to-ref-param-ref">ptr-to-ref-param</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#range-expr-copy-ref">range-expr-copy</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#range-val-copy-ref">range-val-copy</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#stddef-ref">stddef</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#switch-true-ref">switch-true</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#switchif-ref">switchif</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#type-guard-ref">type-guard</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#underef-ref">underef</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#unexported-call-ref">unexported-call</a></td>
-    <td>false</td>
-  </tr>
-  <tr>
-    <td><a href="#unslice-ref">unslice</a></td>
-    <td>false</td>
-  </tr>
+      <tr>
+        <td><a href="#append-combine-ref">append-combine</a></td>
+      </tr>
+      <tr>
+        <td><a href="#builtin-shadow-ref">builtin-shadow</a></td>
+      </tr>
+      <tr>
+        <td><a href="#comments-ref">comments</a></td>
+      </tr>
+      <tr>
+        <td><a href="#elseif-ref">elseif</a></td>
+      </tr>
+      <tr>
+        <td><a href="#flag-deref-ref">flag-deref</a></td>
+      </tr>
+      <tr>
+        <td><a href="#param-duplication-ref">param-duplication</a></td>
+      </tr>
+      <tr>
+        <td><a href="#param-name-ref">param-name</a></td>
+      </tr>
+      <tr>
+        <td><a href="#parenthesis-ref">parenthesis</a></td>
+      </tr>
+      <tr>
+        <td><a href="#ptr-to-ref-param-ref">ptr-to-ref-param</a></td>
+      </tr>
+      <tr>
+        <td><a href="#range-expr-copy-ref">range-expr-copy</a></td>
+      </tr>
+      <tr>
+        <td><a href="#range-val-copy-ref">range-val-copy</a></td>
+      </tr>
+      <tr>
+        <td><a href="#stddef-ref">stddef</a></td>
+      </tr>
+      <tr>
+        <td><a href="#switch-true-ref">switch-true</a></td>
+      </tr>
+      <tr>
+        <td><a href="#switchif-ref">switchif</a></td>
+      </tr>
+      <tr>
+        <td><a href="#type-guard-ref">type-guard</a></td>
+      </tr>
+      <tr>
+        <td><a href="#underef-ref">underef</a></td>
+      </tr>
+      <tr>
+        <td><a href="#unexported-call-ref">unexported-call</a></td>
+      </tr>
+      <tr>
+        <td><a href="#unslice-ref">unslice</a></td>
+      </tr>
 </table>
+
+**Experimental:**
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+      <tr>
+        <td><a href="#long-chain-ref">long-chain</a></td>
+      </tr>
+</table>
+
+
+
 
 
 <a name="append-combine-ref"></a>
@@ -104,6 +95,8 @@ xs = append(xs, 2)
 ```go
 xs = append(xs, 1, 2)
 ```
+
+
 
 
 <a name="builtin-shadow-ref"></a>
@@ -131,6 +124,8 @@ func main() {
 ```
 
 
+
+
 <a name="comments-ref"></a>
 ## comments
 Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
@@ -152,6 +147,8 @@ func Foo() {
 }
 
 ```
+
+
 
 
 <a name="elseif-ref"></a>
@@ -185,6 +182,8 @@ default:
 ```
 
 
+
+
 <a name="flag-deref-ref"></a>
 ## flag-deref
 Detects immediate dereferencing of `flag` package pointers.
@@ -205,32 +204,8 @@ flag.BoolVar(&b, "b", false, "b docs")
 > where flag values are not updated after flag.Parse().
 
 
-<a name="long-chain-ref"></a>
-## long-chain
-Detects repeated expression chains and suggest to refactor them.
 
-**Before:**
-```go
-a := q.w.e.r.t + 1
-b := q.w.e.r.t + 2
-c := q.w.e.r.t + 3
-v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
-```
 
-**After**
-```go
-x := xs[i+1]
-qwert := q.w.e.r.t
-a := qwert + 1
-b := qwert + 2
-c := qwert + 3
-v := (a+x) + (b+x) + (c+x)
-```
-
-**Experimental**
-
-Gives false-positives for:
-* Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
 
 
 <a name="param-duplication-ref"></a>
@@ -246,6 +221,8 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 ```go
 func foo(a, b, c, d, e, f, g int) {}
 ```
+
+
 
 
 <a name="param-name-ref"></a>
@@ -264,6 +241,8 @@ func f(IN int, OUT *int) (ERR error) {}
 ```go
 func f(in int, out *int) (err error) {}
 ```
+
+
 
 
 <a name="parenthesis-ref"></a>
@@ -286,6 +265,8 @@ func foo() []func([]func()) {
 
 
 
+
+
 <a name="ptr-to-ref-param-ref"></a>
 ## ptr-to-ref-param
 Detects input and output parameters that have a type of pointer to referential type.
@@ -302,6 +283,8 @@ func f(m map[string]int) (ch chan *int)
 
 > Slices are not as referential as maps or channels, but it's usually
 > better to return them by value rather than modyfing them by pointer.
+
+
 
 
 <a name="range-expr-copy-ref"></a>
@@ -328,6 +311,8 @@ for _, x := range &xs {
 ```
 
 
+
+
 <a name="range-val-copy-ref"></a>
 ## range-val-copy
 Detects loops that copy big objects during each iteration.
@@ -351,6 +336,8 @@ for i := range xs {
 ```
 
 
+
+
 <a name="stddef-ref"></a>
 ## stddef
 Detects constant expressions that can be replaced by a named constant
@@ -367,6 +354,8 @@ maxVal := 1<<7 - 1
 intBytes := make([]byte, bits.IntSize)
 maxVal := math.MaxInt8
 ```
+
+
 
 
 <a name="switch-true-ref"></a>
@@ -390,6 +379,8 @@ case x > y:
 ```
 
 
+
+
 <a name="switchif-ref"></a>
 ## switchif
 Detects switch statements that could be better written as if statements.
@@ -408,6 +399,8 @@ if x, ok := x.(int); ok {
    ...
 }
 ```
+
+
 
 
 <a name="type-guard-ref"></a>
@@ -439,6 +432,8 @@ default:
 ```
 
 
+
+
 <a name="underef-ref"></a>
 ## underef
 Detects expressions with C style field selection and suggest Go style correction.
@@ -454,6 +449,8 @@ _ := (*a)[5] // only if a is array
 k.field = 5
 _ := a[5]
 ```
+
+
 
 
 <a name="unexported-call-ref"></a>
@@ -484,6 +481,8 @@ func baz() {
 ```
 
 
+
+
 <a name="unslice-ref"></a>
 ## unslice
 Detects slice expressions that can be simplified to sliced expression itself.
@@ -499,5 +498,73 @@ copy(b[:], values...) // b is []byte
 f(s)
 copy(b, values...)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a name="long-chain-ref"></a>
+## long-chain
+Detects repeated expression chains and suggest to refactor them.
+
+**Before:**
+```go
+a := q.w.e.r.t + 1
+b := q.w.e.r.t + 2
+c := q.w.e.r.t + 3
+v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
+```
+
+**After**
+```go
+x := xs[i+1]
+qwert := q.w.e.r.t
+a := qwert + 1
+b := qwert + 2
+c := qwert + 3
+v := (a+x) + (b+x) + (c+x)
+```
+
+**Experimental**
+
+Gives false-positives for:
+* Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
