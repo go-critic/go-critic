@@ -12,6 +12,10 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Experimental</th>
   </tr>
   <tr>
+    <td><a href="#append-combine-ref">append-combine</a></td>
+    <td>false</td>
+  </tr>
+  <tr>
     <td><a href="#builtin-shadow-ref">builtin-shadow</a></td>
     <td>false</td>
   </tr>
@@ -84,6 +88,22 @@ Go source code linter that brings checks that are currently not implemented in o
     <td>false</td>
   </tr>
 </table>
+
+
+<a name="append-combine-ref"></a>
+## append-combine
+Detects `append` chains to the same slice that can be done in a single `append` call.
+
+**Before:**
+```go
+xs = append(xs, 1)
+xs = append(xs, 2)
+```
+
+**After:**
+```go
+xs = append(xs, 1, 2)
+```
 
 
 <a name="builtin-shadow-ref"></a>
