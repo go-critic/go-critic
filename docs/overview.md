@@ -80,9 +80,8 @@ Go source code linter that brings checks that are currently not implemented in o
 
 
 
-  
     <a name="append-combine-ref"></a>
-    ##append-combine
+    ## append-combine
     Detects `append` chains to the same slice that can be done in a single `append` call.
 
 **Before:**
@@ -98,9 +97,8 @@ xs = append(xs, 1, 2)
 
   
 
-  
     <a name="builtin-shadow-ref"></a>
-    ##builtin-shadow
+    ## builtin-shadow
     Detects when
 [predeclared identifiers](https://golang.org/ref/spec#Predeclared_identifiers)
 shadowed in assignments.
@@ -125,9 +123,8 @@ func main() {
 
   
 
-  
     <a name="comments-ref"></a>
-    ##comments
+    ## comments
     Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
 
 **Before:**
@@ -150,9 +147,8 @@ func Foo() {
 
   
 
-  
     <a name="elseif-ref"></a>
-    ##elseif
+    ## elseif
     Detects repeated if-else statements and suggests to replace them with switch statement.
 
 Permits single else or else-if; repeated else-if or else + else-if
@@ -183,9 +179,8 @@ default:
 
   
 
-  
     <a name="flag-deref-ref"></a>
-    ##flag-deref
+    ## flag-deref
     Detects immediate dereferencing of `flag` package pointers.
 Suggests using `XxxVar` functions to achieve desired effect.
 
@@ -205,11 +200,9 @@ flag.BoolVar(&b, "b", false, "b docs")
 
   
 
-  
 
-  
     <a name="param-duplication-ref"></a>
-    ##param-duplication
+    ## param-duplication
     Detects if function parameters could be combined by type and suggest the way to do it.
 
 **Before:**
@@ -224,9 +217,8 @@ func foo(a, b, c, d, e, f, g int) {}
 
   
 
-  
     <a name="param-name-ref"></a>
-    ##param-name
+    ## param-name
     Detects potential issues in function parameter names.
 
 Catches capitalized (exported) parameter names.
@@ -244,9 +236,8 @@ func f(in int, out *int) (err error) {}
 
   
 
-  
     <a name="parenthesis-ref"></a>
-    ##parenthesis
+    ## parenthesis
     Detects unneded parenthesis inside type expressions and suggests to remove them.
 
 **Before:**
@@ -266,9 +257,8 @@ func foo() []func([]func()) {
 
   
 
-  
     <a name="ptr-to-ref-param-ref"></a>
-    ##ptr-to-ref-param
+    ## ptr-to-ref-param
     Detects input and output parameters that have a type of pointer to referential type.
 
 **Before:**
@@ -286,9 +276,8 @@ func f(m map[string]int) (ch chan *int)
 
   
 
-  
     <a name="range-expr-copy-ref"></a>
-    ##range-expr-copy
+    ## range-expr-copy
     Detects `for` statements with range expressions that perform excessive
 copying (big arrays can cause it).
 
@@ -312,9 +301,8 @@ for _, x := range &xs {
 
   
 
-  
     <a name="range-val-copy-ref"></a>
-    ##range-val-copy
+    ## range-val-copy
     Detects loops that copy big objects during each iteration.
 Suggests to use index access or take address and make use pointer instead.
 
@@ -337,9 +325,8 @@ for i := range xs {
 
   
 
-  
     <a name="stddef-ref"></a>
-    ##stddef
+    ## stddef
     Detects constant expressions that can be replaced by a named constant
 from standard library, like `math.MaxInt32`.
 
@@ -357,9 +344,8 @@ maxVal := math.MaxInt8
 
   
 
-  
     <a name="switch-true-ref"></a>
-    ##switch-true
+    ## switch-true
     Detects switch-over-bool statements that use explicit `true` tag value.
 
 **Before:**
@@ -380,9 +366,8 @@ case x > y:
 
   
 
-  
     <a name="switchif-ref"></a>
-    ##switchif
+    ## switchif
     Detects switch statements that could be better written as if statements.
 
 **Before:**
@@ -402,9 +387,8 @@ if x, ok := x.(int); ok {
 
   
 
-  
     <a name="type-guard-ref"></a>
-    ##type-guard
+    ## type-guard
     Detects type switches that cab benefit from type guard clause.
 
 **Before:**
@@ -433,9 +417,8 @@ default:
 
   
 
-  
     <a name="underef-ref"></a>
-    ##underef
+    ## underef
     Detects expressions with C style field selection and suggest Go style correction.
 
 **Before:**
@@ -452,9 +435,8 @@ _ := a[5]
 
   
 
-  
     <a name="unexported-call-ref"></a>
-    ##unexported-call
+    ## unexported-call
     Finds calls of unexported method from unexported type outside that type.
 
 **Before:**
@@ -482,9 +464,8 @@ func baz() {
 
   
 
-  
     <a name="unslice-ref"></a>
-    ##unslice
+    ## unslice
     Detects slice expressions that can be simplified to sliced expression itself.
 
 **Before:**
@@ -504,19 +485,13 @@ copy(b, values...)
 
 **Experimental:**
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
     <a name="long-chain-ref"></a>
-    ##long-chain
+    ## long-chain
     Detects repeated expression chains and suggest to refactor them.
 
 **Before:**
@@ -544,28 +519,15 @@ Gives false-positives for:
 
   
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  

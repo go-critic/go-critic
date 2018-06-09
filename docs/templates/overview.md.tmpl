@@ -37,18 +37,18 @@ Go source code linter that brings checks that are currently not implemented in o
 
 
 {{ range .Checkers }}
-  {{ if not .Experimental}}
+  {{- if not .Experimental}}
     <a name=" {{- .Name -}} -ref"></a>
-    ## {{- .Name}}
+    ## {{ .Name}}
     {{.Description}}
   {{ end}}
 {{ end }}
 
 **Experimental:**
 {{ range .Checkers }}
-  {{ if .Experimental}}
+  {{- if .Experimental}}
     <a name=" {{- .Name -}} -ref"></a>
-    ## {{- .Name}}
+    ## {{.Name}}
     {{.Description}}
   {{ end}}
 {{ end }}
