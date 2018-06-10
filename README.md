@@ -40,19 +40,21 @@ go get -u github.com/go-critic/go-critic/...
 Add linter to your `$PATH` or run it directly:
 
 ```
-./bin/gocritic package/path/to/lint
+./bin/gocritic package package/path/to/lint # check single package
+./big/gocritic project $GOPATH/src          # check all packages under $GOPATH/src
 ```
 
-Run `gocritic -help` for more information.
+Run `gocritic` without arguments for more info.
 
-Usage of **gocritic**: `gocritic [flags] [package]`
+Usage of **gocritic**: `gocritic [sub-command] [sub-command args...]`
 
 Examples:
 
 | Command | Description |
 | --- | --- |
-| `gocritic fmt` | Runs all checkers on fmt package |
-| `gocritic -enable elseif,param-name fmt` | Runs specified checkers on package |
+| `gocritic package fmt` | Runs all (stable) checkers on fmt package |
+| `gocritic package -enable elseif,param-name fmt` | Runs specified checkers on fmt package |
+| `gocritic project $GOROOT/src` | Run all (stable) checkers on entire GOROOT |
 
 ## Contributing
 
