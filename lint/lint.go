@@ -10,26 +10,19 @@ import (
 )
 
 type checkFunction interface {
-	Experimental() bool
 	New(*context) func(*ast.File)
 }
 
-type experementalChecker struct{}
-type stableChecker struct{}
-
-func (с experementalChecker) Experimental() bool {
-	return true
-}
-
-func (c stableChecker) Experimental() bool {
-	return false
+type ruleInfo struct {
+	Experimental bool
+	New          func(*context) func(*ast.File)
 }
 
 // checkFunctions is a table of all available check functions
 // as well as their metadata (like "experimental" attributes).
 //
 // Keys are rule names.
-var checkFunctions = map[string]checkFunction{}
+var checkFunctions = map[string]*ruleInfo{}
 
 // RuleList returns a slice of all rules that can be used to create checkers.
 // Slice is sorted by rule names.
@@ -38,7 +31,7 @@ func RuleList() []*Rule {
 	for ruleName, info := range checkFunctions {
 		rules = append(rules, &Rule{
 			name:         ruleName,
-			experimental: info.Experimental(),
+			experimental: info.Experimental,
 		})
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
@@ -135,8 +128,9 @@ func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
 	})
 }
 
-func addChecker(c checkFunction) {
+func addChecker(c checkFunction, inf *ruleInfo) {
 	typeName := reflect.ValueOf(c).Type().Name()
 	ruleName := typeName[:len(typeName)-len("Checker")]
-	checkFunctions[ruleName] = c
+	inf.New = c.New
+	checkFunctions[ruleName] = inf
 }

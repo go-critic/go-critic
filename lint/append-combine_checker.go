@@ -8,11 +8,10 @@ import (
 )
 
 func init() {
-	addChecker(appendCombineChecker{})
+	addChecker(appendCombineChecker{}, &ruleInfo{})
 }
 
 type appendCombineChecker struct {
-	stableChecker
 	baseStmtListChecker
 }
 
