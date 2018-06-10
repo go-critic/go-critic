@@ -11,10 +11,10 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Name</th>
   </tr>
       <tr>
-        <td><a href="#append-combine-ref">append-combine</a></td>
+        <td><a href="#appendCombine-ref">appendCombine</a></td>
       </tr>
       <tr>
-        <td><a href="#builtin-shadow-ref">builtin-shadow</a></td>
+        <td><a href="#builtinShadow-ref">builtinShadow</a></td>
       </tr>
       <tr>
         <td><a href="#comments-ref">comments</a></td>
@@ -23,43 +23,43 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#elseif-ref">elseif</a></td>
       </tr>
       <tr>
-        <td><a href="#flag-deref-ref">flag-deref</a></td>
+        <td><a href="#flagDeref-ref">flagDeref</a></td>
       </tr>
       <tr>
-        <td><a href="#param-duplication-ref">param-duplication</a></td>
+        <td><a href="#paramDuplication-ref">paramDuplication</a></td>
       </tr>
       <tr>
-        <td><a href="#param-name-ref">param-name</a></td>
+        <td><a href="#paramName-ref">paramName</a></td>
       </tr>
       <tr>
         <td><a href="#parenthesis-ref">parenthesis</a></td>
       </tr>
       <tr>
-        <td><a href="#ptr-to-ref-param-ref">ptr-to-ref-param</a></td>
+        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
       </tr>
       <tr>
-        <td><a href="#range-expr-copy-ref">range-expr-copy</a></td>
+        <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
       </tr>
       <tr>
-        <td><a href="#range-val-copy-ref">range-val-copy</a></td>
+        <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
       </tr>
       <tr>
         <td><a href="#stddef-ref">stddef</a></td>
       </tr>
       <tr>
-        <td><a href="#switch-true-ref">switch-true</a></td>
+        <td><a href="#switchTrue-ref">switchTrue</a></td>
       </tr>
       <tr>
         <td><a href="#switchif-ref">switchif</a></td>
       </tr>
       <tr>
-        <td><a href="#type-guard-ref">type-guard</a></td>
+        <td><a href="#typeGuard-ref">typeGuard</a></td>
       </tr>
       <tr>
         <td><a href="#underef-ref">underef</a></td>
       </tr>
       <tr>
-        <td><a href="#unexported-call-ref">unexported-call</a></td>
+        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
       </tr>
       <tr>
         <td><a href="#unslice-ref">unslice</a></td>
@@ -73,7 +73,7 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Name</th>
   </tr>
       <tr>
-        <td><a href="#long-chain-ref">long-chain</a></td>
+        <td><a href="#longChain-ref">longChain</a></td>
       </tr>
 </table>
 
@@ -81,8 +81,8 @@ Go source code linter that brings checks that are currently not implemented in o
 
 
 
-<a name="append-combine-ref"></a>
-## append-combine
+<a name="appendCombine-ref"></a>
+## appendCombine
 Detects `append` chains to the same slice that can be done in a single `append` call.
 
 **Before:**
@@ -99,8 +99,8 @@ xs = append(xs, 1, 2)
 
 
 
-<a name="builtin-shadow-ref"></a>
-## builtin-shadow
+<a name="builtinShadow-ref"></a>
+## builtinShadow
 Detects when
 [predeclared identifiers](https://golang.org/ref/spec#Predeclared_identifiers)
 shadowed in assignments.
@@ -184,8 +184,8 @@ default:
 
 
 
-<a name="flag-deref-ref"></a>
-## flag-deref
+<a name="flagDeref-ref"></a>
+## flagDeref
 Detects immediate dereferencing of `flag` package pointers.
 Suggests using `XxxVar` functions to achieve desired effect.
 
@@ -208,8 +208,8 @@ flag.BoolVar(&b, "b", false, "b docs")
 
 
 
-<a name="param-duplication-ref"></a>
-## param-duplication
+<a name="paramDuplication-ref"></a>
+## paramDuplication
 Detects if function parameters could be combined by type and suggest the way to do it.
 
 **Before:**
@@ -225,8 +225,8 @@ func foo(a, b, c, d, e, f, g int) {}
 
 
 
-<a name="param-name-ref"></a>
-## param-name
+<a name="paramName-ref"></a>
+## paramName
 Detects potential issues in function parameter names.
 
 Catches capitalized (exported) parameter names.
@@ -267,8 +267,8 @@ func foo() []func([]func()) {
 
 
 
-<a name="ptr-to-ref-param-ref"></a>
-## ptr-to-ref-param
+<a name="ptrToRefParam-ref"></a>
+## ptrToRefParam
 Detects input and output parameters that have a type of pointer to referential type.
 
 **Before:**
@@ -287,8 +287,8 @@ func f(m map[string]int) (ch chan *int)
 
 
 
-<a name="range-expr-copy-ref"></a>
-## range-expr-copy
+<a name="rangeExprCopy-ref"></a>
+## rangeExprCopy
 Detects `for` statements with range expressions that perform excessive
 copying (big arrays can cause it).
 
@@ -313,8 +313,8 @@ for _, x := range &xs {
 
 
 
-<a name="range-val-copy-ref"></a>
-## range-val-copy
+<a name="rangeValCopy-ref"></a>
+## rangeValCopy
 Detects loops that copy big objects during each iteration.
 Suggests to use index access or take address and make use pointer instead.
 
@@ -358,8 +358,8 @@ maxVal := math.MaxInt8
 
 
 
-<a name="switch-true-ref"></a>
-## switch-true
+<a name="switchTrue-ref"></a>
+## switchTrue
 Detects switch-over-bool statements that use explicit `true` tag value.
 
 **Before:**
@@ -403,8 +403,8 @@ if x, ok := x.(int); ok {
 
 
 
-<a name="type-guard-ref"></a>
-## type-guard
+<a name="typeGuard-ref"></a>
+## typeGuard
 Detects type switches that cab benefit from type guard clause.
 
 **Before:**
@@ -453,8 +453,8 @@ _ := a[5]
 
 
 
-<a name="unexported-call-ref"></a>
-## unexported-call
+<a name="unexportedCall-ref"></a>
+## unexportedCall
 Finds calls of unexported method from unexported type outside that type.
 
 **Before:**
@@ -514,8 +514,8 @@ copy(b, values...)
 
 
 
-<a name="long-chain-ref"></a>
-## long-chain
+<a name="longChain-ref"></a>
+## longChain
 Detects repeated expression chains and suggest to refactor them.
 
 **Before:**
