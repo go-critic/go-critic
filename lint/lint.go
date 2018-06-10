@@ -11,7 +11,7 @@ import (
 
 type checkFunction interface {
 	Experimental() bool
-	New() func(*context) func(*ast.File)
+	New(*context) func(*ast.File)
 }
 
 type experementalChecker struct{}
@@ -77,7 +77,7 @@ func NewChecker(rule *Rule, ctx *Context) *Checker {
 		Rule: rule,
 		ctx:  context{Context: ctx},
 	}
-	c.check = checkFunctions[rule.Name()].New()(&c.ctx)
+	c.check = checkFunctions[rule.Name()].New(&c.ctx)
 	return c
 }
 
