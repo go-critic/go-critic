@@ -5,14 +5,19 @@ import (
 	"regexp"
 )
 
+func init() {
+	addChecker(commentsChecker{}, &ruleInfo{})
+}
+
 type commentsChecker struct {
 	ctx          *context
 	badCommentRE *regexp.Regexp
 }
 
-func commentsCheck(ctx *context) func(*ast.File) {
+func (c commentsChecker) New(ctx *context) func(*ast.File) {
 	re := `//\s?\w+[^a-zA-Z]+$`
-	c := commentsChecker{ctx: ctx, badCommentRE: regexp.MustCompile(re)}
+	c.ctx = ctx
+	c.badCommentRE = regexp.MustCompile(re)
 	return c.CheckFile
 }
 

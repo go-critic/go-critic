@@ -5,14 +5,18 @@ import (
 	"go/types"
 )
 
-func ptrToRefParamCheck(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&ptrToRefParamChecker{
-		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(ptrToRefParamChecker{}, &ruleInfo{})
 }
 
 type ptrToRefParamChecker struct {
 	baseFuncDeclChecker
+}
+
+func (c ptrToRefParamChecker) New(ctx *context) func(*ast.File) {
+	return wrapFuncDeclChecker(&ptrToRefParamChecker{
+		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
+	})
 }
 
 func (c *ptrToRefParamChecker) CheckFuncDecl(fn *ast.FuncDecl) {

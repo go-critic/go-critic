@@ -5,7 +5,17 @@ import (
 	"strings"
 )
 
-func paramNameCheck(ctx *context) func(*ast.File) {
+func init() {
+	addChecker(paramNameChecker{}, &ruleInfo{})
+}
+
+type paramNameChecker struct {
+	baseParamListChecker
+
+	loudNames map[string]bool
+}
+
+func (c paramNameChecker) New(ctx *context) func(*ast.File) {
 	return wrapParamListChecker(&paramNameChecker{
 		baseParamListChecker: baseParamListChecker{ctx: ctx},
 
@@ -17,12 +27,6 @@ func paramNameCheck(ctx *context) func(*ast.File) {
 			// TODO: add common acronyms like HTTP and URL?
 		},
 	})
-}
-
-type paramNameChecker struct {
-	baseParamListChecker
-
-	loudNames map[string]bool
 }
 
 func (c *paramNameChecker) CheckParamList(params []*ast.Field) {

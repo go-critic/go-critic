@@ -5,38 +5,24 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+	"reflect"
 	"sort"
 )
+
+type checkFunction interface {
+	New(*context) func(*ast.File)
+}
+
+type ruleInfo struct {
+	Experimental bool
+	New          func(*context) func(*ast.File)
+}
 
 // checkFunctions is a table of all available check functions
 // as well as their metadata (like "experimental" attributes).
 //
 // Keys are rule names.
-var checkFunctions = map[string]struct {
-	experimental bool
-
-	new func(*context) func(*ast.File)
-}{
-	"param-name":        {new: paramNameCheck},
-	"type-guard":        {new: typeGuardCheck},
-	"parenthesis":       {new: parenthesisCheck},
-	"underef":           {new: underefCheck},
-	"param-duplication": {new: paramDuplicationCheck},
-	"elseif":            {new: elseifCheck},
-	"range-val-copy":    {new: rangeValCopyCheck},
-	"long-chain":        {new: longChainCheck, experimental: true},
-	"switchif":          {new: switchifCheck},
-	"unslice":           {new: unsliceCheck},
-	"comments":          {new: commentsCheck},
-	"unexported-call":   {new: unexportedCallCheck},
-	"builtin-shadow":    {new: builtinShadowCheck},
-	"range-expr-copy":   {new: rangeExprCopyCheck},
-	"stddef":            {new: stddefCheck},
-	"ptr-to-ref-param":  {new: ptrToRefParamCheck},
-	"flag-deref":        {new: flagDerefCheck},
-	"switch-true":       {new: switchTrueCheck},
-	"append-combine":    {new: appendCombineCheck},
-}
+var checkFunctions = map[string]*ruleInfo{}
 
 // RuleList returns a slice of all rules that can be used to create checkers.
 // Slice is sorted by rule names.
@@ -45,7 +31,7 @@ func RuleList() []*Rule {
 	for ruleName, info := range checkFunctions {
 		rules = append(rules, &Rule{
 			name:         ruleName,
-			experimental: info.experimental,
+			experimental: info.Experimental,
 		})
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
@@ -84,7 +70,7 @@ func NewChecker(rule *Rule, ctx *Context) *Checker {
 		Rule: rule,
 		ctx:  context{Context: ctx},
 	}
-	c.check = checkFunctions[rule.Name()].new(&c.ctx)
+	c.check = checkFunctions[rule.Name()].New(&c.ctx)
 	return c
 }
 
@@ -140,4 +126,11 @@ func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
 		Text: fmt.Sprintf(format, args...),
 		Node: node,
 	})
+}
+
+func addChecker(c checkFunction, inf *ruleInfo) {
+	typeName := reflect.ValueOf(c).Type().Name()
+	ruleName := typeName[:len(typeName)-len("Checker")]
+	inf.New = c.New
+	checkFunctions[ruleName] = inf
 }

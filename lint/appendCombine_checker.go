@@ -7,14 +7,18 @@ import (
 	"github.com/Quasilyte/astcmp"
 )
 
-func appendCombineCheck(ctx *context) func(*ast.File) {
-	return wrapBlockChecker(&appendCombineChecker{
-		baseStmtListChecker: baseStmtListChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(appendCombineChecker{}, &ruleInfo{})
 }
 
 type appendCombineChecker struct {
 	baseStmtListChecker
+}
+
+func (c appendCombineChecker) New(ctx *context) func(*ast.File) {
+	return wrapBlockChecker(&appendCombineChecker{
+		baseStmtListChecker: baseStmtListChecker{ctx: ctx},
+	})
 }
 
 func (c *appendCombineChecker) CheckStmtList(list []ast.Stmt) {

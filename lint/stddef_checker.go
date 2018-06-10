@@ -28,7 +28,32 @@ import (
 // TODO(quasilyte): variables, types.
 // For example: func(http.ResponseWriter, *http.Request) => http.HandlerFunc.
 
-func stddefCheck(ctx *context) func(*ast.File) {
+func init() {
+	addChecker(stddefChecker{}, &ruleInfo{})
+}
+
+// mathConstant describes named constant value defined in "math" package.
+type mathConstant struct {
+	name  string
+	value float64
+
+	// imprecise is a common "short" value form.
+	// Zero for constatns that don't have well-known short form.
+	imprecise float64
+}
+
+type stddefChecker struct {
+	// TODO(quasilyte): should be global expr checker. Refs #124.
+	baseLocalExprChecker
+
+	mathConsts []mathConstant
+
+	stringLitToSuggestion map[string]string
+
+	suggestionToExpression map[string]ast.Expr
+}
+
+func (c stddefChecker) New(ctx *context) func(*ast.File) {
 	expr := func(s string) ast.Expr {
 		x, err := parser.ParseExpr(s)
 		if err != nil {
@@ -98,27 +123,6 @@ func stddefCheck(ctx *context) func(*ast.File) {
 			"3:04PM": "time.Kitchen",
 		},
 	})
-}
-
-// mathConstant describes named constant value defined in "math" package.
-type mathConstant struct {
-	name  string
-	value float64
-
-	// imprecise is a common "short" value form.
-	// Zero for constatns that don't have well-known short form.
-	imprecise float64
-}
-
-type stddefChecker struct {
-	// TODO(quasilyte): should be global expr checker. Refs #124.
-	baseLocalExprChecker
-
-	mathConsts []mathConstant
-
-	stringLitToSuggestion map[string]string
-
-	suggestionToExpression map[string]ast.Expr
 }
 
 func (c *stddefChecker) CheckLocalExpr(expr ast.Expr) {

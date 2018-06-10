@@ -7,14 +7,18 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func typeGuardCheck(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&typeGuardChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(typeGuardChecker{}, &ruleInfo{})
 }
 
 type typeGuardChecker struct {
 	baseStmtChecker
+}
+
+func (c typeGuardChecker) New(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&typeGuardChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
+	})
 }
 
 func (c *typeGuardChecker) CheckStmt(stmt ast.Stmt) {

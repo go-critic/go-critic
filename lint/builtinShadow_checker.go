@@ -4,7 +4,17 @@ import (
 	"go/ast"
 )
 
-func builtinShadowCheck(ctx *context) func(*ast.File) {
+func init() {
+	addChecker(builtinShadowChecker{}, &ruleInfo{})
+}
+
+type builtinShadowChecker struct {
+	baseStmtChecker
+
+	builtins map[string]bool
+}
+
+func (c builtinShadowChecker) New(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&builtinShadowChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 
@@ -57,12 +67,6 @@ func builtinShadowCheck(ctx *context) func(*ast.File) {
 			"recover": true,
 		},
 	})
-}
-
-type builtinShadowChecker struct {
-	baseStmtChecker
-
-	builtins map[string]bool
 }
 
 func (c *builtinShadowChecker) CheckStmt(stmt ast.Stmt) {

@@ -2,14 +2,18 @@ package lint
 
 import "go/ast"
 
-func switchTrueCheck(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&switchTrueChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(switchTrueChecker{}, &ruleInfo{})
 }
 
 type switchTrueChecker struct {
 	baseStmtChecker
+}
+
+func (c switchTrueChecker) New(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&switchTrueChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
+	})
 }
 
 func (c *switchTrueChecker) CheckStmt(stmt ast.Stmt) {

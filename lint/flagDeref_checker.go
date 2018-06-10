@@ -4,7 +4,18 @@ import (
 	"go/ast"
 )
 
-func flagDerefCheck(ctx *context) func(*ast.File) {
+func init() {
+	addChecker(flagDerefChecker{}, &ruleInfo{})
+}
+
+type flagDerefChecker struct {
+	// TODO(quasilyte): should be global expr checker. Refs #124.
+	baseLocalExprChecker
+
+	flagPtrFuncs map[string]bool
+}
+
+func (c flagDerefChecker) New(ctx *context) func(*ast.File) {
 	return wrapLocalExprChecker(&flagDerefChecker{
 		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
 
@@ -19,13 +30,6 @@ func flagDerefCheck(ctx *context) func(*ast.File) {
 			"flag.Uint64":   true,
 		},
 	})
-}
-
-type flagDerefChecker struct {
-	// TODO(quasilyte): should be global expr checker. Refs #124.
-	baseLocalExprChecker
-
-	flagPtrFuncs map[string]bool
 }
 
 func (c *flagDerefChecker) CheckLocalExpr(expr ast.Expr) {

@@ -4,14 +4,18 @@ import (
 	"go/ast"
 )
 
-func switchifCheck(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&switchifChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(switchifChecker{}, &ruleInfo{})
 }
 
 type switchifChecker struct {
 	baseStmtChecker
+}
+
+func (c switchifChecker) New(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&switchifChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
+	})
 }
 
 func (c *switchifChecker) CheckStmt(stmt ast.Stmt) {

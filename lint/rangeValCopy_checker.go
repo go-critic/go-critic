@@ -4,14 +4,18 @@ import (
 	"go/ast"
 )
 
-func rangeValCopyCheck(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&rangeValCopyChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(rangeValCopyChecker{}, &ruleInfo{})
 }
 
 type rangeValCopyChecker struct {
 	baseStmtChecker
+}
+
+func (c rangeValCopyChecker) New(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&rangeValCopyChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
+	})
 }
 
 func (c *rangeValCopyChecker) PerFuncInit(fn *ast.FuncDecl) bool {

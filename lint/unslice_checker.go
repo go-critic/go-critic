@@ -5,14 +5,18 @@ import (
 	"go/types"
 )
 
-func unsliceCheck(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&unsliceChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(unsliceChecker{}, &ruleInfo{})
 }
 
 type unsliceChecker struct {
 	baseLocalExprChecker
+}
+
+func (c unsliceChecker) New(ctx *context) func(*ast.File) {
+	return wrapLocalExprChecker(&unsliceChecker{
+		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	})
 }
 
 func (c *unsliceChecker) CheckLocalExpr(expr ast.Expr) {

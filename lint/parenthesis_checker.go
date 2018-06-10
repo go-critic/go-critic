@@ -4,14 +4,18 @@ import (
 	"go/ast"
 )
 
-func parenthesisCheck(ctx *context) func(*ast.File) {
-	return wrapTypeExprChecker(&parenthesisChecker{
-		baseTypeExprChecker: baseTypeExprChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(parenthesisChecker{}, &ruleInfo{})
 }
 
 type parenthesisChecker struct {
 	baseTypeExprChecker
+}
+
+func (c parenthesisChecker) New(ctx *context) func(*ast.File) {
+	return wrapTypeExprChecker(&parenthesisChecker{
+		baseTypeExprChecker: baseTypeExprChecker{ctx: ctx},
+	})
 }
 
 func (c *parenthesisChecker) CheckTypeExpr(expr ast.Expr) {

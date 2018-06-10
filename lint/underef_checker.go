@@ -5,15 +5,19 @@ import (
 	"go/types"
 )
 
-func underefCheck(ctx *context) func(*ast.File) {
-	// TODO: should be global expr checker, but we don't have such right now.
-	return wrapLocalExprChecker(&underefChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(underefChecker{}, &ruleInfo{})
 }
 
 type underefChecker struct {
 	baseLocalExprChecker
+}
+
+func (c underefChecker) New(ctx *context) func(*ast.File) {
+	// TODO: should be global expr checker, but we don't have such right now.
+	return wrapLocalExprChecker(&underefChecker{
+		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	})
 }
 
 func (c *underefChecker) CheckLocalExpr(expr ast.Expr) {
