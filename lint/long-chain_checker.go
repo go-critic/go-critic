@@ -8,9 +8,9 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func longChainCheck(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&longChainChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+func init() {
+	addChecker(longChainChecker{}, &ruleInfo{
+		Experimental: true,
 	})
 }
 
@@ -23,6 +23,12 @@ type longChainChecker struct {
 	// reported is a set of reported expression strings.
 	// Used to avoid duplicated warnings.
 	reported map[string]bool
+}
+
+func (c longChainChecker) New(ctx *context) func(*ast.File) {
+	return wrapLocalExprChecker(&longChainChecker{
+		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	})
 }
 
 func (c *longChainChecker) PerFuncInit(fn *ast.FuncDecl) bool {

@@ -4,10 +4,8 @@ import (
 	"go/ast"
 )
 
-func elseifCheck(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&elseifChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(elseifChecker{}, &ruleInfo{})
 }
 
 type elseifChecker struct {
@@ -15,6 +13,12 @@ type elseifChecker struct {
 
 	cause   *ast.IfStmt
 	visited map[*ast.IfStmt]bool
+}
+
+func (c elseifChecker) New(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&elseifChecker{
+		baseStmtChecker: baseStmtChecker{ctx: ctx},
+	})
 }
 
 func (c *elseifChecker) PerFuncInit(fn *ast.FuncDecl) bool {

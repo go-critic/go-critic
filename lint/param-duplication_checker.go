@@ -6,14 +6,18 @@ import (
 	"github.com/Quasilyte/astcmp"
 )
 
-func paramDuplicationCheck(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&paramDuplicationChecker{
-		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
-	})
+func init() {
+	addChecker(paramDuplicationChecker{}, &ruleInfo{})
 }
 
 type paramDuplicationChecker struct {
 	baseFuncDeclChecker
+}
+
+func (c paramDuplicationChecker) New(ctx *context) func(*ast.File) {
+	return wrapFuncDeclChecker(&paramDuplicationChecker{
+		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
+	})
 }
 
 func (c *paramDuplicationChecker) CheckFuncDecl(decl *ast.FuncDecl) {

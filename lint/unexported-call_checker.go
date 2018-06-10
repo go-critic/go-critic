@@ -6,13 +6,17 @@ import (
 	"go/types"
 )
 
+func init() {
+	addChecker(unexportedCallChecker{}, &ruleInfo{})
+}
+
 type unexportedCallChecker struct {
 	baseLocalExprChecker
 
 	recvName string
 }
 
-func unexportedCallCheck(ctx *context) func(*ast.File) {
+func (unexportedCallChecker) New(ctx *context) func(*ast.File) {
 	return wrapLocalExprChecker(&unexportedCallChecker{
 		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
 	})
