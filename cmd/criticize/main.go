@@ -146,6 +146,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 	}
 
 	l.ctx.TypesInfo = &pkgInfo.Info
+	l.ctx.Package = pkgInfo.Pkg
 	for _, f := range pkgInfo.Files {
 		l.checkFile(f)
 	}

@@ -6,6 +6,7 @@ import (
 	"go/parser"
 	"go/token"
 	"math"
+	"strings"
 
 	"github.com/Quasilyte/astcmp"
 )
@@ -20,10 +21,6 @@ import (
 // In numerical comparison cases we could suggest size constants instead of
 // literals like 0x7fffffff => math.MaxInt32, because bitwise masks
 // are not used in this way.
-
-// TODO(quasilyte): should handle packages that define named constants
-// specifically. For example, it's invalid to suggest math.* consts
-// for math package itself.
 
 // TODO(quasilyte): variables, types.
 // For example: func(http.ResponseWriter, *http.Request) => http.HandlerFunc.
@@ -202,6 +199,11 @@ func (c *stddefChecker) checkCallExpr(call *ast.CallExpr) {
 }
 
 func (c *stddefChecker) warn(expr ast.Expr, suggestion string) {
-	c.ctx.Warn(expr, "can replace %s with %s",
-		nodeString(c.ctx.FileSet, expr), suggestion)
+	// Avoid printing warnings for packages that use recognized
+	// expressions to define constants/variables we are suggesting.
+	definingPkg := strings.Split(suggestion, ".")[0]
+	if c.ctx.Package.Name() != definingPkg {
+		c.ctx.Warn(expr, "can replace %s with %s",
+			nodeString(c.ctx.FileSet, expr), suggestion)
+	}
 }
