@@ -55,6 +55,7 @@ func main() {
 	if cmd == nil {
 		terminate("unknown sub-command: "+sub, printSupportedSubs)
 	}
+	log.SetPrefix(sub + ": ")
 	cmd.main()
 }
 

@@ -2,7 +2,6 @@ package criticize
 
 import (
 	"flag"
-	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/types"
@@ -51,7 +50,7 @@ func blame(format string, args ...interface{}) {
 // Terminates program on error.
 func parseArgv(l *linter) {
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "usage: gocritic [flags] [package]")
+		log.Printf("usage: [flags] package...")
 		flag.PrintDefaults()
 	}
 
