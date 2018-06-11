@@ -59,16 +59,16 @@ func Main() {
 	excludeRE, err := regexp.Compile(*exclude)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("bad -exclude pattern: %v", err)
 	}
 
 	packages := map[string]bool{}
 
-	err = filepath.Walk(srcRoot, func(path string, info os.FileInfo, err error) error {
-		p, err := filepath.Abs(path)
-		if err != nil {
-			log.Fatal(err)
+	err = filepath.Walk(srcRoot, func(path string, info os.FileInfo, e error) error {
+		if e != nil {
+			log.Printf("walk error: %v", err)
 		}
+		p, _ := filepath.Abs(path)
 		if info.IsDir() || !strings.HasSuffix(p, ".go") || excludeRE.MatchString(p) {
 			return nil
 		}
@@ -82,7 +82,7 @@ func Main() {
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("walk src-root: %v", err)
 	}
 
 	var args []string
