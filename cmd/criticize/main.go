@@ -29,6 +29,7 @@ type linter struct {
 
 	packages        []string
 	enabledCheckers []string
+	failureExitCode int
 }
 
 // Main implements gocritic sub-command entry point.
@@ -60,6 +61,7 @@ func parseArgv(l *linter) {
 	}
 
 	enable := flag.String("enable", "all", "comma-separated list of enabled checkers")
+	flag.IntVar(&l.failureExitCode, "failcode", 1, "exit code to be used when lint issues are found")
 
 	flag.Parse()
 
@@ -158,7 +160,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 // ExitCode returns status code that should be used as an argument to os.Exit.
 func (l *linter) ExitCode() int {
 	if l.foundIssues {
-		return 1
+		return l.failureExitCode
 	}
 	return 0
 }
