@@ -41,7 +41,7 @@ Add linter to your `$PATH` or run it directly:
 
 ```
 ./bin/gocritic package package/path/to/lint # check single package
-./big/gocritic project $GOPATH/src          # check all packages under $GOPATH/src
+./bin/gocritic project $GOPATH/src          # check all packages under $GOPATH/src
 ```
 
 Run `gocritic` without arguments for more info.
