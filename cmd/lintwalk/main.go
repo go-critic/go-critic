@@ -3,8 +3,6 @@ package lintwalk
 import (
 	"flag"
 	"go/build"
-	"go/parser"
-	"go/token"
 	"log"
 	"os"
 	"os/exec"
@@ -25,7 +23,7 @@ func packagePath() []string {
 
 func getPackagePrefix(dir string) string {
 	for _, p := range packagePath() {
-		if filepath.HasPrefix(dir, p) {
+		if strings.HasPrefix(dir, p) {
 			if res, err := filepath.Rel(filepath.Join(p, "src"), dir); err == nil {
 				return res
 			}
@@ -38,7 +36,7 @@ func getPackagePrefix(dir string) string {
 func Main() {
 	enable := flag.String("enable", "all",
 		`forwarded to linter "as is"`)
-	exclude := flag.String("exclude", "(.*test.*)|(.*vendor.*)|(.*builtin.*)",
+	exclude := flag.String("exclude", "testdata/|vendor/|builtin/",
 		`regexp used to skip package names`)
 
 	flag.Parse()
@@ -60,13 +58,9 @@ func Main() {
 
 	excludeRE, err := regexp.Compile(*exclude)
 
-	testRE := regexp.MustCompile(".*_test")
-
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fs := token.NewFileSet()
 
 	packages := map[string]bool{}
 
@@ -75,24 +69,15 @@ func Main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		pkgs, err := parser.ParseDir(fs, p, nil, parser.PackageClauseOnly)
-
-		if !info.IsDir() || excludeRE.MatchString(p) {
+		if info.IsDir() || !strings.HasSuffix(p, ".go") || excludeRE.MatchString(p) {
 			return nil
 		}
+
 		p = filepath.Dir(p)
+
 		p = getPackagePrefix(p)
 
-		for _, pk := range pkgs {
-			if testRE.MatchString(pk.Name) {
-				continue
-			}
-			if pk.Name == "main" {
-				packages[p] = true
-			} else {
-				packages[filepath.Join(p, pk.Name)] = true
-			}
-		}
+		packages[p] = true
 		return nil
 	})
 
