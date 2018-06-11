@@ -13,12 +13,7 @@ import (
 )
 
 func packagePath() []string {
-	res := []string{runtime.GOROOT(), build.Default.GOPATH}
-
-	if p, ok := os.LookupEnv("GOPATH"); ok {
-		res = append(res, strings.Split(p, ":")...)
-	}
-	return res
+	return []string{runtime.GOROOT(), build.Default.GOPATH}
 }
 
 func getPackagePrefix(dir string) string {
@@ -68,19 +63,15 @@ func Main() {
 		if e != nil {
 			log.Printf("walk error: %v", err)
 		}
-		p, err := filepath.Abs(path)
-		if err != nil {
-			return nil
-		}
-		if info.IsDir() || !strings.HasSuffix(p, ".go") || excludeRE.MatchString(p) {
+		if info.IsDir() || !strings.HasSuffix(path, ".go") || excludeRE.MatchString(path) {
 			return nil
 		}
 
-		p = filepath.Dir(p)
+		path = filepath.Dir(path)
 
-		p = getPackagePrefix(p)
+		path = getPackagePrefix(path)
 
-		packages[p] = true
+		packages[path] = true
 		return nil
 	})
 
