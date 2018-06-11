@@ -2,12 +2,30 @@ package lintwalk
 
 import (
 	"flag"
+	"go/build"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
+	"strings"
 )
+
+func packagePath() []string {
+	return []string{runtime.GOROOT(), build.Default.GOPATH}
+}
+
+func getPackagePrefix(dir string) string {
+	for _, p := range packagePath() {
+		if strings.HasPrefix(dir, p) {
+			if res, err := filepath.Rel(filepath.Join(p, "src"), dir); err == nil {
+				return res
+			}
+		}
+	}
+	return ""
+}
 
 // Main implements gocritic sub-command entry point.
 func Main() {
@@ -27,39 +45,47 @@ func Main() {
 	}
 	srcRoot = filepath.Clean(srcRoot)
 
+	srcRoot, err := filepath.Abs(srcRoot)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	excludeRE, err := regexp.Compile(*exclude)
+
 	if err != nil {
 		log.Fatalf("bad -exclude pattern: %v", err)
 	}
 
-	packages := make(map[string]bool)
-	err = filepath.Walk(srcRoot, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
+	packages := map[string]bool{}
+
+	err = filepath.Walk(srcRoot, func(path string, info os.FileInfo, e error) error {
+		if e != nil {
 			log.Printf("walk error: %v", err)
+		}
+		if info.IsDir() || !strings.HasSuffix(path, ".go") || excludeRE.MatchString(path) {
 			return nil
 		}
-		if info.IsDir() {
-			return nil
-		}
-		path = path[len(srcRoot)+len("/"):]
-		if filepath.Ext(path) != ".go" {
-			return nil
-		}
-		if excludeRE.MatchString(path) {
-			return nil
-		}
-		packages[filepath.Dir(path)] = true
+
+		path = filepath.Dir(path)
+
+		path = getPackagePrefix(path)
+
+		packages[path] = true
 		return nil
 	})
+
 	if err != nil {
 		log.Fatalf("walk src-root: %v", err)
 	}
 
 	var args []string
 	args = append(args, "check-package", "-enable", *enable)
-	for pkg := range packages {
-		args = append(args, pkg)
+
+	for p := range packages {
+		args = append(args, p)
 	}
+
 	/* #nosec */
 	cmd := exec.Command("gocritic", args...)
 	cmd.Stdout = os.Stdout
