@@ -3,7 +3,7 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/Quasilyte/astcmp"
+	"github.com/go-toolsmith/astequal"
 )
 
 func init() {
@@ -49,7 +49,7 @@ func (c *typeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 		assert1 := ast.TypeAssertExpr{X: expr, Type: clause.List[0]}
 		for _, stmt := range clause.Body {
 			assert2 := findNode(stmt, func(x ast.Node) bool {
-				return astcmp.Equal(&assert1, x)
+				return astequal.Node(&assert1, x)
 			})
 			if object == c.ctx.TypesInfo.ObjectOf(c.identOf(assert2)) {
 				c.warn(root, i)

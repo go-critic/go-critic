@@ -3,7 +3,7 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/Quasilyte/astcmp"
+	"github.com/go-toolsmith/astequal"
 )
 
 func init() {
@@ -22,7 +22,7 @@ func (c paramDuplicationChecker) New(ctx *context) func(*ast.File) {
 
 func (c *paramDuplicationChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 	typ := c.optimizeFuncType(decl.Type)
-	if !astcmp.EqualExpr(typ, decl.Type) {
+	if !astequal.Expr(typ, decl.Type) {
 		c.warn(decl.Type, typ)
 	}
 }
@@ -48,7 +48,7 @@ func (c *paramDuplicationChecker) optimizeParams(params *ast.FieldList) *ast.Fie
 	for i, p := range params.List[1:] {
 		names = make([]*ast.Ident, len(p.Names))
 		copy(names, p.Names)
-		if astcmp.EqualExpr(p.Type, params.List[i].Type) {
+		if astequal.Expr(p.Type, params.List[i].Type) {
 			list[len(list)-1].Names =
 				append(list[len(list)-1].Names, names...)
 		} else {
