@@ -36,7 +36,7 @@ go get -u github.com/go-critic/go-critic/...
 
 ## Usage
 
-Be sure `gocritic` executable is under you `$PATH`.
+Be sure `gocritic` executable is under your `$PATH`.
 
 Usage of **gocritic**: `gocritic [sub-command] [sub-command args...]`
 Run `gocritic` without arguments to get help output.
