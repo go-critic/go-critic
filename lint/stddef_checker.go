@@ -42,8 +42,7 @@ type mathConstant struct {
 }
 
 type stddefChecker struct {
-	// TODO(quasilyte): should be global expr checker. Refs #124.
-	baseLocalExprChecker
+	baseExprChecker
 
 	mathConsts []mathConstant
 
@@ -61,8 +60,8 @@ func (c stddefChecker) New(ctx *context) func(*ast.File) {
 		return x
 	}
 
-	return wrapLocalExprChecker(&stddefChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	return wrapExprChecker(&stddefChecker{
+		baseExprChecker: baseExprChecker{ctx: ctx},
 
 		suggestionToExpression: map[string]ast.Expr{
 			"math.MaxInt8":   expr(`1<<7 - 1`),
@@ -124,7 +123,7 @@ func (c stddefChecker) New(ctx *context) func(*ast.File) {
 	})
 }
 
-func (c *stddefChecker) CheckLocalExpr(expr ast.Expr) {
+func (c *stddefChecker) CheckExpr(expr ast.Expr) {
 	val := c.ctx.TypesInfo.Types[expr].Value
 	if val == nil {
 		// Not a compile-time constant.
