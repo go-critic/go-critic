@@ -10,17 +10,16 @@ func init() {
 }
 
 type underefChecker struct {
-	baseLocalExprChecker
+	baseExprChecker
 }
 
 func (c underefChecker) New(ctx *context) func(*ast.File) {
-	// TODO: should be global expr checker, but we don't have such right now.
-	return wrapLocalExprChecker(&underefChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	return wrapExprChecker(&underefChecker{
+		baseExprChecker: baseExprChecker{ctx: ctx},
 	})
 }
 
-func (c *underefChecker) CheckLocalExpr(expr ast.Expr) {
+func (c *underefChecker) CheckExpr(expr ast.Expr) {
 	switch n := expr.(type) {
 	case *ast.SelectorExpr:
 		expr, ok := n.X.(*ast.ParenExpr)

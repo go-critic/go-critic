@@ -2,6 +2,14 @@ package checker_test
 
 import "flag"
 
+var (
+	/// immediate deref in *flag.Bool("global1", false, "") is most likely an error; consider using flag.BoolVar
+	_ = *flag.Bool("global1", false, "")
+
+	/// immediate deref in *flag.Float64("global2", 0, "") is most likely an error; consider using flag.Float64Var
+	_ = *flag.Float64("global2", 0, "")
+)
+
 func shouldWarn() {
 	/// immediate deref in *flag.Bool("b", false, "") is most likely an error; consider using flag.BoolVar
 	_ = *flag.Bool("b", false, "")
