@@ -64,3 +64,12 @@ Code style is the same as in Go project, see [CodeReviewComments](https://github
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 It also describes how to develop a new checker for the linter.
+
+## Dependencies
+
+* [github.com/go-toolsmith/astp](https://github.com/go-toolsmith/astp)
+* [github.com/go-toolsmith/astcopy](https://github.com/go-toolsmith/astcopy)
+* [github.com/go-toolsmith/astequal](https://github.com/go-toolsmith/astequal)
+* [github.com/go-toolsmith/strparse](https://github.com/go-toolsmith/strparse)
+* [golang.org/x/tools/go/loader](https://godoc.org/golang.org/x/tools/go/loader)
+* [golang.org/x/tools/go/ast/astutil](https://godoc.org/golang.org/x/tools/go/ast/astutil)
