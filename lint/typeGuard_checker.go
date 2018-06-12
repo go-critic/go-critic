@@ -3,6 +3,7 @@ package lint
 import (
 	"go/ast"
 
+	"github.com/cristaloleg/astp"
 	"github.com/go-toolsmith/astequal"
 )
 
@@ -27,7 +28,7 @@ func (c *typeGuardChecker) CheckStmt(stmt ast.Stmt) {
 }
 
 func (c *typeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
-	if _, ok := root.Assign.(*ast.AssignStmt); ok {
+	if astp.IsAssignStmt(root.Assign) {
 		return // Already with type guard
 	}
 	// Must be a *ast.ExprStmt then.
