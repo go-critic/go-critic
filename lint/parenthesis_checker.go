@@ -3,7 +3,7 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/Quasilyte/astcopy"
+	"github.com/go-toolsmith/astcopy"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
