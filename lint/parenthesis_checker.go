@@ -48,6 +48,7 @@ func (c *parenthesisChecker) hasParens(x ast.Expr) bool {
 }
 
 func (c *parenthesisChecker) unparenExpr(x ast.Expr) ast.Expr {
+	// Replace every paren expr with expression it encloses.
 	return astutil.Apply(x, nil, func(cur *astutil.Cursor) bool {
 		if paren, ok := cur.Node().(*ast.ParenExpr); ok {
 			cur.Replace(paren.X)
