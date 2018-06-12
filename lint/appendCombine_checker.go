@@ -4,7 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 
-	"github.com/Quasilyte/astcmp"
+	"github.com/go-toolsmith/astequal"
 )
 
 func init() {
@@ -78,7 +78,7 @@ func (c *appendCombineChecker) matchAppend(stmt ast.Stmt, slice ast.Expr) *ast.C
 		cond := ok &&
 			qualifiedName(call.Fun) == "append" &&
 			call.Ellipsis == token.NoPos &&
-			astcmp.EqualExpr(assign.Lhs[0], call.Args[0])
+			astequal.Expr(assign.Lhs[0], call.Args[0])
 		if !cond {
 			return nil
 		}
@@ -86,7 +86,7 @@ func (c *appendCombineChecker) matchAppend(stmt ast.Stmt, slice ast.Expr) *ast.C
 
 	// Check that current append slice match previous append slice.
 	// Otherwise we should break the chain.
-	if slice == nil || astcmp.EqualExpr(slice, call.Args[0]) {
+	if slice == nil || astequal.Expr(slice, call.Args[0]) {
 		return call
 	}
 	return nil

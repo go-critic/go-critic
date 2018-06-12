@@ -7,6 +7,8 @@ import (
 	"go/token"
 	"go/types"
 	"strings"
+
+	"golang.org/x/tools/go/ast/astutil"
 )
 
 func nodeString(fset *token.FileSet, x ast.Node) string {
@@ -50,4 +52,19 @@ func qualifiedName(x ast.Expr) string {
 	default:
 		return ""
 	}
+}
+
+// findNode applies pred for root and all it's childs until it returns true.
+// Matched node is returned.
+// If none of the nodes matched predicate, nil is returned.
+func findNode(root ast.Node, pred func(ast.Node) bool) ast.Node {
+	var found ast.Node
+	astutil.Apply(root, nil, func(cur *astutil.Cursor) bool {
+		if pred(cur.Node()) {
+			found = cur.Node()
+			return false
+		}
+		return true
+	})
+	return found
 }

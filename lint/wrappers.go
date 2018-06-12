@@ -219,6 +219,8 @@ func wrapTypeExprChecker(c typeExprChecker) func(*ast.File) {
 
 	checkExpr = func(x ast.Expr) {
 		switch x := x.(type) {
+		case *ast.CompositeLit:
+			checkExpr(x.Type)
 		case *ast.StructType:
 			checkStructType(x)
 		case *ast.InterfaceType:
@@ -226,8 +228,9 @@ func wrapTypeExprChecker(c typeExprChecker) func(*ast.File) {
 		case *ast.FuncType:
 			checkFuncType(x)
 		case *ast.ArrayType:
-			// TODO: handle slices separately.
-			checkExpr(x.Elt)
+			c.CheckTypeExpr(x)
+		case *ast.FuncLit:
+			checkExpr(x.Type)
 		default:
 			c.CheckTypeExpr(x)
 		}
@@ -239,6 +242,9 @@ func wrapTypeExprChecker(c typeExprChecker) func(*ast.File) {
 			case *ast.ValueSpec:
 				if spec.Type != nil {
 					checkExpr(spec.Type)
+				}
+				for _, expr := range spec.Values {
+					checkExpr(expr)
 				}
 			case *ast.TypeSpec:
 				checkExpr(spec.Type)

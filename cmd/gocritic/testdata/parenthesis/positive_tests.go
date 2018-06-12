@@ -1,30 +1,29 @@
 package checker_test
 
-/// could simplify (func()) to func()
+/// could simplify [](func()) to []func()
 func badReturn() [](func()) {
 	return nil
 }
 
-//TODO: could simplify [](func[](func())) to []func([]func())
-/// could simplify (func([](func()))) to func([](func()))
+/// could simplify [](func([](func()))) to []func([]func())
 func veryBadReturn() [](func([](func()))) {
 	return nil
 }
 
-/// could simplify (func()) to func()
+/// could simplify [](func()) to []func()
 var _ [](func())
 
-/// could simplify (*int) to *int
+/// could simplify [5](*int) to [5]*int
 var _ [5](*int)
 
-/// could simplify (func()) to func()
+/// could simplify [](func()) to []func()
 var _ [](func())
 
 var (
 	_ int
-	/// could simplify (*int) to *int
+	/// could simplify [5](*int) to [5]*int
 	_ [5](*int)
-	/// could simplify (func()) to func()
+	/// could simplify [](func()) to []func()
 	_ [](func())
 )
 
@@ -43,10 +42,10 @@ type myStruct1 struct {
 }
 
 type myInterface1 interface {
-	/// could simplify (int) to int
+	/// could simplify [](int) to []int
 	foo([](int))
 
-	/// could simplify (func() string) to func() string
+	/// could simplify [](func() string) to []func() string
 	bar() [](func() string)
 }
 
@@ -76,3 +75,15 @@ func myFunc1() {
 	_ = localVar1
 	_ = localVar2
 }
+
+/// could simplify map[(string)](string) to map[string]string
+type mapType1 map[(string)](string)
+
+/// could simplify map[[5][5](string)]map[(string)](string) to map[[5][5]string]map[string]string
+type mapType2 map[[5][5](string)]map[(string)](string)
+
+/// could simplify [4](*int) to [4]*int
+var _ = [4](*int){}
+
+/// could simplify [](func()) to []func()
+var _ = func() [](func()) { return nil }

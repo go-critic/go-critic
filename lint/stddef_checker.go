@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Quasilyte/astcmp"
+	"github.com/go-toolsmith/astequal"
 )
 
 // TODO(quasilyte): if we were tracking expression context, it would be possible
@@ -135,7 +135,7 @@ func (c *stddefChecker) CheckExpr(expr ast.Expr) {
 		c.checkBasicLit(expr, val)
 	case *ast.BinaryExpr:
 		for suggestion, y := range c.suggestionToExpression {
-			if astcmp.EqualExpr(expr, y) {
+			if astequal.Expr(expr, y) {
 				c.warn(expr, suggestion)
 				return
 			}
