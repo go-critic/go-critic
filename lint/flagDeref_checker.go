@@ -9,15 +9,14 @@ func init() {
 }
 
 type flagDerefChecker struct {
-	// TODO(quasilyte): should be global expr checker. Refs #124.
-	baseLocalExprChecker
+	baseExprChecker
 
 	flagPtrFuncs map[string]bool
 }
 
 func (c flagDerefChecker) New(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&flagDerefChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
+	return wrapExprChecker(&flagDerefChecker{
+		baseExprChecker: baseExprChecker{ctx: ctx},
 
 		flagPtrFuncs: map[string]bool{
 			"flag.Bool":     true,
@@ -32,7 +31,7 @@ func (c flagDerefChecker) New(ctx *context) func(*ast.File) {
 	})
 }
 
-func (c *flagDerefChecker) CheckLocalExpr(expr ast.Expr) {
+func (c *flagDerefChecker) CheckExpr(expr ast.Expr) {
 	if expr, ok := expr.(*ast.StarExpr); ok {
 		call, ok := expr.X.(*ast.CallExpr)
 		if !ok {
