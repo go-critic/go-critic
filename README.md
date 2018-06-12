@@ -8,7 +8,6 @@ Go source code linter that brings checks that are currently not implemented in o
 ![Logo](https://avatars1.githubusercontent.com/u/40007520?s=400&u=b44287d8845a63fb0102d5259710c11ea367bb13&v=4)
 
 
-
 **Project goals:**
 
 - Provide as much useful checks as possible.
@@ -37,24 +36,21 @@ go get -u github.com/go-critic/go-critic/...
 
 ## Usage
 
-Add linter to your `$PATH` or run it directly:
-
-```
-./bin/gocritic package package/path/to/lint # check single package
-./bin/gocritic project $GOPATH/src          # check all packages under $GOPATH/src
-```
-
-Run `gocritic` without arguments for more info.
+Be sure `gocritic` executable is under your `$PATH`.
 
 Usage of **gocritic**: `gocritic [sub-command] [sub-command args...]`
+Run `gocritic` without arguments to get help output.
 
 Examples:
 
 | Command | Description |
 | --- | --- |
-| `gocritic package fmt` | Runs all (stable) checkers on fmt package |
-| `gocritic package -enable elseif,param-name fmt` | Runs specified checkers on fmt package |
-| `gocritic project $GOROOT/src` | Run all (stable) checkers on entire GOROOT |
+| `gocritic check-package fmt` | Runs all stable checkers on fmt package |
+| `gocritic check-package pkg1 pkg2` | Run all stable checkers on pkg1 and pkg2 |
+| `gocritic check-package -enable elseif,param-name fmt` | Runs specified checkers on fmt package |
+| `gocritic check-project $GOROOT/src` | Run all stable checkers on entire GOROOT |
+| `gocritic check-project $GOPATH/src` | Run all stable checkers on entire GOPATH |
+| `gocritic check-project $GOPATH/src/foo` | Run all stable checkers on all packages under GOPATH/src/foo |
 
 ## Contributing
 
