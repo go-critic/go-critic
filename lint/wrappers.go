@@ -65,6 +65,26 @@ func wrapFuncDeclChecker(c funcDeclChecker) func(*ast.File) {
 	}
 }
 
+type exprChecker interface {
+	CheckExpr(ast.Expr)
+}
+
+type baseExprChecker struct {
+	ctx *context
+}
+
+// wrapExprChecker returns a check function that visits every expression.
+func wrapExprChecker(c exprChecker) func(*ast.File) {
+	return func(f *ast.File) {
+		ast.Inspect(f, func(x ast.Node) bool {
+			if expr, ok := x.(ast.Expr); ok {
+				c.CheckExpr(expr)
+			}
+			return true
+		})
+	}
+}
+
 type localExprChecker interface {
 	PerFuncInit(*ast.FuncDecl) bool
 	CheckLocalExpr(ast.Expr)

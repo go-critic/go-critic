@@ -11,6 +11,19 @@ type sampleInterface interface {
 	method()
 }
 
+var (
+	globalStruct = &sampleStruct{}
+	globalArray  = &[5]int{}
+)
+
+var (
+	/// could simplify (*globalStruct).field to globalStruct.field
+	_ = (*globalStruct).field
+
+	/// could simplify (*globalArray)[0] to globalArray[0]
+	_ = (*globalArray)[0]
+)
+
 func sampleCase() {
 	var k *sampleStruct
 	/// could simplify (*k).field to k.field
