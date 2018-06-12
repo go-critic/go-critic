@@ -4,7 +4,6 @@ import (
 	"go/ast"
 
 	"github.com/Quasilyte/astcmp"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
@@ -49,7 +48,7 @@ func (c *typeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 		// Create artificial node just for matching.
 		assert1 := ast.TypeAssertExpr{X: expr, Type: clause.List[0]}
 		for _, stmt := range clause.Body {
-			assert2 := c.find(stmt, func(x ast.Node) bool {
+			assert2 := findNode(stmt, func(x ast.Node) bool {
 				return astcmp.Equal(&assert1, x)
 			})
 			if object == c.ctx.TypesInfo.ObjectOf(c.identOf(assert2)) {
@@ -62,23 +61,6 @@ func (c *typeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 
 func (c *typeGuardChecker) warn(node ast.Node, caseIndex int) {
 	c.ctx.Warn(node, "case %d can benefit from type switch with assignment", caseIndex)
-}
-
-// find applies pred for root and all it's childs until it returns true.
-// Matched node is returned.
-// If none of the nodes matched predicate, nil is returned.
-//
-// TODO: is this generally useful and can be placed in util.go?
-func (c *typeGuardChecker) find(root ast.Node, pred func(ast.Node) bool) ast.Node {
-	var found ast.Node
-	astutil.Apply(root, nil, func(cur *astutil.Cursor) bool {
-		if pred(cur.Node()) {
-			found = cur.Node()
-			return false
-		}
-		return true
-	})
-	return found
 }
 
 // identOf returns identifier for x that can be used to obtain associated types.Object.
