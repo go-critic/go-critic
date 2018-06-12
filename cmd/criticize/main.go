@@ -2,7 +2,6 @@ package criticize
 
 import (
 	"flag"
-	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/types"
@@ -23,10 +22,13 @@ type linter struct {
 
 	checkers []*lint.Checker
 
+	foundIssues bool // True if there any checker reported an issue
+
 	// Command line flags:
 
 	packages        []string
 	enabledCheckers []string
+	failureExitCode int
 }
 
 // Main implements gocritic sub-command entry point.
@@ -39,6 +41,8 @@ func Main() {
 	for _, pkgPath := range l.packages {
 		l.CheckPackage(pkgPath)
 	}
+
+	os.Exit(l.ExitCode())
 }
 
 func blame(format string, args ...interface{}) {
@@ -51,11 +55,12 @@ func blame(format string, args ...interface{}) {
 // Terminates program on error.
 func parseArgv(l *linter) {
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, "usage: gocritic [flags] [package]")
+		log.Printf("usage: [flags] package...")
 		flag.PrintDefaults()
 	}
 
 	enable := flag.String("enable", "all", "comma-separated list of enabled checkers")
+	flag.IntVar(&l.failureExitCode, "failcode", 1, "exit code to be used when lint issues are found")
 
 	flag.Parse()
 
@@ -146,9 +151,18 @@ func (l *linter) CheckPackage(pkgPath string) {
 	}
 
 	l.ctx.TypesInfo = &pkgInfo.Info
+	l.ctx.Package = pkgInfo.Pkg
 	for _, f := range pkgInfo.Files {
 		l.checkFile(f)
 	}
+}
+
+// ExitCode returns status code that should be used as an argument to os.Exit.
+func (l *linter) ExitCode() int {
+	if l.foundIssues {
+		return l.failureExitCode
+	}
+	return 0
 }
 
 func (l *linter) checkFile(f *ast.File) {
@@ -176,6 +190,7 @@ func (l *linter) checkFile(f *ast.File) {
 			}()
 
 			for _, warn := range c.Check(f) {
+				l.foundIssues = true
 				pos := l.ctx.FileSet.Position(warn.Node.Pos())
 				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)
 			}
