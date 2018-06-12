@@ -3,6 +3,7 @@ package lint
 import (
 	"go/ast"
 
+	"github.com/cristaloleg/astp"
 	"github.com/go-toolsmith/astcopy"
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -40,10 +41,8 @@ func (c *parenthesisChecker) CheckTypeExpr(expr ast.Expr) {
 }
 
 func (c *parenthesisChecker) hasParens(x ast.Expr) bool {
-	// TODO: could use astp.IsParenExpr. Refs #200
 	return nil != findNode(x, func(x ast.Node) bool {
-		_, ok := x.(*ast.ParenExpr)
-		return ok
+		return astp.IsParenExpr(x)
 	})
 }
 
