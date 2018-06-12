@@ -41,9 +41,7 @@ func (c *parenthesisChecker) CheckTypeExpr(expr ast.Expr) {
 }
 
 func (c *parenthesisChecker) hasParens(x ast.Expr) bool {
-	return nil != findNode(x, func(x ast.Node) bool {
-		return astp.IsParenExpr(x)
-	})
+	return findNode(x, astp.IsParenExpr) != nil
 }
 
 func (c *parenthesisChecker) unparenExpr(x ast.Expr) ast.Expr {
