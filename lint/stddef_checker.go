@@ -3,7 +3,6 @@ package lint
 import (
 	"go/ast"
 	"go/constant"
-	"go/parser"
 	"go/token"
 	"math"
 	"net/http"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/strparse"
 )
 
 // TODO(quasilyte): if we were tracking expression context, it would be possible
@@ -52,30 +52,22 @@ type stddefChecker struct {
 }
 
 func (c stddefChecker) New(ctx *context) func(*ast.File) {
-	expr := func(s string) ast.Expr {
-		x, err := parser.ParseExpr(s)
-		if err != nil {
-			panic(err)
-		}
-		return x
-	}
-
 	return wrapExprChecker(&stddefChecker{
 		baseExprChecker: baseExprChecker{ctx: ctx},
 
 		suggestionToExpression: map[string]ast.Expr{
-			"math.MaxInt8":   expr(`1<<7 - 1`),
-			"math.MinInt8":   expr(`-1 << 7`),
-			"math.MaxInt16":  expr(`1<<15 - 1`),
-			"math.MinInt16":  expr(`-1 << 15`),
-			"math.MaxInt32":  expr(`1<<31 - 1`),
-			"math.MinInt32":  expr(`-1 << 31`),
-			"math.MaxInt64":  expr(`1<<63 - 1`),
-			"math.MinInt64":  expr(`-1 << 63`),
-			"math.MaxUint8":  expr(`1<<8 - 1`),
-			"math.MaxUint16": expr(`1<<16 - 1`),
-			"math.MaxUint32": expr(`1<<32 - 1`),
-			"math.MaxUint64": expr(`1<<64 - 1`),
+			"math.MaxInt8":   strparse.Expr(`1<<7 - 1`),
+			"math.MinInt8":   strparse.Expr(`-1 << 7`),
+			"math.MaxInt16":  strparse.Expr(`1<<15 - 1`),
+			"math.MinInt16":  strparse.Expr(`-1 << 15`),
+			"math.MaxInt32":  strparse.Expr(`1<<31 - 1`),
+			"math.MinInt32":  strparse.Expr(`-1 << 31`),
+			"math.MaxInt64":  strparse.Expr(`1<<63 - 1`),
+			"math.MinInt64":  strparse.Expr(`-1 << 63`),
+			"math.MaxUint8":  strparse.Expr(`1<<8 - 1`),
+			"math.MaxUint16": strparse.Expr(`1<<16 - 1`),
+			"math.MaxUint32": strparse.Expr(`1<<32 - 1`),
+			"math.MaxUint64": strparse.Expr(`1<<64 - 1`),
 		},
 
 		mathConsts: []mathConstant{
