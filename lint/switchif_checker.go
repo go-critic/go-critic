@@ -32,7 +32,7 @@ func (c *switchifChecker) checkSwitchStmt(stmt ast.Stmt, body *ast.BlockStmt) {
 		if body.List[0].(*ast.CaseClause).List == nil {
 			// default case.
 			c.warnDefault(stmt)
-		} else {
+		} else if len(body.List[0].(*ast.CaseClause).List) == 1 {
 			c.warn(stmt)
 		}
 	}
