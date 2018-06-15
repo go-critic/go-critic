@@ -1,4 +1,4 @@
-Detects type switches that cab benefit from type guard clause.
+Detects type switches that can benefit from type guard clause with variable.
 
 **Before:**
 ```go
