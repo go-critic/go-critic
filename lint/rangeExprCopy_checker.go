@@ -45,6 +45,6 @@ func (c *rangeExprCopyChecker) CheckStmt(stmt ast.Stmt) {
 }
 
 func (c *rangeExprCopyChecker) warn(rng *ast.RangeStmt, size int64) {
-	x := nodeString(c.ctx.FileSet, rng.X)
-	c.ctx.Warn(rng, "copy of %s (%d bytes) can be avoided with &%s", x, size, x)
+	c.ctx.Warn(rng, "copy of %s (%d bytes) can be avoided with &%s",
+		rng.X, size, rng.X)
 }

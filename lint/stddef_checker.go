@@ -196,7 +196,6 @@ func (c *stddefChecker) warn(expr ast.Expr, suggestion string) {
 	// expressions to define constants/variables we are suggesting.
 	definingPkg := strings.Split(suggestion, ".")[0]
 	if c.ctx.Package.Name() != definingPkg {
-		c.ctx.Warn(expr, "can replace %s with %s",
-			nodeString(c.ctx.FileSet, expr), suggestion)
+		c.ctx.Warn(expr, "can replace %s with %s", expr, suggestion)
 	}
 }
