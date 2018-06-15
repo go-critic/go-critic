@@ -3,8 +3,8 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/cristaloleg/astp"
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/astp"
 )
 
 func init() {

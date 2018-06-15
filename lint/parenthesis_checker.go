@@ -3,8 +3,8 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/cristaloleg/astp"
 	"github.com/go-toolsmith/astcopy"
+	"github.com/go-toolsmith/astp"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
