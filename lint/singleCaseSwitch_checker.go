@@ -5,20 +5,20 @@ import (
 )
 
 func init() {
-	addChecker(switchifChecker{}, &ruleInfo{})
+	addChecker(singleCaseSwitchChecker{}, &ruleInfo{})
 }
 
-type switchifChecker struct {
+type singleCaseSwitchChecker struct {
 	baseStmtChecker
 }
 
-func (c switchifChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&switchifChecker{
+func (c singleCaseSwitchChecker) New(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&singleCaseSwitchChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})
 }
 
-func (c *switchifChecker) CheckStmt(stmt ast.Stmt) {
+func (c *singleCaseSwitchChecker) CheckStmt(stmt ast.Stmt) {
 	switch stmt := stmt.(type) {
 	case *ast.SwitchStmt:
 		c.checkSwitchStmt(stmt, stmt.Body)
@@ -27,7 +27,7 @@ func (c *switchifChecker) CheckStmt(stmt ast.Stmt) {
 	}
 }
 
-func (c *switchifChecker) checkSwitchStmt(stmt ast.Stmt, body *ast.BlockStmt) {
+func (c *singleCaseSwitchChecker) checkSwitchStmt(stmt ast.Stmt, body *ast.BlockStmt) {
 	if len(body.List) == 1 {
 		if body.List[0].(*ast.CaseClause).List == nil {
 			// default case.
@@ -38,10 +38,10 @@ func (c *switchifChecker) checkSwitchStmt(stmt ast.Stmt, body *ast.BlockStmt) {
 	}
 }
 
-func (c *switchifChecker) warn(stmt ast.Stmt) {
+func (c *singleCaseSwitchChecker) warn(stmt ast.Stmt) {
 	c.ctx.Warn(stmt, "should rewrite switch statement to if statement")
 }
 
-func (c *switchifChecker) warnDefault(stmt ast.Stmt) {
+func (c *singleCaseSwitchChecker) warnDefault(stmt ast.Stmt) {
 	c.ctx.Warn(stmt, "found switch with default case only")
 }

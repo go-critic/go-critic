@@ -7,33 +7,33 @@ import (
 )
 
 func init() {
-	addChecker(paramDuplicationChecker{}, &ruleInfo{})
+	addChecker(paramTypeCombineChecker{}, &ruleInfo{})
 }
 
-type paramDuplicationChecker struct {
+type paramTypeCombineChecker struct {
 	baseFuncDeclChecker
 }
 
-func (c paramDuplicationChecker) New(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&paramDuplicationChecker{
+func (c paramTypeCombineChecker) New(ctx *context) func(*ast.File) {
+	return wrapFuncDeclChecker(&paramTypeCombineChecker{
 		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
 	})
 }
 
-func (c *paramDuplicationChecker) CheckFuncDecl(decl *ast.FuncDecl) {
+func (c *paramTypeCombineChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 	typ := c.optimizeFuncType(decl.Type)
 	if !astequal.Expr(typ, decl.Type) {
 		c.warn(decl.Type, typ)
 	}
 }
 
-func (c *paramDuplicationChecker) optimizeFuncType(f *ast.FuncType) *ast.FuncType {
+func (c *paramTypeCombineChecker) optimizeFuncType(f *ast.FuncType) *ast.FuncType {
 	return &ast.FuncType{
 		Params:  c.optimizeParams(f.Params),
 		Results: c.optimizeParams(f.Results),
 	}
 }
-func (c *paramDuplicationChecker) optimizeParams(params *ast.FieldList) *ast.FieldList {
+func (c *paramTypeCombineChecker) optimizeParams(params *ast.FieldList) *ast.FieldList {
 	if params == nil || len(params.List) < 2 {
 		return params
 	}
@@ -63,6 +63,6 @@ func (c *paramDuplicationChecker) optimizeParams(params *ast.FieldList) *ast.Fie
 	}
 }
 
-func (c *paramDuplicationChecker) warn(f1, f2 *ast.FuncType) {
+func (c *paramTypeCombineChecker) warn(f1, f2 *ast.FuncType) {
 	c.ctx.Warn(f1, "%s could be replaced with %s", f1, f2)
 }

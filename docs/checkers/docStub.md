@@ -4,16 +4,17 @@ Detects comments that aim to silence go lint complaints about exported symbol no
 ```go
 // Foo ...
 func Foo() {
-     ...
+     // ...
 }
 
 ```
 
 **After:**
 ```go
-// Foo useful comment for Foo 
 func Foo() {
-     ...
+     // ...
 }
-
 ```
+
+> You can either remove a comment to let go lint find it or change stub to useful comment.
+> This checker makes it easier to detect stubs, the action is up to you.
