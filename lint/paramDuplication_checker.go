@@ -64,7 +64,5 @@ func (c *paramDuplicationChecker) optimizeParams(params *ast.FieldList) *ast.Fie
 }
 
 func (c *paramDuplicationChecker) warn(f1, f2 *ast.FuncType) {
-	c.ctx.Warn(f1, "%s could be replaced with %s",
-		nodeString(c.ctx.FileSet, f1),
-		nodeString(c.ctx.FileSet, f2))
+	c.ctx.Warn(f1, "%s could be replaced with %s", f1, f2)
 }

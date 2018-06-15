@@ -34,7 +34,5 @@ func (c *unsliceChecker) CheckLocalExpr(expr ast.Expr) {
 }
 
 func (c *unsliceChecker) warn(expr *ast.SliceExpr) {
-	c.ctx.Warn(expr, "could simplify %s to %s",
-		nodeString(c.ctx.FileSet, expr),
-		nodeString(c.ctx.FileSet, expr.X))
+	c.ctx.Warn(expr, "could simplify %s to %s", expr, expr.X)
 }

@@ -58,7 +58,7 @@ func (c *longChainChecker) CheckLocalExpr(expr ast.Expr) {
 		return
 	}
 
-	s := nodeString(c.ctx.FileSet, expr)
+	s := c.ctx.printer.Sprint(expr)
 	if c.reported[s] {
 		return
 	}

@@ -46,5 +46,5 @@ func (c *flagDerefChecker) CheckExpr(expr ast.Expr) {
 
 func (c *flagDerefChecker) warn(x ast.Node, suggestion string) {
 	c.ctx.Warn(x, "immediate deref in %s is most likely an error; consider using %s",
-		nodeString(c.ctx.FileSet, x), suggestion)
+		x, suggestion)
 }

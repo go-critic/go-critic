@@ -55,7 +55,5 @@ func (c *parenthesisChecker) unparenExpr(x ast.Expr) ast.Expr {
 }
 
 func (c *parenthesisChecker) warn(cause, noParens ast.Expr) {
-	c.ctx.Warn(cause, "could simplify %s to %s",
-		nodeString(c.ctx.FileSet, cause),
-		nodeString(c.ctx.FileSet, noParens))
+	c.ctx.Warn(cause, "could simplify %s to %s", cause, noParens)
 }
