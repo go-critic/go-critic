@@ -6,22 +6,22 @@ import (
 )
 
 func init() {
-	addChecker(commentsChecker{}, &ruleInfo{})
+	addChecker(docStubChecker{}, &ruleInfo{})
 }
 
-type commentsChecker struct {
+type docStubChecker struct {
 	ctx          *context
 	badCommentRE *regexp.Regexp
 }
 
-func (c commentsChecker) New(ctx *context) func(*ast.File) {
+func (c docStubChecker) New(ctx *context) func(*ast.File) {
 	re := `//\s?\w+[^a-zA-Z]+$`
 	c.ctx = ctx
 	c.badCommentRE = regexp.MustCompile(re)
 	return c.CheckFile
 }
 
-func (c *commentsChecker) CheckFile(f *ast.File) {
+func (c *docStubChecker) CheckFile(f *ast.File) {
 	for _, decl := range f.Decls {
 		if decl, ok := decl.(*ast.FuncDecl); ok {
 			if decl.Doc != nil && c.badCommentRE.MatchString(decl.Doc.List[0].Text) {
@@ -31,6 +31,6 @@ func (c *commentsChecker) CheckFile(f *ast.File) {
 	}
 }
 
-func (c *commentsChecker) warn(decl *ast.FuncDecl) {
+func (c *docStubChecker) warn(decl *ast.FuncDecl) {
 	c.ctx.Warn(decl, "silencing go lint doc-comment warnings is unadvised")
 }
