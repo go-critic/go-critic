@@ -36,6 +36,10 @@ Go source code linter that brings checks that are currently not implemented in o
         <td>syntax-only check (fast)</td>
       </tr>
       <tr>
+        <td><a href="#implAssert-ref">implAssert</a></td>
+        <td>type-aware check</td>
+      </tr>
+      <tr>
         <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
         <td>syntax-only check (fast)</td>
       </tr>
@@ -240,6 +244,23 @@ flag.BoolVar(&b, "b", false, "b docs")
 > Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
+
+<a name="implAssert-ref"></a>
+## implAssert
+Detecs implementation assert pattern in code files and suggests 
+to move them to test files/packages to prevent redundant dependency.
+
+**Before:**
+```go
+// code.go
+var _ pkg.MyInterface = (*MyStruct)(nil)
+```
+
+**After:**
+```go
+// code_test.go
+var _ pkg.MyInterface = (*MyStruct)(nil)
+```
 
 <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
