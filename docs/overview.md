@@ -62,6 +62,9 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#unexportedCall-ref">unexportedCall</a></td>
       </tr>
       <tr>
+        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
+      </tr>
+      <tr>
         <td><a href="#unslice-ref">unslice</a></td>
       </tr>
 </table>
@@ -483,6 +486,23 @@ func baz() {
 
 
 
+<a name="unnamedResult-ref"></a>
+## unnamedResult
+Finds usage of unnamed results, skips (T, error) and (T, bool) patterns.
+
+**Before:**
+```go
+func f() (float64, float64)
+```
+
+**After:**
+```go
+func f() (x, y float64)
+```
+
+
+
+
 <a name="unslice-ref"></a>
 ## unslice
 Detects slice expressions that can be simplified to sliced expression itself.
@@ -540,6 +560,8 @@ v := (a+x) + (b+x) + (c+x)
 
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
+
+
 
 
 
