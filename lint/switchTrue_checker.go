@@ -3,7 +3,9 @@ package lint
 import "go/ast"
 
 func init() {
-	addChecker(switchTrueChecker{}, &ruleInfo{})
+	addChecker(switchTrueChecker{}, &ruleInfo{
+		SyntaxOnly: true,
+	})
 }
 
 type switchTrueChecker struct {

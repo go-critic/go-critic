@@ -5,7 +5,9 @@ import (
 )
 
 func init() {
-	addChecker(builtinShadowChecker{}, &ruleInfo{})
+	addChecker(builtinShadowChecker{}, &ruleInfo{
+		SyntaxOnly: true,
+	})
 }
 
 type builtinShadowChecker struct {
