@@ -13,6 +13,12 @@ type emptyStruct struct{}
 func (in emptyStruct) method1(out *int) {}
 
 func noWarnings() {
+	type LocalCapitalizedType int
+	type (
+		T1 float32
+		T2 float64
+	)
+
 	v1, v2 := 1, 2
 	var x, y = v1, v2
 

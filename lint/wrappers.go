@@ -239,7 +239,7 @@ func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
 					for _, spec := range x.Specs {
 						spec, ok := spec.(*ast.ValueSpec)
 						if !ok { // Ignore type specs
-							continue
+							return false
 						}
 						for _, id := range spec.Names {
 							c.CheckLocalName(id)
