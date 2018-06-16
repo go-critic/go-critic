@@ -5,7 +5,9 @@ import (
 )
 
 func init() {
-	addChecker(elseifChecker{}, &ruleInfo{})
+	addChecker(elseifChecker{}, &ruleInfo{
+		SyntaxOnly: true,
+	})
 }
 
 type elseifChecker struct {

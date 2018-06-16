@@ -6,7 +6,9 @@ import (
 )
 
 func init() {
-	addChecker(captLocalChecker{}, &ruleInfo{})
+	addChecker(captLocalChecker{}, &ruleInfo{
+		SyntaxOnly: true,
+	})
 }
 
 type captLocalChecker struct {

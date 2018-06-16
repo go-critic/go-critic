@@ -9,7 +9,9 @@ import (
 )
 
 func init() {
-	addChecker(typeUnparenChecker{}, &ruleInfo{})
+	addChecker(typeUnparenChecker{}, &ruleInfo{
+		SyntaxOnly: true,
+	})
 }
 
 type typeUnparenChecker struct {

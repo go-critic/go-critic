@@ -9,11 +9,13 @@ Go source code linter that brings checks that are currently not implemented in o
 <table>
   <tr>
     <th>Name</th>
+    <th>Kind</th>
   </tr>
   {{- range .Checkers }}
     {{- if not .Experimental }}
       <tr>
-        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a></td>
+        <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+        <td>{{.Kind}}</td>
       </tr>
     {{- end }}
   {{- end }}

@@ -19,6 +19,7 @@ type checker struct {
 	Name         string
 	Description  string
 	Experimental bool
+	Kind         string
 }
 
 func main() {
@@ -35,6 +36,7 @@ func main() {
 		checkers = append(checkers, checker{
 			Name:         r.Name(),
 			Experimental: r.Experimental(),
+			Kind:         ruleKindString(r),
 			Description:  desc,
 		})
 	}
@@ -55,4 +57,11 @@ func main() {
 func getDesc(name string) (string, error) {
 	b, err := ioutil.ReadFile(checkersPath + name + ".md")
 	return string(b), err
+}
+
+func ruleKindString(r *lint.Rule) string {
+	if r.SyntaxOnly() {
+		return "syntax-only check (fast)"
+	}
+	return "type-aware check"
 }

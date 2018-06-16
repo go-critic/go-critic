@@ -9,63 +9,83 @@ Go source code linter that brings checks that are currently not implemented in o
 <table>
   <tr>
     <th>Name</th>
+    <th>Kind</th>
   </tr>
       <tr>
         <td><a href="#appendCombine-ref">appendCombine</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#builtinShadow-ref">builtinShadow</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#captLocal-ref">captLocal</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#docStub-ref">docStub</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#elseif-ref">elseif</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#flagDeref-ref">flagDeref</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#stdExpr-ref">stdExpr</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#switchTrue-ref">switchTrue</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#typeSwitchVar-ref">typeSwitchVar</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#typeUnparen-ref">typeUnparen</a></td>
+        <td>syntax-only check (fast)</td>
       </tr>
       <tr>
         <td><a href="#underef-ref">underef</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#unexportedCall-ref">unexportedCall</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#unnamedResult-ref">unnamedResult</a></td>
+        <td>type-aware check</td>
       </tr>
       <tr>
         <td><a href="#unslice-ref">unslice</a></td>
+        <td>type-aware check</td>
       </tr>
 </table>
 

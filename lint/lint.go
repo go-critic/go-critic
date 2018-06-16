@@ -15,8 +15,21 @@ type checkFunction interface {
 }
 
 type ruleInfo struct {
+	// Experimental marks rule implementation as experimental.
+	// Reasons to mark anything as experimental:
+	//	- rule name can change in near time
+	//	- checker gives more false positives than anticipated
+	//	- rule requires more testing or alternative design
 	Experimental bool
-	New          func(*context) func(*ast.File)
+
+	// SyntaxOnly marks rules that can be checker by using AST only.
+	// Such rule implementations should not use types info.
+	//
+	// It's OK not to mark rule as SyntaxOnly even if current
+	// implementation does not use types info.
+	SyntaxOnly bool
+
+	New func(*context) func(*ast.File)
 }
 
 // checkFunctions is a table of all available check functions
@@ -33,6 +46,7 @@ func RuleList() []*Rule {
 		rules = append(rules, &Rule{
 			name:         ruleName,
 			experimental: info.Experimental,
+			syntaxOnly:   info.SyntaxOnly,
 		})
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
@@ -43,8 +57,12 @@ func RuleList() []*Rule {
 
 // Rule describes a named check that can be performed by the linter.
 type Rule struct {
-	name         string
+	name string
+
+	// TODO(quasilyte): may want to use ruleInfo struct here?
+
 	experimental bool
+	syntaxOnly   bool
 }
 
 // String returns r short printed representation (name only).
@@ -59,6 +77,9 @@ func (r *Rule) Name() string { return r.name }
 // false positives or some unresoleved bugs in them.
 func (r *Rule) Experimental() bool { return r.experimental }
 
+// SyntaxOnly reports whether type info is not required to perform rule checks.
+func (r *Rule) SyntaxOnly() bool { return r.syntaxOnly }
+
 // NewChecker returns checker for the given rule.
 //
 // Rule must be non-nil and known to the lint package.
@@ -67,6 +88,11 @@ func NewChecker(rule *Rule, ctx *Context) *Checker {
 	if rule == nil {
 		panic("nil rule given")
 	}
+	// TODO(quasilyte): it would be great to have SyntaxOnly
+	// checkers TypeInfo set to nil, so if they ever
+	// start using it that will be detected by the tests.
+	// This can require some lint package refactoring though.
+	// Postponing this idea for now.
 	c := &Checker{
 		Rule: rule,
 		ctx: context{
