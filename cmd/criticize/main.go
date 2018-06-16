@@ -7,6 +7,7 @@ import (
 	"go/types"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -153,8 +154,14 @@ func (l *linter) CheckPackage(pkgPath string) {
 	l.ctx.TypesInfo = &pkgInfo.Info
 	l.ctx.Package = pkgInfo.Pkg
 	for _, f := range pkgInfo.Files {
-		l.checkFile(f)
+		l.checkFile(l.getFilename(f), f)
 	}
+}
+
+func (l *linter) getFilename(f *ast.File) string {
+	fname := l.prog.Fset.Position(f.Pos()).String() // ex: /usr/go/src/pkg/main.go:1:1
+	fname = filepath.Base(fname)                    // ex: main.go:1:1
+	return fname[:len(fname)-4]                     // ex: main.go
 }
 
 // ExitCode returns status code that should be used as an argument to os.Exit.
@@ -165,7 +172,7 @@ func (l *linter) ExitCode() int {
 	return 0
 }
 
-func (l *linter) checkFile(f *ast.File) {
+func (l *linter) checkFile(fname string, f *ast.File) {
 	var wg sync.WaitGroup
 	wg.Add(len(l.checkers))
 	for _, c := range l.checkers {
@@ -189,7 +196,7 @@ func (l *linter) checkFile(f *ast.File) {
 				}
 			}()
 
-			for _, warn := range c.Check(f) {
+			for _, warn := range c.Check(fname, f) {
 				l.foundIssues = true
 				pos := l.ctx.FileSet.Position(warn.Node.Pos())
 				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)

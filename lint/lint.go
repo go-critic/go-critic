@@ -115,8 +115,9 @@ type Checker struct {
 }
 
 // Check runs rule checker over file f.
-func (c *Checker) Check(f *ast.File) []Warning {
+func (c *Checker) Check(fname string, f *ast.File) []Warning {
 	c.ctx.warnings = c.ctx.warnings[:0]
+	c.ctx.filename = fname
 	c.check(f)
 	return c.ctx.warnings
 }
@@ -150,6 +151,8 @@ type Context struct {
 // Fields that are not from Context itself are writeable.
 type context struct {
 	*Context
+
+	filename string
 
 	// printer used to format warning text.
 	printer *astfmt.Printer
