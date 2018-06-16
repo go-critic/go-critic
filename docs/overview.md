@@ -62,6 +62,9 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#unexportedCall-ref">unexportedCall</a></td>
       </tr>
       <tr>
+        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
+      </tr>
+      <tr>
         <td><a href="#unslice-ref">unslice</a></td>
       </tr>
 </table>
@@ -479,6 +482,23 @@ func baz() {
 	var fo foo
 	fo.Bar()
 }
+```
+
+
+
+
+<a name="unnamedResult-ref"></a>
+## unnamedResult
+Finds usage of unnamed results, skips (T, error) and (T, bool) patterns.
+
+**Before:**
+```go
+func f() (float64, float64)
+```
+
+**After:**
+```go
+func f() (x, y float64)
 ```
 
 
