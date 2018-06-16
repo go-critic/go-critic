@@ -9,7 +9,7 @@ func f1(x int, y float64) {
 
 /// parameter `x` isn't used, consider to name it as `_`
 /// parameter `y` isn't used, consider to name it as `_`
-func (f *foo) f2(x int, y int) {
+func (*foo) f2(x int, y int) {
 }
 
 /// parameter `y` isn't used, consider to name it as `_`
