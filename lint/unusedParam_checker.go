@@ -29,7 +29,7 @@ func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 	for _, p := range params.List {
 		if len(p.Names) == 0 {
 			c.warnUnnamed(p)
-			break
+			return
 		}
 		for _, id := range p.Names {
 			if id.Name != "_" {
@@ -39,6 +39,7 @@ func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 	}
 
 	// remove used params
+	// TODO(cristaloleg): we might want to have less iterations here.
 	for id := range c.ctx.TypesInfo.Uses {
 		if _, ok := objToIdent[id.Obj]; ok {
 			delete(objToIdent, id.Obj)
