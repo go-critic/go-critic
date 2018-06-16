@@ -4,24 +4,25 @@ import (
 	"go/ast"
 
 	"github.com/go-toolsmith/astcopy"
+	"github.com/go-toolsmith/astp"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
-	addChecker(parenthesisChecker{}, &ruleInfo{})
+	addChecker(typeUnparenChecker{}, &ruleInfo{})
 }
 
-type parenthesisChecker struct {
+type typeUnparenChecker struct {
 	baseTypeExprChecker
 }
 
-func (c parenthesisChecker) New(ctx *context) func(*ast.File) {
-	return wrapTypeExprChecker(&parenthesisChecker{
+func (c typeUnparenChecker) New(ctx *context) func(*ast.File) {
+	return wrapTypeExprChecker(&typeUnparenChecker{
 		baseTypeExprChecker: baseTypeExprChecker{ctx: ctx},
 	})
 }
 
-func (c *parenthesisChecker) CheckTypeExpr(expr ast.Expr) {
+func (c *typeUnparenChecker) CheckTypeExpr(expr ast.Expr) {
 	// Arrays require extra care: we don't want to unparen
 	// length expression as they are not type expressions.
 	if arr, ok := expr.(*ast.ArrayType); ok {
@@ -39,15 +40,11 @@ func (c *parenthesisChecker) CheckTypeExpr(expr ast.Expr) {
 	c.warn(expr, c.unparenExpr(astcopy.Expr(expr)))
 }
 
-func (c *parenthesisChecker) hasParens(x ast.Expr) bool {
-	// TODO: could use astp.IsParenExpr. Refs #200
-	return nil != findNode(x, func(x ast.Node) bool {
-		_, ok := x.(*ast.ParenExpr)
-		return ok
-	})
+func (c *typeUnparenChecker) hasParens(x ast.Expr) bool {
+	return findNode(x, astp.IsParenExpr) != nil
 }
 
-func (c *parenthesisChecker) unparenExpr(x ast.Expr) ast.Expr {
+func (c *typeUnparenChecker) unparenExpr(x ast.Expr) ast.Expr {
 	// Replace every paren expr with expression it encloses.
 	return astutil.Apply(x, nil, func(cur *astutil.Cursor) bool {
 		if paren, ok := cur.Node().(*ast.ParenExpr); ok {
@@ -57,8 +54,6 @@ func (c *parenthesisChecker) unparenExpr(x ast.Expr) ast.Expr {
 	}).(ast.Expr)
 }
 
-func (c *parenthesisChecker) warn(cause, noParens ast.Expr) {
-	c.ctx.Warn(cause, "could simplify %s to %s",
-		nodeString(c.ctx.FileSet, cause),
-		nodeString(c.ctx.FileSet, noParens))
+func (c *typeUnparenChecker) warn(cause, noParens ast.Expr) {
+	c.ctx.Warn(cause, "could simplify %s to %s", cause, noParens)
 }

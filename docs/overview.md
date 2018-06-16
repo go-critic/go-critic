@@ -17,7 +17,10 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#builtinShadow-ref">builtinShadow</a></td>
       </tr>
       <tr>
-        <td><a href="#comments-ref">comments</a></td>
+        <td><a href="#captLocal-ref">captLocal</a></td>
+      </tr>
+      <tr>
+        <td><a href="#docStub-ref">docStub</a></td>
       </tr>
       <tr>
         <td><a href="#elseif-ref">elseif</a></td>
@@ -26,13 +29,7 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#flagDeref-ref">flagDeref</a></td>
       </tr>
       <tr>
-        <td><a href="#paramDuplication-ref">paramDuplication</a></td>
-      </tr>
-      <tr>
-        <td><a href="#paramName-ref">paramName</a></td>
-      </tr>
-      <tr>
-        <td><a href="#parenthesis-ref">parenthesis</a></td>
+        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
       </tr>
       <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
@@ -44,16 +41,19 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
       </tr>
       <tr>
-        <td><a href="#stddef-ref">stddef</a></td>
+        <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
+      </tr>
+      <tr>
+        <td><a href="#stdExpr-ref">stdExpr</a></td>
       </tr>
       <tr>
         <td><a href="#switchTrue-ref">switchTrue</a></td>
       </tr>
       <tr>
-        <td><a href="#switchif-ref">switchif</a></td>
+        <td><a href="#typeSwitchVar-ref">typeSwitchVar</a></td>
       </tr>
       <tr>
-        <td><a href="#typeGuard-ref">typeGuard</a></td>
+        <td><a href="#typeUnparen-ref">typeUnparen</a></td>
       </tr>
       <tr>
         <td><a href="#underef-ref">underef</a></td>
@@ -129,27 +129,48 @@ func main() {
 
 
 
-<a name="comments-ref"></a>
-## comments
+<a name="captLocal-ref"></a>
+## captLocal
+Detects potential issues in function parameter names.
+
+Catches capitalized (exported) parameter names.
+Suggests to replace them with non-capitalized versions.
+
+**Before:**
+```go
+func f(IN int, OUT *int) (ERR error) {}
+```
+
+**After:**
+```go
+func f(in int, out *int) (err error) {}
+```
+
+
+
+
+<a name="docStub-ref"></a>
+## docStub
 Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
 
 **Before:**
 ```go
 // Foo ...
 func Foo() {
-     ...
+     // ...
 }
 
 ```
 
 **After:**
 ```go
-// Foo useful comment for Foo 
 func Foo() {
-     ...
+     // ...
 }
-
 ```
+
+> You can either remove a comment to let go lint find it or change stub to useful comment.
+> This checker makes it easier to detect stubs, the action is up to you.
 
 
 
@@ -211,8 +232,8 @@ flag.BoolVar(&b, "b", false, "b docs")
 
 
 
-<a name="paramDuplication-ref"></a>
-## paramDuplication
+<a name="paramTypeCombine-ref"></a>
+## paramTypeCombine
 Detects if function parameters could be combined by type and suggest the way to do it.
 
 **Before:**
@@ -224,48 +245,6 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 ```go
 func foo(a, b, c, d, e, f, g int) {}
 ```
-
-
-
-
-<a name="paramName-ref"></a>
-## paramName
-Detects potential issues in function parameter names.
-
-Catches capitalized (exported) parameter names.
-Suggests to replace them with non-capitalized versions.
-
-**Before:**
-```go
-func f(IN int, OUT *int) (ERR error) {}
-```
-
-**After:**
-```go
-func f(in int, out *int) (err error) {}
-```
-
-
-
-
-<a name="parenthesis-ref"></a>
-## parenthesis
-Detects unneded parenthesis inside type expressions and suggests to remove them.
-
-**Before:**
-```go
-func foo() [](func([](func()))) {
-     ...
-}
-```
-
-**After:**
-```go
-func foo() []func([]func()) {
-     ...
-}
-```
-
 
 
 
@@ -341,8 +320,30 @@ for i := range xs {
 
 
 
-<a name="stddef-ref"></a>
-## stddef
+<a name="singleCaseSwitch-ref"></a>
+## singleCaseSwitch
+Detects switch statements that could be better written as if statements.
+
+**Before:**
+```go
+switch x := x.(type) {
+case int:
+     ...
+}
+```
+
+**After:**
+```go
+if x, ok := x.(int); ok {
+   ...
+}
+```
+
+
+
+
+<a name="stdExpr-ref"></a>
+## stdExpr
 Detects constant expressions that can be replaced by a named constant
 from standard library, like `math.MaxInt32`.
 
@@ -384,31 +385,9 @@ case x > y:
 
 
 
-<a name="switchif-ref"></a>
-## switchif
-Detects switch statements that could be better written as if statements.
-
-**Before:**
-```go
-switch x := x.(type) {
-case int:
-     ...
-}
-```
-
-**After:**
-```go
-if x, ok := x.(int); ok {
-   ...
-}
-```
-
-
-
-
-<a name="typeGuard-ref"></a>
-## typeGuard
-Detects type switches that cab benefit from type guard clause.
+<a name="typeSwitchVar-ref"></a>
+## typeSwitchVar
+Detects type switches that can benefit from type guard clause with variable.
 
 **Before:**
 ```go
@@ -433,6 +412,28 @@ default:
 	return 0
 }
 ```
+
+
+
+
+<a name="typeUnparen-ref"></a>
+## typeUnparen
+Detects unneded parenthesis inside type expressions and suggests to remove them.
+
+**Before:**
+```go
+func foo() [](func([](func()))) {
+     ...
+}
+```
+
+**After:**
+```go
+func foo() []func([]func()) {
+     ...
+}
+```
+
 
 
 
@@ -534,6 +535,8 @@ copy(b, values...)
 
 
 
+
+
 <a name="longChain-ref"></a>
 ## longChain
 Detects repeated expression chains and suggest to refactor them.
@@ -560,10 +563,6 @@ v := (a+x) + (b+x) + (c+x)
 
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
-
-
-
-
 
 
 
