@@ -1,5 +1,4 @@
-Detects `for` statements with range expressions that perform excessive
-copying (big arrays can cause it).
+Detects expensive copies of `for` loop range expressions.
 
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
