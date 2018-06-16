@@ -2,6 +2,7 @@ package lint
 
 import (
 	"go/ast"
+	"go/token"
 )
 
 type paramListChecker interface {
@@ -177,6 +178,74 @@ func wrapStmtChecker(c stmtChecker) func(*ast.File) {
 			ast.Inspect(decl.Body, func(x ast.Node) bool {
 				if stmt, ok := x.(ast.Stmt); ok {
 					c.CheckStmt(stmt)
+				}
+				return true
+			})
+		}
+	}
+}
+
+type localNameChecker interface {
+	CheckLocalName(*ast.Ident)
+}
+
+type baseLocalNameChecker struct {
+	ctx *context
+}
+
+// wrapLocalNameChecker returns a check function that visits every local name.
+// Local name definition follows:
+//	- Function parameters (input, output, receiver)
+//	- Every LHS of ":=" assignment
+//	- Every local var/const declaration.
+func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
+	return func(f *ast.File) {
+		for _, decl := range f.Decls {
+			decl, ok := decl.(*ast.FuncDecl)
+			if !ok {
+				continue
+			}
+			// First, function params.
+			ast.Inspect(decl.Type, func(x ast.Node) bool {
+				if id, ok := x.(*ast.Ident); ok {
+					c.CheckLocalName(id)
+				}
+				return true
+			})
+			if decl.Recv != nil {
+				c.CheckLocalName(decl.Recv.List[0].Names[0])
+			}
+			if decl.Body == nil { // Skip external functions
+				return
+			}
+			// Now every assignment and var/const decl.
+			ast.Inspect(decl.Body, func(x ast.Node) bool {
+				switch x := x.(type) {
+				case *ast.AssignStmt:
+					// "=" can never introduce new names.
+					if x.Tok == token.ASSIGN {
+						return false
+					}
+					// Can't be precise without type info here,
+					// some identifiers passed to CheckLocalName
+					// are not defs, but rather re-declarations.
+					for _, lhs := range x.Lhs {
+						if lhs, ok := lhs.(*ast.Ident); ok {
+							c.CheckLocalName(lhs)
+						}
+					}
+					return false
+				case *ast.GenDecl:
+					for _, spec := range x.Specs {
+						spec, ok := spec.(*ast.ValueSpec)
+						if !ok { // Ignore type specs
+							continue
+						}
+						for _, id := range spec.Names {
+							c.CheckLocalName(id)
+						}
+					}
+					return false
 				}
 				return true
 			})
