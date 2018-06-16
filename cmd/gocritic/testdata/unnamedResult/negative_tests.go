@@ -27,3 +27,11 @@ func g6() ([]int, bool) {
 func (f *foo) g7() (func(int), bool) {
 	return nil, false
 }
+
+func (f foo) g8() (x int) {
+	return 0
+}
+
+func (f foo) g9() (x, y int, z float64) {
+	return 0, 0, 0
+}
