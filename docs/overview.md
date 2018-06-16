@@ -489,7 +489,8 @@ func baz() {
 
 <a name="unnamedResult-ref"></a>
 ## unnamedResult
-Finds usage of unnamed results, skips (T, error) and (T, bool) patterns.
+For functions with multiple return values, detects unnamed results
+that do not match `(T, error)` or `(T, bool)` pattern.
 
 **Before:**
 ```go
@@ -563,6 +564,8 @@ v := (a+x) + (b+x) + (c+x)
 
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
+
+
 
 
 

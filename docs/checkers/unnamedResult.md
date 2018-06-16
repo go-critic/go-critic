@@ -1,4 +1,5 @@
-Finds usage of unnamed results, skips (T, error) and (T, bool) patterns.
+For functions with multiple return values, detects unnamed results
+that do not match `(T, error)` or `(T, bool)` pattern.
 
 **Before:**
 ```go
