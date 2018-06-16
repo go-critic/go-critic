@@ -83,7 +83,6 @@ Go source code linter that brings checks that are currently not implemented in o
 
 
 
-
 <a name="appendCombine-ref"></a>
 ## appendCombine
 Detects `append` chains to the same slice that can be done in a single `append` call.
@@ -98,8 +97,6 @@ xs = append(xs, 2)
 ```go
 xs = append(xs, 1, 2)
 ```
-
-
 
 
 <a name="builtinShadow-ref"></a>
@@ -127,8 +124,6 @@ func main() {
 ```
 
 
-
-
 <a name="captLocal-ref"></a>
 ## captLocal
 Detects potential issues in function parameter names.
@@ -145,8 +140,6 @@ func f(IN int, OUT *int) (ERR error) {}
 ```go
 func f(in int, out *int) (err error) {}
 ```
-
-
 
 
 <a name="docStub-ref"></a>
@@ -171,8 +164,6 @@ func Foo() {
 
 > You can either remove a comment to let go lint find it or change stub to useful comment.
 > This checker makes it easier to detect stubs, the action is up to you.
-
-
 
 
 <a name="elseif-ref"></a>
@@ -206,8 +197,6 @@ default:
 ```
 
 
-
-
 <a name="flagDeref-ref"></a>
 ## flagDeref
 Detects immediate dereferencing of `flag` package pointers.
@@ -228,10 +217,6 @@ flag.BoolVar(&b, "b", false, "b docs")
 > where flag values are not updated after flag.Parse().
 
 
-
-
-
-
 <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
 Detects if function parameters could be combined by type and suggest the way to do it.
@@ -245,8 +230,6 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 ```go
 func foo(a, b, c, d, e, f, g int) {}
 ```
-
-
 
 
 <a name="ptrToRefParam-ref"></a>
@@ -265,8 +248,6 @@ func f(m map[string]int) (ch chan *int)
 
 > Slices are not as referential as maps or channels, but it's usually
 > better to return them by value rather than modyfing them by pointer.
-
-
 
 
 <a name="rangeExprCopy-ref"></a>
@@ -293,8 +274,6 @@ for _, x := range &xs {
 ```
 
 
-
-
 <a name="rangeValCopy-ref"></a>
 ## rangeValCopy
 Detects loops that copy big objects during each iteration.
@@ -318,8 +297,6 @@ for i := range xs {
 ```
 
 
-
-
 <a name="singleCaseSwitch-ref"></a>
 ## singleCaseSwitch
 Detects switch statements that could be better written as if statements.
@@ -340,8 +317,6 @@ if x, ok := x.(int); ok {
 ```
 
 
-
-
 <a name="stdExpr-ref"></a>
 ## stdExpr
 Detects constant expressions that can be replaced by a named constant
@@ -358,8 +333,6 @@ maxVal := 1<<7 - 1
 intBytes := make([]byte, bits.IntSize)
 maxVal := math.MaxInt8
 ```
-
-
 
 
 <a name="switchTrue-ref"></a>
@@ -381,8 +354,6 @@ case x > y:
 	// ...
 }
 ```
-
-
 
 
 <a name="typeSwitchVar-ref"></a>
@@ -414,8 +385,6 @@ default:
 ```
 
 
-
-
 <a name="typeUnparen-ref"></a>
 ## typeUnparen
 Detects unneded parenthesis inside type expressions and suggests to remove them.
@@ -436,8 +405,6 @@ func foo() []func([]func()) {
 
 
 
-
-
 <a name="underef-ref"></a>
 ## underef
 Detects expressions with C style field selection and suggest Go style correction.
@@ -453,8 +420,6 @@ _ := (*a)[5] // only if a is array
 k.field = 5
 _ := a[5]
 ```
-
-
 
 
 <a name="unexportedCall-ref"></a>
@@ -485,8 +450,6 @@ func baz() {
 ```
 
 
-
-
 <a name="unnamedResult-ref"></a>
 ## unnamedResult
 For functions with multiple return values, detects unnamed results
@@ -501,8 +464,6 @@ func f() (float64, float64)
 ```go
 func f() (x, y float64)
 ```
-
-
 
 
 <a name="unslice-ref"></a>
@@ -520,22 +481,6 @@ copy(b[:], values...) // b is []byte
 f(s)
 copy(b, values...)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <a name="longChain-ref"></a>
@@ -564,31 +509,4 @@ v := (a+x) + (b+x) + (c+x)
 
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

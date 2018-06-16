@@ -11,9 +11,9 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Name</th>
   </tr>
   {{- range .Checkers }}
-    {{- if not .Experimental}}
+    {{- if not .Experimental }}
       <tr>
-        <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a></td>
       </tr>
     {{- end }}
   {{- end }}
@@ -26,9 +26,9 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Name</th>
   </tr>
   {{- range .Checkers }}
-    {{- if .Experimental}}
+    {{- if .Experimental }}
       <tr>
-        <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a></td>
       </tr>
     {{- end }}
   {{- end }}
@@ -36,18 +36,18 @@ Go source code linter that brings checks that are currently not implemented in o
 
 
 
-{{ range .Checkers }}
-{{ if not .Experimental}}
+{{ range .Checkers -}}
+{{- if not .Experimental }}
 <a name=" {{- .Name -}} -ref"></a>
-## {{ .Name}}
-{{.Description}}
-{{ end }}
-{{ end }}
+## {{ .Name }}
+{{ .Description }}
+{{ end -}}
+{{ end -}}
 
-{{ range .Checkers }}
-{{ if .Experimental}}
+{{ range .Checkers -}}
+{{- if .Experimental }}
 <a name=" {{- .Name -}} -ref"></a>
-## {{.Name}}
-{{.Description}}
-{{ end }}
-{{ end }}
+## {{ .Name }}
+{{ .Description }}
+{{ end -}}
+{{ end -}}
