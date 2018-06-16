@@ -35,3 +35,15 @@ func (f foo) g8() (x int) {
 func (f foo) g9() (x, y int, z float64) {
 	return 0, 0, 0
 }
+
+func (f foo) g10() (x, y int) {
+	return 0, 0
+}
+
+func g11() (x, y, z int) {
+	return 0, 0, 0
+}
+
+func g12() (x, y int, _, w float64) {
+	return 0, 0, 0, 0
+}
