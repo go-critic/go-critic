@@ -1,7 +1,4 @@
-Detects potential issues in function parameter names.
-
-Catches capitalized (exported) parameter names.
-Suggests to replace them with non-capitalized versions.
+Detects capitalized names for local variables.
 
 **Before:**
 ```go

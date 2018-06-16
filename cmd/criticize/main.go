@@ -7,6 +7,7 @@ import (
 	"go/types"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -153,8 +154,16 @@ func (l *linter) CheckPackage(pkgPath string) {
 	l.ctx.TypesInfo = &pkgInfo.Info
 	l.ctx.Package = pkgInfo.Pkg
 	for _, f := range pkgInfo.Files {
+		l.ctx.Filename = l.getFilename(f)
 		l.checkFile(f)
 	}
+}
+
+func (l *linter) getFilename(f *ast.File) string {
+	// see https://github.com/golang/go/issues/24498
+	fname := l.prog.Fset.Position(f.Pos()).String() // ex: /usr/go/src/pkg/main.go:1:1
+	fname = filepath.Base(fname)                    // ex: main.go:1:1
+	return fname[:len(fname)-4]                     // ex: main.go
 }
 
 // ExitCode returns status code that should be used as an argument to os.Exit.

@@ -1,6 +1,4 @@
-Detects when
-[predeclared identifiers](https://golang.org/ref/spec#Predeclared_identifiers)
-shadowed in assignments.
+Detects when predeclared identifiers shadowed in assignments.
 
 **Before:**
 ```go

@@ -1,4 +1,4 @@
-Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
+Detects comments that silence go lint complaints about doc-comment.
 
 **Before:**
 ```go
