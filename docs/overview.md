@@ -87,6 +87,10 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#unslice-ref">unslice</a></td>
         <td>type-aware check</td>
       </tr>
+      <tr>
+        <td><a href="#unusedParams-ref">unusedParams</a></td>
+        <td>type-aware check</td>
+      </tr>
 </table>
 
 **Experimental:**
@@ -500,6 +504,21 @@ copy(b[:], values...) // b is []byte
 ```go
 f(s)
 copy(b, values...)
+```
+
+
+<a name="unusedParams-ref"></a>
+## unusedParams
+Detects unused params and suggests to name them as `_`(underscore).
+
+**Before:**
+```go
+func f(a int, b float64) // b isn't used
+```
+
+**After:**
+```go
+func f(a int, _ float64) // everything is cool
 ```
 
 
