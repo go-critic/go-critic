@@ -46,3 +46,8 @@ func (f *foo) f8() (bool, bool) {
 func (f *foo) f9() (bool, func() int) {
 	return false, nil
 }
+
+/// consider to give name to results
+func f10() (int, int, float64, float64) {
+	return 0, 0, 0, 0
+}

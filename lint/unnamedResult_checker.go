@@ -26,8 +26,9 @@ func (c *unnamedResultChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 		return
 
 	case results.NumFields() == 2:
-		if !c.isBoolOrError(results.List[0].Type) &&
-			c.isBoolOrError(results.List[1].Type) {
+		typ1, typ2 := c.getResultsTypes(results.List)
+		if len(results.List[0].Names) == 2 ||
+			(!c.isBoolOrError(typ1) && c.isBoolOrError(typ2)) {
 			// no need to name results for (T, error) or (T, bool)
 		} else {
 			c.warn(decl)
@@ -45,6 +46,13 @@ func (c *unnamedResultChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 
 func (c *unnamedResultChecker) warn(n ast.Node) {
 	c.ctx.Warn(n, "consider to give name to results")
+}
+
+func (c *unnamedResultChecker) getResultsTypes(fields []*ast.Field) (res1, res2 ast.Expr) {
+	if len(fields) == 2 {
+		return fields[0].Type, fields[1].Type
+	}
+	return fields[0].Type, fields[0].Type
 }
 
 func (c *unnamedResultChecker) isBoolOrError(expr ast.Expr) bool {
