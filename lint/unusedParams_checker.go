@@ -25,9 +25,9 @@ func (c *unusedParamsChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 		return
 	}
 
-	objUsesed := make(map[*ast.Object]struct{})
+	objUsed := make(map[*ast.Object]struct{})
 	for id := range c.ctx.TypesInfo.Uses {
-		objUsesed[id.Obj] = struct{}{}
+		objUsed[id.Obj] = struct{}{}
 	}
 
 	for _, p := range params.List {
@@ -39,7 +39,7 @@ func (c *unusedParamsChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 			if name.Name == "_" {
 				continue
 			}
-			if _, ok := objUsesed[name.Obj]; !ok {
+			if _, ok := objUsed[name.Obj]; !ok {
 				c.warn(name, name.Name)
 			}
 		}
