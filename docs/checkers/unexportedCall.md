@@ -1,4 +1,4 @@
-Finds calls of unexported method from unexported type outside that type.
+Detects calls of unexported method from unexported type outside that type.
 
 **Before:**
 ```go
