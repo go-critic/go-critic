@@ -24,24 +24,30 @@ func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 		return
 	}
 
-	objUsed := make(map[*ast.Object]struct{})
-	for id := range c.ctx.TypesInfo.Uses {
-		objUsed[id.Obj] = struct{}{}
-	}
-
+	// collect all params to map
+	objToIdent := make(map[*ast.Object]*ast.Ident)
 	for _, p := range params.List {
 		if len(p.Names) == 0 {
 			c.warnUnnamed(p)
 			break
 		}
 		for _, id := range p.Names {
-			if id.Name == "_" {
-				continue
-			}
-			if _, ok := objUsed[id.Obj]; !ok {
-				c.warn(id)
+			if id.Name != "_" {
+				objToIdent[id.Obj] = id
 			}
 		}
+	}
+
+	// remove used params
+	for id := range c.ctx.TypesInfo.Uses {
+		if _, ok := objToIdent[id.Obj]; ok {
+			delete(objToIdent, id.Obj)
+		}
+	}
+
+	// all params that are left are unused
+	for _, id := range objToIdent {
+		c.warn(id)
 	}
 }
 
