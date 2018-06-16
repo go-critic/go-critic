@@ -3,7 +3,6 @@ package lint
 import (
 	"go/ast"
 	"go/constant"
-	"go/parser"
 	"go/token"
 	"math"
 	"net/http"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/strparse"
 )
 
 // TODO(quasilyte): if we were tracking expression context, it would be possible
@@ -28,7 +28,7 @@ import (
 // For example: func(http.ResponseWriter, *http.Request) => http.HandlerFunc.
 
 func init() {
-	addChecker(stddefChecker{}, &ruleInfo{})
+	addChecker(stdExprChecker{}, &ruleInfo{})
 }
 
 // mathConstant describes named constant value defined in "math" package.
@@ -41,7 +41,7 @@ type mathConstant struct {
 	imprecise float64
 }
 
-type stddefChecker struct {
+type stdExprChecker struct {
 	baseExprChecker
 
 	mathConsts []mathConstant
@@ -51,31 +51,23 @@ type stddefChecker struct {
 	suggestionToExpression map[string]ast.Expr
 }
 
-func (c stddefChecker) New(ctx *context) func(*ast.File) {
-	expr := func(s string) ast.Expr {
-		x, err := parser.ParseExpr(s)
-		if err != nil {
-			panic(err)
-		}
-		return x
-	}
-
-	return wrapExprChecker(&stddefChecker{
+func (c stdExprChecker) New(ctx *context) func(*ast.File) {
+	return wrapExprChecker(&stdExprChecker{
 		baseExprChecker: baseExprChecker{ctx: ctx},
 
 		suggestionToExpression: map[string]ast.Expr{
-			"math.MaxInt8":   expr(`1<<7 - 1`),
-			"math.MinInt8":   expr(`-1 << 7`),
-			"math.MaxInt16":  expr(`1<<15 - 1`),
-			"math.MinInt16":  expr(`-1 << 15`),
-			"math.MaxInt32":  expr(`1<<31 - 1`),
-			"math.MinInt32":  expr(`-1 << 31`),
-			"math.MaxInt64":  expr(`1<<63 - 1`),
-			"math.MinInt64":  expr(`-1 << 63`),
-			"math.MaxUint8":  expr(`1<<8 - 1`),
-			"math.MaxUint16": expr(`1<<16 - 1`),
-			"math.MaxUint32": expr(`1<<32 - 1`),
-			"math.MaxUint64": expr(`1<<64 - 1`),
+			"math.MaxInt8":   strparse.Expr(`1<<7 - 1`),
+			"math.MinInt8":   strparse.Expr(`-1 << 7`),
+			"math.MaxInt16":  strparse.Expr(`1<<15 - 1`),
+			"math.MinInt16":  strparse.Expr(`-1 << 15`),
+			"math.MaxInt32":  strparse.Expr(`1<<31 - 1`),
+			"math.MinInt32":  strparse.Expr(`-1 << 31`),
+			"math.MaxInt64":  strparse.Expr(`1<<63 - 1`),
+			"math.MinInt64":  strparse.Expr(`-1 << 63`),
+			"math.MaxUint8":  strparse.Expr(`1<<8 - 1`),
+			"math.MaxUint16": strparse.Expr(`1<<16 - 1`),
+			"math.MaxUint32": strparse.Expr(`1<<32 - 1`),
+			"math.MaxUint64": strparse.Expr(`1<<64 - 1`),
 		},
 
 		mathConsts: []mathConstant{
@@ -123,7 +115,7 @@ func (c stddefChecker) New(ctx *context) func(*ast.File) {
 	})
 }
 
-func (c *stddefChecker) CheckExpr(expr ast.Expr) {
+func (c *stdExprChecker) CheckExpr(expr ast.Expr) {
 	val := c.ctx.TypesInfo.Types[expr].Value
 	if val == nil {
 		// Not a compile-time constant.
@@ -145,7 +137,7 @@ func (c *stddefChecker) CheckExpr(expr ast.Expr) {
 	}
 }
 
-func (c *stddefChecker) checkBasicLit(expr ast.Expr, val constant.Value) {
+func (c *stdExprChecker) checkBasicLit(expr ast.Expr, val constant.Value) {
 	const epsilon = 0.00001
 
 	switch val.Kind() {
@@ -178,7 +170,7 @@ func (c *stddefChecker) checkBasicLit(expr ast.Expr, val constant.Value) {
 	}
 }
 
-func (c *stddefChecker) checkCallExpr(call *ast.CallExpr) {
+func (c *stdExprChecker) checkCallExpr(call *ast.CallExpr) {
 	if qualifiedName(call.Fun) == "unsafe.Sizeof" {
 		switch x := call.Args[0].(type) {
 		case *ast.BasicLit:
@@ -199,12 +191,11 @@ func (c *stddefChecker) checkCallExpr(call *ast.CallExpr) {
 	}
 }
 
-func (c *stddefChecker) warn(expr ast.Expr, suggestion string) {
+func (c *stdExprChecker) warn(expr ast.Expr, suggestion string) {
 	// Avoid printing warnings for packages that use recognized
 	// expressions to define constants/variables we are suggesting.
 	definingPkg := strings.Split(suggestion, ".")[0]
 	if c.ctx.Package.Name() != definingPkg {
-		c.ctx.Warn(expr, "can replace %s with %s",
-			nodeString(c.ctx.FileSet, expr), suggestion)
+		c.ctx.Warn(expr, "can replace %s with %s", expr, suggestion)
 	}
 }

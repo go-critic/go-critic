@@ -4,30 +4,31 @@ import (
 	"go/ast"
 
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/astp"
 )
 
 func init() {
-	addChecker(typeGuardChecker{}, &ruleInfo{})
+	addChecker(typeSwitchVarChecker{}, &ruleInfo{})
 }
 
-type typeGuardChecker struct {
+type typeSwitchVarChecker struct {
 	baseStmtChecker
 }
 
-func (c typeGuardChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&typeGuardChecker{
+func (c typeSwitchVarChecker) New(ctx *context) func(*ast.File) {
+	return wrapStmtChecker(&typeSwitchVarChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})
 }
 
-func (c *typeGuardChecker) CheckStmt(stmt ast.Stmt) {
+func (c *typeSwitchVarChecker) CheckStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.TypeSwitchStmt); ok {
 		c.checkTypeSwitch(stmt)
 	}
 }
 
-func (c *typeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
-	if _, ok := root.Assign.(*ast.AssignStmt); ok {
+func (c *typeSwitchVarChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
+	if astp.IsAssignStmt(root.Assign) {
 		return // Already with type guard
 	}
 	// Must be a *ast.ExprStmt then.
@@ -59,7 +60,7 @@ func (c *typeGuardChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 	}
 }
 
-func (c *typeGuardChecker) warn(node ast.Node, caseIndex int) {
+func (c *typeSwitchVarChecker) warn(node ast.Node, caseIndex int) {
 	c.ctx.Warn(node, "case %d can benefit from type switch with assignment", caseIndex)
 }
 
@@ -67,7 +68,7 @@ func (c *typeGuardChecker) warn(node ast.Node, caseIndex int) {
 // Returns nil for expressions that yield temporary results, like `f().field`.
 //
 // TODO: is this generally useful and can be placed in util.go?
-func (c *typeGuardChecker) identOf(x ast.Node) *ast.Ident {
+func (c *typeSwitchVarChecker) identOf(x ast.Node) *ast.Ident {
 	switch x := x.(type) {
 	case *ast.Ident:
 		// Found ident.

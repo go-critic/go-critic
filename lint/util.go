@@ -1,23 +1,12 @@
 package lint
 
 import (
-	"bytes"
 	"go/ast"
-	"go/printer"
-	"go/token"
 	"go/types"
 	"strings"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
-
-func nodeString(fset *token.FileSet, x ast.Node) string {
-	var buf bytes.Buffer
-	if err := printer.Fprint(&buf, fset, x); err != nil {
-		panic(err)
-	}
-	return buf.String()
-}
 
 // IsUnitTestFunc reports whether FuncDecl declares testing function.
 func (ctx *context) IsUnitTestFuncDecl(fn *ast.FuncDecl) bool {

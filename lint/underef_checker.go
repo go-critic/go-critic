@@ -50,16 +50,16 @@ func (c *underefChecker) CheckExpr(expr ast.Expr) {
 func (c *underefChecker) warnSelect(expr *ast.SelectorExpr) {
 	// TODO: add () to function output.
 	c.ctx.Warn(expr, "could simplify %s to %s.%s",
-		nodeString(c.ctx.FileSet, expr),
-		nodeString(c.ctx.FileSet, expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X),
+		expr,
+		expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X,
 		expr.Sel.Name)
 }
 
 func (c *underefChecker) warnArray(expr *ast.IndexExpr) {
 	c.ctx.Warn(expr, "could simplify %s to %s[%s]",
-		nodeString(c.ctx.FileSet, expr),
-		nodeString(c.ctx.FileSet, expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X),
-		nodeString(c.ctx.FileSet, expr.Index))
+		expr,
+		expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X,
+		expr.Index)
 }
 
 // checkStarExpr checks if ast.StarExpr could be simplified.

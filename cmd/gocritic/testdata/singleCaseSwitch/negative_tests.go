@@ -23,3 +23,9 @@ func switchWithTwoCases(x int) {
 	case 2:
 	}
 }
+
+func caseWithTwoValues(x int) {
+	switch x {
+	case 1, 2:
+	}
+}

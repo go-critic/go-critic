@@ -1,12 +1,13 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
 	"reflect"
 	"sort"
+
+	"github.com/go-toolsmith/astfmt"
 )
 
 type checkFunction interface {
@@ -68,7 +69,10 @@ func NewChecker(rule *Rule, ctx *Context) *Checker {
 	}
 	c := &Checker{
 		Rule: rule,
-		ctx:  context{Context: ctx},
+		ctx: context{
+			Context: ctx,
+			printer: astfmt.NewPrinter(ctx.FileSet),
+		},
 	}
 	c.check = checkFunctions[rule.Name()].New(&c.ctx)
 	return c
@@ -120,13 +124,17 @@ type Context struct {
 // Fields that are not from Context itself are writeable.
 type context struct {
 	*Context
+
+	// printer used to format warning text.
+	printer *astfmt.Printer
+
 	warnings []Warning
 }
 
 // Warn adds a Warning to checker output.
 func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
 	ctx.warnings = append(ctx.warnings, Warning{
-		Text: fmt.Sprintf(format, args...),
+		Text: ctx.printer.Sprintf(format, args...),
 		Node: node,
 	})
 }

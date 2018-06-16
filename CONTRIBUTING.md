@@ -87,3 +87,16 @@ These rules aslo applies to **pull requests**.
 Tests can be run with `go test -v github.com/PieselBois/kfulint/cmd/kfulint`.
 
 8. Implement checker itself. Make tests pass.
+
+## Dependencies
+
+These are first-order dependencies:
+
+* [github.com/go-toolsmith/astp](https://github.com/go-toolsmith/astp)
+* [github.com/go-toolsmith/astcopy](https://github.com/go-toolsmith/astcopy)
+* [github.com/go-toolsmith/astequal](https://github.com/go-toolsmith/astequal)
+* [github.com/go-toolsmith/strparse](https://github.com/go-toolsmith/strparse)
+* [golang.org/x/tools/go/loader](https://godoc.org/golang.org/x/tools/go/loader)
+* [golang.org/x/tools/go/ast/astutil](https://godoc.org/golang.org/x/tools/go/ast/astutil)
+
+If, for whatever reason, you can't build `gocritic` due to missing packages, try to `go get` every one of them.

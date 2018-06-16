@@ -1,7 +1,6 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
 	"go/types"
 )
@@ -70,6 +69,5 @@ func (c *unexportedCallChecker) checkCall(call *ast.CallExpr) {
 }
 
 func (c *unexportedCallChecker) warn(n *ast.CallExpr) {
-	c.ctx.Warn(n, fmt.Sprintf("%s should be exported",
-		nodeString(c.ctx.FileSet, n)))
+	c.ctx.Warn(n, "%s should be exported", n)
 }
