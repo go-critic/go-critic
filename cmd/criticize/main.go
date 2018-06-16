@@ -154,7 +154,8 @@ func (l *linter) CheckPackage(pkgPath string) {
 	l.ctx.TypesInfo = &pkgInfo.Info
 	l.ctx.Package = pkgInfo.Pkg
 	for _, f := range pkgInfo.Files {
-		l.checkFile(l.getFilename(f), f)
+		l.ctx.Filename = l.getFilename(f)
+		l.checkFile(f)
 	}
 }
 
@@ -173,7 +174,7 @@ func (l *linter) ExitCode() int {
 	return 0
 }
 
-func (l *linter) checkFile(fname string, f *ast.File) {
+func (l *linter) checkFile(f *ast.File) {
 	var wg sync.WaitGroup
 	wg.Add(len(l.checkers))
 	for _, c := range l.checkers {
@@ -197,7 +198,7 @@ func (l *linter) checkFile(fname string, f *ast.File) {
 				}
 			}()
 
-			for _, warn := range c.Check(fname, f) {
+			for _, warn := range c.Check(f) {
 				l.foundIssues = true
 				pos := l.ctx.FileSet.Position(warn.Node.Pos())
 				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)

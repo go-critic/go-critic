@@ -115,9 +115,8 @@ type Checker struct {
 }
 
 // Check runs rule checker over file f.
-func (c *Checker) Check(fname string, f *ast.File) []Warning {
+func (c *Checker) Check(f *ast.File) []Warning {
 	c.ctx.warnings = c.ctx.warnings[:0]
-	c.ctx.filename = fname
 	c.check(f)
 	return c.ctx.warnings
 }
@@ -133,7 +132,7 @@ type Warning struct {
 
 // Context is a readonly state shared among every checker.
 type Context struct {
-	filename string
+	Filename string
 
 	// FileSet is a file set that was used during package parsing.
 	FileSet *token.FileSet
