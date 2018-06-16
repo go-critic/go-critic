@@ -5,45 +5,6 @@ import (
 	"go/token"
 )
 
-type paramListChecker interface {
-	PerFuncInit(*ast.FuncDecl) bool
-	CheckParamList([]*ast.Field)
-}
-
-type baseParamListChecker struct {
-	ctx *context
-}
-
-func (c baseParamListChecker) PerFuncInit(*ast.FuncDecl) bool {
-	return true
-}
-
-// wrapParamListChecker returns a check function that visits every
-// top-level function declaration parameters.
-//
-// CheckParamList first called for receiver list (if it's not nil),
-// then for input parameters list,
-// then for output (results) parameters list (if it's not nil).
-//
-// Does not inspect nested functions (closures).
-func wrapParamListChecker(c paramListChecker) func(*ast.File) {
-	return func(f *ast.File) {
-		for _, decl := range f.Decls {
-			decl, ok := decl.(*ast.FuncDecl)
-			if !ok || !c.PerFuncInit(decl) {
-				continue
-			}
-			if decl.Recv != nil {
-				c.CheckParamList(decl.Recv.List)
-			}
-			c.CheckParamList(decl.Type.Params.List)
-			if decl.Type.Results != nil {
-				c.CheckParamList(decl.Type.Results.List)
-			}
-		}
-	}
-}
-
 type funcDeclChecker interface {
 	CheckFuncDecl(*ast.FuncDecl)
 }
