@@ -9,83 +9,83 @@ Go source code linter that brings checks that are currently not implemented in o
 <table>
   <tr>
     <th>Name</th>
-    <th>Kind</th>
+    <th>Short description</th>
   </tr>
       <tr>
         <td><a href="#appendCombine-ref">appendCombine</a></td>
-        <td>type-aware check</td>
+        <td>Detects `append` chains to the same slice that can be done in a single `append` call.</td>
       </tr>
       <tr>
         <td><a href="#builtinShadow-ref">builtinShadow</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects when predeclared identifiers shadowed in assignments.</td>
       </tr>
       <tr>
         <td><a href="#captLocal-ref">captLocal</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects capitalized names for local variables.</td>
       </tr>
       <tr>
         <td><a href="#docStub-ref">docStub</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects comments that silence go lint complaints about doc-comment.</td>
       </tr>
       <tr>
         <td><a href="#elseif-ref">elseif</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects repeated if-else statements and suggests to replace them with switch statement.</td>
       </tr>
       <tr>
         <td><a href="#flagDeref-ref">flagDeref</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects immediate dereferencing of `flag` package pointers.</td>
       </tr>
       <tr>
         <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects if function parameters could be combined by type and suggest the way to do it.</td>
       </tr>
       <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
-        <td>type-aware check</td>
+        <td>Detects input and output parameters that have a type of pointer to referential type.</td>
       </tr>
       <tr>
         <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
-        <td>type-aware check</td>
+        <td>Detects expensive copies of `for` loop range expressions.</td>
       </tr>
       <tr>
         <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
-        <td>type-aware check</td>
+        <td>Detects loops that copy big objects during each iteration.</td>
       </tr>
       <tr>
         <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects switch statements that could be better written as if statements.</td>
       </tr>
       <tr>
         <td><a href="#stdExpr-ref">stdExpr</a></td>
-        <td>type-aware check</td>
+        <td>Detects constant expressions that can be replaced by a named constant</td>
       </tr>
       <tr>
         <td><a href="#switchTrue-ref">switchTrue</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects switch-over-bool statements that use explicit `true` tag value.</td>
       </tr>
       <tr>
         <td><a href="#typeSwitchVar-ref">typeSwitchVar</a></td>
-        <td>type-aware check</td>
+        <td>Detects type switches that can benefit from type guard clause with variable.</td>
       </tr>
       <tr>
         <td><a href="#typeUnparen-ref">typeUnparen</a></td>
-        <td>syntax-only check (fast)</td>
+        <td>Detects unneded parenthesis inside type expressions and suggests to remove them.</td>
       </tr>
       <tr>
         <td><a href="#underef-ref">underef</a></td>
-        <td>type-aware check</td>
+        <td>Detects dereference expressions that can be omitted.</td>
       </tr>
       <tr>
         <td><a href="#unexportedCall-ref">unexportedCall</a></td>
-        <td>type-aware check</td>
+        <td>Detects calls of unexported method from unexported type outside that type.</td>
       </tr>
       <tr>
         <td><a href="#unnamedResult-ref">unnamedResult</a></td>
-        <td>type-aware check</td>
+        <td>For functions with multiple return values, detects unnamed results</td>
       </tr>
       <tr>
         <td><a href="#unslice-ref">unslice</a></td>
-        <td>type-aware check</td>
+        <td>Detects slice expressions that can be simplified to sliced expression itself.</td>
       </tr>
       <tr>
         <td><a href="#unusedParams-ref">unusedParams</a></td>
@@ -98,12 +98,13 @@ Go source code linter that brings checks that are currently not implemented in o
 <table>
   <tr>
     <th>Name</th>
+    <th>Short description</th>
   </tr>
       <tr>
         <td><a href="#longChain-ref">longChain</a></td>
+        <td>Detects repeated expression chains and suggest to refactor them.</td>
       </tr>
 </table>
-
 
 
 
@@ -125,9 +126,7 @@ xs = append(xs, 1, 2)
 
 <a name="builtinShadow-ref"></a>
 ## builtinShadow
-Detects when
-[predeclared identifiers](https://golang.org/ref/spec#Predeclared_identifiers)
-shadowed in assignments.
+Detects when predeclared identifiers shadowed in assignments.
 
 **Before:**
 ```go
@@ -147,13 +146,10 @@ func main() {
 }
 ```
 
-
+`builtinShadow` is syntax-only checker (fast).
 <a name="captLocal-ref"></a>
 ## captLocal
-Detects potential issues in function parameter names.
-
-Catches capitalized (exported) parameter names.
-Suggests to replace them with non-capitalized versions.
+Detects capitalized names for local variables.
 
 **Before:**
 ```go
@@ -165,10 +161,10 @@ func f(IN int, OUT *int) (ERR error) {}
 func f(in int, out *int) (err error) {}
 ```
 
-
+`captLocal` is syntax-only checker (fast).
 <a name="docStub-ref"></a>
 ## docStub
-Detects comments that aim to silence go lint complaints about exported symbol not having a doc-comment.
+Detects comments that silence go lint complaints about doc-comment.
 
 **Before:**
 ```go
@@ -189,7 +185,7 @@ func Foo() {
 > You can either remove a comment to let go lint find it or change stub to useful comment.
 > This checker makes it easier to detect stubs, the action is up to you.
 
-
+`docStub` is syntax-only checker (fast).
 <a name="elseif-ref"></a>
 ## elseif
 Detects repeated if-else statements and suggests to replace them with switch statement.
@@ -220,7 +216,7 @@ default:
 }
 ```
 
-
+`elseif` is syntax-only checker (fast).
 <a name="flagDeref-ref"></a>
 ## flagDeref
 Detects immediate dereferencing of `flag` package pointers.
@@ -240,7 +236,7 @@ flag.BoolVar(&b, "b", false, "b docs")
 > Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
-
+`flagDeref` is syntax-only checker (fast).
 <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
 Detects if function parameters could be combined by type and suggest the way to do it.
@@ -255,7 +251,7 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 func foo(a, b, c, d, e, f, g int) {}
 ```
 
-
+`paramTypeCombine` is syntax-only checker (fast).
 <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
 Detects input and output parameters that have a type of pointer to referential type.
@@ -276,8 +272,7 @@ func f(m map[string]int) (ch chan *int)
 
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
-Detects `for` statements with range expressions that perform excessive
-copying (big arrays can cause it).
+Detects expensive copies of `for` loop range expressions.
 
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
@@ -340,7 +335,7 @@ if x, ok := x.(int); ok {
 }
 ```
 
-
+`singleCaseSwitch` is syntax-only checker (fast).
 <a name="stdExpr-ref"></a>
 ## stdExpr
 Detects constant expressions that can be replaced by a named constant
@@ -379,7 +374,7 @@ case x > y:
 }
 ```
 
-
+`switchTrue` is syntax-only checker (fast).
 <a name="typeSwitchVar-ref"></a>
 ## typeSwitchVar
 Detects type switches that can benefit from type guard clause with variable.
@@ -428,10 +423,10 @@ func foo() []func([]func()) {
 ```
 
 
-
+`typeUnparen` is syntax-only checker (fast).
 <a name="underef-ref"></a>
 ## underef
-Detects expressions with C style field selection and suggest Go style correction.
+Detects dereference expressions that can be omitted.
 
 **Before:**
 ```go
@@ -448,7 +443,7 @@ _ := a[5]
 
 <a name="unexportedCall-ref"></a>
 ## unexportedCall
-Finds calls of unexported method from unexported type outside that type.
+Detects calls of unexported method from unexported type outside that type.
 
 **Before:**
 ```go

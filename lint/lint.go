@@ -132,6 +132,8 @@ type Warning struct {
 
 // Context is a readonly state shared among every checker.
 type Context struct {
+	Filename string
+
 	// FileSet is a file set that was used during package parsing.
 	FileSet *token.FileSet
 

@@ -1,4 +1,4 @@
-Detects expressions with C style field selection and suggest Go style correction.
+Detects dereference expressions that can be omitted.
 
 **Before:**
 ```go
