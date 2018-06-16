@@ -133,6 +133,8 @@ type Warning struct {
 
 // Context is a readonly state shared among every checker.
 type Context struct {
+	filename string
+
 	// FileSet is a file set that was used during package parsing.
 	FileSet *token.FileSet
 
@@ -151,8 +153,6 @@ type Context struct {
 // Fields that are not from Context itself are writeable.
 type context struct {
 	*Context
-
-	filename string
 
 	// printer used to format warning text.
 	printer *astfmt.Printer
