@@ -36,7 +36,7 @@ func main() {
 		checkers = append(checkers, checker{
 			Name:         r.Name(),
 			Experimental: r.Experimental(),
-			Kind:         kindString(r),
+			Kind:         ruleKindString(r),
 			Description:  desc,
 		})
 	}
@@ -59,7 +59,7 @@ func getDesc(name string) (string, error) {
 	return string(b), err
 }
 
-func kindString(r *lint.Rule) string {
+func ruleKindString(r *lint.Rule) string {
 	if r.SyntaxOnly() {
 		return "syntax-only check (fast)"
 	}
