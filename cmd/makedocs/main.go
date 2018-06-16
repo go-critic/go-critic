@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"log"
+	"strings"
 	"text/template"
 
 	"github.com/go-critic/go-critic/lint"
@@ -16,10 +17,11 @@ const (
 )
 
 type checker struct {
-	Name         string
-	Description  string
-	Experimental bool
-	Kind         string
+	Name             string
+	ShortDescription string
+	Description      string
+	SyntaxOnly       bool
+	Experimental     bool
 }
 
 func main() {
@@ -34,10 +36,11 @@ func main() {
 			log.Fatal(r.Name())
 		}
 		checkers = append(checkers, checker{
-			Name:         r.Name(),
-			Experimental: r.Experimental(),
-			Kind:         ruleKindString(r),
-			Description:  desc,
+			Name:             r.Name(),
+			Experimental:     r.Experimental(),
+			SyntaxOnly:       r.SyntaxOnly(),
+			ShortDescription: shortDescription(desc),
+			Description:      desc,
 		})
 	}
 	buf := bytes.Buffer{}
@@ -59,9 +62,10 @@ func getDesc(name string) (string, error) {
 	return string(b), err
 }
 
-func ruleKindString(r *lint.Rule) string {
-	if r.SyntaxOnly() {
-		return "syntax-only check (fast)"
-	}
-	return "type-aware check"
+func shortDescription(desc string) string {
+	// We expect every checker to have first doc line
+	// to be a short summary, complete sentence.
+	summary := strings.Split(desc, "\n")[0]
+	summary = strings.TrimSpace(summary)
+	return summary
 }
