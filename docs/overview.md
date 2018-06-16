@@ -37,7 +37,7 @@ Go source code linter that brings checks that are currently not implemented in o
       </tr>
       <tr>
         <td><a href="#implAssert-ref">implAssert</a></td>
-        <td>type-aware check</td>
+        <td>Detecs implementation assert pattern in code files and suggests</td>
       </tr>
       <tr>
         <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
@@ -93,7 +93,7 @@ Go source code linter that brings checks that are currently not implemented in o
       </tr>
       <tr>
         <td><a href="#unusedParams-ref">unusedParams</a></td>
-        <td>type-aware check</td>
+        <td>Detects unused params and suggests to name them as `_`(underscore).</td>
       </tr>
 </table>
 
@@ -240,7 +240,7 @@ flag.BoolVar(&b, "b", false, "b docs")
 > Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
-
+`flagDeref` is syntax-only checker (fast).
 <a name="implAssert-ref"></a>
 ## implAssert
 Detecs implementation assert pattern in code files and suggests 
@@ -258,7 +258,6 @@ var _ pkg.MyInterface = (*MyStruct)(nil)
 var _ pkg.MyInterface = (*MyStruct)(nil)
 ```
 
-`flagDeref` is syntax-only checker (fast).
 <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
 Detects if function parameters could be combined by type and suggest the way to do it.
