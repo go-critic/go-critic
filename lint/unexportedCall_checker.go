@@ -10,18 +10,12 @@ func init() {
 }
 
 type unexportedCallChecker struct {
-	baseLocalExprChecker
+	checkerBase
 
 	recvName string
 }
 
-func (c *unexportedCallChecker) New(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&unexportedCallChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
-	})
-}
-
-func (c *unexportedCallChecker) PerFuncInit(decl *ast.FuncDecl) bool {
+func (c *unexportedCallChecker) VisitFunc(decl *ast.FuncDecl) bool {
 	if decl.Body == nil {
 		return false
 	}

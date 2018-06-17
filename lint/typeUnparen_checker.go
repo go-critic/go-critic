@@ -13,13 +13,7 @@ func init() {
 }
 
 type typeUnparenChecker struct {
-	baseTypeExprChecker
-}
-
-func (c *typeUnparenChecker) New(ctx *context) func(*ast.File) {
-	return wrapTypeExprChecker(&typeUnparenChecker{
-		baseTypeExprChecker: baseTypeExprChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *typeUnparenChecker) CheckTypeExpr(expr ast.Expr) {

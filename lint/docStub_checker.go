@@ -10,24 +10,19 @@ func init() {
 }
 
 type docStubChecker struct {
-	ctx          *context
+	checkerBase
+
 	badCommentRE *regexp.Regexp
 }
 
-func (c *docStubChecker) New(ctx *context) func(*ast.File) {
+func (c *docStubChecker) Init() {
 	re := `//\s?\w+[^a-zA-Z]+$`
-	c.ctx = ctx
 	c.badCommentRE = regexp.MustCompile(re)
-	return c.CheckFile
 }
 
-func (c *docStubChecker) CheckFile(f *ast.File) {
-	for _, decl := range f.Decls {
-		if decl, ok := decl.(*ast.FuncDecl); ok {
-			if decl.Doc != nil && c.badCommentRE.MatchString(decl.Doc.List[0].Text) {
-				c.warn(decl)
-			}
-		}
+func (c *docStubChecker) CheckFuncDecl(decl *ast.FuncDecl) {
+	if decl.Doc != nil && c.badCommentRE.MatchString(decl.Doc.List[0].Text) {
+		c.warn(decl)
 	}
 }
 

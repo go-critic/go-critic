@@ -9,13 +9,7 @@ func init() {
 }
 
 type singleCaseSwitchChecker struct {
-	baseStmtChecker
-}
-
-func (c *singleCaseSwitchChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&singleCaseSwitchChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *singleCaseSwitchChecker) CheckStmt(stmt ast.Stmt) {

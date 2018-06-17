@@ -12,13 +12,7 @@ func init() {
 }
 
 type appendCombineChecker struct {
-	baseStmtListChecker
-}
-
-func (c *appendCombineChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtListChecker(&appendCombineChecker{
-		baseStmtListChecker: baseStmtListChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *appendCombineChecker) CheckStmtList(list []ast.Stmt) {

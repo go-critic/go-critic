@@ -7,13 +7,7 @@ func init() {
 }
 
 type switchTrueChecker struct {
-	baseStmtChecker
-}
-
-func (c *switchTrueChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&switchTrueChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *switchTrueChecker) CheckStmt(stmt ast.Stmt) {

@@ -10,23 +10,19 @@ func init() {
 }
 
 type captLocalChecker struct {
-	baseLocalNameChecker
+	checkerBase
 
 	loudNames map[string]bool
 }
 
-func (c *captLocalChecker) New(ctx *context) func(*ast.File) {
-	return wrapLocalNameChecker(&captLocalChecker{
-		baseLocalNameChecker: baseLocalNameChecker{ctx: ctx},
+func (c *captLocalChecker) Init() {
+	c.loudNames = map[string]bool{
+		"IN":    true,
+		"OUT":   true,
+		"INOUT": true,
 
-		loudNames: map[string]bool{
-			"IN":    true,
-			"OUT":   true,
-			"INOUT": true,
-
-			// TODO: add common acronyms like HTTP and URL?
-		},
-	})
+		// TODO: add common acronyms like HTTP and URL?
+	}
 }
 
 func (c *captLocalChecker) CheckLocalName(id *ast.Ident) {

@@ -10,13 +10,7 @@ func init() {
 }
 
 type unsliceChecker struct {
-	baseLocalExprChecker
-}
-
-func (c *unsliceChecker) New(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&unsliceChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *unsliceChecker) CheckLocalExpr(expr ast.Expr) {

@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -14,7 +15,7 @@ import (
 func RuleList() []*Rule {
 	rules := make([]*Rule, 0, len(checkerPrototypes))
 	for _, c := range checkerPrototypes {
-		rules = append(rules, c.Rule)
+		rules = append(rules, c.rule)
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
 		return rules[i].Name() < rules[j].Name()
@@ -60,20 +61,19 @@ func (r *Rule) Name() string { return r.name }
 // NewChecker returns checker for the given rule.
 //
 // Rule must be non-nil and known to the lint package.
-// Valid rules list can be obtained by RuleList call.
+// Valid rule list can be obtained by RuleList call.
 func NewChecker(rule *Rule, ctx *Context) *Checker {
 	if rule == nil {
 		panic("nil rule given")
 	}
-	// Copy checker prototype.
-	c := checkerPrototypes[rule.Name()]
-	// Bind context.
-	c.ctx = context{
+	c, ok := checkerPrototypes[rule.Name()]
+	if !ok {
+		panic(fmt.Sprintf("rule %q is undefined", rule.Name()))
+	}
+	return c.clone(context{
 		Context: ctx,
 		printer: astfmt.NewPrinter(ctx.FileSet),
-	}
-	c.check = c.init(&c.ctx)
-	return &c
+	})
 }
 
 // Checker analyzes given file for potential issues.
@@ -83,7 +83,7 @@ type Checker struct {
 
 	ctx context
 
-	init  func(*context) func(*ast.File)
+	clone func(context) *Checker
 	check func(*ast.File)
 }
 

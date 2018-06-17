@@ -13,7 +13,7 @@ func init() {
 }
 
 type longChainChecker struct {
-	baseLocalExprChecker
+	checkerBase
 
 	// chains is a {expr string => count} mapping.
 	chains map[string]int
@@ -23,13 +23,7 @@ type longChainChecker struct {
 	reported map[string]bool
 }
 
-func (c *longChainChecker) New(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&longChainChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
-	})
-}
-
-func (c *longChainChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+func (c *longChainChecker) VisitFunc(fn *ast.FuncDecl) bool {
 	// Avoid checking functions of 1 statement.
 	// Both performance and false-positives reasons.
 	if fn.Body == nil || len(fn.Body.List) == 1 {

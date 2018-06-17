@@ -9,16 +9,10 @@ func init() {
 }
 
 type rangeValCopyChecker struct {
-	baseStmtChecker
+	checkerBase
 }
 
-func (c *rangeValCopyChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&rangeValCopyChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
-}
-
-func (c *rangeValCopyChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+func (c *rangeValCopyChecker) VisitFunc(fn *ast.FuncDecl) bool {
 	return fn.Body != nil && !c.ctx.IsUnitTestFuncDecl(fn)
 }
 

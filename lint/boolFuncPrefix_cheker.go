@@ -11,13 +11,7 @@ func init() {
 }
 
 type boolFuncPrefixChecker struct {
-	baseFuncDeclChecker
-}
-
-func (c *boolFuncPrefixChecker) New(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&boolFuncPrefixChecker{
-		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *boolFuncPrefixChecker) CheckFuncDecl(decl *ast.FuncDecl) {
