@@ -2,7 +2,7 @@ package lint
 
 //! Detects `append` chains to the same slice that can be done in a single `append` call.
 //
-// @before:
+// @before
 // xs = append(xs, 1)
 // xs = append(xs, 2)
 //
