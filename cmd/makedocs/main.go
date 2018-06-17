@@ -35,6 +35,9 @@ var checkers []checker
 
 func main() {
 	tmpl, err := template.ParseFiles(templatesPath + "overview.md.tmpl")
+	if err != nil {
+		log.Fatal(err)
+	}
 	pkgs, err := parser.ParseDir(&token.FileSet{}, checkersPath,
 		func(inf os.FileInfo) bool {
 			return strings.HasSuffix(inf.Name(), "_checker.go")
