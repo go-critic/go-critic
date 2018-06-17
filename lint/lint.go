@@ -15,6 +15,13 @@ type checkFunction interface {
 }
 
 type ruleInfo struct {
+	// SyntaxOnly marks rules that can be checker by using AST only.
+	// Such rule implementations should not use types info.
+	//
+	// It's OK not to mark rule as SyntaxOnly even if current
+	// implementation does not use types info.
+	SyntaxOnly bool
+
 	// Experimental marks rule implementation as experimental.
 	// Reasons to mark anything as experimental:
 	//	- rule name can change in near time
@@ -22,12 +29,9 @@ type ruleInfo struct {
 	//	- rule requires more testing or alternative design
 	Experimental bool
 
-	// SyntaxOnly marks rules that can be checker by using AST only.
-	// Such rule implementations should not use types info.
-	//
-	// It's OK not to mark rule as SyntaxOnly even if current
-	// implementation does not use types info.
-	SyntaxOnly bool
+	// VeryOpinionated marks rule as controversive for some audience and
+	// that it might be not suitable for everyone.
+	VeryOpinionated bool
 
 	New func(*context) func(*ast.File)
 }
@@ -44,9 +48,10 @@ func RuleList() []*Rule {
 	rules := make([]*Rule, 0, len(checkFunctions))
 	for ruleName, info := range checkFunctions {
 		rules = append(rules, &Rule{
-			name:         ruleName,
-			experimental: info.Experimental,
-			syntaxOnly:   info.SyntaxOnly,
+			name:            ruleName,
+			syntaxOnly:      info.SyntaxOnly,
+			experimental:    info.Experimental,
+			veryOpinionated: info.VeryOpinionated,
 		})
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
@@ -61,8 +66,9 @@ type Rule struct {
 
 	// TODO(quasilyte): may want to use ruleInfo struct here?
 
-	experimental bool
-	syntaxOnly   bool
+	syntaxOnly      bool
+	experimental    bool
+	veryOpinionated bool
 }
 
 // String returns r short printed representation (name only).
@@ -71,14 +77,20 @@ func (r *Rule) String() string { return r.name }
 // Name returns rule name.
 func (r *Rule) Name() string { return r.name }
 
+// SyntaxOnly reports whether type info is not required to perform rule checks.
+func (r *Rule) SyntaxOnly() bool { return r.syntaxOnly }
+
 // Experimental reports whether rule is experimental.
 //
 // Rules are considered experimental when they have many
 // false positives or some unresoleved bugs in them.
 func (r *Rule) Experimental() bool { return r.experimental }
 
-// SyntaxOnly reports whether type info is not required to perform rule checks.
-func (r *Rule) SyntaxOnly() bool { return r.syntaxOnly }
+// VeryOpinionated reports whether rule is very opinionated.
+//
+// Rules are considered opinionated when they might be controversive
+// and not suitable for broad audience.
+func (r *Rule) VeryOpinionated() bool { return r.veryOpinionated }
 
 // NewChecker returns checker for the given rule.
 //
