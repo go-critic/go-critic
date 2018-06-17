@@ -6,9 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(docStubChecker{}, &ruleInfo{
-		SyntaxOnly: true,
-	})
+	addChecker(docStubChecker{}, attrSyntaxOnly)
 }
 
 type docStubChecker struct {

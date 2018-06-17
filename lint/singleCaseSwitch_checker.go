@@ -5,9 +5,7 @@ import (
 )
 
 func init() {
-	addChecker(singleCaseSwitchChecker{}, &ruleInfo{
-		SyntaxOnly: true,
-	})
+	addChecker(singleCaseSwitchChecker{}, attrSyntaxOnly)
 }
 
 type singleCaseSwitchChecker struct {
