@@ -15,14 +15,14 @@ import (
 )
 
 func init() {
-	addChecker(boolFuncPrefixChecker{}, attrExperimental, attrVeryOpinionated)
+	addChecker(&boolFuncPrefixChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
 type boolFuncPrefixChecker struct {
 	baseFuncDeclChecker
 }
 
-func (c boolFuncPrefixChecker) New(ctx *context) func(*ast.File) {
+func (c *boolFuncPrefixChecker) New(ctx *context) func(*ast.File) {
 	return wrapFuncDeclChecker(&boolFuncPrefixChecker{
 		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
 	})

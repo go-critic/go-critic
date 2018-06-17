@@ -21,7 +21,7 @@ import (
 )
 
 func init() {
-	addChecker(builtinShadowChecker{}, attrSyntaxOnly)
+	addChecker(&builtinShadowChecker{}, attrSyntaxOnly)
 }
 
 type builtinShadowChecker struct {
@@ -30,7 +30,7 @@ type builtinShadowChecker struct {
 	builtins map[string]bool
 }
 
-func (c builtinShadowChecker) New(ctx *context) func(*ast.File) {
+func (c *builtinShadowChecker) New(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&builtinShadowChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 

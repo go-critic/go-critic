@@ -21,14 +21,14 @@ import (
 )
 
 func init() {
-	addChecker(typeUnparenChecker{}, attrSyntaxOnly)
+	addChecker(&typeUnparenChecker{}, attrSyntaxOnly)
 }
 
 type typeUnparenChecker struct {
 	baseTypeExprChecker
 }
 
-func (c typeUnparenChecker) New(ctx *context) func(*ast.File) {
+func (c *typeUnparenChecker) New(ctx *context) func(*ast.File) {
 	return wrapTypeExprChecker(&typeUnparenChecker{
 		baseTypeExprChecker: baseTypeExprChecker{ctx: ctx},
 	})

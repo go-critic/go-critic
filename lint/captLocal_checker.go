@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-	addChecker(captLocalChecker{}, attrSyntaxOnly)
+	addChecker(&captLocalChecker{}, attrSyntaxOnly)
 }
 
 type captLocalChecker struct {
@@ -23,7 +23,7 @@ type captLocalChecker struct {
 	loudNames map[string]bool
 }
 
-func (c captLocalChecker) New(ctx *context) func(*ast.File) {
+func (c *captLocalChecker) New(ctx *context) func(*ast.File) {
 	return wrapLocalNameChecker(&captLocalChecker{
 		baseLocalNameChecker: baseLocalNameChecker{ctx: ctx},
 

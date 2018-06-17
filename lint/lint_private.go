@@ -65,8 +65,8 @@ func addChecker(c checkFunction, attrs ...checkerAttribute) {
 			panic(fmt.Sprintf("unexpected checkerAttribute"))
 		}
 	}
-	typeName := reflect.ValueOf(c).Type().Name()
-	ruleName := typeName[:len(typeName)-len("Checker")]
+	typeName := reflect.ValueOf(c).Type().String()
+	ruleName := typeName[len("*lint.") : len(typeName)-len("Checker")]
 	info.New = c.New
 	checkFunctions[ruleName] = &info
 }

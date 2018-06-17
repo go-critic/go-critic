@@ -28,7 +28,7 @@ import (
 )
 
 func init() {
-	addChecker(elseifChecker{}, attrSyntaxOnly)
+	addChecker(&elseifChecker{}, attrSyntaxOnly)
 }
 
 type elseifChecker struct {
@@ -38,7 +38,7 @@ type elseifChecker struct {
 	visited map[*ast.IfStmt]bool
 }
 
-func (c elseifChecker) New(ctx *context) func(*ast.File) {
+func (c *elseifChecker) New(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&elseifChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})

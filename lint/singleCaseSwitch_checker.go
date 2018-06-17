@@ -18,14 +18,14 @@ import (
 )
 
 func init() {
-	addChecker(singleCaseSwitchChecker{}, attrSyntaxOnly)
+	addChecker(&singleCaseSwitchChecker{}, attrSyntaxOnly)
 }
 
 type singleCaseSwitchChecker struct {
 	baseStmtChecker
 }
 
-func (c singleCaseSwitchChecker) New(ctx *context) func(*ast.File) {
+func (c *singleCaseSwitchChecker) New(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&singleCaseSwitchChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})

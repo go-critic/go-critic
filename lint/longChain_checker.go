@@ -30,7 +30,7 @@ import (
 )
 
 func init() {
-	addChecker(longChainChecker{}, attrExperimental)
+	addChecker(&longChainChecker{}, attrExperimental)
 }
 
 type longChainChecker struct {
@@ -44,7 +44,7 @@ type longChainChecker struct {
 	reported map[string]bool
 }
 
-func (c longChainChecker) New(ctx *context) func(*ast.File) {
+func (c *longChainChecker) New(ctx *context) func(*ast.File) {
 	return wrapLocalExprChecker(&longChainChecker{
 		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
 	})

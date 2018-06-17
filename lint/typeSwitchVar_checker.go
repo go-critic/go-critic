@@ -30,14 +30,14 @@ import (
 )
 
 func init() {
-	addChecker(typeSwitchVarChecker{})
+	addChecker(&typeSwitchVarChecker{})
 }
 
 type typeSwitchVarChecker struct {
 	baseStmtChecker
 }
 
-func (c typeSwitchVarChecker) New(ctx *context) func(*ast.File) {
+func (c *typeSwitchVarChecker) New(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&typeSwitchVarChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})
