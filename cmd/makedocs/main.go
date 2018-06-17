@@ -107,23 +107,23 @@ func parseComment(text string, c *checker) {
 			continue
 		}
 
-		if strings.HasPrefix(l, "@before") {
+		if strings.HasPrefix(l, "Before:") {
 			if s != emptyLine {
-				log.Fatal("No empty line before @before")
+				log.Fatal("No empty line before 'Before:' section")
 			}
 			s = before
 			continue
 		}
 
-		if strings.HasPrefix(l, "@after") {
+		if strings.HasPrefix(l, "After:") {
 			if s != emptyLine {
-				log.Fatal("No empty line before @after")
+				log.Fatal("No empty line before 'After:' section")
 			}
 			s = after
 			continue
 		}
 
-		if len(l) < 2 { // string is empty
+		if len(l) == 0 { // string is empty
 			if s == emptyLine {
 				log.Fatal("Duplicate empty line")
 			}
@@ -133,7 +133,7 @@ func parseComment(text string, c *checker) {
 
 		switch s {
 		case emptyLine:
-			log.Fatal("No section tag before empty line")
+			log.Fatal("No section tag provided")
 		case desciption:
 			c.Description += l + "\n"
 		case before:

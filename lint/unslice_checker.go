@@ -1,5 +1,15 @@
 package lint
 
+//! Detects slice expressions that can be simplified to sliced expression itself.
+//
+// Before:
+// f(s[:]) // s is string
+// copy(b[:], values...) // b is []byte
+//
+// After:
+// f(s)
+// copy(b, values...)
+
 import (
 	"go/ast"
 	"go/types"

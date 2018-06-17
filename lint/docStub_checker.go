@@ -1,5 +1,18 @@
 package lint
 
+//! Detects comments that silence go lint complaints about doc-comment.
+//
+// Before:
+// // Foo ...
+// func Foo() {
+//      // ...
+// }
+//
+// After:
+// func Foo() {
+//      // ...
+// }
+
 import (
 	"go/ast"
 	"regexp"

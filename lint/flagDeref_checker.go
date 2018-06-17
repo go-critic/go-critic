@@ -1,5 +1,15 @@
 package lint
 
+//! Detects immediate dereferencing of `flag` package pointers.
+// Suggests using `XxxVar` functions to achieve desired effect.
+//
+// Before:
+// b := *flag.Bool("b", false, "b docs")
+//
+// After:
+// var b bool
+// flag.BoolVar(&b, "b", false, "b docs")
+
 import (
 	"go/ast"
 )

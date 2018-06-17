@@ -1,5 +1,17 @@
 package lint
 
+//! Detects unneded parenthesis inside type expressions and suggests to remove them.
+//
+// Before:
+// func foo() [](func([](func()))) {
+//      ...
+// }
+//
+// After:
+// func foo() []func([]func()) {
+//      ...
+// }
+
 import (
 	"go/ast"
 

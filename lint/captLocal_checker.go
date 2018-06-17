@@ -1,5 +1,13 @@
 package lint
 
+//! Detects capitalized names for local variables.
+//
+// Before:
+// func f(IN int, OUT *int) (ERR error) {}
+//
+// After:
+// func f(in int, out *int) (err error) {}
+
 import (
 	"go/ast"
 	"strings"

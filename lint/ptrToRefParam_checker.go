@@ -1,5 +1,13 @@
 package lint
 
+//! Detects input and output parameters that have a type of pointer to referential type.
+//
+// Before:
+// func f(m *map[string]int) (ch *chan *int)
+//
+// After:
+// func f(m map[string]int) (ch chan *int)
+
 import (
 	"go/ast"
 	"go/types"

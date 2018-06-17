@@ -1,5 +1,14 @@
 package lint
 
+//! For functions with multiple return values, detects unnamed results
+// that do not match `(T, error)` or `(T, bool)` pattern.
+//
+// Before:
+// func f() (float64, float64)
+//
+// After:
+// func f() (x, y float64)
+
 import (
 	"go/ast"
 	"go/types"
