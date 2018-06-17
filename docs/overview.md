@@ -520,7 +520,7 @@ func Enabled() bool
 func IsEnabled() bool
 ```
 
-
+`boolFuncPrefix` is very opinionated.
 <a name="longChain-ref"></a>
 ## longChain
 Detects repeated expression chains and suggest to refactor them.
