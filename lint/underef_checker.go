@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(underefChecker{}, &ruleInfo{})
+	addChecker(underefChecker{})
 }
 
 type underefChecker struct {

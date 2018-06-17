@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(ptrToRefParamChecker{}, &ruleInfo{})
+	addChecker(ptrToRefParamChecker{})
 }
 
 type ptrToRefParamChecker struct {

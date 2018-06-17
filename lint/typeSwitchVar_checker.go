@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	addChecker(typeSwitchVarChecker{}, &ruleInfo{})
+	addChecker(typeSwitchVarChecker{})
 }
 
 type typeSwitchVarChecker struct {

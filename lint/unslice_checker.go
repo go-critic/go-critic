@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(unsliceChecker{}, &ruleInfo{})
+	addChecker(unsliceChecker{})
 }
 
 type unsliceChecker struct {

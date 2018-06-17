@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -179,9 +180,22 @@ func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
 	})
 }
 
-func addChecker(c checkFunction, inf *ruleInfo) {
+func addChecker(c checkFunction, attrs ...checkerAttribute) {
+	var info ruleInfo
+	for _, attr := range attrs {
+		switch attr {
+		case attrExperimental:
+			info.Experimental = true
+		case attrSyntaxOnly:
+			info.SyntaxOnly = true
+		case attrVeryOpinionated:
+			info.VeryOpinionated = true
+		default:
+			panic(fmt.Sprintf("unexpected checkerAttribute"))
+		}
+	}
 	typeName := reflect.ValueOf(c).Type().Name()
 	ruleName := typeName[:len(typeName)-len("Checker")]
-	inf.New = c.New
-	checkFunctions[ruleName] = inf
+	info.New = c.New
+	checkFunctions[ruleName] = &info
 }
