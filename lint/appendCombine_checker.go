@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	addChecker(appendCombineChecker{}, &ruleInfo{})
+	addChecker(appendCombineChecker{})
 }
 
 type appendCombineChecker struct {

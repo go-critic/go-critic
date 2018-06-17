@@ -5,9 +5,7 @@ import (
 )
 
 func init() {
-	addChecker(flagDerefChecker{}, &ruleInfo{
-		SyntaxOnly: true,
-	})
+	addChecker(flagDerefChecker{}, attrSyntaxOnly)
 }
 
 type flagDerefChecker struct {

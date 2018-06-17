@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(unnamedResultChecker{}, &ruleInfo{})
+	addChecker(unnamedResultChecker{})
 }
 
 type unnamedResultChecker struct {
