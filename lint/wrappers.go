@@ -5,18 +5,77 @@ import (
 	"go/token"
 )
 
-type funcDeclChecker interface {
-	CheckFuncDecl(*ast.FuncDecl)
-}
+type (
+	// funcDeclChecker visits every top-level function declaration.
+	//
+	// See also: baseFuncDeclChecker, wrapFuncDeclChecker.
+	funcDeclChecker interface {
+		CheckFuncDecl(*ast.FuncDecl)
+	}
+
+	// exprChecker visits every expression inside AST file.
+	//
+	// See also: baseExprChecker, wrapExprChecker.
+	exprChecker interface {
+		CheckExpr(ast.Expr)
+	}
+
+	// localExprChecker visits every expression inside function body.
+	//
+	// PerFuncInit is called for every function visited.
+	// If returned false, function is skipped.
+	//
+	// See also: baseLocalExprChecker, wrapLocalExprChecker.
+	localExprChecker interface {
+		PerFuncInit(*ast.FuncDecl) bool
+		CheckLocalExpr(ast.Expr)
+	}
+
+	// stmtListChecker visits every statement list inside function body.
+	// This includes block statement bodies as well as implicit blocks
+	// introduced by case clauses and alike.
+	//
+	// See also: baseStmtListChecker, wrapStmtListChecker.
+	stmtListChecker interface {
+		CheckStmtList([]ast.Stmt)
+	}
+
+	// stmtChecker visits every statement inside function body.
+	//
+	// PerFuncInit is called for every function visited.
+	// If returned false, function is skipped.
+	//
+	// See also: baseStmtChecker, wrapStmtChecker.
+	stmtChecker interface {
+		PerFuncInit(*ast.FuncDecl) bool
+		CheckStmt(ast.Stmt)
+	}
+
+	// localNameChecker visits every name definition inside function.
+	// Next elements are considered as name definitions:
+	//	- Function parameters (input, output, receiver)
+	//	- Every LHS of ":=" assignment
+	//	- Every local var/const declaration.
+	//
+	// See also: baseLocalNameChecker, wrapLocalNameChecker.
+	localNameChecker interface {
+		CheckLocalName(*ast.Ident)
+	}
+
+	// typeExpeChecker visits every type describing expression.
+	// It also traverses struct types and interface types to run
+	// checker over their fields/method signatures.
+	//
+	// See also: baseTypeExprChecker, wrapTypeExprChecker.
+	typeExprChecker interface {
+		CheckTypeExpr(ast.Expr)
+	}
+)
 
 type baseFuncDeclChecker struct {
 	ctx *context
 }
 
-// wrapFuncDeclChecker returns a check function that visits every
-// top-level function declaration.
-//
-// CheckLocalExpr is called on every function declaration.
 func wrapFuncDeclChecker(c funcDeclChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {
@@ -27,15 +86,10 @@ func wrapFuncDeclChecker(c funcDeclChecker) func(*ast.File) {
 	}
 }
 
-type exprChecker interface {
-	CheckExpr(ast.Expr)
-}
-
 type baseExprChecker struct {
 	ctx *context
 }
 
-// wrapExprChecker returns a check function that visits every expression.
 func wrapExprChecker(c exprChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		ast.Inspect(f, func(x ast.Node) bool {
@@ -47,18 +101,10 @@ func wrapExprChecker(c exprChecker) func(*ast.File) {
 	}
 }
 
-type localExprChecker interface {
-	PerFuncInit(*ast.FuncDecl) bool
-	CheckLocalExpr(ast.Expr)
-}
-
 type baseLocalExprChecker struct {
 	ctx *context
 }
 
-// wrapLocalExprChecher returns a check function that visits every
-// function local expression. That is, it does not visit top-level
-// expressions that define constants and global variables.
 func wrapLocalExprChecker(c localExprChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {
@@ -80,18 +126,11 @@ func (c baseLocalExprChecker) PerFuncInit(fn *ast.FuncDecl) bool {
 	return fn.Body != nil
 }
 
-type stmtListChecker interface {
-	CheckStmtList([]ast.Stmt)
-}
-
 type baseStmtListChecker struct {
 	ctx *context
 }
 
-// baseStmtListChecker returns a check function that visits every statement
-// list inside file. This includes block statement bodies as well as
-// implicit blocks introduced by case clauses and alike.
-func wrapBlockChecker(c stmtListChecker) func(*ast.File) {
+func wrapStmtListChecker(c stmtListChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {
 			decl, ok := decl.(*ast.FuncDecl)
@@ -113,11 +152,6 @@ func wrapBlockChecker(c stmtListChecker) func(*ast.File) {
 	}
 }
 
-type stmtChecker interface {
-	PerFuncInit(*ast.FuncDecl) bool
-	CheckStmt(ast.Stmt)
-}
-
 type baseStmtChecker struct {
 	ctx *context
 }
@@ -126,8 +160,6 @@ func (c baseStmtChecker) PerFuncInit(fn *ast.FuncDecl) bool {
 	return fn.Body != nil
 }
 
-// wrapStmtChecker returns a check function that visits every statement
-// node inside file, including ones in nested functions.
 func wrapStmtChecker(c stmtChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {
@@ -146,19 +178,10 @@ func wrapStmtChecker(c stmtChecker) func(*ast.File) {
 	}
 }
 
-type localNameChecker interface {
-	CheckLocalName(*ast.Ident)
-}
-
 type baseLocalNameChecker struct {
 	ctx *context
 }
 
-// wrapLocalNameChecker returns a check function that visits every local name.
-// Local name definition follows:
-//	- Function parameters (input, output, receiver)
-//	- Every LHS of ":=" assignment
-//	- Every local var/const declaration.
 func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {
@@ -214,19 +237,10 @@ func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
 	}
 }
 
-type typeExprChecker interface {
-	CheckTypeExpr(ast.Expr)
-}
-
 type baseTypeExprChecker struct {
 	ctx *context
 }
 
-// wrapTypeExprChecker returns a check function that visits every type
-// expression, both top-level and local ones.
-//
-// It also traverses struct types and interface types to run
-// checker over their fields/method signatures.
 func wrapTypeExprChecker(c typeExprChecker) func(*ast.File) {
 	var checkExpr func(x ast.Expr)
 
