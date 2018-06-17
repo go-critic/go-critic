@@ -5,14 +5,14 @@ import (
 )
 
 func init() {
-	addChecker(rangeValCopyChecker{})
+	addChecker(&rangeValCopyChecker{})
 }
 
 type rangeValCopyChecker struct {
 	baseStmtChecker
 }
 
-func (c rangeValCopyChecker) New(ctx *context) func(*ast.File) {
+func (c *rangeValCopyChecker) New(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&rangeValCopyChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})

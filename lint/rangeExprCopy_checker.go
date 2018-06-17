@@ -6,14 +6,14 @@ import (
 )
 
 func init() {
-	addChecker(rangeExprCopyChecker{})
+	addChecker(&rangeExprCopyChecker{})
 }
 
 type rangeExprCopyChecker struct {
 	baseStmtChecker
 }
 
-func (c rangeExprCopyChecker) New(ctx *context) func(*ast.File) {
+func (c *rangeExprCopyChecker) New(ctx *context) func(*ast.File) {
 	// TODO(quasilyte): there is some annoying code duplication with other
 	// range statement checker. We should consider refactoring if
 	// more checkers that inspect range statements will appear.

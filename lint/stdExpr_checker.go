@@ -28,7 +28,7 @@ import (
 // For example: func(http.ResponseWriter, *http.Request) => http.HandlerFunc.
 
 func init() {
-	addChecker(stdExprChecker{})
+	addChecker(&stdExprChecker{})
 }
 
 // mathConstant describes named constant value defined in "math" package.
@@ -51,7 +51,7 @@ type stdExprChecker struct {
 	suggestionToExpression map[string]ast.Expr
 }
 
-func (c stdExprChecker) New(ctx *context) func(*ast.File) {
+func (c *stdExprChecker) New(ctx *context) func(*ast.File) {
 	return wrapExprChecker(&stdExprChecker{
 		baseExprChecker: baseExprChecker{ctx: ctx},
 

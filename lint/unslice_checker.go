@@ -6,14 +6,14 @@ import (
 )
 
 func init() {
-	addChecker(unsliceChecker{})
+	addChecker(&unsliceChecker{})
 }
 
 type unsliceChecker struct {
 	baseLocalExprChecker
 }
 
-func (c unsliceChecker) New(ctx *context) func(*ast.File) {
+func (c *unsliceChecker) New(ctx *context) func(*ast.File) {
 	return wrapLocalExprChecker(&unsliceChecker{
 		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
 	})
