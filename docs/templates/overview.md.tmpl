@@ -44,6 +44,17 @@ Go source code linter that brings checks that are currently not implemented in o
 <a name=" {{- .Name -}} -ref"></a>
 ## {{ .Name }}
 {{ .Description }}
+
+**Before:**
+```go
+{{ .Before }}
+```
+
+**After:**
+```go
+{{ .After }}
+```
+
 {{ if .SyntaxOnly -}}
   `{{.Name}}` is syntax-only checker (fast).
 {{- end -}}
@@ -58,6 +69,17 @@ Go source code linter that brings checks that are currently not implemented in o
 <a name=" {{- .Name -}} -ref"></a>
 ## {{ .Name }}
 {{ .Description }}
+
+**Before:**
+```go
+{{ .Before }}
+```
+
+**After:**
+```go
+{{ .After }}
+```
+
 {{ if .SyntaxOnly -}}
   `{{.Name}}` is syntax-only checker (fast).
 {{- end -}}
