@@ -47,6 +47,9 @@ Go source code linter that brings checks that are currently not implemented in o
 {{ if .SyntaxOnly -}}
   `{{.Name}}` is syntax-only checker (fast).
 {{- end -}}
+{{ if .VeryOpinionated -}}
+  `{{.Name}}` is very opinionated.
+{{- end -}}
 {{ end -}}
 {{ end -}}
 
@@ -57,6 +60,9 @@ Go source code linter that brings checks that are currently not implemented in o
 {{ .Description }}
 {{ if .SyntaxOnly -}}
   `{{.Name}}` is syntax-only checker (fast).
+{{- end -}}
+{{ if .VeryOpinionated -}}
+  `{{.Name}}` is very opinionated.
 {{- end -}}
 {{ end -}}
 {{ end -}}
