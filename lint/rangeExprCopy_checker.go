@@ -1,6 +1,7 @@
 package lint
 
 //! Detects expensive copies of `for` loop range expressions.
+//
 // Suggests to use pointer to array to avoid the copy using `&` on range expression.
 //
 // Before:

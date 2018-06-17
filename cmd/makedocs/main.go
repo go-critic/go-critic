@@ -88,8 +88,7 @@ func main() {
 type parseState uint
 
 const (
-	emptyLine parseState = 1 << iota
-	desciption
+	desciption parseState = 1 << iota
 	before
 	after
 	note
@@ -97,10 +96,10 @@ const (
 
 func parseComment(text string, c *checker) {
 	lines := strings.Split(text, "\n")
-	s := emptyLine
+	s := desciption
 	for _, l := range lines {
 		if strings.HasPrefix(l, "!") {
-			if s != emptyLine || c.ShortDescription != "" {
+			if c.ShortDescription != "" {
 				log.Fatal("Parse error: duplicate description section")
 			}
 			c.ShortDescription = strings.TrimSpace(l[1:])
@@ -111,40 +110,30 @@ func parseComment(text string, c *checker) {
 
 		// TODO: remove duplicated code
 		if strings.HasPrefix(l, "Before:") {
-			if s != emptyLine {
-				log.Fatal("No empty line before 'Before:' section")
+			if c.Before != "" {
+				log.Fatal("Duplicated 'Before:' section")
 			}
 			s = before
 			continue
 		}
 
 		if strings.HasPrefix(l, "After:") {
-			if s != emptyLine {
-				log.Fatal("No empty line before 'After:' section")
+			if c.After != "" {
+				log.Fatal("Duplicated 'After:' section")
 			}
 			s = after
 			continue
 		}
 
 		if strings.HasPrefix(l, "Note:") {
-			if s != emptyLine {
-				log.Fatal("No empty line before 'After:' section")
+			if c.Note != "" {
+				log.Fatal("Duplicated 'Note:' section")
 			}
 			s = note
 			continue
 		}
 
-		if len(l) == 0 { // string is empty
-			if s == emptyLine {
-				log.Fatal("Duplicate empty line")
-			}
-			s = emptyLine
-			continue
-		}
-
 		switch s {
-		case emptyLine:
-			log.Fatal("No section tag provided")
 		case desciption:
 			c.Description += l + "\n"
 		case before:

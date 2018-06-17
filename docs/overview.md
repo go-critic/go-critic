@@ -114,16 +114,19 @@ Detects `append` chains to the same slice that can be done in a single `append` 
 
 
 
+
 **Before:**
 ```go
 xs = append(xs, 1)
 xs = append(xs, 2)
+
 
 ```
 
 **After:**
 ```go
 xs = append(xs, 1, 2)
+
 
 ```
 
@@ -135,6 +138,7 @@ Detects when predeclared identifiers shadowed in assignments.
 
 
 
+
 **Before:**
 ```go
 func main() {
@@ -142,6 +146,7 @@ func main() {
     len := 10
     println(len)
 }
+
 
 ```
 
@@ -153,6 +158,7 @@ func main() {
     println(length)
 }
 
+
 ```
 
 `builtinShadow` is syntax-only checker (fast).
@@ -163,15 +169,18 @@ Detects capitalized names for local variables.
 
 
 
+
 **Before:**
 ```go
 func f(IN int, OUT *int) (ERR error) {}
+
 
 ```
 
 **After:**
 ```go
 func f(in int, out *int) (err error) {}
+
 
 ```
 
@@ -183,12 +192,14 @@ Detects comments that silence go lint complaints about doc-comment.
 
 
 
+
 **Before:**
 ```go
 // Foo ...
 func Foo() {
      // ...
 }
+
 
 ```
 
@@ -198,18 +209,22 @@ func Foo() {
      // ...
 }
 
+
 ```
 
 `docStub` is syntax-only checker (fast).> You can either remove a comment to let go lint find it or change stub to useful comment.
 > This checker makes it easier to detect stubs, the action is up to you.
 
 
+
 <a name="elseif-ref"></a>
 ## elseif
 Detects repeated if-else statements and suggests to replace them with switch statement.
 
+
 Permits single else or else-if; repeated else-if or else + else-if
 will trigger suggestion to use switch statement.
+
 
 
 **Before:**
@@ -221,6 +236,7 @@ if cond1 {
 } else {
 	// Code C.
 }
+
 
 ```
 
@@ -235,6 +251,7 @@ default:
 	// Code C.
 }
 
+
 ```
 
 `elseif` is syntax-only checker (fast).
@@ -243,12 +260,15 @@ default:
 ## flagDeref
 Detects immediate dereferencing of `flag` package pointers.
 
+
 Suggests using `XxxVar` functions to achieve desired effect.
+
 
 
 **Before:**
 ```go
 b := *flag.Bool("b", false, "b docs")
+
 
 ```
 
@@ -257,14 +277,18 @@ b := *flag.Bool("b", false, "b docs")
 var b bool
 flag.BoolVar(&b, "b", false, "b docs")
 
+
 ```
 
 `flagDeref` is syntax-only checker (fast).> Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
-### Experimental
+
+**Experimental**
+
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
+
 
 
 <a name="paramTypeCombine-ref"></a>
@@ -273,15 +297,18 @@ Detects if function parameters could be combined by type and suggest the way to 
 
 
 
+
 **Before:**
 ```go
 func foo(a, b int, c, d int, e, f int, g int) {}
+
 
 ```
 
 **After:**
 ```go
 func foo(a, b, c, d, e, f, g int) {}
+
 
 ```
 
@@ -293,9 +320,11 @@ Detects input and output parameters that have a type of pointer to referential t
 
 
 
+
 **Before:**
 ```go
 func f(m *map[string]int) (ch *chan *int)
+
 
 ```
 
@@ -303,17 +332,21 @@ func f(m *map[string]int) (ch *chan *int)
 ```go
 func f(m map[string]int) (ch chan *int)
 
+
 ```
 
 > Slices are not as referential as maps or channels, but it's usually
 > better to return them by value rather than modyfing them by pointer.
 
 
+
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
 Detects expensive copies of `for` loop range expressions.
 
+
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
+
 
 
 **Before:**
@@ -322,6 +355,7 @@ var xs [256]byte
 for _, x := range xs {
 	// Loop body.
 }
+
 
 ```
 
@@ -332,6 +366,7 @@ for _, x := range &xs {
 	// Loop body.
 }
 
+
 ```
 
 
@@ -340,7 +375,9 @@ for _, x := range &xs {
 ## rangeValCopy
 Detects loops that copy big objects during each iteration.
 
+
 Suggests to use index access or take address and make use pointer instead.
+
 
 
 **Before:**
@@ -349,6 +386,7 @@ xs := make([][1024]byte, length)
 for _, x := range xs {
 	// Loop body.
 }
+
 
 ```
 
@@ -360,6 +398,7 @@ for i := range xs {
 	// Loop body.
 }
 
+
 ```
 
 
@@ -370,12 +409,14 @@ Detects switch statements that could be better written as if statements.
 
 
 
+
 **Before:**
 ```go
 switch x := x.(type) {
 case int:
      ...
 }
+
 
 ```
 
@@ -384,6 +425,7 @@ case int:
 if x, ok := x.(int); ok {
    ...
 }
+
 
 ```
 
@@ -396,10 +438,12 @@ Detects constant expressions that can be replaced by a named constant
 from standard library, like `math.MaxInt32`.
 
 
+
 **Before:**
 ```go
 intBytes := make([]byte, unsafe.Sizeof(0))
 maxVal := 1<<7 - 1
+
 
 ```
 
@@ -407,6 +451,7 @@ maxVal := 1<<7 - 1
 ```go
 intBytes := make([]byte, bits.IntSize)
 maxVal := math.MaxInt8
+
 
 ```
 
@@ -418,12 +463,14 @@ Detects switch-over-bool statements that use explicit `true` tag value.
 
 
 
+
 **Before:**
 ```go
 switch true {
 case x > y:
 	// ...
 }
+
 
 ```
 
@@ -434,6 +481,7 @@ case x > y:
 	// ...
 }
 
+
 ```
 
 `switchTrue` is syntax-only checker (fast).
@@ -441,6 +489,7 @@ case x > y:
 <a name="typeSwitchVar-ref"></a>
 ## typeSwitchVar
 Detects type switches that can benefit from type guard clause with variable.
+
 
 
 
@@ -455,6 +504,7 @@ default:
 	return 0
 }
 
+
 ```
 
 **After:**
@@ -468,6 +518,7 @@ default:
 	return 0
 }
 
+
 ```
 
 
@@ -478,11 +529,13 @@ Detects unneded parenthesis inside type expressions and suggests to remove them.
 
 
 
+
 **Before:**
 ```go
 func foo() [](func([](func()))) {
      ...
 }
+
 
 ```
 
@@ -491,6 +544,7 @@ func foo() [](func([](func()))) {
 func foo() []func([]func()) {
      ...
 }
+
 
 ```
 
@@ -502,10 +556,12 @@ Detects dereference expressions that can be omitted.
 
 
 
+
 **Before:**
 ```go
 (*k).field = 5
 _ := (*a)[5] // only if a is array
+
 
 ```
 
@@ -514,6 +570,7 @@ _ := (*a)[5] // only if a is array
 k.field = 5
 _ := a[5]
 
+
 ```
 
 
@@ -521,6 +578,7 @@ _ := a[5]
 <a name="unexportedCall-ref"></a>
 ## unexportedCall
 Detects calls of unexported method from unexported type outside that type.
+
 
 
 
@@ -533,6 +591,7 @@ func baz() {
 	fo.bar()
 }
 
+
 ```
 
 **After:**
@@ -543,6 +602,7 @@ func baz() {
 	var fo foo
 	fo.Bar()
 }
+
 
 ```
 
@@ -555,15 +615,18 @@ For functions with multiple return values, detects unnamed results
 that do not match `(T, error)` or `(T, bool)` pattern.
 
 
+
 **Before:**
 ```go
 func f() (float64, float64)
+
 
 ```
 
 **After:**
 ```go
 func f() (x, y float64)
+
 
 ```
 
@@ -575,10 +638,12 @@ Detects slice expressions that can be simplified to sliced expression itself.
 
 
 
+
 **Before:**
 ```go
 f(s[:]) // s is string
 copy(b[:], values...) // b is []byte
+
 
 ```
 
@@ -586,6 +651,7 @@ copy(b[:], values...) // b is []byte
 ```go
 f(s)
 copy(b, values...)
+
 
 ```
 
@@ -598,12 +664,14 @@ Detects repeated expression chains and suggest to refactor them.
 
 
 
+
 **Before:**
 ```go
 a := q.w.e.r.t + 1
 b := q.w.e.r.t + 2
 c := q.w.e.r.t + 3
 v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
+
 
 ```
 
@@ -616,6 +684,7 @@ b := qwert + 2
 c := qwert + 3
 v := (a+x) + (b+x) + (c+x)
 
+
 ```
 
 
@@ -625,15 +694,18 @@ Detects unused params and suggests to name them as `_` (underscore).
 
 
 
+
 **Before:**
 ```go
 func f(a int, b float64) // b isn't used inside function body
+
 
 ```
 
 **After:**
 ```go
 func f(a int, _ float64) // everything is cool
+
 
 ```
 

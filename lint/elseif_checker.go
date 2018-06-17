@@ -1,6 +1,7 @@
 package lint
 
 //! Detects repeated if-else statements and suggests to replace them with switch statement.
+//
 // Permits single else or else-if; repeated else-if or else + else-if
 // will trigger suggestion to use switch statement.
 //
