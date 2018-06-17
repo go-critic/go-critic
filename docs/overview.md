@@ -97,6 +97,10 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Short description</th>
   </tr>
       <tr>
+        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a></td>
+        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.</td>
+      </tr>
+      <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.</td>
       </tr>
@@ -502,6 +506,21 @@ copy(b, values...)
 ```
 
 
+<a name="boolFuncPrefix-ref"></a>
+## boolFuncPrefix
+Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+**Before:**
+```go
+func Enabled() bool
+```
+
+**After:**
+```go
+func IsEnabled() bool
+```
+
+`boolFuncPrefix` is very opinionated.
 <a name="longChain-ref"></a>
 ## longChain
 Detects repeated expression chains and suggest to refactor them.
