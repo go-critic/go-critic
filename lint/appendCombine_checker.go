@@ -25,7 +25,7 @@ type appendCombineChecker struct {
 }
 
 func (c appendCombineChecker) New(ctx *context) func(*ast.File) {
-	return wrapBlockChecker(&appendCombineChecker{
+	return wrapStmtListChecker(&appendCombineChecker{
 		baseStmtListChecker: baseStmtListChecker{ctx: ctx},
 	})
 }
