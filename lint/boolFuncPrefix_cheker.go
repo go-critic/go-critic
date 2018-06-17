@@ -7,9 +7,7 @@ import (
 )
 
 func init() {
-	addChecker(boolFuncPrefixChecker{}, &ruleInfo{
-		Experimental: true,
-	})
+	addChecker(boolFuncPrefixChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
 type boolFuncPrefixChecker struct {
@@ -46,7 +44,7 @@ func (c *boolFuncPrefixChecker) isBoolType(expr ast.Expr) bool {
 
 func (c *boolFuncPrefixChecker) hasProperPrefix(name string) bool {
 	name = strings.ToLower(name)
-	excluded := []string{"close", "quit"}
+	excluded := []string{"exit", "quit"}
 	for _, ex := range excluded {
 		if name == ex {
 			return true
