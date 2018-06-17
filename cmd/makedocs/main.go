@@ -38,9 +38,9 @@ func main() {
 		}
 		checkers = append(checkers, checker{
 			Name:             r.Name(),
-			SyntaxOnly:       r.SyntaxOnly(),
-			Experimental:     r.Experimental(),
-			VeryOpinionated:  r.VeryOpinionated(),
+			SyntaxOnly:       r.SyntaxOnly,
+			Experimental:     r.Experimental,
+			VeryOpinionated:  r.VeryOpinionated,
 			ShortDescription: shortDescription(desc),
 			Description:      desc,
 		})
