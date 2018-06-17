@@ -8,17 +8,11 @@ import (
 	"github.com/go-toolsmith/astfmt"
 )
 
-// checkFunctions is a table of all available check functions
-// as well as their metadata (like "experimental" attributes).
+// checkerPrototypes is a table of existing checkers used
+// instantiate new checkers.
 //
 // Keys are rule names.
-var checkFunctions = map[string]*ruleInfo{}
-
-type ruleInfo struct {
-	AttributeSet
-
-	New func(*context) func(*ast.File)
-}
+var checkerPrototypes = map[string]Checker{}
 
 type checkFunction interface {
 	New(*context) func(*ast.File)
@@ -52,21 +46,23 @@ func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
 }
 
 func addChecker(c checkFunction, attrs ...checkerAttribute) {
-	var info ruleInfo
+	var rule Rule
 	for _, attr := range attrs {
 		switch attr {
 		case attrExperimental:
-			info.Experimental = true
+			rule.Experimental = true
 		case attrSyntaxOnly:
-			info.SyntaxOnly = true
+			rule.SyntaxOnly = true
 		case attrVeryOpinionated:
-			info.VeryOpinionated = true
+			rule.VeryOpinionated = true
 		default:
 			panic(fmt.Sprintf("unexpected checkerAttribute"))
 		}
 	}
 	typeName := reflect.ValueOf(c).Type().String()
-	ruleName := typeName[len("*lint.") : len(typeName)-len("Checker")]
-	info.New = c.New
-	checkFunctions[ruleName] = &info
+	rule.name = typeName[len("*lint.") : len(typeName)-len("Checker")]
+	checkerPrototypes[rule.name] = Checker{
+		Rule: &rule,
+		init: c.New,
+	}
 }

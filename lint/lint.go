@@ -12,12 +12,9 @@ import (
 // RuleList returns a slice of all rules that can be used to create checkers.
 // Slice is sorted by rule names.
 func RuleList() []*Rule {
-	rules := make([]*Rule, 0, len(checkFunctions))
-	for ruleName, info := range checkFunctions {
-		rules = append(rules, &Rule{
-			name:         ruleName,
-			AttributeSet: info.AttributeSet,
-		})
+	rules := make([]*Rule, 0, len(checkerPrototypes))
+	for _, c := range checkerPrototypes {
+		rules = append(rules, c.Rule)
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
 		return rules[i].Name() < rules[j].Name()
@@ -68,20 +65,15 @@ func NewChecker(rule *Rule, ctx *Context) *Checker {
 	if rule == nil {
 		panic("nil rule given")
 	}
-	// TODO(quasilyte): it would be great to have SyntaxOnly
-	// checkers TypeInfo set to nil, so if they ever
-	// start using it that will be detected by the tests.
-	// This can require some lint package refactoring though.
-	// Postponing this idea for now.
-	c := &Checker{
-		Rule: rule,
-		ctx: context{
-			Context: ctx,
-			printer: astfmt.NewPrinter(ctx.FileSet),
-		},
+	// Copy checker prototype.
+	c := checkerPrototypes[rule.Name()]
+	// Bind context.
+	c.ctx = context{
+		Context: ctx,
+		printer: astfmt.NewPrinter(ctx.FileSet),
 	}
-	c.check = checkFunctions[rule.Name()].New(&c.ctx)
-	return c
+	c.check = c.init(&c.ctx)
+	return &c
 }
 
 // Checker analyzes given file for potential issues.
@@ -91,6 +83,7 @@ type Checker struct {
 
 	ctx context
 
+	init  func(*context) func(*ast.File)
 	check func(*ast.File)
 }
 
