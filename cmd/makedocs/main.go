@@ -26,6 +26,7 @@ type checker struct {
 	Description      string
 	Before           string
 	After            string
+	Note             string
 	SyntaxOnly       bool
 	Experimental     bool
 	VeryOpinionated  bool
@@ -91,6 +92,7 @@ const (
 	desciption
 	before
 	after
+	note
 )
 
 func parseComment(text string, c *checker) {
@@ -102,11 +104,12 @@ func parseComment(text string, c *checker) {
 				log.Fatal("Parse error: duplicate description section")
 			}
 			c.ShortDescription = strings.TrimSpace(l[1:])
-			c.Description += strings.TrimSpace(l[1:]) + "\n"
+			c.Description += strings.TrimSpace(l[1:]) + "\n\n"
 			s = desciption
 			continue
 		}
 
+		// TODO: remove duplicated code
 		if strings.HasPrefix(l, "Before:") {
 			if s != emptyLine {
 				log.Fatal("No empty line before 'Before:' section")
@@ -120,6 +123,14 @@ func parseComment(text string, c *checker) {
 				log.Fatal("No empty line before 'After:' section")
 			}
 			s = after
+			continue
+		}
+
+		if strings.HasPrefix(l, "Note:") {
+			if s != emptyLine {
+				log.Fatal("No empty line before 'After:' section")
+			}
+			s = note
 			continue
 		}
 
@@ -140,6 +151,8 @@ func parseComment(text string, c *checker) {
 			c.Before += l + "\n"
 		case after:
 			c.After += l + "\n"
+		case note:
+			c.Note += l + "\n"
 		}
 	}
 }

@@ -1,5 +1,13 @@
 package lint
 
+//! Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+//
+// Before:
+// func Enabled() bool
+//
+// After:
+// func IsEnabled() bool
+
 import (
 	"go/ast"
 	"go/types"

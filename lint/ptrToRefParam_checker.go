@@ -7,6 +7,10 @@ package lint
 //
 // After:
 // func f(m map[string]int) (ch chan *int)
+//
+// Note:
+// > Slices are not as referential as maps or channels, but it's usually
+// > better to return them by value rather than modyfing them by pointer.
 
 import (
 	"go/ast"

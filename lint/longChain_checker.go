@@ -15,6 +15,11 @@ package lint
 // b := qwert + 2
 // c := qwert + 3
 // v := (a+x) + (b+x) + (c+x)
+//
+// Note:
+// ### Experimental
+// Gives false-positives for:
+// * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
 
 import (
 	"go/ast"
