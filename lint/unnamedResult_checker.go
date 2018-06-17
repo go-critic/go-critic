@@ -15,14 +15,14 @@ import (
 )
 
 func init() {
-	addChecker(unnamedResultChecker{})
+	addChecker(&unnamedResultChecker{})
 }
 
 type unnamedResultChecker struct {
 	baseFuncDeclChecker
 }
 
-func (c unnamedResultChecker) New(ctx *context) func(*ast.File) {
+func (c *unnamedResultChecker) New(ctx *context) func(*ast.File) {
 	return wrapFuncDeclChecker(&unnamedResultChecker{
 		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
 	})

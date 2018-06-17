@@ -16,14 +16,14 @@ import (
 )
 
 func init() {
-	addChecker(underefChecker{})
+	addChecker(&underefChecker{})
 }
 
 type underefChecker struct {
 	baseExprChecker
 }
 
-func (c underefChecker) New(ctx *context) func(*ast.File) {
+func (c *underefChecker) New(ctx *context) func(*ast.File) {
 	return wrapExprChecker(&underefChecker{
 		baseExprChecker: baseExprChecker{ctx: ctx},
 	})

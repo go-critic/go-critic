@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	addChecker(flagDerefChecker{}, attrSyntaxOnly)
+	addChecker(&flagDerefChecker{}, attrSyntaxOnly)
 }
 
 type flagDerefChecker struct {
@@ -24,7 +24,7 @@ type flagDerefChecker struct {
 	flagPtrFuncs map[string]bool
 }
 
-func (c flagDerefChecker) New(ctx *context) func(*ast.File) {
+func (c *flagDerefChecker) New(ctx *context) func(*ast.File) {
 	return wrapExprChecker(&flagDerefChecker{
 		baseExprChecker: baseExprChecker{ctx: ctx},
 
