@@ -29,7 +29,7 @@ type ruleInfo struct {
 	//	- rule requires more testing or alternative design
 	Experimental bool
 
-	// VeryOpinionated marks rule as controversive for some audience and
+	// VeryOpinionated marks rule as controversial for some audience and
 	// that it might be not suitable for everyone.
 	VeryOpinionated bool
 
@@ -88,7 +88,7 @@ func (r *Rule) Experimental() bool { return r.experimental }
 
 // VeryOpinionated reports whether rule is very opinionated.
 //
-// Rules are considered opinionated when they might be controversive
+// Rules are considered opinionated when they might be controversial
 // and not suitable for broad audience.
 func (r *Rule) VeryOpinionated() bool { return r.veryOpinionated }
 
