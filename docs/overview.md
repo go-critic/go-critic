@@ -100,6 +100,10 @@ Go source code linter that brings checks that are currently not implemented in o
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.</td>
       </tr>
+      <tr>
+        <td><a href="#unusedParam-ref">unusedParam</a></td>
+        <td>Detects unused params and suggests to name them as `_` (underscore).</td>
+      </tr>
 </table>
 
 
@@ -524,4 +528,19 @@ v := (a+x) + (b+x) + (c+x)
 
 Gives false-positives for:
 * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
+
+
+<a name="unusedParam-ref"></a>
+## unusedParam
+Detects unused params and suggests to name them as `_` (underscore).
+
+**Before:**
+```go
+func f(a int, b float64) // b isn't used inside function body
+```
+
+**After:**
+```go
+func f(a int, _ float64) // everything is cool
+```
 
