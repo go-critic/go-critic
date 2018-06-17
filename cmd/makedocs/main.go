@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"go/parser"
 	"go/token"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+	"text/template"
 
 	"github.com/go-critic/go-critic/lint"
 )
