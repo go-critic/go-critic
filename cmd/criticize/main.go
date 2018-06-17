@@ -119,7 +119,7 @@ func (l *linter) InitCheckers() {
 	if l.enabledCheckers == nil {
 		for _, rule := range available {
 			// Exclude experimental checkers from default list.
-			if !rule.Experimental() {
+			if !rule.Experimental {
 				requested[rule.Name()] = true
 			}
 		}

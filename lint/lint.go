@@ -1,21 +1,33 @@
 package lint
 
 import (
-	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
-	"reflect"
 	"sort"
 
 	"github.com/go-toolsmith/astfmt"
 )
 
-type checkFunction interface {
-	New(*context) func(*ast.File)
+// RuleList returns a slice of all rules that can be used to create checkers.
+// Slice is sorted by rule names.
+func RuleList() []*Rule {
+	rules := make([]*Rule, 0, len(checkFunctions))
+	for ruleName, info := range checkFunctions {
+		rules = append(rules, &Rule{
+			name:         ruleName,
+			AttributeSet: info.AttributeSet,
+		})
+	}
+	sort.SliceStable(rules, func(i, j int) bool {
+		return rules[i].Name() < rules[j].Name()
+	})
+	return rules
 }
 
-type ruleInfo struct {
+// AttributeSet describes rule implementation properties that may be
+// related to implementation (experimental) or be more fundamental (opinionated).
+type AttributeSet struct {
 	// SyntaxOnly marks rules that can be checker by using AST only.
 	// Such rule implementations should not use types info.
 	//
@@ -33,43 +45,13 @@ type ruleInfo struct {
 	// VeryOpinionated marks rule as controversial for some audience and
 	// that it might be not suitable for everyone.
 	VeryOpinionated bool
-
-	New func(*context) func(*ast.File)
-}
-
-// checkFunctions is a table of all available check functions
-// as well as their metadata (like "experimental" attributes).
-//
-// Keys are rule names.
-var checkFunctions = map[string]*ruleInfo{}
-
-// RuleList returns a slice of all rules that can be used to create checkers.
-// Slice is sorted by rule names.
-func RuleList() []*Rule {
-	rules := make([]*Rule, 0, len(checkFunctions))
-	for ruleName, info := range checkFunctions {
-		rules = append(rules, &Rule{
-			name:            ruleName,
-			syntaxOnly:      info.SyntaxOnly,
-			experimental:    info.Experimental,
-			veryOpinionated: info.VeryOpinionated,
-		})
-	}
-	sort.SliceStable(rules, func(i, j int) bool {
-		return rules[i].Name() < rules[j].Name()
-	})
-	return rules
 }
 
 // Rule describes a named check that can be performed by the linter.
 type Rule struct {
+	AttributeSet
+
 	name string
-
-	// TODO(quasilyte): may want to use ruleInfo struct here?
-
-	syntaxOnly      bool
-	experimental    bool
-	veryOpinionated bool
 }
 
 // String returns r short printed representation (name only).
@@ -77,21 +59,6 @@ func (r *Rule) String() string { return r.name }
 
 // Name returns rule name.
 func (r *Rule) Name() string { return r.name }
-
-// SyntaxOnly reports whether type info is not required to perform rule checks.
-func (r *Rule) SyntaxOnly() bool { return r.syntaxOnly }
-
-// Experimental reports whether rule is experimental.
-//
-// Rules are considered experimental when they have many
-// false positives or some unresoleved bugs in them.
-func (r *Rule) Experimental() bool { return r.experimental }
-
-// VeryOpinionated reports whether rule is very opinionated.
-//
-// Rules are considered opinionated when they might be controversial
-// and not suitable for broad audience.
-func (r *Rule) VeryOpinionated() bool { return r.veryOpinionated }
 
 // NewChecker returns checker for the given rule.
 //
@@ -137,6 +104,7 @@ func (c *Checker) Check(f *ast.File) []Warning {
 // Warning represents issue that is found by rule checker.
 type Warning struct {
 	// Node is an AST node that caused warning to trigger.
+	// Can be used to obtain proper error location.
 	Node ast.Node
 
 	// Text is warning message without source location info.
@@ -159,43 +127,4 @@ type Context struct {
 	// SizesInfo carries alignment and type size information.
 	// Arch-dependent.
 	SizesInfo types.Sizes
-}
-
-// context is checker-local context copy.
-// Fields that are not from Context itself are writeable.
-type context struct {
-	*Context
-
-	// printer used to format warning text.
-	printer *astfmt.Printer
-
-	warnings []Warning
-}
-
-// Warn adds a Warning to checker output.
-func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
-	ctx.warnings = append(ctx.warnings, Warning{
-		Text: ctx.printer.Sprintf(format, args...),
-		Node: node,
-	})
-}
-
-func addChecker(c checkFunction, attrs ...checkerAttribute) {
-	var info ruleInfo
-	for _, attr := range attrs {
-		switch attr {
-		case attrExperimental:
-			info.Experimental = true
-		case attrSyntaxOnly:
-			info.SyntaxOnly = true
-		case attrVeryOpinionated:
-			info.VeryOpinionated = true
-		default:
-			panic(fmt.Sprintf("unexpected checkerAttribute"))
-		}
-	}
-	typeName := reflect.ValueOf(c).Type().Name()
-	ruleName := typeName[:len(typeName)-len("Checker")]
-	info.New = c.New
-	checkFunctions[ruleName] = &info
 }
