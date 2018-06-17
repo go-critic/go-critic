@@ -97,6 +97,10 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Short description</th>
   </tr>
       <tr>
+        <td><a href="#flagFuncNaming-ref">flagFuncNaming</a></td>
+        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.</td>
+      </tr>
+      <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.</td>
       </tr>
@@ -499,6 +503,21 @@ copy(b[:], values...) // b is []byte
 ```go
 f(s)
 copy(b, values...)
+```
+
+
+<a name="flagFuncNaming-ref"></a>
+## flagFuncNaming
+Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+**Before:**
+```go
+func Enabled() bool
+```
+
+**After:**
+```go
+func IsEnabled() bool
 ```
 
 
