@@ -3,14 +3,14 @@ package lint
 import "go/ast"
 
 func init() {
-	addChecker(switchTrueChecker{}, attrSyntaxOnly)
+	addChecker(&switchTrueChecker{}, attrSyntaxOnly)
 }
 
 type switchTrueChecker struct {
 	baseStmtChecker
 }
 
-func (c switchTrueChecker) New(ctx *context) func(*ast.File) {
+func (c *switchTrueChecker) New(ctx *context) func(*ast.File) {
 	return wrapStmtChecker(&switchTrueChecker{
 		baseStmtChecker: baseStmtChecker{ctx: ctx},
 	})

@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(unexportedCallChecker{}, attrVeryOpinionated)
+	addChecker(&unexportedCallChecker{}, attrVeryOpinionated)
 }
 
 type unexportedCallChecker struct {
@@ -15,7 +15,7 @@ type unexportedCallChecker struct {
 	recvName string
 }
 
-func (unexportedCallChecker) New(ctx *context) func(*ast.File) {
+func (c *unexportedCallChecker) New(ctx *context) func(*ast.File) {
 	return wrapLocalExprChecker(&unexportedCallChecker{
 		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
 	})

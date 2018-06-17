@@ -5,14 +5,14 @@ import (
 )
 
 func init() {
-	addChecker(unusedParamChecker{}, attrExperimental)
+	addChecker(&unusedParamChecker{}, attrExperimental)
 }
 
 type unusedParamChecker struct {
 	baseFuncDeclChecker
 }
 
-func (c unusedParamChecker) New(ctx *context) func(*ast.File) {
+func (c *unusedParamChecker) New(ctx *context) func(*ast.File) {
 	return wrapFuncDeclChecker(&unusedParamChecker{
 		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
 	})

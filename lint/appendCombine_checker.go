@@ -8,14 +8,14 @@ import (
 )
 
 func init() {
-	addChecker(appendCombineChecker{})
+	addChecker(&appendCombineChecker{})
 }
 
 type appendCombineChecker struct {
 	baseStmtListChecker
 }
 
-func (c appendCombineChecker) New(ctx *context) func(*ast.File) {
+func (c *appendCombineChecker) New(ctx *context) func(*ast.File) {
 	return wrapBlockChecker(&appendCombineChecker{
 		baseStmtListChecker: baseStmtListChecker{ctx: ctx},
 	})

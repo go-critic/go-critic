@@ -7,14 +7,14 @@ import (
 )
 
 func init() {
-	addChecker(paramTypeCombineChecker{}, attrSyntaxOnly)
+	addChecker(&paramTypeCombineChecker{}, attrSyntaxOnly)
 }
 
 type paramTypeCombineChecker struct {
 	baseFuncDeclChecker
 }
 
-func (c paramTypeCombineChecker) New(ctx *context) func(*ast.File) {
+func (c *paramTypeCombineChecker) New(ctx *context) func(*ast.File) {
 	return wrapFuncDeclChecker(&paramTypeCombineChecker{
 		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
 	})

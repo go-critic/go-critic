@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(docStubChecker{}, attrSyntaxOnly)
+	addChecker(&docStubChecker{}, attrSyntaxOnly)
 }
 
 type docStubChecker struct {
@@ -14,7 +14,7 @@ type docStubChecker struct {
 	badCommentRE *regexp.Regexp
 }
 
-func (c docStubChecker) New(ctx *context) func(*ast.File) {
+func (c *docStubChecker) New(ctx *context) func(*ast.File) {
 	re := `//\s?\w+[^a-zA-Z]+$`
 	c.ctx = ctx
 	c.badCommentRE = regexp.MustCompile(re)

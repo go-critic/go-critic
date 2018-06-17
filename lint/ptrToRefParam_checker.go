@@ -6,14 +6,14 @@ import (
 )
 
 func init() {
-	addChecker(ptrToRefParamChecker{})
+	addChecker(&ptrToRefParamChecker{})
 }
 
 type ptrToRefParamChecker struct {
 	baseFuncDeclChecker
 }
 
-func (c ptrToRefParamChecker) New(ctx *context) func(*ast.File) {
+func (c *ptrToRefParamChecker) New(ctx *context) func(*ast.File) {
 	return wrapFuncDeclChecker(&ptrToRefParamChecker{
 		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
 	})
