@@ -83,7 +83,6 @@ type Checker struct {
 
 	ctx context
 
-	clone func(context) *Checker
 	check func(*ast.File)
 }
 
