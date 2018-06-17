@@ -472,7 +472,7 @@ func baz() {
 }
 ```
 
-
+`unexportedCall` is very opinionated.
 <a name="unnamedResult-ref"></a>
 ## unnamedResult
 For functions with multiple return values, detects unnamed results

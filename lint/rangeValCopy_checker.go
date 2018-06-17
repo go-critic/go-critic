@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	addChecker(rangeValCopyChecker{}, &ruleInfo{})
+	addChecker(rangeValCopyChecker{})
 }
 
 type rangeValCopyChecker struct {

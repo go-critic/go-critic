@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(unexportedCallChecker{}, &ruleInfo{})
+	addChecker(unexportedCallChecker{}, attrVeryOpinionated)
 }
 
 type unexportedCallChecker struct {

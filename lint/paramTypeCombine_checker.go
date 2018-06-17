@@ -7,9 +7,7 @@ import (
 )
 
 func init() {
-	addChecker(paramTypeCombineChecker{}, &ruleInfo{
-		SyntaxOnly: true,
-	})
+	addChecker(paramTypeCombineChecker{}, attrSyntaxOnly)
 }
 
 type paramTypeCombineChecker struct {

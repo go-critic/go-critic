@@ -22,6 +22,7 @@ type checker struct {
 	Description      string
 	SyntaxOnly       bool
 	Experimental     bool
+	VeryOpinionated  bool
 }
 
 func main() {
@@ -37,8 +38,9 @@ func main() {
 		}
 		checkers = append(checkers, checker{
 			Name:             r.Name(),
-			Experimental:     r.Experimental(),
 			SyntaxOnly:       r.SyntaxOnly(),
+			Experimental:     r.Experimental(),
+			VeryOpinionated:  r.VeryOpinionated(),
 			ShortDescription: shortDescription(desc),
 			Description:      desc,
 		})
