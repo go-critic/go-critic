@@ -180,7 +180,7 @@ func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
 	})
 }
 
-func addChecker(c checkFunction, attrs ...*checkerAttribute) {
+func addChecker(c checkFunction, attrs ...checkerAttribute) {
 	var info ruleInfo
 	for _, attr := range attrs {
 		switch attr {

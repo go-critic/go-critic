@@ -5,9 +5,8 @@ package lint
 
 type checkerAttribute int
 
-// All valid attributes.
-var (
-	attrExperimental    = new(checkerAttribute)
-	attrSyntaxOnly      = new(checkerAttribute)
-	attrVeryOpinionated = new(checkerAttribute)
+const (
+	attrExperimental checkerAttribute = iota
+	attrSyntaxOnly
+	attrVeryOpinionated
 )
