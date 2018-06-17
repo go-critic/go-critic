@@ -97,7 +97,7 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Short description</th>
   </tr>
       <tr>
-        <td><a href="#flagFuncNaming-ref">flagFuncNaming</a></td>
+        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a></td>
         <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.</td>
       </tr>
       <tr>
@@ -506,8 +506,8 @@ copy(b, values...)
 ```
 
 
-<a name="flagFuncNaming-ref"></a>
-## flagFuncNaming
+<a name="boolFuncPrefix-ref"></a>
+## boolFuncPrefix
 Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
 
 **Before:**
