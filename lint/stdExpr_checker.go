@@ -1,7 +1,7 @@
 package lint
 
 //! Detects constant expressions that can be replaced by a named constant
-// from standard library, like `math.MaxInt32`.
+//  from standard library, like `math.MaxInt32`.
 //
 // Before:
 // intBytes := make([]byte, unsafe.Sizeof(0))

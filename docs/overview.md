@@ -212,7 +212,8 @@ func Foo() {
 
 ```
 
-`docStub` is syntax-only checker (fast).> You can either remove a comment to let go lint find it or change stub to useful comment.
+`docStub` is syntax-only checker (fast).
+> You can either remove a comment to let go lint find it or change stub to useful comment.
 > This checker makes it easier to detect stubs, the action is up to you.
 
 
@@ -259,7 +260,6 @@ default:
 <a name="flagDeref-ref"></a>
 ## flagDeref
 Detects immediate dereferencing of `flag` package pointers.
-
 
 Suggests using `XxxVar` functions to achieve desired effect.
 
@@ -375,7 +375,6 @@ for _, x := range &xs {
 ## rangeValCopy
 Detects loops that copy big objects during each iteration.
 
-
 Suggests to use index access or take address and make use pointer instead.
 
 
@@ -435,7 +434,7 @@ if x, ok := x.(int); ok {
 ## stdExpr
 Detects constant expressions that can be replaced by a named constant
 
-from standard library, like `math.MaxInt32`.
+ from standard library, like `math.MaxInt32`.
 
 
 
@@ -612,7 +611,7 @@ func baz() {
 ## unnamedResult
 For functions with multiple return values, detects unnamed results
 
-that do not match `(T, error)` or `(T, bool)` pattern.
+ that do not match `(T, error)` or `(T, bool)` pattern.
 
 
 

@@ -1,7 +1,6 @@
 package lint
 
 //! Detects immediate dereferencing of `flag` package pointers.
-//
 // Suggests using `XxxVar` functions to achieve desired effect.
 //
 // Before:
