@@ -12,14 +12,14 @@ func init() {
 }
 
 type captLocalChecker struct {
-	baseParamListChecker
+	baseLocalNameChecker
 
 	loudNames map[string]bool
 }
 
 func (c captLocalChecker) New(ctx *context) func(*ast.File) {
-	return wrapParamListChecker(&captLocalChecker{
-		baseParamListChecker: baseParamListChecker{ctx: ctx},
+	return wrapLocalNameChecker(&captLocalChecker{
+		baseLocalNameChecker: baseLocalNameChecker{ctx: ctx},
 
 		loudNames: map[string]bool{
 			"IN":    true,
@@ -31,16 +31,12 @@ func (c captLocalChecker) New(ctx *context) func(*ast.File) {
 	})
 }
 
-func (c *captLocalChecker) CheckParamList(params []*ast.Field) {
-	for _, p := range params {
-		for _, id := range p.Names {
-			switch {
-			case c.loudNames[id.Name]:
-				c.warnLoud(id)
-			case ast.IsExported(id.Name):
-				c.warnCapitalized(id)
-			}
-		}
+func (c *captLocalChecker) CheckLocalName(id *ast.Ident) {
+	switch {
+	case c.loudNames[id.Name]:
+		c.warnLoud(id)
+	case ast.IsExported(id.Name):
+		c.warnCapitalized(id)
 	}
 }
 
