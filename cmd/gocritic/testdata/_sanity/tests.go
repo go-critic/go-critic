@@ -150,3 +150,7 @@ type myString string
 func convertPtr(x string) *myString {
 	return (*myString)(&x)
 }
+
+func (myString) noReceiverName1(a, b string) {}
+
+func (*myString) noReceiverName2() (a, b string) { return "", "" }

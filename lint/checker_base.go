@@ -201,7 +201,7 @@ func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
 					}
 				}
 			}
-			if decl.Recv != nil {
+			if decl.Recv != nil && len(decl.Recv.List[0].Names) != 0 {
 				c.CheckLocalName(decl.Recv.List[0].Names[0])
 			}
 			if !c.VisitFunc(decl) {
