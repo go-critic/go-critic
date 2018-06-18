@@ -9,13 +9,7 @@ func init() {
 }
 
 type unusedParamChecker struct {
-	baseFuncDeclChecker
-}
-
-func (c *unusedParamChecker) New(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&unusedParamChecker{
-		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {

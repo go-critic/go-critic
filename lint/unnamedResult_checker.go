@@ -10,13 +10,7 @@ func init() {
 }
 
 type unnamedResultChecker struct {
-	baseFuncDeclChecker
-}
-
-func (c *unnamedResultChecker) New(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&unnamedResultChecker{
-		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *unnamedResultChecker) CheckFuncDecl(decl *ast.FuncDecl) {

@@ -6,28 +6,34 @@ import (
 )
 
 type (
+	// walkerEventHandler describes common hooks available for every checker.
+	walkerEventHandler interface {
+		// VisitFunc is called for every function declaration that is about
+		// to be traversed. If false is returned, function is not visited.
+		VisitFunc(*ast.FuncDecl) bool
+	}
+
 	// funcDeclChecker visits every top-level function declaration.
 	//
-	// See also: baseFuncDeclChecker, wrapFuncDeclChecker.
+	// See also: wrapFuncDeclChecker.
 	funcDeclChecker interface {
+		walkerEventHandler
 		CheckFuncDecl(*ast.FuncDecl)
 	}
 
 	// exprChecker visits every expression inside AST file.
 	//
-	// See also: baseExprChecker, wrapExprChecker.
+	// See also: wrapExprChecker.
 	exprChecker interface {
+		walkerEventHandler
 		CheckExpr(ast.Expr)
 	}
 
 	// localExprChecker visits every expression inside function body.
 	//
-	// PerFuncInit is called for every function visited.
-	// If returned false, function is skipped.
-	//
-	// See also: baseLocalExprChecker, wrapLocalExprChecker.
+	// See also: wrapLocalExprChecker.
 	localExprChecker interface {
-		PerFuncInit(*ast.FuncDecl) bool
+		walkerEventHandler
 		CheckLocalExpr(ast.Expr)
 	}
 
@@ -35,19 +41,17 @@ type (
 	// This includes block statement bodies as well as implicit blocks
 	// introduced by case clauses and alike.
 	//
-	// See also: baseStmtListChecker, wrapStmtListChecker.
+	// See also: wrapStmtListChecker.
 	stmtListChecker interface {
+		walkerEventHandler
 		CheckStmtList([]ast.Stmt)
 	}
 
 	// stmtChecker visits every statement inside function body.
 	//
-	// PerFuncInit is called for every function visited.
-	// If returned false, function is skipped.
-	//
-	// See also: baseStmtChecker, wrapStmtChecker.
+	// See also: wrapStmtChecker.
 	stmtChecker interface {
-		PerFuncInit(*ast.FuncDecl) bool
+		walkerEventHandler
 		CheckStmt(ast.Stmt)
 	}
 
@@ -57,8 +61,9 @@ type (
 	//	- Every LHS of ":=" assignment
 	//	- Every local var/const declaration.
 	//
-	// See also: baseLocalNameChecker, wrapLocalNameChecker.
+	// See also: wrapLocalNameChecker.
 	localNameChecker interface {
+		walkerEventHandler
 		CheckLocalName(*ast.Ident)
 	}
 
@@ -66,14 +71,36 @@ type (
 	// It also traverses struct types and interface types to run
 	// checker over their fields/method signatures.
 	//
-	// See also: baseTypeExprChecker, wrapTypeExprChecker.
+	// See also: wrapTypeExprChecker.
 	typeExprChecker interface {
+		walkerEventHandler
 		CheckTypeExpr(ast.Expr)
 	}
 )
 
-type baseFuncDeclChecker struct {
+type checkerBase struct {
 	ctx *context
+}
+
+// BindContext saves checker-local context.
+// Called once before Init.
+//
+// Generally, embedding checker needs not to define BindContext
+// as default implementation does the right thing.
+func (c *checkerBase) BindContext(ctx *context) {
+	c.ctx = ctx
+}
+
+// Init implements checker initialization.
+// It is called for zero value instance only once, inside NewChecker.
+//
+// Default initialization does nothing.
+// If embedding checker has a state that needs to be initialized, it must
+// define method with the same signature and perform initialization there.
+func (c *checkerBase) Init() {}
+
+func (c *checkerBase) VisitFunc(fn *ast.FuncDecl) bool {
+	return fn.Body != nil
 }
 
 func wrapFuncDeclChecker(c funcDeclChecker) func(*ast.File) {
@@ -84,10 +111,6 @@ func wrapFuncDeclChecker(c funcDeclChecker) func(*ast.File) {
 			}
 		}
 	}
-}
-
-type baseExprChecker struct {
-	ctx *context
 }
 
 func wrapExprChecker(c exprChecker) func(*ast.File) {
@@ -101,15 +124,11 @@ func wrapExprChecker(c exprChecker) func(*ast.File) {
 	}
 }
 
-type baseLocalExprChecker struct {
-	ctx *context
-}
-
 func wrapLocalExprChecker(c localExprChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {
 			decl, ok := decl.(*ast.FuncDecl)
-			if !ok || !c.PerFuncInit(decl) {
+			if !ok || !c.VisitFunc(decl) {
 				continue
 			}
 			ast.Inspect(decl.Body, func(x ast.Node) bool {
@@ -120,14 +139,6 @@ func wrapLocalExprChecker(c localExprChecker) func(*ast.File) {
 			})
 		}
 	}
-}
-
-func (c baseLocalExprChecker) PerFuncInit(fn *ast.FuncDecl) bool {
-	return fn.Body != nil
-}
-
-type baseStmtListChecker struct {
-	ctx *context
 }
 
 func wrapStmtListChecker(c stmtListChecker) func(*ast.File) {
@@ -152,20 +163,12 @@ func wrapStmtListChecker(c stmtListChecker) func(*ast.File) {
 	}
 }
 
-type baseStmtChecker struct {
-	ctx *context
-}
-
-func (c baseStmtChecker) PerFuncInit(fn *ast.FuncDecl) bool {
-	return fn.Body != nil
-}
-
 func wrapStmtChecker(c stmtChecker) func(*ast.File) {
 	return func(f *ast.File) {
 		for _, decl := range f.Decls {
 			// Only functions can contain statements.
 			decl, ok := decl.(*ast.FuncDecl)
-			if !ok || !c.PerFuncInit(decl) {
+			if !ok || !c.VisitFunc(decl) {
 				continue
 			}
 			ast.Inspect(decl.Body, func(x ast.Node) bool {
@@ -176,10 +179,6 @@ func wrapStmtChecker(c stmtChecker) func(*ast.File) {
 			})
 		}
 	}
-}
-
-type baseLocalNameChecker struct {
-	ctx *context
 }
 
 func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
@@ -235,10 +234,6 @@ func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
 			})
 		}
 	}
-}
-
-type baseTypeExprChecker struct {
-	ctx *context
 }
 
 func wrapTypeExprChecker(c typeExprChecker) func(*ast.File) {

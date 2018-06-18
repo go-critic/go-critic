@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -12,12 +13,9 @@ import (
 // RuleList returns a slice of all rules that can be used to create checkers.
 // Slice is sorted by rule names.
 func RuleList() []*Rule {
-	rules := make([]*Rule, 0, len(checkFunctions))
-	for ruleName, info := range checkFunctions {
-		rules = append(rules, &Rule{
-			name:         ruleName,
-			AttributeSet: info.AttributeSet,
-		})
+	rules := make([]*Rule, 0, len(checkerPrototypes))
+	for _, c := range checkerPrototypes {
+		rules = append(rules, c.rule)
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
 		return rules[i].Name() < rules[j].Name()
@@ -63,25 +61,19 @@ func (r *Rule) Name() string { return r.name }
 // NewChecker returns checker for the given rule.
 //
 // Rule must be non-nil and known to the lint package.
-// Valid rules list can be obtained by RuleList call.
+// Valid rule list can be obtained by RuleList call.
 func NewChecker(rule *Rule, ctx *Context) *Checker {
 	if rule == nil {
 		panic("nil rule given")
 	}
-	// TODO(quasilyte): it would be great to have SyntaxOnly
-	// checkers TypeInfo set to nil, so if they ever
-	// start using it that will be detected by the tests.
-	// This can require some lint package refactoring though.
-	// Postponing this idea for now.
-	c := &Checker{
-		Rule: rule,
-		ctx: context{
-			Context: ctx,
-			printer: astfmt.NewPrinter(ctx.FileSet),
-		},
+	c, ok := checkerPrototypes[rule.Name()]
+	if !ok {
+		panic(fmt.Sprintf("rule %q is undefined", rule.Name()))
 	}
-	c.check = checkFunctions[rule.Name()].New(&c.ctx)
-	return c
+	return c.clone(context{
+		Context: ctx,
+		printer: astfmt.NewPrinter(ctx.FileSet),
+	})
 }
 
 // Checker analyzes given file for potential issues.

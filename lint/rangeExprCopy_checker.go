@@ -10,19 +10,10 @@ func init() {
 }
 
 type rangeExprCopyChecker struct {
-	baseStmtChecker
+	checkerBase
 }
 
-func (c *rangeExprCopyChecker) New(ctx *context) func(*ast.File) {
-	// TODO(quasilyte): there is some annoying code duplication with other
-	// range statement checker. We should consider refactoring if
-	// more checkers that inspect range statements will appear.
-	return wrapStmtChecker(&rangeExprCopyChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
-}
-
-func (c *rangeExprCopyChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+func (c *rangeExprCopyChecker) VisitFunc(fn *ast.FuncDecl) bool {
 	return fn.Body != nil && !c.ctx.IsUnitTestFuncDecl(fn)
 }
 

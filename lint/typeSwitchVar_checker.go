@@ -12,13 +12,7 @@ func init() {
 }
 
 type typeSwitchVarChecker struct {
-	baseStmtChecker
-}
-
-func (c *typeSwitchVarChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&typeSwitchVarChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *typeSwitchVarChecker) CheckStmt(stmt ast.Stmt) {

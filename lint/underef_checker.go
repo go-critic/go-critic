@@ -10,13 +10,7 @@ func init() {
 }
 
 type underefChecker struct {
-	baseExprChecker
-}
-
-func (c *underefChecker) New(ctx *context) func(*ast.File) {
-	return wrapExprChecker(&underefChecker{
-		baseExprChecker: baseExprChecker{ctx: ctx},
-	})
+	checkerBase
 }
 
 func (c *underefChecker) CheckExpr(expr ast.Expr) {
