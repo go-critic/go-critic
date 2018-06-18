@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/go-critic/go-critic/cmd/checkertools"
 	"github.com/go-critic/go-critic/cmd/criticize"
 	"github.com/go-critic/go-critic/cmd/lintwalk"
 )
@@ -33,6 +34,11 @@ var subCommands = []*subCommand{
 		main:  lintwalk.Main,
 		name:  "check-project",
 		short: "run gocritic over specified source tree, recursively",
+	},
+	{
+		main:  checkertools.NewMain,
+		name:  "checker-new",
+		short: "scaffold new checker: create test files and implementation stub",
 	},
 }
 
