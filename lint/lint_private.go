@@ -24,7 +24,7 @@ type checkerProto struct {
 // abstractChecker is a proxy interface to forward checkerBase
 // embedding checker into addChecker.
 //
-// abstarctChecher is implemented by checkerBase directly and completely,
+// abstractChecker is implemented by checkerBase directly and completely,
 // making any checker that embeds it a valid argument to addChecker.
 //
 // See checkerBase and its implementation of this interface for more info.
