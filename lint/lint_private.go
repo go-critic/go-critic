@@ -24,12 +24,10 @@ type checkerProto struct {
 // abstractChecker is a proxy interface to forward checkerBase
 // embedding checker into addChecker.
 //
-// It's an implementation detail that has only these guarantees:
-//	- implemented by checkerBase type
-//	- it is an argument type for addChecker
+// abstarctChecher is implemented by checkerBase directly and completely,
+// making any checker that embeds it a valid argument to addChecker.
 //
-// Therefore, every checker that embeds checkerBase (normally, every checker)
-// also a valid argument to addChecker.
+// See checkerBase and its implementation of this interface for more info.
 type abstractChecker interface {
 	BindContext(*context)
 	Init()
@@ -115,9 +113,11 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 	proto := checkerProto{rule: &rule}
 	proto.clone = func(ctx context) *Checker {
 		c := cloneAbstractChecker(c)
-		clone := Checker{Rule: proto.rule}
-		clone.check = bindCheckFunction(c)
-		clone.ctx = ctx
+		clone := Checker{
+			Rule:  proto.rule,
+			check: bindCheckFunction(c),
+			ctx:   ctx,
+		}
 		c.BindContext(&clone.ctx)
 		c.Init()
 		return &clone
