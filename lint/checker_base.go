@@ -189,17 +189,23 @@ func wrapLocalNameChecker(c localNameChecker) func(*ast.File) {
 				continue
 			}
 			// First, function params.
-			ast.Inspect(decl.Type, func(x ast.Node) bool {
-				if id, ok := x.(*ast.Ident); ok {
+			for _, p := range decl.Type.Params.List {
+				for _, id := range p.Names {
 					c.CheckLocalName(id)
 				}
-				return true
-			})
+			}
+			if decl.Type.Results != nil {
+				for _, p := range decl.Type.Results.List {
+					for _, id := range p.Names {
+						c.CheckLocalName(id)
+					}
+				}
+			}
 			if decl.Recv != nil {
 				c.CheckLocalName(decl.Recv.List[0].Names[0])
 			}
-			if decl.Body == nil { // Skip external functions
-				return
+			if !c.VisitFunc(decl) {
+				continue
 			}
 			// Now every assignment and var/const decl.
 			ast.Inspect(decl.Body, func(x ast.Node) bool {

@@ -12,6 +12,12 @@ type emptyStruct struct{}
 
 func (in emptyStruct) method1(out *int) {}
 
+type ExportedType int
+
+func (x ExportedType) capitalizedType(y ExportedType) ExportedType {
+	return 0
+}
+
 func noWarnings() {
 	type LocalCapitalizedType int
 	type (
