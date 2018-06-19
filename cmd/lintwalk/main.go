@@ -29,10 +29,9 @@ func getPackagePrefix(dir string) string {
 
 // Main implements gocritic sub-command entry point.
 func Main() {
-	enable := flag.String("enable", "all",
-		`forwarded to linter "as is"`)
-	exclude := flag.String("exclude", "testdata/|vendor/|builtin/",
-		`regexp used to skip package names`)
+	enable := flag.String("enable", "all", `forwarded to linter "as is"`)
+	exclude := flag.String("exclude", "testdata/|vendor/|builtin/", `regexp used to skip package names`)
+	scanGenerated := flag.Bool("scanGenerated", false, ``)
 
 	flag.Parse()
 
@@ -81,6 +80,9 @@ func Main() {
 
 	var args []string
 	args = append(args, "check-package", "-enable", *enable)
+	if *scanGenerated {
+		args = append(args, "-scanGenerated")
+	}
 
 	for p := range packages {
 		args = append(args, p)
