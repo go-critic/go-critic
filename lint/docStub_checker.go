@@ -3,6 +3,7 @@ package lint
 import (
 	"go/ast"
 	"regexp"
+	"strings"
 )
 
 func init() {
@@ -12,17 +13,21 @@ func init() {
 type docStubChecker struct {
 	checkerBase
 
-	badCommentRE *regexp.Regexp
+	goodCommentRE *regexp.Regexp
 }
 
 func (c *docStubChecker) Init() {
-	re := `//\s?\w+[^a-zA-Z]+$`
-	c.badCommentRE = regexp.MustCompile(re)
+	re := `// \w+ \w+`
+	c.goodCommentRE = regexp.MustCompile(re)
 }
 
 func (c *docStubChecker) CheckFuncDecl(decl *ast.FuncDecl) {
-	if decl.Doc != nil && c.badCommentRE.MatchString(decl.Doc.List[0].Text) {
-		c.warn(decl)
+	if ast.IsExported(decl.Name.Name) && decl.Doc != nil {
+		doc := decl.Doc.List[0].Text
+		prefix := "// " + decl.Name.Name + " "
+		if !strings.HasPrefix(doc, prefix) || !c.goodCommentRE.MatchString(doc) {
+			c.warn(decl)
+		}
 	}
 }
 
