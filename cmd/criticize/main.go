@@ -156,7 +156,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 	l.ctx.TypesInfo = &pkgInfo.Info
 	l.ctx.Package = pkgInfo.Pkg
 	for _, f := range pkgInfo.Files {
-		if l.scanGenerated || isGenerated(f) {
+		if l.scanGenerated || !isGenerated(f) {
 			l.ctx.Filename = l.getFilename(f)
 			l.checkFile(f)
 		}
