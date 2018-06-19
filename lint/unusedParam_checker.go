@@ -14,7 +14,7 @@ type unusedParamChecker struct {
 
 func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 	params := decl.Type.Params
-	if params == nil || params.NumFields() == 0 {
+	if decl.Body == nil || params == nil || params.NumFields() == 0 {
 		return
 	}
 
