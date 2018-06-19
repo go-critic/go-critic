@@ -37,6 +37,9 @@ func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 	for id := range c.ctx.TypesInfo.Uses {
 		if _, ok := objToIdent[id.Obj]; ok {
 			delete(objToIdent, id.Obj)
+			if len(objToIdent) == 0 {
+				return
+			}
 		}
 	}
 

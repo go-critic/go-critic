@@ -27,7 +27,7 @@ func (c *ptrToRefParamChecker) checkParams(params []*ast.Field) {
 			continue
 		}
 
-		if c.isRefType(ptr.Elem().Underlying()) {
+		if c.isRefType(ptr.Elem()) {
 			if len(param.Names) == 0 {
 				c.ctx.Warn(param, "consider to make non-pointer type for `%s`", ptr.String())
 			} else {
