@@ -18,3 +18,19 @@ func ok4(ch chan *string) chan *int {
 
 /// OK: just a func
 func ok5() {}
+
+type kek map[int]int
+type kek2 chan string
+type kek3 []string
+
+func (k *kek) ok(kk *kek)   {}
+func (k *kek2) ok(kk *kek2) {}
+func (k *kek3) ok(kk *kek3) {}
+
+type wow *map[int]int
+type wow2 *chan string
+type wow3 *[]string
+
+func wowok(kk wow)   {}
+func wowok2(kk wow2) {}
+func wowok3(kk wow3) {}
