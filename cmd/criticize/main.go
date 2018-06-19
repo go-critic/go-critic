@@ -158,6 +158,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 	for _, f := range pkgInfo.Files {
 		if l.scanGenerated || isGenerated(f) {
 			l.ctx.Filename = l.getFilename(f)
+			l.checkFile(f)
 		}
 	}
 }
