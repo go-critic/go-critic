@@ -15,7 +15,7 @@ type unexportedCallChecker struct {
 	recvName string
 }
 
-func (c *unexportedCallChecker) VisitFunc(decl *ast.FuncDecl) bool {
+func (c *unexportedCallChecker) EnterFunc(decl *ast.FuncDecl) bool {
 	if decl.Body == nil {
 		return false
 	}
@@ -30,7 +30,7 @@ func (c *unexportedCallChecker) VisitFunc(decl *ast.FuncDecl) bool {
 }
 
 // TODO: update description and warning message
-func (c *unexportedCallChecker) CheckLocalExpr(expr ast.Expr) {
+func (c *unexportedCallChecker) VisitLocalExpr(expr ast.Expr) {
 	if call, ok := expr.(*ast.CallExpr); ok {
 		c.checkCall(call)
 	}
@@ -44,7 +44,7 @@ func (c *unexportedCallChecker) checkCall(call *ast.CallExpr) {
 	if sel.Sel.IsExported() {
 		return
 	}
-	typ := c.ctx.TypesInfo.TypeOf(sel.Sel)
+	typ := c.ctx.typesInfo.TypeOf(sel.Sel)
 	sig, ok := typ.(*types.Signature)
 	if !ok {
 		return

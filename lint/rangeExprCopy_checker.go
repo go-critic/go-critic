@@ -13,16 +13,16 @@ type rangeExprCopyChecker struct {
 	checkerBase
 }
 
-func (c *rangeExprCopyChecker) VisitFunc(fn *ast.FuncDecl) bool {
+func (c *rangeExprCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	return fn.Body != nil && !c.ctx.IsUnitTestFuncDecl(fn)
 }
 
-func (c *rangeExprCopyChecker) CheckStmt(stmt ast.Stmt) {
+func (c *rangeExprCopyChecker) VisitStmt(stmt ast.Stmt) {
 	rng, ok := stmt.(*ast.RangeStmt)
 	if !ok || rng.Key == nil || rng.Value == nil {
 		return
 	}
-	tv := c.ctx.TypesInfo.Types[rng.X]
+	tv := c.ctx.typesInfo.Types[rng.X]
 	if !tv.Addressable() {
 		return
 	}
@@ -30,7 +30,7 @@ func (c *rangeExprCopyChecker) CheckStmt(stmt ast.Stmt) {
 		return
 	}
 	const sizeThreshold = 96 // Not recommended to set value lower than 64
-	if size := c.ctx.SizesInfo.Sizeof(tv.Type); size >= sizeThreshold {
+	if size := c.ctx.sizesInfo.Sizeof(tv.Type); size >= sizeThreshold {
 		c.warn(rng, size)
 	}
 }

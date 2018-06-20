@@ -105,11 +105,7 @@ func (l *linter) LoadProgram() {
 	}
 
 	l.prog = prog
-
-	l.ctx = &lint.Context{
-		FileSet:   prog.Fset,
-		SizesInfo: sizes,
-	}
+	l.ctx = lint.NewContext(prog.Fset, sizes)
 }
 
 func (l *linter) InitCheckers() {
@@ -151,10 +147,9 @@ func (l *linter) CheckPackage(pkgPath string) {
 		log.Fatalf("%s package is not properly loaded", pkgPath)
 	}
 
-	l.ctx.TypesInfo = &pkgInfo.Info
-	l.ctx.Package = pkgInfo.Pkg
+	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 	for _, f := range pkgInfo.Files {
-		l.ctx.Filename = l.getFilename(f)
+		l.ctx.SetFileInfo(l.getFilename(f))
 		l.checkFile(f)
 	}
 }
@@ -200,7 +195,7 @@ func (l *linter) checkFile(f *ast.File) {
 
 			for _, warn := range c.Check(f) {
 				l.foundIssues = true
-				pos := l.ctx.FileSet.Position(warn.Node.Pos())
+				pos := l.ctx.FileSet().Position(warn.Node.Pos())
 				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)
 			}
 		}(c)

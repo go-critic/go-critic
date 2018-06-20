@@ -13,7 +13,7 @@ type underefChecker struct {
 	checkerBase
 }
 
-func (c *underefChecker) CheckExpr(expr ast.Expr) {
+func (c *underefChecker) VisitExpr(expr ast.Expr) {
 	switch n := expr.(type) {
 	case *ast.SelectorExpr:
 		expr, ok := n.X.(*ast.ParenExpr)
@@ -59,7 +59,7 @@ func (c *underefChecker) warnArray(expr *ast.IndexExpr) {
 // checkStarExpr checks if ast.StarExpr could be simplified.
 func (c *underefChecker) checkStarExpr(expr *ast.StarExpr) bool {
 	// Checks if expr is pointer type.
-	typ, ok := c.ctx.TypesInfo.TypeOf(expr.X).(*types.Pointer)
+	typ, ok := c.ctx.typesInfo.TypeOf(expr.X).(*types.Pointer)
 	if !ok {
 		return false
 	}
@@ -73,7 +73,7 @@ func (c *underefChecker) checkStarExpr(expr *ast.StarExpr) bool {
 }
 
 func (c *underefChecker) checkArray(expr *ast.StarExpr) bool {
-	typ, ok := c.ctx.TypesInfo.TypeOf(expr.X).(*types.Pointer)
+	typ, ok := c.ctx.typesInfo.TypeOf(expr.X).(*types.Pointer)
 	if !ok {
 		return false
 	}

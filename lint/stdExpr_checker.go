@@ -111,8 +111,8 @@ func (c *stdExprChecker) Init() {
 	}
 }
 
-func (c *stdExprChecker) CheckExpr(expr ast.Expr) {
-	val := c.ctx.TypesInfo.Types[expr].Value
+func (c *stdExprChecker) VisitExpr(expr ast.Expr) {
+	val := c.ctx.typesInfo.Types[expr].Value
 	if val == nil {
 		// Not a compile-time constant.
 		return
@@ -191,7 +191,7 @@ func (c *stdExprChecker) warn(expr ast.Expr, suggestion string) {
 	// Avoid printing warnings for packages that use recognized
 	// expressions to define constants/variables we are suggesting.
 	definingPkg := strings.Split(suggestion, ".")[0]
-	if c.ctx.Package.Name() != definingPkg {
+	if c.ctx.pkg.Name() != definingPkg {
 		c.ctx.Warn(expr, "can replace %s with %s", expr, suggestion)
 	}
 }

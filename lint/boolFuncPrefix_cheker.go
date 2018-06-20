@@ -14,7 +14,7 @@ type boolFuncPrefixChecker struct {
 	checkerBase
 }
 
-func (c *boolFuncPrefixChecker) CheckFuncDecl(decl *ast.FuncDecl) {
+func (c *boolFuncPrefixChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	params := decl.Type.Params
 	results := decl.Type.Results
 
@@ -32,7 +32,7 @@ func (c *boolFuncPrefixChecker) warn(fn *ast.FuncDecl) {
 }
 
 func (c *boolFuncPrefixChecker) isBoolType(expr ast.Expr) bool {
-	typ, ok := c.ctx.TypesInfo.TypeOf(expr).(*types.Basic)
+	typ, ok := c.ctx.typesInfo.TypeOf(expr).(*types.Basic)
 	return ok && typ.Kind() == types.Bool
 }
 

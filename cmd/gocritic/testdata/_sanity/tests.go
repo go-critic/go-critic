@@ -130,6 +130,8 @@ type typeWithEmbedding struct {
 	structType
 }
 
+type emptyIface interface{}
+
 type ifaceType interface {
 	A() func()
 	B() func() func()
@@ -154,3 +156,5 @@ func convertPtr(x string) *myString {
 func (myString) noReceiverName1(a, b string) {}
 
 func (*myString) noReceiverName2() (a, b string) { return "", "" }
+
+var noInit1, noInit2 int

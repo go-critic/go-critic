@@ -20,7 +20,7 @@ func (c *docStubChecker) Init() {
 	c.badCommentRE = regexp.MustCompile(re)
 }
 
-func (c *docStubChecker) CheckFuncDecl(decl *ast.FuncDecl) {
+func (c *docStubChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	if decl.Doc != nil && c.badCommentRE.MatchString(decl.Doc.List[0].Text) {
 		c.warn(decl)
 	}
