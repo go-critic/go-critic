@@ -17,18 +17,12 @@ func init() {
 }
 
 type unusedParamChecker struct {
-	baseFuncDeclChecker
+	checkerBase
 }
 
-func (c *unusedParamChecker) New(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&unusedParamChecker{
-		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
-	})
-}
-
-func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {
+func (c *unusedParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	params := decl.Type.Params
-	if params == nil || params.NumFields() == 0 {
+	if decl.Body == nil || params == nil || params.NumFields() == 0 {
 		return
 	}
 
@@ -48,9 +42,12 @@ func (c *unusedParamChecker) CheckFuncDecl(decl *ast.FuncDecl) {
 
 	// remove used params
 	// TODO(cristaloleg): we might want to have less iterations here.
-	for id := range c.ctx.TypesInfo.Uses {
+	for id := range c.ctx.typesInfo.Uses {
 		if _, ok := objToIdent[id.Obj]; ok {
 			delete(objToIdent, id.Obj)
+			if len(objToIdent) == 0 {
+				return
+			}
 		}
 	}
 

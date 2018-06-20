@@ -23,29 +23,25 @@ func init() {
 }
 
 type flagDerefChecker struct {
-	baseExprChecker
+	checkerBase
 
 	flagPtrFuncs map[string]bool
 }
 
-func (c *flagDerefChecker) New(ctx *context) func(*ast.File) {
-	return wrapExprChecker(&flagDerefChecker{
-		baseExprChecker: baseExprChecker{ctx: ctx},
-
-		flagPtrFuncs: map[string]bool{
-			"flag.Bool":     true,
-			"flag.Duration": true,
-			"flag.Float64":  true,
-			"flag.Int":      true,
-			"flag.Int64":    true,
-			"flag.String":   true,
-			"flag.Uint":     true,
-			"flag.Uint64":   true,
-		},
-	})
+func (c *flagDerefChecker) Init() {
+	c.flagPtrFuncs = map[string]bool{
+		"flag.Bool":     true,
+		"flag.Duration": true,
+		"flag.Float64":  true,
+		"flag.Int":      true,
+		"flag.Int64":    true,
+		"flag.String":   true,
+		"flag.Uint":     true,
+		"flag.Uint64":   true,
+	}
 }
 
-func (c *flagDerefChecker) CheckExpr(expr ast.Expr) {
+func (c *flagDerefChecker) VisitExpr(expr ast.Expr) {
 	if expr, ok := expr.(*ast.StarExpr); ok {
 		call, ok := expr.X.(*ast.CallExpr)
 		if !ok {

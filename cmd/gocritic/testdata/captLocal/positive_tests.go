@@ -38,7 +38,6 @@ func localBody() {
 		VAR3, VAR4 := X, Y
 
 		/// `VAR5' should not be capitalized
-		/// `VAR3' should not be capitalized
 		VAR5, VAR3 := VAR4, VAR3
 		_, _ = VAR3, VAR5
 

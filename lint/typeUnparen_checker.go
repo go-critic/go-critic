@@ -25,31 +25,49 @@ func init() {
 }
 
 type typeUnparenChecker struct {
-	baseTypeExprChecker
+	checkerBase
+
+	cause ast.Node // Last warning cause
 }
 
-func (c *typeUnparenChecker) New(ctx *context) func(*ast.File) {
-	return wrapTypeExprChecker(&typeUnparenChecker{
-		baseTypeExprChecker: baseTypeExprChecker{ctx: ctx},
-	})
-}
+func (c *typeUnparenChecker) EnterChilds(x ast.Node) bool { return c.cause != x }
 
-func (c *typeUnparenChecker) CheckTypeExpr(expr ast.Expr) {
-	// Arrays require extra care: we don't want to unparen
-	// length expression as they are not type expressions.
-	if arr, ok := expr.(*ast.ArrayType); ok {
-		if !c.hasParens(arr.Elt) {
+func (c *typeUnparenChecker) checkTypeExpr(x ast.Expr) {
+	switch x := x.(type) {
+	case *ast.ArrayType:
+		// Arrays require extra care: we don't want to unparen
+		// length expression as they are not type expressions.
+		if !c.hasParens(x.Elt) {
 			return
 		}
-		noParens := astcopy.Expr(arr).(*ast.ArrayType)
+		noParens := astcopy.ArrayType(x)
 		noParens.Elt = c.unparenExpr(noParens.Elt)
-		c.warn(expr, noParens)
-		return
+		c.warn(x, noParens)
+	case *ast.StructType, *ast.InterfaceType:
+		// Only nested fields are to be reported.
+	default:
+		if !c.hasParens(x) {
+			return
+		}
+		// fmt.Printf("=> %#v\n", x)
+		c.warn(x, c.unparenExpr(astcopy.Expr(x)))
 	}
-	if !c.hasParens(expr) {
-		return
+}
+
+func (c *typeUnparenChecker) VisitTypeExpr(x ast.Expr) {
+	switch x := x.(type) {
+	case *ast.ParenExpr:
+		switch {
+		case astp.IsStructType(x.X):
+			c.ctx.Warn(x, "could simplify (struct{...}) to struct{...}")
+		case astp.IsInterfaceType(x.X):
+			c.ctx.Warn(x, "could simplify (interface{...}) to interface{...}")
+		default:
+			c.warn(x, c.unparenExpr(astcopy.Expr(x)))
+		}
+	default:
+		c.checkTypeExpr(x)
 	}
-	c.warn(expr, c.unparenExpr(astcopy.Expr(expr)))
 }
 
 func (c *typeUnparenChecker) hasParens(x ast.Expr) bool {
@@ -67,5 +85,6 @@ func (c *typeUnparenChecker) unparenExpr(x ast.Expr) ast.Expr {
 }
 
 func (c *typeUnparenChecker) warn(cause, noParens ast.Expr) {
-	c.ctx.Warn(cause, "could simplify %s to %s", cause, noParens)
+	c.cause = cause
+	c.ctx.Warn(cause, "could simplify %s to %s", c.cause, noParens)
 }

@@ -5,23 +5,33 @@ import (
 	"go/ast"
 	"reflect"
 
+	"github.com/go-critic/go-critic/lint/internal/astwalk"
 	"github.com/go-toolsmith/astfmt"
 )
 
-// checkFunctions is a table of all available check functions
-// as well as their metadata (like "experimental" attributes).
+// checkerPrototypes is a table of checker prototypes that are
+// used to instantiate new checker instances.
 //
 // Keys are rule names.
-var checkFunctions = map[string]*ruleInfo{}
+var checkerPrototypes = map[string]checkerProto{}
 
-type ruleInfo struct {
-	AttributeSet
+type checkerProto struct {
+	rule *Rule
 
-	New func(*context) func(*ast.File)
+	// clone performs prototype copy and returns it as *Checker.
+	clone func(context) *Checker
 }
 
-type checkFunction interface {
-	New(*context) func(*ast.File)
+// abstractChecker is a proxy interface to forward checkerBase
+// embedding checker into addChecker.
+//
+// abstractChecker is implemented by checkerBase directly and completely,
+// making any checker that embeds it a valid argument to addChecker.
+//
+// See checkerBase and its implementation of this interface for more info.
+type abstractChecker interface {
+	BindContext(*context)
+	Init()
 }
 
 type checkerAttribute int
@@ -51,22 +61,67 @@ func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
 	})
 }
 
-func addChecker(c checkFunction, attrs ...checkerAttribute) {
-	var info ruleInfo
+// addChecker adds checker c to global checkers prototype table.
+// Checker must be a pointer to zero value of concrete checker.
+//
+// Attributes used to fill AttributeSet for the rule inferred from checker.
+func addChecker(c abstractChecker, attrs ...checkerAttribute) {
+	// Clone abstractChecker underlying object.
+	cloneAbstractChecker := func(c abstractChecker) abstractChecker {
+		dynType := reflect.ValueOf(c).Elem().Type()
+		return reflect.New(dynType).Interface().(abstractChecker)
+	}
+
+	newFileWalker := func(ctx *context, c abstractChecker) astwalk.FileWalker {
+		// Infer proper AST traversing wrapper (walker).
+		switch v := c.(type) {
+		case astwalk.FuncDeclVisitor:
+			return astwalk.WalkerForFuncDecl(v)
+		case astwalk.ExprVisitor:
+			return astwalk.WalkerForExpr(v)
+		case astwalk.LocalExprVisitor:
+			return astwalk.WalkerForLocalExpr(v)
+		case astwalk.StmtListVisitor:
+			return astwalk.WalkerForStmtList(v)
+		case astwalk.StmtVisitor:
+			return astwalk.WalkerForStmt(v)
+		case astwalk.LocalDefVisitor:
+			return astwalk.WalkerForLocalDef(v, ctx.typesInfo)
+		case astwalk.TypeExprVisitor:
+			return astwalk.WalkerForTypeExpr(v, ctx.typesInfo)
+		default:
+			panic(fmt.Sprintf("%T does not implement known visitor interface", c))
+		}
+	}
+
+	var rule Rule
+	typeName := reflect.ValueOf(c).Type().String()
+	rule.name = typeName[len("*lint.") : len(typeName)-len("Checker")]
+	// Fill rule attributes using provided attr list.
 	for _, attr := range attrs {
 		switch attr {
 		case attrExperimental:
-			info.Experimental = true
+			rule.Experimental = true
 		case attrSyntaxOnly:
-			info.SyntaxOnly = true
+			rule.SyntaxOnly = true
 		case attrVeryOpinionated:
-			info.VeryOpinionated = true
+			rule.VeryOpinionated = true
 		default:
 			panic(fmt.Sprintf("unexpected checkerAttribute"))
 		}
 	}
-	typeName := reflect.ValueOf(c).Type().String()
-	ruleName := typeName[len("*lint.") : len(typeName)-len("Checker")]
-	info.New = c.New
-	checkFunctions[ruleName] = &info
+
+	proto := checkerProto{rule: &rule}
+	proto.clone = func(ctx context) *Checker {
+		c := cloneAbstractChecker(c)
+		clone := &Checker{
+			Rule: proto.rule,
+			ctx:  ctx,
+		}
+		clone.walker = newFileWalker(&clone.ctx, c)
+		c.BindContext(&clone.ctx)
+		c.Init()
+		return clone
+	}
+	checkerPrototypes[rule.name] = proto
 }

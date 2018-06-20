@@ -21,16 +21,10 @@ func init() {
 }
 
 type switchTrueChecker struct {
-	baseStmtChecker
+	checkerBase
 }
 
-func (c *switchTrueChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&switchTrueChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
-}
-
-func (c *switchTrueChecker) CheckStmt(stmt ast.Stmt) {
+func (c *switchTrueChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.SwitchStmt); ok {
 		if qualifiedName(stmt.Tag) == "true" {
 			c.warn(stmt)

@@ -33,19 +33,13 @@ func init() {
 }
 
 type elseifChecker struct {
-	baseStmtChecker
+	checkerBase
 
 	cause   *ast.IfStmt
 	visited map[*ast.IfStmt]bool
 }
 
-func (c *elseifChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtChecker(&elseifChecker{
-		baseStmtChecker: baseStmtChecker{ctx: ctx},
-	})
-}
-
-func (c *elseifChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+func (c *elseifChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	if fn.Body == nil {
 		return false
 	}
@@ -53,7 +47,7 @@ func (c *elseifChecker) PerFuncInit(fn *ast.FuncDecl) bool {
 	return true
 }
 
-func (c *elseifChecker) CheckStmt(stmt ast.Stmt) {
+func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.IfStmt); ok {
 		if c.visited[stmt] {
 			return

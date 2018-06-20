@@ -25,3 +25,32 @@ type goodMap2 map[[5][5]string]map[string]string
 var _ = [4]*int{}
 
 var _ = func() []func() { return nil }
+
+var f52want float64 = 1.0 / (1 << 52)
+
+const (
+	c1 = (1 + (2 + 3))
+	c2 = (1 << 2 << 3)
+)
+
+func f() {
+	const (
+		localC1 = (1 + (2 + 3))
+		localC2 = (1 << 2 << 3)
+	)
+
+}
+
+type ifaceToEmbed interface{}
+
+type ifaceWithEmbedding interface {
+	ifaceToEmbed
+	Foo()
+}
+
+type structToEmbed struct{}
+
+type structWithEmbedding struct {
+	structToEmbed
+	Field int
+}

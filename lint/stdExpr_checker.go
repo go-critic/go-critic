@@ -53,7 +53,7 @@ type mathConstant struct {
 }
 
 type stdExprChecker struct {
-	baseExprChecker
+	checkerBase
 
 	mathConsts []mathConstant
 
@@ -62,72 +62,68 @@ type stdExprChecker struct {
 	suggestionToExpression map[string]ast.Expr
 }
 
-func (c *stdExprChecker) New(ctx *context) func(*ast.File) {
-	return wrapExprChecker(&stdExprChecker{
-		baseExprChecker: baseExprChecker{ctx: ctx},
+func (c *stdExprChecker) Init() {
+	c.suggestionToExpression = map[string]ast.Expr{
+		"math.MaxInt8":   strparse.Expr(`1<<7 - 1`),
+		"math.MinInt8":   strparse.Expr(`-1 << 7`),
+		"math.MaxInt16":  strparse.Expr(`1<<15 - 1`),
+		"math.MinInt16":  strparse.Expr(`-1 << 15`),
+		"math.MaxInt32":  strparse.Expr(`1<<31 - 1`),
+		"math.MinInt32":  strparse.Expr(`-1 << 31`),
+		"math.MaxInt64":  strparse.Expr(`1<<63 - 1`),
+		"math.MinInt64":  strparse.Expr(`-1 << 63`),
+		"math.MaxUint8":  strparse.Expr(`1<<8 - 1`),
+		"math.MaxUint16": strparse.Expr(`1<<16 - 1`),
+		"math.MaxUint32": strparse.Expr(`1<<32 - 1`),
+		"math.MaxUint64": strparse.Expr(`1<<64 - 1`),
+	}
 
-		suggestionToExpression: map[string]ast.Expr{
-			"math.MaxInt8":   strparse.Expr(`1<<7 - 1`),
-			"math.MinInt8":   strparse.Expr(`-1 << 7`),
-			"math.MaxInt16":  strparse.Expr(`1<<15 - 1`),
-			"math.MinInt16":  strparse.Expr(`-1 << 15`),
-			"math.MaxInt32":  strparse.Expr(`1<<31 - 1`),
-			"math.MinInt32":  strparse.Expr(`-1 << 31`),
-			"math.MaxInt64":  strparse.Expr(`1<<63 - 1`),
-			"math.MinInt64":  strparse.Expr(`-1 << 63`),
-			"math.MaxUint8":  strparse.Expr(`1<<8 - 1`),
-			"math.MaxUint16": strparse.Expr(`1<<16 - 1`),
-			"math.MaxUint32": strparse.Expr(`1<<32 - 1`),
-			"math.MaxUint64": strparse.Expr(`1<<64 - 1`),
-		},
+	c.mathConsts = []mathConstant{
+		// Unary plus is a current way to avoid stddef to trigger
+		// on these literals.
+		{"math.Pi", math.Pi, +3.14},
+		{"math.E", math.E, +2.71},
 
-		mathConsts: []mathConstant{
-			// Unary plus is a current way to avoid stddef to trigger
-			// on these literals.
-			{"math.Pi", math.Pi, +3.14},
-			{"math.E", math.E, +2.71},
+		{"math.Phi", math.Phi, 0},
 
-			{"math.Phi", math.Phi, 0},
+		{"math.Sqrt2", math.Sqrt2, 0},
+		{"math.SqrtE", math.SqrtE, 0},
+		{"math.SqrtPi", math.SqrtPi, 0},
+		{"math.SqrtPhi", math.SqrtPhi, 0},
 
-			{"math.Sqrt2", math.Sqrt2, 0},
-			{"math.SqrtE", math.SqrtE, 0},
-			{"math.SqrtPi", math.SqrtPi, 0},
-			{"math.SqrtPhi", math.SqrtPhi, 0},
+		{"math.Ln2", math.Ln2, 0},
+		{"math.Log2E", math.Log2E, 0},
+		{"math.Ln10", math.Ln10, 0},
+		{"math.Log10E", math.Log10E, 0},
+	}
 
-			{"math.Ln2", math.Ln2, 0},
-			{"math.Log2E", math.Log2E, 0},
-			{"math.Ln10", math.Ln10, 0},
-			{"math.Log10E", math.Log10E, 0},
-		},
+	c.stringLitToSuggestion = map[string]string{
+		http.MethodGet:    "net/http.MethodGet",
+		http.MethodHead:   "net/http.MethodHead",
+		http.MethodPost:   "net/http.MethodPost",
+		http.MethodPut:    "net/http.MethodPut",
+		http.MethodDelete: "net/http.MethodDelete",
 
-		stringLitToSuggestion: map[string]string{
-			http.MethodGet:    "net/http.MethodGet",
-			http.MethodHead:   "net/http.MethodHead",
-			http.MethodPost:   "net/http.MethodPost",
-			http.MethodPut:    "net/http.MethodPut",
-			http.MethodDelete: "net/http.MethodDelete",
-
-			time.ANSIC:       "time.ANSIC",
-			time.UnixDate:    "time.UnixDate",
-			time.RubyDate:    "time.RubyDate",
-			time.RFC822:      "time.RFC822",
-			time.RFC822Z:     "time.RFC822Z",
-			time.RFC850:      "time.RFC850",
-			time.RFC1123:     "time.RFC1123",
-			time.RFC1123Z:    "time.RFC1123Z",
-			time.RFC3339:     "time.RFC3339",
-			time.RFC3339Nano: "time.RFC3339Nano",
-			time.Stamp:       "time.Stamp",
-			time.StampMilli:  "time.StampMilli",
-			time.StampMicro:  "time.StampMicro",
-			time.StampNano:   "time.StampNano",
-			time.Kitchen:     "time.Kitchen",
-		},
-	})
+		time.ANSIC:       "time.ANSIC",
+		time.UnixDate:    "time.UnixDate",
+		time.RubyDate:    "time.RubyDate",
+		time.RFC822:      "time.RFC822",
+		time.RFC822Z:     "time.RFC822Z",
+		time.RFC850:      "time.RFC850",
+		time.RFC1123:     "time.RFC1123",
+		time.RFC1123Z:    "time.RFC1123Z",
+		time.RFC3339:     "time.RFC3339",
+		time.RFC3339Nano: "time.RFC3339Nano",
+		time.Stamp:       "time.Stamp",
+		time.StampMilli:  "time.StampMilli",
+		time.StampMicro:  "time.StampMicro",
+		time.StampNano:   "time.StampNano",
+		time.Kitchen:     "time.Kitchen",
+	}
 }
 
-func (c *stdExprChecker) CheckExpr(expr ast.Expr) {
-	val := c.ctx.TypesInfo.Types[expr].Value
+func (c *stdExprChecker) VisitExpr(expr ast.Expr) {
+	val := c.ctx.typesInfo.Types[expr].Value
 	if val == nil {
 		// Not a compile-time constant.
 		return
@@ -206,7 +202,7 @@ func (c *stdExprChecker) warn(expr ast.Expr, suggestion string) {
 	// Avoid printing warnings for packages that use recognized
 	// expressions to define constants/variables we are suggesting.
 	definingPkg := strings.Split(suggestion, ".")[0]
-	if c.ctx.Package.Name() != definingPkg {
+	if c.ctx.pkg.Name() != definingPkg {
 		c.ctx.Warn(expr, "can replace %s with %s", expr, suggestion)
 	}
 }

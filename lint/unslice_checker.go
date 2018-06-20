@@ -20,19 +20,13 @@ func init() {
 }
 
 type unsliceChecker struct {
-	baseLocalExprChecker
+	checkerBase
 }
 
-func (c *unsliceChecker) New(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&unsliceChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
-	})
-}
-
-func (c *unsliceChecker) CheckLocalExpr(expr ast.Expr) {
+func (c *unsliceChecker) VisitLocalExpr(expr ast.Expr) {
 	if expr, ok := expr.(*ast.SliceExpr); ok {
 		if expr.Low == nil && expr.High == nil {
-			typ := c.ctx.TypesInfo.TypeOf(expr)
+			typ := c.ctx.typesInfo.TypeOf(expr)
 			switch typ := typ.(type) {
 			case *types.Basic:
 				if typ.Kind() == types.String {

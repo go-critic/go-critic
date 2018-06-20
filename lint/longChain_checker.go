@@ -35,7 +35,7 @@ func init() {
 }
 
 type longChainChecker struct {
-	baseLocalExprChecker
+	checkerBase
 
 	// chains is a {expr string => count} mapping.
 	chains map[string]int
@@ -45,13 +45,7 @@ type longChainChecker struct {
 	reported map[string]bool
 }
 
-func (c *longChainChecker) New(ctx *context) func(*ast.File) {
-	return wrapLocalExprChecker(&longChainChecker{
-		baseLocalExprChecker: baseLocalExprChecker{ctx: ctx},
-	})
-}
-
-func (c *longChainChecker) PerFuncInit(fn *ast.FuncDecl) bool {
+func (c *longChainChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	// Avoid checking functions of 1 statement.
 	// Both performance and false-positives reasons.
 	if fn.Body == nil || len(fn.Body.List) == 1 {
@@ -63,7 +57,7 @@ func (c *longChainChecker) PerFuncInit(fn *ast.FuncDecl) bool {
 	return true
 }
 
-func (c *longChainChecker) CheckLocalExpr(expr ast.Expr) {
+func (c *longChainChecker) VisitLocalExpr(expr ast.Expr) {
 	// These constants are purely heuristical.
 	//
 	// TODO: for very big functions should increase minChainLen
@@ -138,7 +132,7 @@ func (c *longChainChecker) isTypeConversion(call *ast.CallExpr) bool {
 
 	switch fn := astutil.Unparen(call.Fun).(type) {
 	case *ast.Ident:
-		_, ok := c.ctx.TypesInfo.ObjectOf(fn).(*types.TypeName)
+		_, ok := c.ctx.typesInfo.ObjectOf(fn).(*types.TypeName)
 		return ok
 
 	case *ast.SelectorExpr:
@@ -146,10 +140,10 @@ func (c *longChainChecker) isTypeConversion(call *ast.CallExpr) bool {
 		if !ok {
 			return false
 		}
-		if _, ok := c.ctx.TypesInfo.ObjectOf(pkg).(*types.PkgName); !ok {
+		if _, ok := c.ctx.typesInfo.ObjectOf(pkg).(*types.PkgName); !ok {
 			return false
 		}
-		_, ok = c.ctx.TypesInfo.ObjectOf(fn.Sel).(*types.TypeName)
+		_, ok = c.ctx.typesInfo.ObjectOf(fn.Sel).(*types.TypeName)
 		return ok
 
 	default:

@@ -22,16 +22,10 @@ func init() {
 }
 
 type ptrToRefParamChecker struct {
-	baseFuncDeclChecker
+	checkerBase
 }
 
-func (c *ptrToRefParamChecker) New(ctx *context) func(*ast.File) {
-	return wrapFuncDeclChecker(&ptrToRefParamChecker{
-		baseFuncDeclChecker: baseFuncDeclChecker{ctx: ctx},
-	})
-}
-
-func (c *ptrToRefParamChecker) CheckFuncDecl(fn *ast.FuncDecl) {
+func (c *ptrToRefParamChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 	c.checkParams(fn.Type.Params.List)
 	if fn.Type.Results != nil {
 		c.checkParams(fn.Type.Results.List)
@@ -40,12 +34,12 @@ func (c *ptrToRefParamChecker) CheckFuncDecl(fn *ast.FuncDecl) {
 
 func (c *ptrToRefParamChecker) checkParams(params []*ast.Field) {
 	for _, param := range params {
-		ptr, ok := c.ctx.TypesInfo.TypeOf(param.Type).(*types.Pointer)
+		ptr, ok := c.ctx.typesInfo.TypeOf(param.Type).(*types.Pointer)
 		if !ok {
 			continue
 		}
 
-		if c.isRefType(ptr.Elem().Underlying()) {
+		if c.isRefType(ptr.Elem()) {
 			if len(param.Names) == 0 {
 				c.ctx.Warn(param, "consider to make non-pointer type for `%s`", ptr.String())
 			} else {

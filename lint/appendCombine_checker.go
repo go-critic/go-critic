@@ -21,16 +21,10 @@ func init() {
 }
 
 type appendCombineChecker struct {
-	baseStmtListChecker
+	checkerBase
 }
 
-func (c *appendCombineChecker) New(ctx *context) func(*ast.File) {
-	return wrapStmtListChecker(&appendCombineChecker{
-		baseStmtListChecker: baseStmtListChecker{ctx: ctx},
-	})
-}
-
-func (c *appendCombineChecker) CheckStmtList(list []ast.Stmt) {
+func (c *appendCombineChecker) VisitStmtList(list []ast.Stmt) {
 	var cause ast.Node // First append
 	var slice ast.Expr // Slice being appended to
 	chain := 0         // How much appends in a row we've seen

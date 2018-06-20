@@ -1,23 +1,22 @@
 package lint
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"go/types"
 	"sort"
 
+	"github.com/go-critic/go-critic/lint/internal/astwalk"
 	"github.com/go-toolsmith/astfmt"
 )
 
 // RuleList returns a slice of all rules that can be used to create checkers.
 // Slice is sorted by rule names.
 func RuleList() []*Rule {
-	rules := make([]*Rule, 0, len(checkFunctions))
-	for ruleName, info := range checkFunctions {
-		rules = append(rules, &Rule{
-			name:         ruleName,
-			AttributeSet: info.AttributeSet,
-		})
+	rules := make([]*Rule, 0, len(checkerPrototypes))
+	for _, c := range checkerPrototypes {
+		rules = append(rules, c.rule)
 	}
 	sort.SliceStable(rules, func(i, j int) bool {
 		return rules[i].Name() < rules[j].Name()
@@ -63,25 +62,19 @@ func (r *Rule) Name() string { return r.name }
 // NewChecker returns checker for the given rule.
 //
 // Rule must be non-nil and known to the lint package.
-// Valid rules list can be obtained by RuleList call.
+// Valid rule list can be obtained by RuleList call.
 func NewChecker(rule *Rule, ctx *Context) *Checker {
 	if rule == nil {
 		panic("nil rule given")
 	}
-	// TODO(quasilyte): it would be great to have SyntaxOnly
-	// checkers TypeInfo set to nil, so if they ever
-	// start using it that will be detected by the tests.
-	// This can require some lint package refactoring though.
-	// Postponing this idea for now.
-	c := &Checker{
-		Rule: rule,
-		ctx: context{
-			Context: ctx,
-			printer: astfmt.NewPrinter(ctx.FileSet),
-		},
+	c, ok := checkerPrototypes[rule.Name()]
+	if !ok {
+		panic(fmt.Sprintf("rule %q is undefined", rule.Name()))
 	}
-	c.check = checkFunctions[rule.Name()].New(&c.ctx)
-	return c
+	return c.clone(context{
+		Context: ctx,
+		printer: astfmt.NewPrinter(ctx.fileSet),
+	})
 }
 
 // Checker analyzes given file for potential issues.
@@ -91,13 +84,13 @@ type Checker struct {
 
 	ctx context
 
-	check func(*ast.File)
+	walker astwalk.FileWalker
 }
 
 // Check runs rule checker over file f.
 func (c *Checker) Check(f *ast.File) []Warning {
 	c.ctx.warnings = c.ctx.warnings[:0]
-	c.check(f)
+	c.walker.WalkFile(f)
 	return c.ctx.warnings
 }
 
@@ -113,18 +106,57 @@ type Warning struct {
 
 // Context is a readonly state shared among every checker.
 type Context struct {
-	Filename string
+	// filename is a currently checked file name.
+	filename string
 
-	// FileSet is a file set that was used during package parsing.
-	FileSet *token.FileSet
+	// fileSet is a file set that was used during package parsing.
+	fileSet *token.FileSet
 
-	// TypesInfo carries parsed packages types information.
-	TypesInfo *types.Info
+	// pkg describes package that is being checked.
+	pkg *types.Package
 
-	// Package describes package that is being checked.
-	Package *types.Package
+	// typesInfo carries parsed packages types information.
+	typesInfo *types.Info
 
-	// SizesInfo carries alignment and type size information.
+	// sizesInfo carries alignment and type size information.
 	// Arch-dependent.
-	SizesInfo types.Sizes
+	sizesInfo types.Sizes
+}
+
+// NewContext returns new shared context to be used by every checker.
+//
+// All data carried by the context is readonly for checkers,
+// but can be modified by integrating application.
+func NewContext(fset *token.FileSet, sizes types.Sizes) *Context {
+	return &Context{
+		fileSet:   fset,
+		sizesInfo: sizes,
+		typesInfo: &types.Info{},
+	}
+}
+
+// FileSet returns file set used upon context creation.
+func (c *Context) FileSet() *token.FileSet { return c.fileSet }
+
+// SetPackageInfo sets package-related metadata.
+//
+// Must be called for every package being checked.
+//
+// Type information may be nil if all requested checkers
+// have SyntaxOnly attribute.
+func (c *Context) SetPackageInfo(info *types.Info, pkg *types.Package) {
+	if info != nil {
+		// We do this kind of assignment to avoid
+		// changing c.typesInfo field address after
+		// every re-assignment.
+		*c.typesInfo = *info
+	}
+	c.pkg = pkg
+}
+
+// SetFileInfo sets file-related metadata.
+//
+// Must be called for every source code file being checked.
+func (c *Context) SetFileInfo(filename string) {
+	c.filename = filename
 }
