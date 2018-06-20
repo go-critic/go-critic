@@ -2,11 +2,11 @@ package lint
 
 //! Detects dereference expressions that can be omitted.
 //
-// Before:
+// @Before:
 // (*k).field = 5
 // _ := (*a)[5] // only if a is array
 //
-// After:
+// @After:
 // k.field = 5
 // _ := a[5]
 

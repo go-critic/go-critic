@@ -2,13 +2,13 @@ package lint
 
 //! Detects repeated expression chains and suggest to refactor them.
 //
-// Before:
+// @Before:
 // a := q.w.e.r.t + 1
 // b := q.w.e.r.t + 2
 // c := q.w.e.r.t + 3
 // v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
 //
-// After:
+// @After:
 // x := xs[i+1]
 // qwert := q.w.e.r.t
 // a := qwert + 1
@@ -16,10 +16,10 @@ package lint
 // c := qwert + 3
 // v := (a+x) + (b+x) + (c+x)
 //
-// Note:
+// @Note:
 // **Experimental**
 //
-// Gives false-positives for:
+// @Gives false-positives for:
 // * Cases with re-assignment. See `$GOROOT/src/crypto/md5/md5block.go` for example.
 
 import (

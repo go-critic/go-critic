@@ -2,10 +2,10 @@ package lint
 
 //! Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
 //
-// Before:
+// @Before:
 // func Enabled() bool
 //
-// After:
+// @After:
 // func IsEnabled() bool
 
 import (

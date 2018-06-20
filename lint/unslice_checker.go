@@ -2,11 +2,11 @@ package lint
 
 //! Detects slice expressions that can be simplified to sliced expression itself.
 //
-// Before:
+// @Before:
 // f(s[:]) // s is string
 // copy(b[:], values...) // b is []byte
 //
-// After:
+// @After:
 // f(s)
 // copy(b, values...)
 

@@ -2,13 +2,13 @@ package lint
 
 //! Detects switch statements that could be better written as if statements.
 //
-// Before:
+// @Before:
 // switch x := x.(type) {
 // case int:
 //      ...
 // }
 //
-// After:
+// @After:
 // if x, ok := x.(int); ok {
 //    ...
 // }

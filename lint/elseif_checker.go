@@ -5,7 +5,7 @@ package lint
 // Permits single else or else-if; repeated else-if or else + else-if
 // will trigger suggestion to use switch statement.
 //
-// Before:
+// @Before:
 // if cond1 {
 // 	// Code A.
 // } else if cond2 {
@@ -14,7 +14,7 @@ package lint
 // 	// Code C.
 // }
 //
-// After:
+// @After:
 // switch {
 // case cond1:
 // 	// Code A.

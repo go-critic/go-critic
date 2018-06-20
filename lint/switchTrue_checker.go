@@ -2,13 +2,13 @@ package lint
 
 //! Detects switch-over-bool statements that use explicit `true` tag value.
 //
-// Before:
+// @Before:
 // switch true {
 // case x > y:
 // 	// ...
 // }
 //
-// After:
+// @After:
 // switch {
 // case x > y:
 // 	// ...

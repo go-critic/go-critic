@@ -2,7 +2,7 @@ package lint
 
 //! Detects type switches that can benefit from type guard clause with variable.
 //
-// Before:
+// @Before:
 // switch v.(type) {
 // case int:
 // 	return v.(int)
@@ -12,7 +12,7 @@ package lint
 // 	return 0
 // }
 //
-// After:
+// @After:
 // switch v := v.(type) {
 // case int:
 // 	return v

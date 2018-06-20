@@ -4,13 +4,13 @@ package lint
 //
 // Suggests to use pointer to array to avoid the copy using `&` on range expression.
 //
-// Before:
+// @Before:
 // var xs [256]byte
 // for _, x := range xs {
 // 	// Loop body.
 // }
 //
-// After:
+// @After:
 // var xs [256]byte
 // for _, x := range &xs {
 // 	// Loop body.

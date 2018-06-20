@@ -2,12 +2,12 @@ package lint
 
 //! Detects unneded parenthesis inside type expressions and suggests to remove them.
 //
-// Before:
+// @Before:
 // func foo() [](func([](func()))) {
 //      ...
 // }
 //
-// After:
+// @After:
 // func foo() []func([]func()) {
 //      ...
 // }

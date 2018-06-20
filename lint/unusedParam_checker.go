@@ -2,10 +2,10 @@ package lint
 
 //! Detects unused params and suggests to name them as `_` (underscore).
 //
-// Before:
+// @Before:
 // func f(a int, b float64) // b isn't used inside function body
 //
-// After:
+// @After:
 // func f(a int, _ float64) // everything is cool
 
 import (

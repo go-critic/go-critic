@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"go/parser"
 	"go/token"
@@ -85,63 +86,67 @@ func main() {
 	}
 }
 
-type parseState uint
-
-const (
-	desciption parseState = 1 << iota
-	before
-	after
-	note
-)
-
 func parseComment(text string, c *checker) {
 	lines := strings.Split(text, "\n")
-	s := desciption
-	for _, l := range lines {
-		if strings.HasPrefix(l, "!") {
-			if c.ShortDescription != "" {
-				log.Fatal("Parse error: duplicate description section")
-			}
-			c.ShortDescription = strings.TrimSpace(l[1:])
-			c.Description += strings.TrimSpace(l[1:]) + "\n\n"
-			s = desciption
-			continue
-		}
-
-		// TODO: remove duplicated code
-		if strings.HasPrefix(l, "Before:") {
-			if c.Before != "" {
-				log.Fatal("Duplicated 'Before:' section")
-			}
-			s = before
-			continue
-		}
-
-		if strings.HasPrefix(l, "After:") {
-			if c.After != "" {
-				log.Fatal("Duplicated 'After:' section")
-			}
-			s = after
-			continue
-		}
-
-		if strings.HasPrefix(l, "Note:") {
-			if c.Note != "" {
-				log.Fatal("Duplicated 'Note:' section")
-			}
-			s = note
-			continue
-		}
-
-		switch s {
-		case desciption:
-			c.Description += l + "\n"
-		case before:
-			c.Before += l + "\n"
-		case after:
-			c.After += l + "\n"
-		case note:
-			c.Note += l + "\n"
+	ind := 0
+	stages := []func(l []string, i *int, c *checker) error{
+		parseShortDesc,
+		parseDesc,
+		parseBefore,
+		parseAfter,
+	}
+	for _, st := range stages {
+		err := st(lines, &ind, c)
+		if err != nil {
+			// TODO: improve error message
+			log.Fatal(err)
 		}
 	}
+}
+
+func parseShortDesc(lines []string, ind *int, c *checker) error {
+	c.ShortDescription = strings.TrimSpace(lines[0][1:]) + "\n\n"
+	*ind += 2 // skip empty line
+	return nil
+}
+
+func parseDesc(lines []string, ind *int, c *checker) error {
+	if len(lines) <= *ind {
+		return errors.New("parseDesc: no description provided")
+	}
+	if strings.HasPrefix(lines[*ind], "@") { // if no description
+		return nil
+	}
+	for *ind < len(lines) && len(lines[*ind]) > 0 {
+		c.Description += strings.TrimSpace(lines[*ind]) + "\n"
+		*ind++
+	}
+	*ind++ //skip empty line
+	return nil
+}
+
+func parseBefore(lines []string, ind *int, c *checker) error {
+	if len(lines) < *ind || strings.TrimSpace(lines[*ind]) != "@Before:" {
+		return errors.New("parseBefore: no @Before: section found")
+	}
+	*ind++
+	for *ind < len(lines) && len(lines[*ind]) > 0 {
+		c.Before += strings.TrimSpace(lines[*ind]) + "\n"
+		*ind++
+	}
+	*ind++ //skip empty line
+	return nil
+}
+
+func parseAfter(lines []string, ind *int, c *checker) error {
+	if len(lines) < *ind || strings.TrimSpace(lines[*ind]) != "@After:" {
+		return errors.New("parseAfter: no @After: section found")
+	}
+	*ind++
+	for *ind < len(lines) && len(lines[*ind]) > 0 {
+		c.After += strings.TrimSpace(lines[*ind]) + "\n"
+		*ind++
+	}
+	*ind++ //skip empty line
+	return nil
 }
