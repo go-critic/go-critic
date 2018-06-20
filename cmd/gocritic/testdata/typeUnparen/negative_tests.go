@@ -40,3 +40,17 @@ func f() {
 	)
 
 }
+
+type ifaceToEmbed interface{}
+
+type ifaceWithEmbedding interface {
+	ifaceToEmbed
+	Foo()
+}
+
+type structToEmbed struct{}
+
+type structWithEmbedding struct {
+	structToEmbed
+	Field int
+}

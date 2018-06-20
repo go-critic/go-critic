@@ -57,7 +57,13 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 			return false
 		}
 		for _, method := range x.Methods.List {
-			w.walkSignature(method.Type.(*ast.FuncType))
+			switch x := method.Type.(type) {
+			case *ast.FuncType:
+				w.walkSignature(x)
+			default:
+				// Embedded interface.
+				w.walk(x)
+			}
 		}
 		return false
 	case *ast.ArrayType:

@@ -128,9 +128,15 @@ type structType struct {
 
 type typeWithEmbedding struct {
 	structType
+	intAlias
 }
 
 type emptyIface interface{}
+
+type embeddingIface interface {
+	emptyIface
+	ifaceType
+}
 
 type ifaceType interface {
 	A() func()
