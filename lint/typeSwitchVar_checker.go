@@ -15,7 +15,7 @@ type typeSwitchVarChecker struct {
 	checkerBase
 }
 
-func (c *typeSwitchVarChecker) CheckStmt(stmt ast.Stmt) {
+func (c *typeSwitchVarChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.TypeSwitchStmt); ok {
 		c.checkTypeSwitch(stmt)
 	}
@@ -27,7 +27,7 @@ func (c *typeSwitchVarChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 	}
 	// Must be a *ast.ExprStmt then.
 	expr := root.Assign.(*ast.ExprStmt).X.(*ast.TypeAssertExpr).X
-	object := c.ctx.TypesInfo.ObjectOf(c.identOf(expr))
+	object := c.ctx.typesInfo.ObjectOf(c.identOf(expr))
 	if object == nil {
 		return // Give up: can't handle shadowing without object
 	}
@@ -46,7 +46,7 @@ func (c *typeSwitchVarChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 			assert2 := findNode(stmt, func(x ast.Node) bool {
 				return astequal.Node(&assert1, x)
 			})
-			if object == c.ctx.TypesInfo.ObjectOf(c.identOf(assert2)) {
+			if object == c.ctx.typesInfo.ObjectOf(c.identOf(assert2)) {
 				c.warn(root, i)
 				break
 			}

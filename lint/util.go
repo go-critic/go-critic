@@ -13,7 +13,7 @@ func (ctx *context) IsUnitTestFuncDecl(fn *ast.FuncDecl) bool {
 	if !strings.HasPrefix(fn.Name.Name, "Test") {
 		return false
 	}
-	typ := ctx.TypesInfo.TypeOf(fn.Name)
+	typ := ctx.typesInfo.TypeOf(fn.Name)
 	if sig, ok := typ.(*types.Signature); ok {
 		return sig.Results().Len() == 0 &&
 			sig.Params().Len() == 1 &&

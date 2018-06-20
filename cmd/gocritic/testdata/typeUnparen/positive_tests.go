@@ -50,10 +50,30 @@ type myInterface1 interface {
 }
 
 func myFunc1() {
-	type localType1 struct {
-		/// could simplify (int) to int
-		x (int)
-	}
+	func() {
+		type localType1 struct {
+			/// could simplify ([]complex128) to []complex128
+			x ([]complex128)
+		}
+
+		_ = struct {
+			/// could simplify (struct{...}) to struct{...}
+			_ struct{ x (struct{}) }
+			_ struct {
+				/// could simplify (struct{...}) to struct{...}
+				y (struct {
+					/// could simplify (struct{...}) to struct{...}
+					_ (struct{})
+				})
+			}
+
+			/// could simplify (struct{...}) to struct{...}
+			_ (struct {
+				x int
+				y int
+			})
+		}{}
+	}()
 
 	/// could simplify (int) to int
 	type localType2 (int)
@@ -85,5 +105,20 @@ type mapType2 map[[5][5](string)]map[(string)](string)
 /// could simplify [4](*int) to [4]*int
 var _ = [4](*int){}
 
-/// could simplify [](func()) to []func()
+/// could simplify func() [](func()) to func() []func()
 var _ = func() [](func()) { return nil }
+
+var _ = []interface{}{
+	/// could simplify (complex64) to complex64
+	struct{ x (complex64) }{},
+
+	func() {
+		/// could simplify (mapType1) to mapType1
+		type T (mapType1)
+
+		var (
+			/// could simplify [](interface{}) to []interface{}
+			_ = [](interface{}){}
+		)
+	},
+}

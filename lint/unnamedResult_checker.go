@@ -13,7 +13,7 @@ type unnamedResultChecker struct {
 	checkerBase
 }
 
-func (c *unnamedResultChecker) CheckFuncDecl(decl *ast.FuncDecl) {
+func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	results := decl.Type.Results
 	switch {
 	case results == nil || results.NumFields() < 2:
@@ -50,7 +50,7 @@ func (c *unnamedResultChecker) getResultsTypes(fields []*ast.Field) (res1, res2 
 }
 
 func (c *unnamedResultChecker) isBoolOrError(expr ast.Expr) bool {
-	switch typ := c.ctx.TypesInfo.TypeOf(expr).(type) {
+	switch typ := c.ctx.typesInfo.TypeOf(expr).(type) {
 	case *types.Named:
 		return typ.Obj().Name() == "error"
 

@@ -7,6 +7,7 @@ import (
 	"go/types"
 	"sort"
 
+	"github.com/go-critic/go-critic/lint/internal/astwalk"
 	"github.com/go-toolsmith/astfmt"
 )
 
@@ -72,7 +73,7 @@ func NewChecker(rule *Rule, ctx *Context) *Checker {
 	}
 	return c.clone(context{
 		Context: ctx,
-		printer: astfmt.NewPrinter(ctx.FileSet),
+		printer: astfmt.NewPrinter(ctx.fileSet),
 	})
 }
 
@@ -83,13 +84,13 @@ type Checker struct {
 
 	ctx context
 
-	check func(*ast.File)
+	walker astwalk.FileWalker
 }
 
 // Check runs rule checker over file f.
 func (c *Checker) Check(f *ast.File) []Warning {
 	c.ctx.warnings = c.ctx.warnings[:0]
-	c.check(f)
+	c.walker.WalkFile(f)
 	return c.ctx.warnings
 }
 
@@ -105,18 +106,57 @@ type Warning struct {
 
 // Context is a readonly state shared among every checker.
 type Context struct {
-	Filename string
+	// filename is a currently checked file name.
+	filename string
 
-	// FileSet is a file set that was used during package parsing.
-	FileSet *token.FileSet
+	// fileSet is a file set that was used during package parsing.
+	fileSet *token.FileSet
 
-	// TypesInfo carries parsed packages types information.
-	TypesInfo *types.Info
+	// pkg describes package that is being checked.
+	pkg *types.Package
 
-	// Package describes package that is being checked.
-	Package *types.Package
+	// typesInfo carries parsed packages types information.
+	typesInfo *types.Info
 
-	// SizesInfo carries alignment and type size information.
+	// sizesInfo carries alignment and type size information.
 	// Arch-dependent.
-	SizesInfo types.Sizes
+	sizesInfo types.Sizes
+}
+
+// NewContext returns new shared context to be used by every checker.
+//
+// All data carried by the context is readonly for checkers,
+// but can be modified by integrating application.
+func NewContext(fset *token.FileSet, sizes types.Sizes) *Context {
+	return &Context{
+		fileSet:   fset,
+		sizesInfo: sizes,
+		typesInfo: &types.Info{},
+	}
+}
+
+// FileSet returns file set used upon context creation.
+func (c *Context) FileSet() *token.FileSet { return c.fileSet }
+
+// SetPackageInfo sets package-related metadata.
+//
+// Must be called for every package being checked.
+//
+// Type information may be nil if all requested checkers
+// have SyntaxOnly attribute.
+func (c *Context) SetPackageInfo(info *types.Info, pkg *types.Package) {
+	if info != nil {
+		// We do this kind of assignment to avoid
+		// changing c.typesInfo field address after
+		// every re-assignment.
+		*c.typesInfo = *info
+	}
+	c.pkg = pkg
+}
+
+// SetFileInfo sets file-related metadata.
+//
+// Must be called for every source code file being checked.
+func (c *Context) SetFileInfo(filename string) {
+	c.filename = filename
 }

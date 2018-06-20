@@ -12,7 +12,7 @@ type singleCaseSwitchChecker struct {
 	checkerBase
 }
 
-func (c *singleCaseSwitchChecker) CheckStmt(stmt ast.Stmt) {
+func (c *singleCaseSwitchChecker) VisitStmt(stmt ast.Stmt) {
 	switch stmt := stmt.(type) {
 	case *ast.SwitchStmt:
 		c.checkSwitchStmt(stmt, stmt.Body)

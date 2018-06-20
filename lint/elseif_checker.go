@@ -15,7 +15,7 @@ type elseifChecker struct {
 	visited map[*ast.IfStmt]bool
 }
 
-func (c *elseifChecker) VisitFunc(fn *ast.FuncDecl) bool {
+func (c *elseifChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	if fn.Body == nil {
 		return false
 	}
@@ -23,7 +23,7 @@ func (c *elseifChecker) VisitFunc(fn *ast.FuncDecl) bool {
 	return true
 }
 
-func (c *elseifChecker) CheckStmt(stmt ast.Stmt) {
+func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.IfStmt); ok {
 		if c.visited[stmt] {
 			return

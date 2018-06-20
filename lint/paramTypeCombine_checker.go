@@ -14,7 +14,7 @@ type paramTypeCombineChecker struct {
 	checkerBase
 }
 
-func (c *paramTypeCombineChecker) CheckFuncDecl(decl *ast.FuncDecl) {
+func (c *paramTypeCombineChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	typ := c.optimizeFuncType(decl.Type)
 	if !astequal.Expr(typ, decl.Type) {
 		c.warn(decl.Type, typ)

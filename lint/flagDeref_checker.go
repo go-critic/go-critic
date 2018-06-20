@@ -27,7 +27,7 @@ func (c *flagDerefChecker) Init() {
 	}
 }
 
-func (c *flagDerefChecker) CheckExpr(expr ast.Expr) {
+func (c *flagDerefChecker) VisitExpr(expr ast.Expr) {
 	if expr, ok := expr.(*ast.StarExpr); ok {
 		call, ok := expr.X.(*ast.CallExpr)
 		if !ok {

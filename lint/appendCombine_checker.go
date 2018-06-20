@@ -15,7 +15,7 @@ type appendCombineChecker struct {
 	checkerBase
 }
 
-func (c *appendCombineChecker) CheckStmtList(list []ast.Stmt) {
+func (c *appendCombineChecker) VisitStmtList(list []ast.Stmt) {
 	var cause ast.Node // First append
 	var slice ast.Expr // Slice being appended to
 	chain := 0         // How much appends in a row we've seen

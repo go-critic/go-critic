@@ -10,7 +10,7 @@ type switchTrueChecker struct {
 	checkerBase
 }
 
-func (c *switchTrueChecker) CheckStmt(stmt ast.Stmt) {
+func (c *switchTrueChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.SwitchStmt); ok {
 		if qualifiedName(stmt.Tag) == "true" {
 			c.warn(stmt)

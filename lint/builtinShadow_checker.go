@@ -65,7 +65,7 @@ func (c *builtinShadowChecker) Init() {
 	}
 }
 
-func (c *builtinShadowChecker) CheckStmt(stmt ast.Stmt) {
+func (c *builtinShadowChecker) VisitStmt(stmt ast.Stmt) {
 	if assignStmt, ok := stmt.(*ast.AssignStmt); ok {
 		for _, v := range assignStmt.Lhs {
 			ident, ok := v.(*ast.Ident)

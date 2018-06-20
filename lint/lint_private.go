@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"reflect"
 
+	"github.com/go-critic/go-critic/lint/internal/astwalk"
 	"github.com/go-toolsmith/astfmt"
 )
 
@@ -71,25 +72,25 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 		return reflect.New(dynType).Interface().(abstractChecker)
 	}
 
-	bindCheckFunction := func(c abstractChecker) func(*ast.File) {
+	newFileWalker := func(ctx *context, c abstractChecker) astwalk.FileWalker {
 		// Infer proper AST traversing wrapper (walker).
-		switch c := c.(type) {
-		case funcDeclChecker:
-			return wrapFuncDeclChecker(c)
-		case exprChecker:
-			return wrapExprChecker(c)
-		case localExprChecker:
-			return wrapLocalExprChecker(c)
-		case stmtListChecker:
-			return wrapStmtListChecker(c)
-		case stmtChecker:
-			return wrapStmtChecker(c)
-		case localNameChecker:
-			return wrapLocalNameChecker(c)
-		case typeExprChecker:
-			return wrapTypeExprChecker(c)
+		switch v := c.(type) {
+		case astwalk.FuncDeclVisitor:
+			return astwalk.WalkerForFuncDecl(v)
+		case astwalk.ExprVisitor:
+			return astwalk.WalkerForExpr(v)
+		case astwalk.LocalExprVisitor:
+			return astwalk.WalkerForLocalExpr(v)
+		case astwalk.StmtListVisitor:
+			return astwalk.WalkerForStmtList(v)
+		case astwalk.StmtVisitor:
+			return astwalk.WalkerForStmt(v)
+		case astwalk.LocalDefVisitor:
+			return astwalk.WalkerForLocalDef(v, ctx.typesInfo)
+		case astwalk.TypeExprVisitor:
+			return astwalk.WalkerForTypeExpr(v, ctx.typesInfo)
 		default:
-			panic(fmt.Sprintf("can't bind check function for %T", c))
+			panic(fmt.Sprintf("%T does not implement known visitor interface", c))
 		}
 	}
 
@@ -113,14 +114,14 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 	proto := checkerProto{rule: &rule}
 	proto.clone = func(ctx context) *Checker {
 		c := cloneAbstractChecker(c)
-		clone := Checker{
-			Rule:  proto.rule,
-			check: bindCheckFunction(c),
-			ctx:   ctx,
+		clone := &Checker{
+			Rule: proto.rule,
+			ctx:  ctx,
 		}
+		clone.walker = newFileWalker(&clone.ctx, c)
 		c.BindContext(&clone.ctx)
 		c.Init()
-		return &clone
+		return clone
 	}
 	checkerPrototypes[rule.name] = proto
 }
