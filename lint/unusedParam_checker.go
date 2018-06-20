@@ -14,7 +14,7 @@ type unusedParamChecker struct {
 
 func (c *unusedParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	params := decl.Type.Params
-	if params == nil || params.NumFields() == 0 {
+	if decl.Body == nil || params == nil || params.NumFields() == 0 {
 		return
 	}
 
@@ -37,6 +37,9 @@ func (c *unusedParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	for id := range c.ctx.typesInfo.Uses {
 		if _, ok := objToIdent[id.Obj]; ok {
 			delete(objToIdent, id.Obj)
+			if len(objToIdent) == 0 {
+				return
+			}
 		}
 	}
 
