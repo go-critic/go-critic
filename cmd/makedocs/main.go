@@ -88,7 +88,7 @@ func main() {
 
 func parseComment(text string, c *checker) {
 	lines := strings.Split(text, "\n")
-	ind := 0
+	index := 0
 	stages := []func(l []string, i *int, c *checker) error{
 		parseShortDesc,
 		parseDesc,
@@ -97,71 +97,71 @@ func parseComment(text string, c *checker) {
 		parseNote,
 	}
 	for _, st := range stages {
-		err := st(lines, &ind, c)
+		err := st(lines, &index, c)
 		if err != nil {
 			log.Println(err)
 		}
 	}
 }
 
-func parseShortDesc(lines []string, ind *int, c *checker) error {
+func parseShortDesc(lines []string, index *int, c *checker) error {
 	c.ShortDescription = strings.TrimSpace(lines[0][1:]) + "\n\n"
-	*ind += 2 // skip empty line
+	*index += 2 // skip empty line
 	return nil
 }
 
-func parseDesc(lines []string, ind *int, c *checker) error {
-	if len(lines) <= *ind {
+func parseDesc(lines []string, index *int, c *checker) error {
+	if len(lines) <= *index {
 		return errors.New("parseDesc: no description provided")
 	}
-	if strings.HasPrefix(lines[*ind], "@") { // if no description
+	if strings.HasPrefix(lines[*index], "@") { // if no description
 		return nil
 	}
-	for *ind < len(lines) && len(lines[*ind]) > 0 {
-		c.Description += strings.TrimSpace(lines[*ind]) + "\n"
-		*ind++
+	for *index < len(lines) && len(lines[*index]) > 0 {
+		c.Description += strings.TrimSpace(lines[*index]) + "\n"
+		*index++
 	}
-	*ind++ //skip empty line
+	*index++ //skip empty line
 	return nil
 }
 
-func parseBefore(lines []string, ind *int, c *checker) error {
-	if len(lines) <= *ind || strings.TrimSpace(lines[*ind]) != "@Before:" {
+func parseBefore(lines []string, index *int, c *checker) error {
+	if len(lines) <= *index || strings.TrimSpace(lines[*index]) != "@Before:" {
 		return errors.New("parseBefore: no @Before: section found")
 	}
-	*ind++
-	for *ind < len(lines) && len(lines[*ind]) > 0 {
-		c.Before += strings.TrimSpace(lines[*ind]) + "\n"
-		*ind++
+	*index++
+	for *index < len(lines) && len(lines[*index]) > 0 {
+		c.Before += strings.TrimSpace(lines[*index]) + "\n"
+		*index++
 	}
-	*ind++ //skip empty line
+	*index++ //skip empty line
 	return nil
 }
 
-func parseAfter(lines []string, ind *int, c *checker) error {
-	if len(lines) <= *ind || strings.TrimSpace(lines[*ind]) != "@After:" {
+func parseAfter(lines []string, index *int, c *checker) error {
+	if len(lines) <= *index || strings.TrimSpace(lines[*index]) != "@After:" {
 		return errors.New("parseAfter: no @After: section found")
 	}
-	*ind++
-	for *ind < len(lines) && len(lines[*ind]) > 0 {
-		c.After += strings.TrimSpace(lines[*ind]) + "\n"
-		*ind++
+	*index++
+	for *index < len(lines) && len(lines[*index]) > 0 {
+		c.After += strings.TrimSpace(lines[*index]) + "\n"
+		*index++
 	}
-	*ind++ //skip empty line
+	*index++ //skip empty line
 	return nil
 }
 
-func parseNote(lines []string, ind *int, c *checker) error {
-	if len(lines) <= *ind {
+func parseNote(lines []string, index *int, c *checker) error {
+	if len(lines) <= *index {
 		return nil // No @Note: section
 	}
-	if strings.TrimSpace(lines[*ind]) != "@Note:" {
+	if strings.TrimSpace(lines[*index]) != "@Note:" {
 		return errors.New("parseNote: last section is not @Note")
 	}
-	*ind++
-	for *ind < len(lines) && len(lines[*ind]) > 0 {
-		c.Note += strings.TrimSpace(lines[*ind]) + "\n"
-		*ind++
+	*index++
+	for *index < len(lines) && len(lines[*index]) > 0 {
+		c.Note += strings.TrimSpace(lines[*index]) + "\n"
+		*index++
 	}
 	return nil
 }
