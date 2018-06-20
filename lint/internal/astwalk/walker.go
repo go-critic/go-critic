@@ -5,37 +5,43 @@ import (
 	"go/types"
 )
 
-// TODO: try out idea to return false for every visit
-// and force checkers to recurse in order to handle siblings.
-
+// FileWalker traverses given file and calls associated visitor
+// for every node it's interested in.
 type FileWalker interface {
 	WalkFile(*ast.File)
 }
 
+// WalkerForFuncDecl returns file walker implementation for FuncDeclVisitor.
 func WalkerForFuncDecl(v FuncDeclVisitor) FileWalker {
 	return &funcDeclWalker{visitor: v}
 }
 
+// WalkerForExpr returns file walker implementation for ExprVisitor.
 func WalkerForExpr(v ExprVisitor) FileWalker {
 	return &exprWalker{visitor: v}
 }
 
+// WalkerForLocalExpr returns file walker implementation for LocalExprVisitor.
 func WalkerForLocalExpr(v LocalExprVisitor) FileWalker {
 	return &localExprWalker{visitor: v}
 }
 
+// WalkerForStmtList returns file walker implementation for StmtListVisitor.
 func WalkerForStmtList(v StmtListVisitor) FileWalker {
 	return &stmtListWalker{visitor: v}
 }
 
+// WalkerForStmt returns file walker implementation for StmtVisitor.
 func WalkerForStmt(v StmtVisitor) FileWalker {
 	return &stmtWalker{visitor: v}
 }
 
+// WalkerForLocalDef returns file walker implementation for LocalDefVisitor.
 func WalkerForLocalDef(v LocalDefVisitor, info *types.Info) FileWalker {
 	return &localDefWalker{visitor: v, info: info}
 }
 
+// WalkerForTypeExpr returns file walker implementation for TypeExprVisitor.
 func WalkerForTypeExpr(v TypeExprVisitor, info *types.Info) FileWalker {
 	return &typeExprWalker{visitor: v, info: info}
 }
