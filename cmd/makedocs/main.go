@@ -94,12 +94,12 @@ func parseComment(text string, c *checker) {
 		parseDesc,
 		parseBefore,
 		parseAfter,
+		parseNote,
 	}
 	for _, st := range stages {
 		err := st(lines, &ind, c)
 		if err != nil {
-			// TODO: improve error message
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 }
@@ -126,7 +126,7 @@ func parseDesc(lines []string, ind *int, c *checker) error {
 }
 
 func parseBefore(lines []string, ind *int, c *checker) error {
-	if len(lines) < *ind || strings.TrimSpace(lines[*ind]) != "@Before:" {
+	if len(lines) <= *ind || strings.TrimSpace(lines[*ind]) != "@Before:" {
 		return errors.New("parseBefore: no @Before: section found")
 	}
 	*ind++
@@ -139,7 +139,7 @@ func parseBefore(lines []string, ind *int, c *checker) error {
 }
 
 func parseAfter(lines []string, ind *int, c *checker) error {
-	if len(lines) < *ind || strings.TrimSpace(lines[*ind]) != "@After:" {
+	if len(lines) <= *ind || strings.TrimSpace(lines[*ind]) != "@After:" {
 		return errors.New("parseAfter: no @After: section found")
 	}
 	*ind++
@@ -148,5 +148,20 @@ func parseAfter(lines []string, ind *int, c *checker) error {
 		*ind++
 	}
 	*ind++ //skip empty line
+	return nil
+}
+
+func parseNote(lines []string, ind *int, c *checker) error {
+	if len(lines) <= *ind {
+		return nil // No @Note: section
+	}
+	if strings.TrimSpace(lines[*ind]) != "@Note" {
+		return errors.New("parseNote: last section is not Note")
+	}
+	*ind++
+	for *ind < len(lines) && len(lines[*ind]) > 0 {
+		c.Note += strings.TrimSpace(lines[*ind]) + "\n"
+		*ind++
+	}
 	return nil
 }

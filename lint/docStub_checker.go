@@ -14,7 +14,6 @@ package lint
 // }
 //
 // @Note:
-//
 // > You can either remove a comment to let go lint find it or change stub to useful comment.
 // > This checker makes it easier to detect stubs, the action is up to you.
 
