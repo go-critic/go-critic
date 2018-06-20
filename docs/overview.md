@@ -241,7 +241,9 @@ func Foo() {
 
 ```
 
-`docStub` is syntax-only checker (fast).
+`docStub` is syntax-only checker (fast).> You can either remove a comment to let go lint find it or change stub to useful comment.
+> This checker makes it easier to detect stubs, the action is up to you.
+
 
 <a name="elseif-ref"></a>
 ## elseif
@@ -293,7 +295,9 @@ flag.BoolVar(&b, "b", false, "b docs")
 
 ```
 
-`flagDeref` is syntax-only checker (fast).
+`flagDeref` is syntax-only checker (fast).> Dereferencing returned pointers will lead to hard to find errors
+> where flag values are not updated after flag.Parse().
+
 
 
 <a name="paramTypeCombine-ref"></a>
@@ -330,6 +334,8 @@ func f(m map[string]int) (ch chan *int)
 
 ```
 
+> Slices are not as referential as maps or channels, but it's usually
+> better to return them by value rather than modyfing them by pointer.
 
 
 <a name="rangeExprCopy-ref"></a>
@@ -590,6 +596,7 @@ copy(b, values...)
 
 
 
+
 <a name="boolFuncPrefix-ref"></a>
 ## boolFuncPrefix
 
@@ -607,6 +614,16 @@ func IsEnabled() bool
 ```
 
 `boolFuncPrefix` is very opinionated.
+
+
+> You can either remove a comment to let go lint find it or change stub to useful comment.
+> This checker makes it easier to detect stubs, the action is up to you.
+
+
+> Dereferencing returned pointers will lead to hard to find errors
+> where flag values are not updated after flag.Parse().
+
+
 <a name="longChain-ref"></a>
 ## longChain
 
@@ -632,6 +649,22 @@ v := (a+x) + (b+x) + (c+x)
 ```
 
 
+
+> Slices are not as referential as maps or channels, but it's usually
+> better to return them by value rather than modyfing them by pointer.
+
+
+
+
+
+
+
+
+
+
+
+
+
 <a name="unusedParam-ref"></a>
 ## unusedParam
 
@@ -647,4 +680,5 @@ func f(a int, b float64) // b isn't used inside function body
 func f(a int, _ float64) // everything is cool
 
 ```
+
 

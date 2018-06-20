@@ -155,8 +155,8 @@ func parseNote(lines []string, ind *int, c *checker) error {
 	if len(lines) <= *ind {
 		return nil // No @Note: section
 	}
-	if strings.TrimSpace(lines[*ind]) != "@Note" {
-		return errors.New("parseNote: last section is not Note")
+	if strings.TrimSpace(lines[*ind]) != "@Note:" {
+		return errors.New("parseNote: last section is not @Note:")
 	}
 	*ind++
 	for *ind < len(lines) && len(lines[*ind]) > 0 {
