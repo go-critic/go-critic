@@ -1,5 +1,21 @@
 package lint
 
+//! Detects expensive copies of `for` loop range expressions.
+//
+// Suggests to use pointer to array to avoid the copy using `&` on range expression.
+//
+// @Before:
+// var xs [256]byte
+// for _, x := range xs {
+// 	// Loop body.
+// }
+//
+// @After:
+// var xs [256]byte
+// for _, x := range &xs {
+// 	// Loop body.
+// }
+
 import (
 	"go/ast"
 	"go/types"

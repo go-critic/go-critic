@@ -1,5 +1,19 @@
 package lint
 
+//! Detects switch-over-bool statements that use explicit `true` tag value.
+//
+// @Before:
+// switch true {
+// case x > y:
+// 	// ...
+// }
+//
+// @After:
+// switch {
+// case x > y:
+// 	// ...
+// }
+
 import "go/ast"
 
 func init() {

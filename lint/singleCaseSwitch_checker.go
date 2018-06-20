@@ -1,5 +1,18 @@
 package lint
 
+//! Detects switch statements that could be better written as if statements.
+//
+// @Before:
+// switch x := x.(type) {
+// case int:
+//      ...
+// }
+//
+// @After:
+// if x, ok := x.(int); ok {
+//    ...
+// }
+
 import (
 	"go/ast"
 )
