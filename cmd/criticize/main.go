@@ -29,6 +29,7 @@ type linter struct {
 
 	packages        []string
 	enabledCheckers []string
+	scanGenerated   bool
 	failureExitCode int
 }
 
@@ -61,6 +62,7 @@ func parseArgv(l *linter) {
 	}
 
 	enable := flag.String("enable", "all", "comma-separated list of enabled checkers")
+	flag.BoolVar(&l.scanGenerated, "scanGenerated", false, "")
 	flag.IntVar(&l.failureExitCode, "failcode", 1, "exit code to be used when lint issues are found")
 
 	flag.Parse()
@@ -154,16 +156,25 @@ func (l *linter) CheckPackage(pkgPath string) {
 	l.ctx.TypesInfo = &pkgInfo.Info
 	l.ctx.Package = pkgInfo.Pkg
 	for _, f := range pkgInfo.Files {
-		l.ctx.Filename = l.getFilename(f)
-		l.checkFile(f)
+		if l.scanGenerated || !isGenerated(f) {
+			l.ctx.Filename = l.getFilename(f)
+			l.checkFile(f)
+		}
 	}
+}
+
+func isGenerated(f *ast.File) bool {
+	if f.Comments == nil || len(f.Comments) == 0 {
+		return false
+	}
+	return strings.HasPrefix(f.Comments[0].Text(), "Code generated .* DO NOT EDIT.")
 }
 
 func (l *linter) getFilename(f *ast.File) string {
 	// see https://github.com/golang/go/issues/24498
 	fname := l.prog.Fset.Position(f.Pos()).String() // ex: /usr/go/src/pkg/main.go:1:1
-	fname = filepath.Base(fname)                    // ex: main.go:1:1
-	return fname[:len(fname)-4]                     // ex: main.go
+	fname = strings.Split(fname, ":")[0]            // ex: /usr/go/src/pkg/main.go
+	return filepath.Base(fname)                     // ex: main.go
 }
 
 // ExitCode returns status code that should be used as an argument to os.Exit.
