@@ -75,6 +75,8 @@ type walkerEvents interface {
 	EnterChilds(ast.Node) bool
 }
 
+var _ = walkerEvents(nil) // Make sure walkerEvents not marked as unused by megacheck
+
 type (
 	// NameKind describes what kind of name Name object holds.
 	NameKind int
