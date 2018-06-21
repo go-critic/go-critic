@@ -319,19 +319,21 @@ flag.BoolVar(&b, "b", false, "b docs")
 
 <a name="importShadow-ref"></a>
 ## importShadow
+Detects when imported package names shadowed in assignments.
+
 
 
 **Before:**
 ```go
 import (
-"fmt"
-"math"
+	   "fmt"
+    "math"
 )
 func main() {
-fmt.Println(math.Pi)
-// shadowing math package
-math := 10
-fmt.Println(len)
+    fmt.Println(math.Pi)
+    // shadowing math package
+    math := 10
+    fmt.Println(len)
 }
 
 ```
@@ -339,14 +341,14 @@ fmt.Println(len)
 **After:**
 ```go
 import (
-"fmt"
-"math"
+    "fmt"
+    "math"
 )
 func main() {
-fmt.Println(math.Pi)
-// change identificator name
-value := 10
-fmt.Println(value)
+    fmt.Println(math.Pi)
+    // change identificator name
+    value := 10
+    fmt.Println(value)
 }
 
 ```
