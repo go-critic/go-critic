@@ -118,7 +118,7 @@ func parseDesc(lines []string, index *int, c *checker) error {
 		return nil
 	}
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.Description += strings.TrimSpace(lines[*index]) + "\n"
+		c.Description += lines[*index] + "\n"
 		*index++
 	}
 	*index++ //skip empty line
@@ -131,7 +131,7 @@ func parseBefore(lines []string, index *int, c *checker) error {
 	}
 	*index++
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.Before += strings.TrimSpace(lines[*index]) + "\n"
+		c.Before += lines[*index] + "\n"
 		*index++
 	}
 	*index++ //skip empty line
@@ -144,7 +144,7 @@ func parseAfter(lines []string, index *int, c *checker) error {
 	}
 	*index++
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.After += strings.TrimSpace(lines[*index]) + "\n"
+		c.After += lines[*index] + "\n"
 		*index++
 	}
 	*index++ //skip empty line
@@ -160,7 +160,7 @@ func parseNote(lines []string, index *int, c *checker) error {
 	}
 	*index++
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.Note += strings.TrimSpace(lines[*index]) + "\n"
+		c.Note += lines[*index] + "\n"
 		*index++
 	}
 	return nil
