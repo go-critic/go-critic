@@ -183,9 +183,9 @@ xs = append(xs, 1, 2)
 **Before:**
 ```go
 func main() {
-// shadowing len function
-len := 10
-println(len)
+    // shadowing len function
+    len := 10
+    println(len)
 }
 
 ```
@@ -193,9 +193,9 @@ println(len)
 **After:**
 ```go
 func main() {
-// change identificator name
-length := 10
-println(length)
+    // change identificator name
+    length := 10
+    println(length)
 }
 
 ```
@@ -228,7 +228,7 @@ func f(in int, out *int) (err error) {}
 ```go
 // Foo ...
 func Foo() {
-// ...
+     // ...
 }
 
 ```
@@ -236,7 +236,7 @@ func Foo() {
 **After:**
 ```go
 func Foo() {
-// ...
+     // ...
 }
 
 ```
@@ -254,11 +254,11 @@ will trigger suggestion to use switch statement.
 **Before:**
 ```go
 if cond1 {
-// Code A.
+	// Code A.
 } else if cond2 {
-// Code B.
+	// Code B.
 } else {
-// Code C.
+	// Code C.
 }
 
 ```
@@ -267,11 +267,11 @@ if cond1 {
 ```go
 switch {
 case cond1:
-// Code A.
+	// Code A.
 case cond2:
-// Code B.
+	// Code B.
 default:
-// Code C.
+	// Code C.
 }
 
 ```
@@ -347,7 +347,7 @@ Suggests to use pointer to array to avoid the copy using `&` on range expression
 ```go
 var xs [256]byte
 for _, x := range xs {
-// Loop body.
+	// Loop body.
 }
 
 ```
@@ -356,7 +356,7 @@ for _, x := range xs {
 ```go
 var xs [256]byte
 for _, x := range &xs {
-// Loop body.
+	// Loop body.
 }
 
 ```
@@ -371,7 +371,7 @@ for _, x := range &xs {
 ```go
 xs := make([][1024]byte, length)
 for _, x := range xs {
-// Loop body.
+	// Loop body.
 }
 
 ```
@@ -380,8 +380,8 @@ for _, x := range xs {
 ```go
 xs := make([][1024]byte, length)
 for i := range xs {
-x := &xs[i]
-// Loop body.
+	x := &xs[i]
+	// Loop body.
 }
 
 ```
@@ -396,7 +396,7 @@ x := &xs[i]
 ```go
 switch x := x.(type) {
 case int:
-...
+     ...
 }
 
 ```
@@ -404,7 +404,7 @@ case int:
 **After:**
 ```go
 if x, ok := x.(int); ok {
-...
+   ...
 }
 
 ```
@@ -439,7 +439,7 @@ maxVal := math.MaxInt8
 ```go
 switch true {
 case x > y:
-// ...
+	// ...
 }
 
 ```
@@ -448,7 +448,7 @@ case x > y:
 ```go
 switch {
 case x > y:
-// ...
+	// ...
 }
 
 ```
@@ -463,11 +463,11 @@ case x > y:
 ```go
 switch v.(type) {
 case int:
-return v.(int)
+	return v.(int)
 case point:
-return v.(point).x + v.(point).y
+	return v.(point).x + v.(point).y
 default:
-return 0
+	return 0
 }
 
 ```
@@ -476,11 +476,11 @@ return 0
 ```go
 switch v := v.(type) {
 case int:
-return v
+	return v
 case point:
-return v.x + v.y
+	return v.x + v.y
 default:
-return 0
+	return 0
 }
 
 ```
@@ -494,7 +494,7 @@ return 0
 **Before:**
 ```go
 func foo() [](func([](func()))) {
-...
+     ...
 }
 
 ```
@@ -502,7 +502,7 @@ func foo() [](func([](func()))) {
 **After:**
 ```go
 func foo() []func([]func()) {
-...
+     ...
 }
 
 ```
@@ -538,8 +538,8 @@ _ := a[5]
 type foo struct{}
 func (f foo) bar() int { return 1 }
 func baz() {
-var fo foo
-fo.bar()
+	var fo foo
+	fo.bar()
 }
 
 ```
@@ -549,8 +549,8 @@ fo.bar()
 type foo struct{}
 func (f foo) Bar() int { return 1 } // now Bar is exported
 func baz() {
-var fo foo
-fo.Bar()
+	var fo foo
+	fo.Bar()
 }
 
 ```
