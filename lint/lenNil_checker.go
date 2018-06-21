@@ -28,7 +28,7 @@ func (c *lenNilChecker) VisitStmt(stmt ast.Stmt) {
 		return
 	}
 
-	visited := make(map[ast.Node]struct{}, 0)
+	visited := make(map[ast.Node]struct{})
 
 	findNode(ifstmt, func(node ast.Node) bool {
 		expr, ok := ifstmt.Cond.(*ast.BinaryExpr)
