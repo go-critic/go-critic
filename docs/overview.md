@@ -48,6 +48,10 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#implAssert-ref">implAssert</a></td>
+        <td>Detecs implementation assert pattern in code files and suggests</td>
+      </tr>
+      <tr>
         <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
         <td>Detects if function parameters could be combined by type and suggest the way to do it.
 
@@ -316,6 +320,23 @@ flag.BoolVar(&b, "b", false, "b docs")
 > where flag values are not updated after flag.Parse().
 
 `flagDeref` is syntax-only checker (fast).
+<a name="implAssert-ref"></a>
+## implAssert
+Detecs implementation assert pattern in code files and suggests 
+to move them to test files/packages to prevent redundant dependency.
+
+**Before:**
+```go
+// code.go
+var _ pkg.MyInterface = (*MyStruct)(nil)
+```
+
+**After:**
+```go
+// code_test.go
+var _ pkg.MyInterface = (*MyStruct)(nil)
+```
+
 <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
 Detects if function parameters could be combined by type and suggest the way to do it.
