@@ -33,6 +33,7 @@ func Main() {
 		`forwarded to linter "as is"`)
 	exclude := flag.String("exclude", "testdata/|vendor/|builtin/",
 		`regexp used to skip package names`)
+	checkGenerated := flag.Bool("checkGenerated", false, `forwarded to linter "as is"`)
 
 	flag.Parse()
 
@@ -84,6 +85,9 @@ func Main() {
 
 	var args []string
 	args = append(args, "check-package", "-enable", *enable)
+	if *checkGenerated {
+		args = append(args, "-checkGenerated")
+	}
 
 	for p := range packages {
 		args = append(args, p)
