@@ -18,6 +18,8 @@ package lint
 
 import (
 	"go/ast"
+
+	"github.com/go-critic/go-critic/lint/internal/astwalk"
 )
 
 func init() {
@@ -81,20 +83,12 @@ func (c *builtinShadowChecker) Init() {
 	}
 }
 
-func (c *builtinShadowChecker) VisitStmt(stmt ast.Stmt) {
-	if assignStmt, ok := stmt.(*ast.AssignStmt); ok {
-		for _, v := range assignStmt.Lhs {
-			ident, ok := v.(*ast.Ident)
-			if !ok {
-				continue
-			}
-			if _, isBuiltin := c.builtins[ident.Name]; isBuiltin {
-				c.warn(ident)
-			}
-		}
+func (c *builtinShadowChecker) VisitLocalDef(name astwalk.Name, _ ast.Expr) {
+	if _, isBuiltin := c.builtins[name.ID.String()]; isBuiltin {
+		c.warn(name.ID)
 	}
 }
 
 func (c *builtinShadowChecker) warn(ident *ast.Ident) {
-	c.ctx.Warn(ident, "assigning to predeclared identifier: %s", ident)
+	c.ctx.Warn(ident, "shadowing of predeclared identifier: %s", ident)
 }
