@@ -162,8 +162,6 @@ Detects `append` chains to the same slice that can be done in a single `append` 
 
 
 
-
-
 **Before:**
 ```go
 xs = append(xs, 1)
@@ -183,8 +181,6 @@ xs = append(xs, 1, 2)
 <a name="builtinShadow-ref"></a>
 ## builtinShadow
 Detects when predeclared identifiers shadowed in assignments.
-
-
 
 
 
@@ -216,8 +212,6 @@ Detects capitalized names for local variables.
 
 
 
-
-
 **Before:**
 ```go
 func f(IN int, OUT *int) (ERR error) {}
@@ -235,8 +229,6 @@ func f(in int, out *int) (err error) {}
 <a name="docStub-ref"></a>
 ## docStub
 Detects comments that silence go lint complaints about doc-comment.
-
-
 
 
 
@@ -264,8 +256,6 @@ func Foo() {
 <a name="elseif-ref"></a>
 ## elseif
 Detects repeated if-else statements and suggests to replace them with switch statement.
-
-
 
 Permits single else or else-if; repeated else-if or else + else-if
 will trigger suggestion to use switch statement.
@@ -304,8 +294,6 @@ Detects immediate dereferencing of `flag` package pointers.
 
 
 
-
-
 **Before:**
 ```go
 b := *flag.Bool("b", false, "b docs")
@@ -330,8 +318,6 @@ Detects if function parameters could be combined by type and suggest the way to 
 
 
 
-
-
 **Before:**
 ```go
 func foo(a, b int, c, d int, e, f int, g int) {}
@@ -349,8 +335,6 @@ func foo(a, b, c, d, e, f, g int) {}
 <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
 Detects input and output parameters that have a type of pointer to referential type.
-
-
 
 
 
@@ -373,8 +357,6 @@ func f(m map[string]int) (ch chan *int)
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
 Detects expensive copies of `for` loop range expressions.
-
-
 
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
@@ -405,8 +387,6 @@ Detects loops that copy big objects during each iteration.
 
 
 
-
-
 **Before:**
 ```go
 xs := make([][1024]byte, length)
@@ -431,8 +411,6 @@ for i := range xs {
 <a name="singleCaseSwitch-ref"></a>
 ## singleCaseSwitch
 Detects switch statements that could be better written as if statements.
-
-
 
 
 
@@ -461,8 +439,6 @@ Detects constant expressions that can be replaced by a named constant
 
 
 
-
-
 **Before:**
 ```go
 intBytes := make([]byte, unsafe.Sizeof(0))
@@ -482,8 +458,6 @@ maxVal := math.MaxInt8
 <a name="switchTrue-ref"></a>
 ## switchTrue
 Detects switch-over-bool statements that use explicit `true` tag value.
-
-
 
 
 
@@ -510,8 +484,6 @@ case x > y:
 <a name="typeSwitchVar-ref"></a>
 ## typeSwitchVar
 Detects type switches that can benefit from type guard clause with variable.
-
-
 
 
 
@@ -549,8 +521,6 @@ Detects unneded parenthesis inside type expressions and suggests to remove them.
 
 
 
-
-
 **Before:**
 ```go
 func foo() [](func([](func()))) {
@@ -575,8 +545,6 @@ Detects dereference expressions that can be omitted.
 
 
 
-
-
 **Before:**
 ```go
 (*k).field = 5
@@ -596,8 +564,6 @@ _ := a[5]
 <a name="unexportedCall-ref"></a>
 ## unexportedCall
 Detects calls of unexported method from unexported type outside that type.
-
-
 
 
 
@@ -631,8 +597,6 @@ For functions with multiple return values, detects unnamed results
 
 
 
-
-
 **Before:**
 ```go
 func f() (float64, float64)
@@ -650,8 +614,6 @@ func f() (x, y float64)
 <a name="unslice-ref"></a>
 ## unslice
 Detects slice expressions that can be simplified to sliced expression itself.
-
-
 
 
 
@@ -676,8 +638,6 @@ copy(b, values...)
 <a name="boolFuncPrefix-ref"></a>
 ## boolFuncPrefix
 Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
-
-
 
 
 
@@ -707,8 +667,6 @@ func IsEnabled() bool
 <a name="longChain-ref"></a>
 ## longChain
 Detects repeated expression chains and suggest to refactor them.
-
-
 
 
 
@@ -752,8 +710,6 @@ v := (a+x) + (b+x) + (c+x)
 <a name="unusedParam-ref"></a>
 ## unusedParam
 Detects unused params and suggests to name them as `_` (underscore).
-
-
 
 
 
