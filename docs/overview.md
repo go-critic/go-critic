@@ -158,6 +158,10 @@ Go source code linter that brings checks that are currently not implemented in o
 
 <a name="appendCombine-ref"></a>
 ## appendCombine
+Detects `append` chains to the same slice that can be done in a single `append` call.
+
+
+
 
 
 **Before:**
@@ -178,6 +182,10 @@ xs = append(xs, 1, 2)
 
 <a name="builtinShadow-ref"></a>
 ## builtinShadow
+Detects when predeclared identifiers shadowed in assignments.
+
+
+
 
 
 **Before:**
@@ -204,6 +212,10 @@ func main() {
 
 <a name="captLocal-ref"></a>
 ## captLocal
+Detects capitalized names for local variables.
+
+
+
 
 
 **Before:**
@@ -222,6 +234,10 @@ func f(in int, out *int) (err error) {}
 
 <a name="docStub-ref"></a>
 ## docStub
+Detects comments that silence go lint complaints about doc-comment.
+
+
+
 
 
 **Before:**
@@ -247,6 +263,10 @@ func Foo() {
 
 <a name="elseif-ref"></a>
 ## elseif
+Detects repeated if-else statements and suggests to replace them with switch statement.
+
+
+
 Permits single else or else-if; repeated else-if or else + else-if
 will trigger suggestion to use switch statement.
 
@@ -280,6 +300,10 @@ default:
 
 <a name="flagDeref-ref"></a>
 ## flagDeref
+Detects immediate dereferencing of `flag` package pointers.
+
+
+
 
 
 **Before:**
@@ -302,6 +326,10 @@ flag.BoolVar(&b, "b", false, "b docs")
 
 <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
+Detects if function parameters could be combined by type and suggest the way to do it.
+
+
+
 
 
 **Before:**
@@ -320,6 +348,10 @@ func foo(a, b, c, d, e, f, g int) {}
 
 <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
+Detects input and output parameters that have a type of pointer to referential type.
+
+
+
 
 
 **Before:**
@@ -340,6 +372,10 @@ func f(m map[string]int) (ch chan *int)
 
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
+Detects expensive copies of `for` loop range expressions.
+
+
+
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
 
@@ -365,6 +401,10 @@ for _, x := range &xs {
 
 <a name="rangeValCopy-ref"></a>
 ## rangeValCopy
+Detects loops that copy big objects during each iteration.
+
+
+
 
 
 **Before:**
@@ -390,6 +430,10 @@ for i := range xs {
 
 <a name="singleCaseSwitch-ref"></a>
 ## singleCaseSwitch
+Detects switch statements that could be better written as if statements.
+
+
+
 
 
 **Before:**
@@ -413,6 +457,10 @@ if x, ok := x.(int); ok {
 
 <a name="stdExpr-ref"></a>
 ## stdExpr
+Detects constant expressions that can be replaced by a named constant
+
+
+
 
 
 **Before:**
@@ -433,6 +481,10 @@ maxVal := math.MaxInt8
 
 <a name="switchTrue-ref"></a>
 ## switchTrue
+Detects switch-over-bool statements that use explicit `true` tag value.
+
+
+
 
 
 **Before:**
@@ -457,6 +509,10 @@ case x > y:
 
 <a name="typeSwitchVar-ref"></a>
 ## typeSwitchVar
+Detects type switches that can benefit from type guard clause with variable.
+
+
+
 
 
 **Before:**
@@ -489,6 +545,10 @@ default:
 
 <a name="typeUnparen-ref"></a>
 ## typeUnparen
+Detects unneded parenthesis inside type expressions and suggests to remove them.
+
+
+
 
 
 **Before:**
@@ -511,6 +571,10 @@ func foo() []func([]func()) {
 
 <a name="underef-ref"></a>
 ## underef
+Detects dereference expressions that can be omitted.
+
+
+
 
 
 **Before:**
@@ -531,6 +595,10 @@ _ := a[5]
 
 <a name="unexportedCall-ref"></a>
 ## unexportedCall
+Detects calls of unexported method from unexported type outside that type.
+
+
+
 
 
 **Before:**
@@ -559,6 +627,10 @@ func baz() {
 
 <a name="unnamedResult-ref"></a>
 ## unnamedResult
+For functions with multiple return values, detects unnamed results
+
+
+
 
 
 **Before:**
@@ -577,6 +649,10 @@ func f() (x, y float64)
 
 <a name="unslice-ref"></a>
 ## unslice
+Detects slice expressions that can be simplified to sliced expression itself.
+
+
+
 
 
 **Before:**
@@ -599,6 +675,10 @@ copy(b, values...)
 
 <a name="boolFuncPrefix-ref"></a>
 ## boolFuncPrefix
+Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+
+
 
 
 **Before:**
@@ -626,6 +706,10 @@ func IsEnabled() bool
 
 <a name="longChain-ref"></a>
 ## longChain
+Detects repeated expression chains and suggest to refactor them.
+
+
+
 
 
 **Before:**
@@ -667,6 +751,10 @@ v := (a+x) + (b+x) + (c+x)
 
 <a name="unusedParam-ref"></a>
 ## unusedParam
+Detects unused params and suggests to name them as `_` (underscore).
+
+
+
 
 
 **Before:**
