@@ -27,6 +27,9 @@ type linter struct {
 
 	// Command line flags:
 
+	withOpinionated  bool
+	withExperimental bool
+
 	packages        []string
 	enabledCheckers []string
 	failureExitCode int
@@ -55,23 +58,36 @@ func blame(format string, args ...interface{}) {
 // parseArgv processes command-line arguments and fills ctx argument with them.
 // Terminates program on error.
 func parseArgv(l *linter) {
+	const enableAll = "all"
+
 	flag.Usage = func() {
 		log.Printf("usage: [flags] package...")
 		flag.PrintDefaults()
 	}
 
-	enable := flag.String("enable", "all", "comma-separated list of enabled checkers")
+	enable := flag.String("enable", enableAll, "comma-separated list of enabled checkers")
+	flag.BoolVar(&l.withExperimental, `withExperimental`, false,
+		`only for -enable=all, include experimental checks`)
+	flag.BoolVar(&l.withOpinionated, `withOpinionated`, false,
+		`only for -enable=all, include very opinionated checks`)
 	flag.IntVar(&l.failureExitCode, "failcode", 1, "exit code to be used when lint issues are found")
 
 	flag.Parse()
 
 	l.packages = flag.Args()
+
 	if len(l.packages) == 0 {
 		blame("no packages specified\n")
 	}
+	if *enable != enableAll && l.withExperimental {
+		blame("-withExperimental used with -enable=%q", *enable)
+	}
+	if *enable != enableAll && l.withOpinionated {
+		blame("-withOpinionated used with -enable=%q", *enable)
+	}
 
 	switch *enable {
-	case "all":
+	case enableAll:
 		// Special case. l.enabledCheckers remains nil.
 	case "":
 		// Empty slice. Semantically "disable-all".
@@ -113,11 +129,15 @@ func (l *linter) InitCheckers() {
 	available := lint.RuleList()
 
 	if l.enabledCheckers == nil {
+		// Fill default checkers set.
 		for _, rule := range available {
-			// Exclude experimental checkers from default list.
-			if !rule.Experimental {
-				requested[rule.Name()] = true
+			if rule.Experimental && !l.withExperimental {
+				continue
 			}
+			if rule.VeryOpinionated && !l.withOpinionated {
+				continue
+			}
+			requested[rule.Name()] = true
 		}
 	} else {
 		for _, name := range l.enabledCheckers {
