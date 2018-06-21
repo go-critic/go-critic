@@ -4,7 +4,7 @@ package lint
 //
 // @Before:
 // import (
-// 	   "fmt"
+//     "fmt"
 //     "math"
 // )
 // func main() {

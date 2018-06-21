@@ -680,7 +680,7 @@ Detects when imported package names shadowed in assignments.
 **Before:**
 ```go
 import (
-	   "fmt"
+    "fmt"
     "math"
 )
 func main() {
