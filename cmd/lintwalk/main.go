@@ -61,7 +61,10 @@ func Main() {
 
 	err = filepath.Walk(srcRoot, func(path string, info os.FileInfo, e error) error {
 		if e != nil {
-			log.Printf("walk error: %v", err)
+			if info == nil {
+				return e
+			}
+			log.Printf("walk error: %v", e)
 		}
 		if info.IsDir() || !strings.HasSuffix(path, ".go") || excludeRE.MatchString(path) {
 			return nil
