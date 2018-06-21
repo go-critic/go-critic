@@ -3,10 +3,10 @@ package lint
 //! Detects redundant x!=nil before len(x).
 //
 // @Before:
-// if myMap != nil && len(myMap) == smth {
+// if myMap != nil && len(myMap) == smth {}
 //
 // @After:
-// if len(myMap) == smth {
+// if len(myMap) == smth {}
 
 import (
 	"go/ast"
@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	addChecker(&lenNilChecker{})
+	addChecker(&lenNilChecker{}, attrExperimental)
 }
 
 type lenNilChecker struct {
@@ -28,15 +28,29 @@ func (c *lenNilChecker) VisitStmt(stmt ast.Stmt) {
 		return
 	}
 
-	expr, ok := ifstmt.Cond.(*ast.BinaryExpr)
-	if !ok {
-		return
-	}
+	visited := make(map[ast.Node]struct{}, 0)
 
-	if (c.isNilCheck(expr.X) && c.hasLenCall(expr.Y)) ||
-		(c.isNilCheck(expr.Y) && c.hasLenCall(expr.X)) {
-		c.warn(ifstmt)
-	}
+	findNode(ifstmt, func(node ast.Node) bool {
+		expr, ok := ifstmt.Cond.(*ast.BinaryExpr)
+		if !ok {
+			return false
+		}
+
+		if _, ok := visited[expr]; ok {
+			return false
+		}
+		visited[expr] = struct{}{}
+
+		if expr.Op == token.LAND || expr.Op == token.LOR {
+			if c.isNilCheck(expr.X) && c.hasLenCall(expr.Y) {
+				c.warn(expr.X)
+			}
+			if c.isNilCheck(expr.Y) && c.hasLenCall(expr.X) {
+				c.warn(expr.Y)
+			}
+		}
+		return false
+	})
 }
 
 func (c *lenNilChecker) isNilCheck(expr ast.Expr) bool {
@@ -44,9 +58,9 @@ func (c *lenNilChecker) isNilCheck(expr ast.Expr) bool {
 	if !ok {
 		return false
 	}
-	return binexpr.Op == token.NEQ &&
-		(binexpr.Y.(*ast.Ident).Name == "nil" && c.isRefType(binexpr.X) ||
-			binexpr.X.(*ast.Ident).Name == "nil" && c.isRefType(binexpr.Y))
+	return (binexpr.Op == token.NEQ || binexpr.Op == token.EQL) &&
+		(c.isRefType(binexpr.X) && c.isNilKeyword(binexpr.Y) ||
+			c.isRefType(binexpr.Y) && c.isNilKeyword(binexpr.X))
 }
 
 func (c *lenNilChecker) isRefType(expr ast.Expr) bool {
@@ -60,12 +74,17 @@ func (c *lenNilChecker) isRefType(expr ast.Expr) bool {
 	}
 }
 
+func (c *lenNilChecker) isNilKeyword(x ast.Expr) bool {
+	id, ok := x.(*ast.Ident)
+	return ok && id.Name == "nil"
+}
+
 func (c *lenNilChecker) hasLenCall(x ast.Expr) bool {
 	return containsNode(x, func(x ast.Node) bool {
 		return callQualifiedName(x) == "len"
 	})
 }
 
-func (c *lenNilChecker) warn(stmt ast.Stmt) {
-	c.ctx.Warn(stmt, "consider to remove redundant nil check")
+func (c *lenNilChecker) warn(expr ast.Expr) {
+	c.ctx.Warn(expr, "%s check is redundant", expr)
 }
