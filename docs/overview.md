@@ -48,6 +48,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#importShadow-ref">importShadow</a></td>
+        <td>Detects when imported package names shadowed in assignments.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
         <td>Detects if function parameters could be combined by type and suggest the way to do it.
 
@@ -298,6 +304,42 @@ flag.BoolVar(&b, "b", false, "b docs")
 `flagDeref` is syntax-only checker (fast).> Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
+
+<a name="importShadow-ref"></a>
+## importShadow
+
+
+**Before:**
+```go
+import (
+"fmt"
+"math"
+)
+func main() {
+fmt.Println(math.Pi)
+// shadowing math package
+math := 10
+fmt.Println(len)
+}
+
+```
+
+**After:**
+```go
+import (
+"fmt"
+"math"
+)
+func main() {
+fmt.Println(math.Pi)
+// change identificator name
+value := 10
+fmt.Println(value)
+}
+
+```
+
+`importShadow` is syntax-only checker (fast).
 
 
 <a name="paramTypeCombine-ref"></a>
@@ -622,6 +664,7 @@ func IsEnabled() bool
 
 > Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
+
 
 
 <a name="longChain-ref"></a>
