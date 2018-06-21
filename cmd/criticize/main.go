@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"sync"
@@ -15,6 +16,8 @@ import (
 	"github.com/go-critic/go-critic/lint"
 	"golang.org/x/tools/go/loader"
 )
+
+var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT.")
 
 type linter struct {
 	ctx *lint.Context
@@ -29,6 +32,7 @@ type linter struct {
 
 	withOpinionated  bool
 	withExperimental bool
+	checkGenerated   bool
 
 	packages        []string
 	enabledCheckers []string
@@ -65,12 +69,16 @@ func parseArgv(l *linter) {
 		flag.PrintDefaults()
 	}
 
-	enable := flag.String("enable", enableAll, "comma-separated list of enabled checkers")
+	enable := flag.String("enable", enableAll,
+		`comma-separated list of enabled checkers`)
 	flag.BoolVar(&l.withExperimental, `withExperimental`, false,
 		`only for -enable=all, include experimental checks`)
 	flag.BoolVar(&l.withOpinionated, `withOpinionated`, false,
 		`only for -enable=all, include very opinionated checks`)
-	flag.IntVar(&l.failureExitCode, "failcode", 1, "exit code to be used when lint issues are found")
+	flag.IntVar(&l.failureExitCode, "failcode", 1,
+		`exit code to be used when lint issues are found`)
+	flag.BoolVar(&l.checkGenerated, "checkGenerated", false,
+		`whether to check machine-generated files`)
 
 	flag.Parse()
 
@@ -169,16 +177,22 @@ func (l *linter) CheckPackage(pkgPath string) {
 
 	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 	for _, f := range pkgInfo.Files {
-		l.ctx.SetFileInfo(l.getFilename(f))
-		l.checkFile(f)
+		if l.checkGenerated || !isGenerated(f) {
+			l.ctx.SetFileInfo(l.getFilename(f))
+			l.checkFile(f)
+		}
 	}
+}
+
+func isGenerated(f *ast.File) bool {
+	return len(f.Comments) != 0 && generatedFileCommentRE.MatchString(f.Comments[0].Text())
 }
 
 func (l *linter) getFilename(f *ast.File) string {
 	// see https://github.com/golang/go/issues/24498
 	fname := l.prog.Fset.Position(f.Pos()).String() // ex: /usr/go/src/pkg/main.go:1:1
-	fname = filepath.Base(fname)                    // ex: main.go:1:1
-	return fname[:len(fname)-4]                     // ex: main.go
+	fname = strings.Split(fname, ":")[0]            // ex: /usr/go/src/pkg/main.go
+	return filepath.Base(fname)                     // ex: main.go
 }
 
 // ExitCode returns status code that should be used as an argument to os.Exit.
