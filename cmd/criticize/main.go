@@ -185,10 +185,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 }
 
 func isGenerated(f *ast.File) bool {
-	if f.Comments == nil || len(f.Comments) == 0 {
-		return false
-	}
-	return generatedFileCommentRE.MatchString(f.Comments[0].Text())
+	return len(f.Comments) != 0 && generatedFileCommentRE.MatchString(f.Comments[0].Text())
 }
 
 func (l *linter) getFilename(f *ast.File) string {
