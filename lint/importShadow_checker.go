@@ -34,7 +34,7 @@ import (
 )
 
 func init() {
-	addChecker(&importShadowChecker{}, attrSyntaxOnly)
+	addChecker(&importShadowChecker{}, attrExperimental, attrSyntaxOnly)
 }
 
 type importShadowChecker struct {
