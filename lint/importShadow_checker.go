@@ -34,14 +34,12 @@ import (
 )
 
 func init() {
-	addChecker(&importShadowChecker{}, attrExperimental, attrSyntaxOnly)
+	addChecker(&importShadowChecker{}, attrExperimental)
 }
 
 type importShadowChecker struct {
 	checkerBase
 }
-
-func (c *importShadowChecker) Init() {}
 
 func (c *importShadowChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {
 	for _, imp := range c.ctx.Context.pkg.Imports() {
