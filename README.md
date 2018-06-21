@@ -52,6 +52,8 @@ Examples:
 | `gocritic check-project $GOPATH/src` | Run all stable checkers on entire GOPATH |
 | `gocritic check-project $GOPATH/src/foo` | Run all stable checkers on all packages under GOPATH/src/foo |
 
+> Note: `check-project $GOPATH/xyz` won't work it you're using multiple paths under `GOPATH`.
+
 ## Contributing
 
 This project aims to be contributing-friendly.
