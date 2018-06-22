@@ -12,6 +12,8 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+
+	"github.com/go-toolsmith/astequal"
 )
 
 func init() {
@@ -22,35 +24,20 @@ type lenNilChecker struct {
 	checkerBase
 }
 
-func (c *lenNilChecker) VisitStmt(stmt ast.Stmt) {
-	ifstmt, ok := stmt.(*ast.IfStmt)
+func (c *lenNilChecker) VisitExpr(expr ast.Expr) {
+	binexpr, ok := expr.(*ast.BinaryExpr)
 	if !ok {
 		return
 	}
 
-	visited := make(map[ast.Node]struct{})
-
-	findNode(ifstmt, func(node ast.Node) bool {
-		expr, ok := ifstmt.Cond.(*ast.BinaryExpr)
-		if !ok {
-			return false
+	if binexpr.Op == token.LAND || binexpr.Op == token.LOR {
+		if c.isNilCheck(binexpr.X) && c.hasLenCall(binexpr.Y, binexpr.X) {
+			c.warn(binexpr.X)
 		}
-
-		if _, ok := visited[expr]; ok {
-			return false
+		if c.isNilCheck(binexpr.Y) && c.hasLenCall(binexpr.X, binexpr.Y) {
+			c.warn(binexpr.Y)
 		}
-		visited[expr] = struct{}{}
-
-		if expr.Op == token.LAND || expr.Op == token.LOR {
-			if c.isNilCheck(expr.X) && c.hasLenCall(expr.Y) {
-				c.warn(expr.X)
-			}
-			if c.isNilCheck(expr.Y) && c.hasLenCall(expr.X) {
-				c.warn(expr.Y)
-			}
-		}
-		return false
-	})
+	}
 }
 
 func (c *lenNilChecker) isNilCheck(expr ast.Expr) bool {
@@ -59,8 +46,8 @@ func (c *lenNilChecker) isNilCheck(expr ast.Expr) bool {
 		return false
 	}
 	return (binexpr.Op == token.NEQ || binexpr.Op == token.EQL) &&
-		(c.isRefType(binexpr.X) && c.isNilKeyword(binexpr.Y) ||
-			c.isRefType(binexpr.Y) && c.isNilKeyword(binexpr.X))
+		(c.isRefType(binexpr.X) && qualifiedName(binexpr.Y) == "nil" ||
+			c.isRefType(binexpr.Y) && qualifiedName(binexpr.X) == "nil")
 }
 
 func (c *lenNilChecker) isRefType(expr ast.Expr) bool {
@@ -74,14 +61,17 @@ func (c *lenNilChecker) isRefType(expr ast.Expr) bool {
 	}
 }
 
-func (c *lenNilChecker) isNilKeyword(x ast.Expr) bool {
-	id, ok := x.(*ast.Ident)
-	return ok && id.Name == "nil"
-}
-
-func (c *lenNilChecker) hasLenCall(x ast.Expr) bool {
+func (c *lenNilChecker) hasLenCall(x ast.Expr, v ast.Expr) bool {
+	binexpr, ok := v.(*ast.BinaryExpr)
+	if !ok {
+		return false
+	}
 	return containsNode(x, func(x ast.Node) bool {
-		return callQualifiedName(x) == "len"
+		call, ok := x.(*ast.CallExpr)
+		return ok &&
+			qualifiedName(call.Fun) == "len" &&
+			len(call.Args) == 1 &&
+			(astequal.Expr(call.Args[0], binexpr.X) || astequal.Expr(call.Args[0], binexpr.Y))
 	})
 }
 

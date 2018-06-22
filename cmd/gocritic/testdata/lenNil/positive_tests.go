@@ -1,6 +1,6 @@
 package checker_test
 
-func f() {
+func f1() {
 	{
 		var m map[int]int
 		/// m != nil check is redundant
@@ -24,4 +24,35 @@ func f() {
 		if s == nil || len(s) == 1 {
 		}
 	}
+
+	{
+		var ch chan int
+		/// ch == nil check is redundant
+		/// ch != nil check is redundant
+		if (ch == nil || len(ch) == 1) != (ch != nil && len(ch) != 1) {
+		}
+	}
+	{
+		var ch chan int
+		/// ch != nil check is redundant
+		switch ch != nil && len(ch)+10 == 100 {
+		default:
+		}
+	}
+	{
+		var ch chan int
+		switch {
+		/// ch != nil check is redundant
+		case ch != nil || len(ch) == 0:
+		/// ch == nil check is redundant
+		case ch == nil && len(ch) == 0:
+		default:
+		}
+	}
+}
+
+func f2() bool {
+	var ch chan int
+	/// ch != nil check is redundant
+	return ch != nil && len(ch)+10 == 100
 }
