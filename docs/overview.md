@@ -141,6 +141,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#boolOpt-ref">boolOpt</a></td>
+        <td>Detects bool expressions that can be simplified.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
         <td>Detects when imported package names shadowed in assignments.
 
@@ -657,6 +663,28 @@ func IsEnabled() bool
 ```
 
 `boolFuncPrefix` is very opinionated.
+
+<a name="boolOpt-ref"></a>
+## boolOpt
+Detects bool expressions that can be simplified.
+
+
+
+**Before:**
+```go
+a := !(elapsed >= expectElapsedMin)
+b := !(x) == !(y)
+
+```
+
+**After:**
+```go
+a := elapsed < expectElapsedMin
+b := (x) == (y)
+
+```
+
+
 
 
 > You can either remove a comment to let go lint find it or change stub to useful comment.
