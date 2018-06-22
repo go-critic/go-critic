@@ -35,3 +35,9 @@ func mixedStyle8(a int, b, c int) (d int, e int) { return a, c }
 
 /// func(a int, b int, c int64, d int, e, f int64, _, g int64, h int, k int) could be replaced with func(a, b int, c int64, d int, e, f, _, g int64, h, k int)
 func mixedTypeWarn(a int, b int, c int64, d int, e, f int64, _, g int64, h int, k int) {}
+
+/// func(_, _ int, _ int, _ int32) could be replaced with func(_, _, _ int, _ int32)
+func withBlank1(_, _ int, _ int, _ int32) {}
+
+/// func() (_, _ int, _ int, _ int32) could be replaced with func() (_, _, _ int, _ int32)
+func withBlank2() (_, _ int, _ int, _ int32) { return }

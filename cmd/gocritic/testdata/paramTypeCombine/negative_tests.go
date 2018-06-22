@@ -8,3 +8,9 @@ func good5(a int)                   {}
 func good6()                        {}
 
 func mixedTypes(a, b int, c, d int64) {}
+
+func unnamedParams(uint32, uint32) {}
+
+func unnamedResults(sep []byte) (uint32, uint32) {
+	return 0, 0
+}
