@@ -111,6 +111,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#boolOpt-ref">boolOpt</a></td>
+        <td>Detects bool expressions that can be simplified.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#docStub-ref">docStub</a></td>
         <td>Detects comments that silence go lint complaints about doc-comment.
 
@@ -200,7 +206,28 @@ func IsEnabled() bool
 ```
 
 
-`boolFuncPrefix` is very opinionated.<a name="builtinShadow-ref"></a>
+`boolFuncPrefix` is very opinionated.<a name="boolOpt-ref"></a>
+## boolOpt
+Detects bool expressions that can be simplified.
+
+
+
+**Before:**
+```go
+a := !(elapsed >= expectElapsedMin)
+b := !(x) == !(y)
+
+```
+
+**After:**
+```go
+a := elapsed < expectElapsedMin
+b := (x) == (y)
+
+```
+
+
+<a name="builtinShadow-ref"></a>
 ## builtinShadow
 Detects when predeclared identifiers shadowed in assignments.
 
