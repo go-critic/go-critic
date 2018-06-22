@@ -49,7 +49,7 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 		}
 		return true
 	case *ast.CallExpr:
-		// Pointer convensions require parenthesis around pointer type.
+		// Pointer conversions require parenthesis around pointer type.
 		// These casts are represented as call expressions.
 		// Because it's impossible for the visitor to distinguish such
 		// "required" parenthesis, walker skips outmost parenthesis in such cases.
