@@ -30,12 +30,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#docStub-ref">docStub</a></td>
-        <td>Detects comments that silence go lint complaints about doc-comment.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#elseif-ref">elseif</a></td>
         <td>Detects repeated if-else statements and suggests to replace them with switch statement.
 
@@ -54,12 +48,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
-        <td>Detects input and output parameters that have a type of pointer to referential type.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
         <td>Detects expensive copies of `for` loop range expressions.
 
@@ -74,12 +62,6 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
         <td>Detects switch statements that could be better written as if statements.
-
-</td>
-      </tr>
-      <tr>
-        <td><a href="#stdExpr-ref">stdExpr</a></td>
-        <td>Detects constant expressions that can be replaced by a named constant
 
 </td>
       </tr>
@@ -108,18 +90,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
-        <td>Detects calls of unexported method from unexported type outside that type.
-
-</td>
-      </tr>
-      <tr>
-        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
-        <td>For functions with multiple return values, detects unnamed results
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#unslice-ref">unslice</a></td>
         <td>Detects slice expressions that can be simplified to sliced expression itself.
 
@@ -141,6 +111,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#docStub-ref">docStub</a></td>
+        <td>Detects comments that silence go lint complaints about doc-comment.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
         <td>Detects when imported package names shadowed in assignments.
 
@@ -149,6 +125,30 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
+        <td>Detects input and output parameters that have a type of pointer to referential type.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#stdExpr-ref">stdExpr</a></td>
+        <td>Detects constant expressions that can be replaced by a named constant
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
+        <td>Detects calls of unexported method from unexported type outside that type.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
+        <td>For functions with multiple return values, detects unnamed results
 
 </td>
       </tr>
