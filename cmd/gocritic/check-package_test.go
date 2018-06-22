@@ -1,7 +1,6 @@
 package main_test
 
 import (
-	"flag"
 	"io/ioutil"
 	"log"
 	"os"
@@ -24,13 +23,6 @@ const (
 	// linterCmdPath holds full path to linter main pkg path.
 	linterCmdPath = "github.com/go-critic/go-critic/cmd/gocritic/"
 )
-
-var ruleName string
-
-func init() {
-	ruleName = *flag.String("rule", "", "")
-	flag.Parse()
-}
 
 func TestMain(m *testing.M) {
 	// Before all tests are executed, we need to build linter first.
@@ -85,84 +77,70 @@ func TestSanity(t *testing.T) {
 
 func TestOutput(t *testing.T) {
 	for _, rule := range ruleList {
-		testChecker(t, rule)
-	}
-}
+		t.Run(rule.name, func(t *testing.T) {
+			pkgPath := linterCmdPath + "testdata/" + rule.name
+			testFilename := filepath.Join(
+				"testdata", rule.name, "positive_tests.go")
+			f := parseTestFile(t, testFilename)
 
-func TestOutputOne(t *testing.T) {
-	for _, rule := range ruleList {
-		if rule.name == ruleName {
-			testChecker(t, rule)
-			return
-		}
-	}
-}
-
-func testChecker(t *testing.T, rule ruleTest) {
-	t.Helper()
-	t.Run(rule.name, func(t *testing.T) {
-		pkgPath := linterCmdPath + "testdata/" + rule.name
-		testFilename := filepath.Join(
-			"testdata", rule.name, "positive_tests.go")
-		f := parseTestFile(t, testFilename)
-
-		// Running the linter.
-		output, err := runChecker(rule.name, pkgPath)
-		if err != nil {
-			t.Fatalf("run linter: %v: %s", err, output)
-		}
-
-		warningRE := regexp.MustCompile(`.*?:(\d+):\d+: ([a-zA-Z\-/]*): (.*)`)
-
-		// Process linter output.
-		var unexpectedLines []string
-		for _, l := range strings.Split(string(output), "\n") {
-			if len(l) == 0 { // Ignore empty lines
-				continue
-			}
-			if !warningRE.MatchString(l) {
-				// Something that doen't look like a warning.
-				// Probably debug output or checker runtime error.
-				unexpectedLines = append(unexpectedLines, l)
-				continue
-			}
-			var lineString, ruleName, text string
-			unpackSubmatches(l, warningRE, &lineString, &ruleName, &text)
-			line, err := strconv.Atoi(lineString)
+			// Running the linter.
+			output, err := runChecker(rule.name, pkgPath)
 			if err != nil {
-				t.Errorf("%s: invalid line number in %s",
-					testFilename, lineString)
+				t.Fatalf("run linter: %v: %s", err, output)
 			}
-			if ruleName != rule.name {
-				t.Errorf("%s: unexpected checker name: %s",
-					testFilename, ruleName)
-				continue
-			}
-			if w := f.Find(line, text); w != nil {
-				if w.matched {
-					t.Errorf("%s:%d: multiple matches for %s",
-						testFilename, line, w)
-				}
-				w.matched = true
-			} else {
-				unexpectedLines = append(unexpectedLines, l)
-			}
-		}
 
-		// Check if there are unmatched warnings and/or unexpected
-		// lines in the linter output.
-		for line := range f.warnings {
-			for _, w := range f.warnings[line] {
-				if w.matched {
+			warningRE := regexp.MustCompile(`.*?:(\d+):\d+: ([a-zA-Z\-/]*): (.*)`)
+
+			// Process linter output.
+			var unexpectedLines []string
+			for _, l := range strings.Split(string(output), "\n") {
+				if len(l) == 0 { // Ignore empty lines
 					continue
 				}
-				t.Errorf("%s:%d: unmatched %s", testFilename, line, w)
+				if !warningRE.MatchString(l) {
+					// Something that doen't look like a warning.
+					// Probably debug output or checker runtime error.
+					unexpectedLines = append(unexpectedLines, l)
+					continue
+				}
+				var lineString, ruleName, text string
+				unpackSubmatches(l, warningRE, &lineString, &ruleName, &text)
+				line, err := strconv.Atoi(lineString)
+				if err != nil {
+					t.Errorf("%s: invalid line number in %s",
+						testFilename, lineString)
+				}
+				if ruleName != rule.name {
+					t.Errorf("%s: unexpected checker name: %s",
+						testFilename, ruleName)
+					continue
+				}
+				if w := f.Find(line, text); w != nil {
+					if w.matched {
+						t.Errorf("%s:%d: multiple matches for %s",
+							testFilename, line, w)
+					}
+					w.matched = true
+				} else {
+					unexpectedLines = append(unexpectedLines, l)
+				}
 			}
-		}
-		for _, l := range unexpectedLines {
-			t.Errorf("unexpected line in output: %s", l)
-		}
-	})
+
+			// Check if there are unmatched warnings and/or unexpected
+			// lines in the linter output.
+			for line := range f.warnings {
+				for _, w := range f.warnings[line] {
+					if w.matched {
+						continue
+					}
+					t.Errorf("%s:%d: unmatched %s", testFilename, line, w)
+				}
+			}
+			for _, l := range unexpectedLines {
+				t.Errorf("unexpected line in output: %s", l)
+			}
+		})
+	}
 }
 
 // parseTestFile decodes single end-to-end test file.
