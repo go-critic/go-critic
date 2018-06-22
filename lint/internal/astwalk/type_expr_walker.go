@@ -4,6 +4,8 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
+
+	"github.com/go-toolsmith/astp"
 )
 
 type typeExprWalker struct {
@@ -46,6 +48,22 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 			return w.visit(x)
 		}
 		return true
+	case *ast.CallExpr:
+		// Pointer convensions require parenthesis around pointer type.
+		// These casts are represented as call expressions.
+		// Because it's impossible for the visitor to distinguish such
+		// "required" parenthesis, walker skips outmost parenthesis in such cases.
+		parens, ok := x.Fun.(*ast.ParenExpr)
+		if ok && w.isTypeExpr(parens.X) && astp.IsStarExpr(parens.X) {
+			ast.Inspect(parens.X, w.walk)
+			return false
+		}
+		return true
+	case *ast.StarExpr:
+		if w.isTypeExpr(x.X) {
+			return w.visit(x)
+		}
+		return true
 	case *ast.MapType:
 		return w.visit(x)
 	case *ast.FuncType:
@@ -74,6 +92,10 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 
 func (w *typeExprWalker) isTypeExpr(x ast.Expr) bool {
 	switch x := x.(type) {
+	case *ast.StarExpr:
+		return w.isTypeExpr(x.X)
+	case *ast.ParenExpr:
+		return w.isTypeExpr(x.X)
 	case *ast.Ident:
 		// Identifier may be a type expression if object
 		// it reffers to is a type name.
