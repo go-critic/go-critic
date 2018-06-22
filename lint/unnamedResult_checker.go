@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	addChecker(&unnamedResultChecker{})
+	addChecker(&unnamedResultChecker{}, attrExperimental)
 }
 
 type unnamedResultChecker struct {
