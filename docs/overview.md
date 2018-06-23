@@ -95,6 +95,12 @@ Go source code linter that brings checks that are currently not implemented in o
 
 </td>
       </tr>
+      <tr>
+        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
+        <td>Detects Yoda style expressions that suggest to replace them.
+
+</td>
+      </tr>
 </table>
 
 **Experimental:**
@@ -826,6 +832,25 @@ func f(a int, b float64) // b isn't used inside function body
 **After:**
 ```go
 func f(a int, _ float64) // everything is cool
+
+```
+
+
+<a name="yodaStyleExpr-ref"></a>
+## yodaStyleExpr
+Detects Yoda style expressions that suggest to replace them.
+
+
+
+**Before:**
+```go
+if nil != ptr {}
+
+```
+
+**After:**
+```go
+if ptr != nil {}
 
 ```
 
