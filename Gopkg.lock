@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/go-toolsmith/astcopy"
   packages = ["."]
-  revision = "7f3c9768117e22a3a21988c635390dcf989c02fb"
+  revision = "fc497f942afe9ca951d5c91c5c180fd59aebe5d4"
 
 [[projects]]
   branch = "master"
@@ -39,7 +39,7 @@
     "go/buildutil",
     "go/loader"
   ]
-  revision = "465e6f399236d0ea2466584539d4eab4d3d83720"
+  revision = "25b95b48224cce18163c7d49dcfb89a2d5ecd209"
 
 [solve-meta]
   analyzer-name = "dep"
