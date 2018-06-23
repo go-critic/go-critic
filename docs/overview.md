@@ -129,6 +129,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#evalOrder-ref">evalOrder</a></td>
+        <td>Detects potentially unsafe dependencies on evaluation order.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
         <td>Detects when imported package names shadowed in assignments.
 
@@ -368,7 +374,31 @@ default:
 ```
 
 
-`elseif` is syntax-only checker (fast).<a name="flagDeref-ref"></a>
+`elseif` is syntax-only checker (fast).<a name="evalOrder-ref"></a>
+## evalOrder
+Detects potentially unsafe dependencies on evaluation order.
+
+
+
+**Before:**
+```go
+return mayModifySlice(&xs), xs[0]
+
+```
+
+**After:**
+```go
+// A)
+v := mayModifySlice(&xs)
+return v, xs[0]
+// B)
+v := xs[0]
+return mayModifySlice(&xs), v
+
+```
+
+
+<a name="flagDeref-ref"></a>
 ## flagDeref
 Detects immediate dereferencing of `flag` package pointers.
 

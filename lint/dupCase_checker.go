@@ -15,7 +15,7 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/go-toolsmith/astequal"
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
 )
 
 func init() {
@@ -25,7 +25,7 @@ func init() {
 type dupCaseChecker struct {
 	checkerBase
 
-	astSet []ast.Node
+	astSet lintutil.AstSet
 }
 
 func (c *dupCaseChecker) VisitStmt(stmt ast.Stmt) {
@@ -35,25 +35,15 @@ func (c *dupCaseChecker) VisitStmt(stmt ast.Stmt) {
 }
 
 func (c *dupCaseChecker) checkSwitch(stmt *ast.SwitchStmt) {
-	c.astSet = c.astSet[:0]
+	c.astSet.Clear()
 	for i := range stmt.Body.List {
 		cc := stmt.Body.List[i].(*ast.CaseClause)
 		for _, x := range cc.List {
-			if !c.setInsert(x) {
+			if !c.astSet.Insert(x) {
 				c.warn(x)
 			}
 		}
 	}
-}
-
-func (c *dupCaseChecker) setInsert(x ast.Node) bool {
-	for i := range c.astSet {
-		if astequal.Node(c.astSet[i], x) {
-			return false
-		}
-	}
-	c.astSet = append(c.astSet, x)
-	return true
 }
 
 func (c *dupCaseChecker) warn(cause ast.Node) {
