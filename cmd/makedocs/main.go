@@ -21,7 +21,7 @@ const (
 	checkersPath  = "../../lint/"
 )
 
-type checker struct {
+type checkerDoc struct {
 	Name             string
 	ShortDescription string
 	Description      string
@@ -33,7 +33,7 @@ type checker struct {
 	VeryOpinionated  bool
 }
 
-var checkers []checker
+var checkers []checkerDoc
 
 func main() {
 	tmpl, err := template.ParseFiles(templatesPath + "overview.md.tmpl")
@@ -53,11 +53,10 @@ func main() {
 
 		f, ok := pkgs["lint"].Files[fmt.Sprintf("%s%s_checker.go", checkersPath, r.Name())]
 		if !ok {
-
 			log.Printf("File not found: %s%s_checker.go", checkersPath, r.Name())
 			continue
 		}
-		c := checker{
+		c := checkerDoc{
 			Name:            r.Name(),
 			SyntaxOnly:      r.SyntaxOnly,
 			Experimental:    r.Experimental,
@@ -74,7 +73,7 @@ func main() {
 	}
 	buf := bytes.Buffer{}
 	err = tmpl.Execute(&buf, struct {
-		Checkers []checker
+		Checkers []checkerDoc
 	}{
 		Checkers: checkers,
 	})
@@ -86,10 +85,10 @@ func main() {
 	}
 }
 
-func parseComment(text string, c *checker) {
+func parseComment(text string, c *checkerDoc) {
 	lines := strings.Split(text, "\n")
 	index := 0
-	stages := []func(l []string, i *int, c *checker) error{
+	stages := []func(l []string, i *int, c *checkerDoc) error{
 		parseShortDesc,
 		parseDesc,
 		parseBefore,
@@ -104,13 +103,13 @@ func parseComment(text string, c *checker) {
 	}
 }
 
-func parseShortDesc(lines []string, index *int, c *checker) error {
-	c.ShortDescription = strings.TrimSpace(lines[0][1:]) + "\n\n"
+func parseShortDesc(lines []string, index *int, c *checkerDoc) error {
+	c.ShortDescription = strings.TrimSpace(lines[0][1:])
 	*index += 2 // skip empty line
 	return nil
 }
 
-func parseDesc(lines []string, index *int, c *checker) error {
+func parseDesc(lines []string, index *int, c *checkerDoc) error {
 	if len(lines) <= *index {
 		return errors.New("parseDesc: no description provided")
 	}
@@ -118,40 +117,40 @@ func parseDesc(lines []string, index *int, c *checker) error {
 		return nil
 	}
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.Description += lines[*index] + "\n"
+		c.Description += lines[*index]
 		*index++
 	}
 	*index++ //skip empty line
 	return nil
 }
 
-func parseBefore(lines []string, index *int, c *checker) error {
+func parseBefore(lines []string, index *int, c *checkerDoc) error {
 	if len(lines) <= *index || strings.TrimSpace(lines[*index]) != "@Before:" {
 		return errors.New("parseBefore: no @Before: section found")
 	}
 	*index++
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.Before += lines[*index] + "\n"
+		c.Before += lines[*index]
 		*index++
 	}
 	*index++ //skip empty line
 	return nil
 }
 
-func parseAfter(lines []string, index *int, c *checker) error {
+func parseAfter(lines []string, index *int, c *checkerDoc) error {
 	if len(lines) <= *index || strings.TrimSpace(lines[*index]) != "@After:" {
 		return errors.New("parseAfter: no @After: section found")
 	}
 	*index++
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.After += lines[*index] + "\n"
+		c.After += lines[*index]
 		*index++
 	}
 	*index++ //skip empty line
 	return nil
 }
 
-func parseNote(lines []string, index *int, c *checker) error {
+func parseNote(lines []string, index *int, c *checkerDoc) error {
 	if len(lines) <= *index {
 		return nil // No @Note: section
 	}
@@ -160,7 +159,7 @@ func parseNote(lines []string, index *int, c *checker) error {
 	}
 	*index++
 	for *index < len(lines) && len(lines[*index]) > 0 {
-		c.Note += lines[*index] + "\n"
+		c.Note += lines[*index]
 		*index++
 	}
 	return nil
