@@ -30,12 +30,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#docStub-ref">docStub</a></td>
-        <td>Detects comments that silence go lint complaints about doc-comment.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#elseif-ref">elseif</a></td>
         <td>Detects repeated if-else statements and suggests to replace them with switch statement.
 
@@ -54,12 +48,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
-        <td>Detects input and output parameters that have a type of pointer to referential type.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
         <td>Detects expensive copies of `for` loop range expressions.
 
@@ -74,12 +62,6 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
         <td>Detects switch statements that could be better written as if statements.
-
-</td>
-      </tr>
-      <tr>
-        <td><a href="#stdExpr-ref">stdExpr</a></td>
-        <td>Detects constant expressions that can be replaced by a named constant
 
 </td>
       </tr>
@@ -108,20 +90,14 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
-        <td>Detects calls of unexported method from unexported type outside that type.
-
-</td>
-      </tr>
-      <tr>
-        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
-        <td>For functions with multiple return values, detects unnamed results
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#unslice-ref">unslice</a></td>
         <td>Detects slice expressions that can be simplified to sliced expression itself.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
+        <td>Detects Yoda style expressions that suggest to replace them.
 
 </td>
       </tr>
@@ -141,6 +117,30 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#boolOpt-ref">boolOpt</a></td>
+        <td>Detects bool expressions that can be simplified.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#docStub-ref">docStub</a></td>
+        <td>Detects comments that silence go lint complaints about doc-comment.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#dupCase-ref">dupCase</a></td>
+        <td>Detects duplicated case clauses inside switch statements.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#evalOrder-ref">evalOrder</a></td>
+        <td>Detects potentially unsafe dependencies on evaluation order.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
         <td>Detects when imported package names shadowed in assignments.
 
@@ -153,13 +153,42 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
+        <td>Detects input and output parameters that have a type of pointer to referential type.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#regexpMust-ref">regexpMust</a></td>
+        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#stdExpr-ref">stdExpr</a></td>
+        <td>Detects constant expressions that can be replaced by a named constant
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
+        <td>Detects calls of unexported method from unexported type outside that type.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
+        <td>For functions with multiple return values, detects unnamed results
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#unusedParam-ref">unusedParam</a></td>
         <td>Detects unused params and suggests to name them as `_` (underscore).
 
 </td>
       </tr>
 </table>
-
 
 
 <a name="appendCombine-ref"></a>
@@ -181,6 +210,45 @@ xs = append(xs, 1, 2)
 
 ```
 
+
+<a name="boolFuncPrefix-ref"></a>
+## boolFuncPrefix
+Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+
+
+**Before:**
+```go
+func Enabled() bool
+
+```
+
+**After:**
+```go
+func IsEnabled() bool
+
+```
+
+
+`boolFuncPrefix` is very opinionated.<a name="boolOpt-ref"></a>
+## boolOpt
+Detects bool expressions that can be simplified.
+
+
+
+**Before:**
+```go
+a := !(elapsed >= expectElapsedMin)
+b := !(x) == !(y)
+
+```
+
+**After:**
+```go
+a := elapsed < expectElapsedMin
+b := (x) == (y)
+
+```
 
 
 <a name="builtinShadow-ref"></a>
@@ -210,8 +278,7 @@ func main() {
 ```
 
 
-`builtinShadow` is syntax-only checker (fast).
-<a name="captLocal-ref"></a>
+`builtinShadow` is syntax-only checker (fast).<a name="captLocal-ref"></a>
 ## captLocal
 Detects capitalized names for local variables.
 
@@ -230,8 +297,7 @@ func f(in int, out *int) (err error) {}
 ```
 
 
-`captLocal` is syntax-only checker (fast).
-<a name="docStub-ref"></a>
+`captLocal` is syntax-only checker (fast).<a name="docStub-ref"></a>
 ## docStub
 Detects comments that silence go lint complaints about doc-comment.
 
@@ -257,7 +323,29 @@ func Foo() {
 > You can either remove a comment to let go lint find it or change stub to useful comment.
 > This checker makes it easier to detect stubs, the action is up to you.
 
-`docStub` is syntax-only checker (fast).
+`docStub` is syntax-only checker (fast).<a name="dupCase-ref"></a>
+## dupCase
+Detects duplicated case clauses inside switch statements.
+
+
+
+**Before:**
+```go
+switch x {
+case ys[0], ys[1], ys[2], ys[0], ys[4]:
+}
+
+```
+
+**After:**
+```go
+switch x {
+case ys[0], ys[1], ys[2], ys[3], ys[4]:
+}
+
+```
+
+
 <a name="elseif-ref"></a>
 ## elseif
 Detects repeated if-else statements and suggests to replace them with switch statement.
@@ -292,7 +380,30 @@ default:
 ```
 
 
-`elseif` is syntax-only checker (fast).
+`elseif` is syntax-only checker (fast).<a name="evalOrder-ref"></a>
+## evalOrder
+Detects potentially unsafe dependencies on evaluation order.
+
+
+
+**Before:**
+```go
+return mayModifySlice(&xs), xs[0]
+
+```
+
+**After:**
+```go
+// A)
+v := mayModifySlice(&xs)
+return v, xs[0]
+// B)
+v := xs[0]
+return mayModifySlice(&xs), v
+
+```
+
+
 <a name="flagDeref-ref"></a>
 ## flagDeref
 Detects immediate dereferencing of `flag` package pointers.
@@ -315,359 +426,7 @@ flag.BoolVar(&b, "b", false, "b docs")
 > Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
-`flagDeref` is syntax-only checker (fast).
-<a name="paramTypeCombine-ref"></a>
-## paramTypeCombine
-Detects if function parameters could be combined by type and suggest the way to do it.
-
-
-
-**Before:**
-```go
-func foo(a, b int, c, d int, e, f int, g int) {}
-
-```
-
-**After:**
-```go
-func foo(a, b, c, d, e, f, g int) {}
-
-```
-
-
-`paramTypeCombine` is syntax-only checker (fast).
-<a name="ptrToRefParam-ref"></a>
-## ptrToRefParam
-Detects input and output parameters that have a type of pointer to referential type.
-
-
-
-**Before:**
-```go
-func f(m *map[string]int) (ch *chan *int)
-
-```
-
-**After:**
-```go
-func f(m map[string]int) (ch chan *int)
-
-```
-
-> Slices are not as referential as maps or channels, but it's usually
-> better to return them by value rather than modyfing them by pointer.
-
-
-<a name="rangeExprCopy-ref"></a>
-## rangeExprCopy
-Detects expensive copies of `for` loop range expressions.
-
-Suggests to use pointer to array to avoid the copy using `&` on range expression.
-
-
-**Before:**
-```go
-var xs [256]byte
-for _, x := range xs {
-	// Loop body.
-}
-
-```
-
-**After:**
-```go
-var xs [256]byte
-for _, x := range &xs {
-	// Loop body.
-}
-
-```
-
-
-
-<a name="rangeValCopy-ref"></a>
-## rangeValCopy
-Detects loops that copy big objects during each iteration.
-
-
-
-**Before:**
-```go
-xs := make([][1024]byte, length)
-for _, x := range xs {
-	// Loop body.
-}
-
-```
-
-**After:**
-```go
-xs := make([][1024]byte, length)
-for i := range xs {
-	x := &xs[i]
-	// Loop body.
-}
-
-```
-
-
-
-<a name="singleCaseSwitch-ref"></a>
-## singleCaseSwitch
-Detects switch statements that could be better written as if statements.
-
-
-
-**Before:**
-```go
-switch x := x.(type) {
-case int:
-     ...
-}
-
-```
-
-**After:**
-```go
-if x, ok := x.(int); ok {
-   ...
-}
-
-```
-
-
-`singleCaseSwitch` is syntax-only checker (fast).
-<a name="stdExpr-ref"></a>
-## stdExpr
-Detects constant expressions that can be replaced by a named constant
-
-
-
-**Before:**
-```go
-intBytes := make([]byte, unsafe.Sizeof(0))
-maxVal := 1<<7 - 1
-
-```
-
-**After:**
-```go
-intBytes := make([]byte, bits.IntSize)
-maxVal := math.MaxInt8
-
-```
-
-
-
-<a name="switchTrue-ref"></a>
-## switchTrue
-Detects switch-over-bool statements that use explicit `true` tag value.
-
-
-
-**Before:**
-```go
-switch true {
-case x > y:
-	// ...
-}
-
-```
-
-**After:**
-```go
-switch {
-case x > y:
-	// ...
-}
-
-```
-
-
-`switchTrue` is syntax-only checker (fast).
-<a name="typeSwitchVar-ref"></a>
-## typeSwitchVar
-Detects type switches that can benefit from type guard clause with variable.
-
-
-
-**Before:**
-```go
-switch v.(type) {
-case int:
-	return v.(int)
-case point:
-	return v.(point).x + v.(point).y
-default:
-	return 0
-}
-
-```
-
-**After:**
-```go
-switch v := v.(type) {
-case int:
-	return v
-case point:
-	return v.x + v.y
-default:
-	return 0
-}
-
-```
-
-
-
-<a name="typeUnparen-ref"></a>
-## typeUnparen
-Detects unneded parenthesis inside type expressions and suggests to remove them.
-
-
-
-**Before:**
-```go
-func foo() [](func([](func()))) {
-     ...
-}
-
-```
-
-**After:**
-```go
-func foo() []func([]func()) {
-     ...
-}
-
-```
-
-
-`typeUnparen` is syntax-only checker (fast).
-<a name="underef-ref"></a>
-## underef
-Detects dereference expressions that can be omitted.
-
-
-
-**Before:**
-```go
-(*k).field = 5
-_ := (*a)[5] // only if a is array
-
-```
-
-**After:**
-```go
-k.field = 5
-_ := a[5]
-
-```
-
-
-
-<a name="unexportedCall-ref"></a>
-## unexportedCall
-Detects calls of unexported method from unexported type outside that type.
-
-
-
-**Before:**
-```go
-type foo struct{}
-func (f foo) bar() int { return 1 }
-func baz() {
-	var fo foo
-	fo.bar()
-}
-
-```
-
-**After:**
-```go
-type foo struct{}
-func (f foo) Bar() int { return 1 } // now Bar is exported
-func baz() {
-	var fo foo
-	fo.Bar()
-}
-
-```
-
-
-`unexportedCall` is very opinionated.
-<a name="unnamedResult-ref"></a>
-## unnamedResult
-For functions with multiple return values, detects unnamed results
-
-
-
-**Before:**
-```go
-func f() (float64, float64)
-
-```
-
-**After:**
-```go
-func f() (x, y float64)
-
-```
-
-
-
-<a name="unslice-ref"></a>
-## unslice
-Detects slice expressions that can be simplified to sliced expression itself.
-
-
-
-**Before:**
-```go
-f(s[:]) // s is string
-copy(b[:], values...) // b is []byte
-
-```
-
-**After:**
-```go
-f(s)
-copy(b, values...)
-
-```
-
-
-
-
-<a name="boolFuncPrefix-ref"></a>
-## boolFuncPrefix
-Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
-
-
-
-**Before:**
-```go
-func Enabled() bool
-
-```
-
-**After:**
-```go
-func IsEnabled() bool
-
-```
-
-`boolFuncPrefix` is very opinionated.
-
-
-> You can either remove a comment to let go lint find it or change stub to useful comment.
-> This checker makes it easier to detect stubs, the action is up to you.
-
-
-> Dereferencing returned pointers will lead to hard to find errors
-> where flag values are not updated after flag.Parse().
-
-
-<a name="importShadow-ref"></a>
+`flagDeref` is syntax-only checker (fast).<a name="importShadow-ref"></a>
 ## importShadow
 Detects when imported package names shadowed in assignments.
 
@@ -704,7 +463,6 @@ func main() {
 ```
 
 
-
 <a name="longChain-ref"></a>
 ## longChain
 Detects repeated expression chains and suggest to refactor them.
@@ -732,20 +490,331 @@ v := (a+x) + (b+x) + (c+x)
 ```
 
 
+<a name="paramTypeCombine-ref"></a>
+## paramTypeCombine
+Detects if function parameters could be combined by type and suggest the way to do it.
+
+
+
+**Before:**
+```go
+func foo(a, b int, c, d int, e, f int, g int) {}
+
+```
+
+**After:**
+```go
+func foo(a, b, c, d, e, f, g int) {}
+
+```
+
+
+`paramTypeCombine` is syntax-only checker (fast).<a name="ptrToRefParam-ref"></a>
+## ptrToRefParam
+Detects input and output parameters that have a type of pointer to referential type.
+
+
+
+**Before:**
+```go
+func f(m *map[string]int) (ch *chan *int)
+
+```
+
+**After:**
+```go
+func f(m map[string]int) (ch chan *int)
+
+```
 
 > Slices are not as referential as maps or channels, but it's usually
 > better to return them by value rather than modyfing them by pointer.
 
+<a name="rangeExprCopy-ref"></a>
+## rangeExprCopy
+Detects expensive copies of `for` loop range expressions.
+
+Suggests to use pointer to array to avoid the copy using `&` on range expression.
+
+
+**Before:**
+```go
+var xs [256]byte
+for _, x := range xs {
+	// Loop body.
+}
+
+```
+
+**After:**
+```go
+var xs [256]byte
+for _, x := range &xs {
+	// Loop body.
+}
+
+```
+
+
+<a name="rangeValCopy-ref"></a>
+## rangeValCopy
+Detects loops that copy big objects during each iteration.
 
 
 
+**Before:**
+```go
+xs := make([][1024]byte, length)
+for _, x := range xs {
+	// Loop body.
+}
+
+```
+
+**After:**
+```go
+xs := make([][1024]byte, length)
+for i := range xs {
+	x := &xs[i]
+	// Loop body.
+}
+
+```
+
+
+<a name="regexpMust-ref"></a>
+## regexpMust
+Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
 
 
 
+**Before:**
+```go
+re, _ := regexp.Compile(`const pattern`)
+
+```
+
+**After:**
+```go
+re := regexp.MustCompile(`const pattern`)
+
+```
+
+
+<a name="singleCaseSwitch-ref"></a>
+## singleCaseSwitch
+Detects switch statements that could be better written as if statements.
 
 
 
+**Before:**
+```go
+switch x := x.(type) {
+case int:
+     ...
+}
 
+```
+
+**After:**
+```go
+if x, ok := x.(int); ok {
+   ...
+}
+
+```
+
+
+`singleCaseSwitch` is syntax-only checker (fast).<a name="stdExpr-ref"></a>
+## stdExpr
+Detects constant expressions that can be replaced by a named constant
+
+
+
+**Before:**
+```go
+intBytes := make([]byte, unsafe.Sizeof(0))
+maxVal := 1<<7 - 1
+
+```
+
+**After:**
+```go
+intBytes := make([]byte, bits.IntSize)
+maxVal := math.MaxInt8
+
+```
+
+
+<a name="switchTrue-ref"></a>
+## switchTrue
+Detects switch-over-bool statements that use explicit `true` tag value.
+
+
+
+**Before:**
+```go
+switch true {
+case x > y:
+	// ...
+}
+
+```
+
+**After:**
+```go
+switch {
+case x > y:
+	// ...
+}
+
+```
+
+
+`switchTrue` is syntax-only checker (fast).<a name="typeSwitchVar-ref"></a>
+## typeSwitchVar
+Detects type switches that can benefit from type guard clause with variable.
+
+
+
+**Before:**
+```go
+switch v.(type) {
+case int:
+	return v.(int)
+case point:
+	return v.(point).x + v.(point).y
+default:
+	return 0
+}
+
+```
+
+**After:**
+```go
+switch v := v.(type) {
+case int:
+	return v
+case point:
+	return v.x + v.y
+default:
+	return 0
+}
+
+```
+
+
+<a name="typeUnparen-ref"></a>
+## typeUnparen
+Detects unneded parenthesis inside type expressions and suggests to remove them.
+
+
+
+**Before:**
+```go
+func foo() [](func([](func()))) {
+     ...
+}
+
+```
+
+**After:**
+```go
+func foo() []func([]func()) {
+     ...
+}
+
+```
+
+
+`typeUnparen` is syntax-only checker (fast).<a name="underef-ref"></a>
+## underef
+Detects dereference expressions that can be omitted.
+
+
+
+**Before:**
+```go
+(*k).field = 5
+_ := (*a)[5] // only if a is array
+
+```
+
+**After:**
+```go
+k.field = 5
+_ := a[5]
+
+```
+
+
+<a name="unexportedCall-ref"></a>
+## unexportedCall
+Detects calls of unexported method from unexported type outside that type.
+
+
+
+**Before:**
+```go
+type foo struct{}
+func (f foo) bar() int { return 1 }
+func baz() {
+	var fo foo
+	fo.bar()
+}
+
+```
+
+**After:**
+```go
+type foo struct{}
+func (f foo) Bar() int { return 1 } // now Bar is exported
+func baz() {
+	var fo foo
+	fo.Bar()
+}
+
+```
+
+
+`unexportedCall` is very opinionated.<a name="unnamedResult-ref"></a>
+## unnamedResult
+For functions with multiple return values, detects unnamed results
+
+
+
+**Before:**
+```go
+func f() (float64, float64)
+
+```
+
+**After:**
+```go
+func f() (x, y float64)
+
+```
+
+
+<a name="unslice-ref"></a>
+## unslice
+Detects slice expressions that can be simplified to sliced expression itself.
+
+
+
+**Before:**
+```go
+f(s[:]) // s is string
+copy(b[:], values...) // b is []byte
+
+```
+
+**After:**
+```go
+f(s)
+copy(b, values...)
+
+```
 
 
 <a name="unusedParam-ref"></a>
@@ -763,6 +832,25 @@ func f(a int, b float64) // b isn't used inside function body
 **After:**
 ```go
 func f(a int, _ float64) // everything is cool
+
+```
+
+
+<a name="yodaStyleExpr-ref"></a>
+## yodaStyleExpr
+Detects Yoda style expressions that suggest to replace them.
+
+
+
+**Before:**
+```go
+if nil != ptr {}
+
+```
+
+**After:**
+```go
+if ptr != nil {}
 
 ```
 

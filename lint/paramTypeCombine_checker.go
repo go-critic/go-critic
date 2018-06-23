@@ -36,7 +36,15 @@ func (c *paramTypeCombineChecker) optimizeFuncType(f *ast.FuncType) *ast.FuncTyp
 	}
 }
 func (c *paramTypeCombineChecker) optimizeParams(params *ast.FieldList) *ast.FieldList {
-	if params == nil || len(params.List) < 2 {
+	// To avoid false positives, skip unnamed param lists.
+	//
+	// We're using a property that Go only permits unnamed params
+	// for the whole list, so it's enough to check whether any of
+	// ast.Field have empty name list.
+	skip := params == nil ||
+		len(params.List) < 2 ||
+		len(params.List[0].Names) == 0
+	if skip {
 		return params
 	}
 

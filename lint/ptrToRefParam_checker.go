@@ -18,7 +18,7 @@ import (
 )
 
 func init() {
-	addChecker(&ptrToRefParamChecker{})
+	addChecker(&ptrToRefParamChecker{}, attrExperimental)
 }
 
 type ptrToRefParamChecker struct {

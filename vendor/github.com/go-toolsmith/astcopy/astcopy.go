@@ -121,7 +121,7 @@ func Ellipsis(x *ast.Ellipsis) *ast.Ellipsis {
 		return nil
 	}
 	cp := *x
-	cp.Elt = copyExpr(x)
+	cp.Elt = copyExpr(x.Elt)
 	return &cp
 }
 

@@ -2,6 +2,7 @@ package lintwalk
 
 import (
 	"flag"
+	"fmt"
 	"go/build"
 	"log"
 	"os"
@@ -34,6 +35,7 @@ func Main() {
 	exclude := flag.String("exclude", "testdata/|vendor/|builtin/",
 		`regexp used to skip package names`)
 	checkGenerated := flag.Bool("checkGenerated", false, `forwarded to linter "as is"`)
+	shorterErrLocation := flag.Bool("shorterErrLocation", true, `forwarded to linter "as is"`)
 
 	flag.Parse()
 
@@ -83,12 +85,12 @@ func Main() {
 		log.Fatalf("walk src-root: %v", err)
 	}
 
-	var args []string
-	args = append(args, "check-package", "-enable", *enable)
-	if *checkGenerated {
-		args = append(args, "-checkGenerated")
+	args := []string{
+		"check-package",
+		"-enable", *enable,
+		"-checkGenerated=" + fmt.Sprint(*checkGenerated),
+		"-shorterErrLocation=" + fmt.Sprint(*shorterErrLocation),
 	}
-
 	for p := range packages {
 		args = append(args, p)
 	}
