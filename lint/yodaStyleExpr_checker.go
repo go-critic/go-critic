@@ -40,10 +40,6 @@ func (c *yodaStyleExprChecker) isConstExpr(expr ast.Expr) bool {
 	return qualifiedName(expr) == "nil" || astp.IsBasicLit(expr)
 }
 
-func (c *yodaStyleExprChecker) isVar(expr ast.Expr) bool {
-	return astp.IsIdent(expr) || astp.IsSelectorExpr(expr)
-}
-
 func (c *yodaStyleExprChecker) warn(expr *ast.BinaryExpr) {
 	e := astp.AsBinaryExpr(astcopy.Expr(expr))
 	e.X, e.Y = e.Y, e.X
