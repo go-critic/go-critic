@@ -41,7 +41,7 @@ func (c *yodaStyleExprChecker) isConstExpr(expr ast.Expr) bool {
 }
 
 func (c *yodaStyleExprChecker) warn(expr *ast.BinaryExpr) {
-	e := astp.AsBinaryExpr(astcopy.Expr(expr))
+	e := astcopy.BinaryExpr(expr)
 	e.X, e.Y = e.Y, e.X
 	c.ctx.Warn(expr, "consider to change order in expression to %s", e)
 }
