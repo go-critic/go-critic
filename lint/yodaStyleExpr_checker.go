@@ -30,7 +30,7 @@ func (c *yodaStyleExprChecker) VisitLocalExpr(expr ast.Expr) {
 		return
 	}
 	if binexpr.Op == token.EQL || binexpr.Op == token.NEQ {
-		if c.isConstExpr(binexpr.X) && !c.isConstExpr(binexpr.Y) { //c.isVar(binexpr.Y) {
+		if c.isConstExpr(binexpr.X) && !c.isConstExpr(binexpr.Y) {
 			c.warn(binexpr)
 		}
 	}
