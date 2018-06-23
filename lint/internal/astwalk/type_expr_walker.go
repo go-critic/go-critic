@@ -5,6 +5,7 @@ import (
 	"go/token"
 	"go/types"
 
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"github.com/go-toolsmith/astp"
 )
 
@@ -44,7 +45,7 @@ func (w *typeExprWalker) visit(x ast.Expr) bool {
 func (w *typeExprWalker) walk(x ast.Node) bool {
 	switch x := x.(type) {
 	case *ast.ParenExpr:
-		if w.isTypeExpr(x.X) {
+		if lintutil.IsTypeExpr(w.info, x.X) {
 			return w.visit(x)
 		}
 		return true
@@ -54,13 +55,13 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 		// Because it's impossible for the visitor to distinguish such
 		// "required" parenthesis, walker skips outmost parenthesis in such cases.
 		parens, ok := x.Fun.(*ast.ParenExpr)
-		if ok && w.isTypeExpr(parens.X) && astp.IsStarExpr(parens.X) {
+		if ok && lintutil.IsTypeExpr(w.info, parens.X) && astp.IsStarExpr(parens.X) {
 			ast.Inspect(parens.X, w.walk)
 			return false
 		}
 		return true
 	case *ast.StarExpr:
-		if w.isTypeExpr(x.X) {
+		if lintutil.IsTypeExpr(w.info, x.X) {
 			return w.visit(x)
 		}
 		return true
@@ -88,26 +89,6 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 		return w.visit(x)
 	}
 	return true
-}
-
-func (w *typeExprWalker) isTypeExpr(x ast.Expr) bool {
-	switch x := x.(type) {
-	case *ast.StarExpr:
-		return w.isTypeExpr(x.X)
-	case *ast.ParenExpr:
-		return w.isTypeExpr(x.X)
-	case *ast.Ident:
-		// Identifier may be a type expression if object
-		// it reffers to is a type name.
-		_, ok := w.info.ObjectOf(x).(*types.TypeName)
-		return ok
-
-	case *ast.FuncType, *ast.StructType, *ast.InterfaceType, *ast.ArrayType, *ast.MapType:
-		return true
-
-	default:
-		return false
-	}
 }
 
 func (w *typeExprWalker) walkSignature(typ *ast.FuncType) {

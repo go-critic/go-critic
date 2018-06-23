@@ -3,30 +3,30 @@
 [![Build Status](https://travis-ci.org/go-critic/go-critic.svg?branch=master)](https://travis-ci.org/go-critic/go-critic)
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-critic/go-critic)](https://goreportcard.com/report/github.com/go-critic/go-critic)
 
-Go source code linter that brings checks that are currently not implemented in other linters.
+Go source code linter providing checks currently missing from other linters.
 
 ![Logo](https://avatars1.githubusercontent.com/u/40007520?s=400&u=b44287d8845a63fb0102d5259710c11ea367bb13&v=4)
 
 
 **Project goals:**
 
-- Provide as much useful checks as possible.
-  We're prototyping and experimenting here
+- Provide as many useful checks as possible;
+  We're prototyping and experimenting here.
 
-- When specific check implementation is mature and proven useful,
-  propose it's integration into other linter
+- When a specific check implementation is mature and proven useful,
+  propose its integration into other linters.
 
-- If good checker can't find a better home, it stays here
+- If a good checker can't find a better home, it stays here.
 
 We say **yes!** to most checks that feel right and can help someone.
 
-You can use this tool to make whole codebase checks from time to time.
+You can use this tool to make whole codebase checks periodically.
 
 There is never too much static code analysis. Try it out.
 
 ## Documentation
 
-Latest documentation is available at [go-critic.github.io](https://go-critic.github.io/overview).
+The latest documentation is available at [go-critic.github.io](https://go-critic.github.io/overview).
 
 ## Installation
 
@@ -56,9 +56,9 @@ Examples:
 
 ## Contributing
 
-This project aims to be contributing-friendly.
+This project aims to be contribution-friendly.
 
-We're using optimistic merging strategy most of the time.
+We're using an optimistic merging strategy most of the time.
 In short, this means that if your contribution has some flaws, we can still merge it and then
 fix them by ourselves. Experimental and work-in-progress checkers are isolated, so nothing bad will happen.
 
