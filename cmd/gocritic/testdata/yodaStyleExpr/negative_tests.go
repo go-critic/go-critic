@@ -8,3 +8,8 @@ func g1() {
 	if 10 > a {
 	}
 }
+
+func g2() bool {
+	f := func() interface{} { return nil }
+	return f() != nil
+}

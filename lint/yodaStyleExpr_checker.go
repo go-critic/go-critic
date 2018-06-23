@@ -11,6 +11,9 @@ package lint
 import (
 	"go/ast"
 	"go/token"
+
+	"github.com/cristaloleg/astp"
+	"github.com/go-toolsmith/astcopy"
 )
 
 func init() {
@@ -27,29 +30,22 @@ func (c *yodaStyleExprChecker) VisitLocalExpr(expr ast.Expr) {
 		return
 	}
 	if binexpr.Op == token.EQL || binexpr.Op == token.NEQ {
-		if c.isConstExpr(binexpr.X) && c.isVar(binexpr.Y) {
+		if c.isConstExpr(binexpr.X) && !c.isConstExpr(binexpr.Y) { //c.isVar(binexpr.Y) {
 			c.warn(binexpr)
 		}
 	}
 }
 
 func (c *yodaStyleExprChecker) isConstExpr(expr ast.Expr) bool {
-	if qualifiedName(expr) == "nil" {
-		return true
-	}
-	_, ok := expr.(*ast.BasicLit)
-	return ok
+	return qualifiedName(expr) == "nil" || astp.IsBasicLit(expr)
 }
 
 func (c *yodaStyleExprChecker) isVar(expr ast.Expr) bool {
-	switch expr.(type) {
-	case *ast.Ident, *ast.SelectorExpr:
-		return true
-	default:
-		return false
-	}
+	return astp.IsIdent(expr) || astp.IsSelectorExpr(expr)
 }
 
-func (c *yodaStyleExprChecker) warn(expr ast.Expr) {
-	c.ctx.Warn(expr, "consider to change order of expression in %s", expr)
+func (c *yodaStyleExprChecker) warn(expr *ast.BinaryExpr) {
+	e := astp.AsBinaryExpr(astcopy.Expr(expr))
+	e.X, e.Y = e.Y, e.X
+	c.ctx.Warn(expr, "consider to change order in expression to %s", e)
 }
