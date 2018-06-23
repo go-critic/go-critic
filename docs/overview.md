@@ -147,6 +147,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#regexpMust-ref">regexpMust</a></td>
+        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#stdExpr-ref">stdExpr</a></td>
         <td>Detects constant expressions that can be replaced by a named constant
 
@@ -536,6 +542,25 @@ for i := range xs {
 	x := &xs[i]
 	// Loop body.
 }
+
+```
+
+
+<a name="regexpMust-ref"></a>
+## regexpMust
+Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
+
+
+
+**Before:**
+```go
+re, _ := regexp.Compile(`const pattern`)
+
+```
+
+**After:**
+```go
+re := regexp.MustCompile(`const pattern`)
 
 ```
 
