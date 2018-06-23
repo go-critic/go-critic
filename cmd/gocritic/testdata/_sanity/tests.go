@@ -164,3 +164,19 @@ func (myString) noReceiverName1(a, b string) {}
 func (*myString) noReceiverName2() (a, b string) { return "", "" }
 
 var noInit1, noInit2 int
+
+func funcCalls() {
+	f0 := func() {}
+	f1 := func(x int) {}
+	f2 := func(x, y int) {}
+	f3 := func(x, y, z int) {}
+	fVariadic := func(xs ...int) {}
+
+	f0()
+	f1(1)
+	f2(1, 2)
+	f3(1, 2, 3)
+	fVariadic()
+	fVariadic(1, 2)
+	fVariadic([]int{1, 2}...)
+}
