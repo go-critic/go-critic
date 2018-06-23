@@ -12,12 +12,12 @@ import (
 	"go/ast"
 	"go/token"
 
-	"github.com/cristaloleg/astp"
 	"github.com/go-toolsmith/astcopy"
+	"github.com/go-toolsmith/astp"
 )
 
 func init() {
-	addChecker(&yodaStyleExprChecker{})
+	addChecker(&yodaStyleExprChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
 type yodaStyleExprChecker struct {
