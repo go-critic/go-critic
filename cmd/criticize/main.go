@@ -245,11 +245,12 @@ func (l *linter) checkFile(f *ast.File) {
 }
 
 func shortenLocation(loc string) string {
-	if strings.HasPrefix(loc, build.Default.GOPATH) {
+	switch {
+	case strings.HasPrefix(loc, build.Default.GOPATH):
 		return strings.Replace(loc, build.Default.GOPATH, "$GOPATH", 1)
-	}
-	if strings.HasPrefix(loc, build.Default.GOROOT) {
+	case strings.HasPrefix(loc, build.Default.GOROOT):
 		return strings.Replace(loc, build.Default.GOROOT, "$GOROOT", 1)
+	default:
+		return loc
 	}
-	return loc
 }
