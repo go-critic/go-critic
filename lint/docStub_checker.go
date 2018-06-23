@@ -23,7 +23,7 @@ import (
 )
 
 func init() {
-	addChecker(&docStubChecker{}, attrSyntaxOnly)
+	addChecker(&docStubChecker{}, attrSyntaxOnly, attrExperimental)
 }
 
 type docStubChecker struct {

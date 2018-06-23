@@ -57,10 +57,10 @@ func (c *typeUnparenChecker) checkTypeExpr(x ast.Expr) {
 func (c *typeUnparenChecker) VisitTypeExpr(x ast.Expr) {
 	switch x := x.(type) {
 	case *ast.ParenExpr:
-		switch {
-		case astp.IsStructType(x.X):
+		switch x.X.(type) {
+		case *ast.StructType:
 			c.ctx.Warn(x, "could simplify (struct{...}) to struct{...}")
-		case astp.IsInterfaceType(x.X):
+		case *ast.InterfaceType:
 			c.ctx.Warn(x, "could simplify (interface{...}) to interface{...}")
 		default:
 			c.warn(x, c.unparenExpr(astcopy.Expr(x)))
