@@ -3,6 +3,7 @@ package criticize
 import (
 	"flag"
 	"go/ast"
+	"go/build"
 	"go/parser"
 	"go/types"
 	"log"
@@ -30,9 +31,10 @@ type linter struct {
 
 	// Command line flags:
 
-	withOpinionated  bool
-	withExperimental bool
-	checkGenerated   bool
+	withOpinionated    bool
+	withExperimental   bool
+	checkGenerated     bool
+	shorterErrLocation bool
 
 	packages        []string
 	enabledCheckers []string
@@ -79,6 +81,8 @@ func parseArgv(l *linter) {
 		`exit code to be used when lint issues are found`)
 	flag.BoolVar(&l.checkGenerated, "checkGenerated", false,
 		`whether to check machine-generated files`)
+	flag.BoolVar(&l.shorterErrLocation, "shorterErrLocation", true,
+		`whether to replace error location prefix with $GOROOT and $GOPATH`)
 
 	flag.Parse()
 
@@ -229,10 +233,24 @@ func (l *linter) checkFile(f *ast.File) {
 
 			for _, warn := range c.Check(f) {
 				l.foundIssues = true
-				pos := l.ctx.FileSet().Position(warn.Node.Pos())
-				log.Printf("%s: %s: %v\n", pos, c.Rule, warn.Text)
+				loc := l.ctx.FileSet().Position(warn.Node.Pos()).String()
+				if l.shorterErrLocation {
+					loc = shortenLocation(loc)
+				}
+				log.Printf("%s: %s: %v\n", loc, c.Rule, warn.Text)
 			}
 		}(c)
 	}
 	wg.Wait()
+}
+
+func shortenLocation(loc string) string {
+	switch {
+	case strings.HasPrefix(loc, build.Default.GOPATH):
+		return strings.Replace(loc, build.Default.GOPATH, "$GOPATH", 1)
+	case strings.HasPrefix(loc, build.Default.GOROOT):
+		return strings.Replace(loc, build.Default.GOROOT, "$GOROOT", 1)
+	default:
+		return loc
+	}
 }
