@@ -4,11 +4,11 @@ package lint
 //
 // @Before:
 // fmt.Sprintf("whatever")
-// fmt.Errorf("whereever")
+// fmt.Errorf("wherever")
 //
 // @After:
 // fmt.Sprint("whatever")
-// errors.New("whereever")
+// errors.New("wherever")
 
 import (
 	"go/ast"
