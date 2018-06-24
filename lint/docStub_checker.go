@@ -33,12 +33,12 @@ type docStubChecker struct {
 }
 
 func (c *docStubChecker) Init() {
-	re := `//\s?\w+[^a-zA-Z]+$`
+	re := `//\s?\w+([^a-zA-Z]+|( XXX.?))$`
 	c.badCommentRE = regexp.MustCompile(re)
 }
 
 func (c *docStubChecker) VisitFuncDecl(decl *ast.FuncDecl) {
-	if decl.Doc != nil && c.badCommentRE.MatchString(decl.Doc.List[0].Text) {
+	if decl.Name.IsExported() && decl.Doc != nil && c.badCommentRE.MatchString(decl.Doc.List[0].Text) {
 		c.warn(decl)
 	}
 }
