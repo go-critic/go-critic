@@ -95,12 +95,6 @@ Go source code linter that brings checks that are currently not implemented in o
 
 </td>
       </tr>
-      <tr>
-        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
-        <td>Detects Yoda style expressions that suggest to replace them.
-
-</td>
-      </tr>
 </table>
 
 **Experimental:**
@@ -131,6 +125,12 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#dupCase-ref">dupCase</a></td>
         <td>Detects duplicated case clauses inside switch statements.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#emptyFmt-ref">emptyFmt</a></td>
+        <td>Detects usages of formatting functions without formatting arguments.
 
 </td>
       </tr>
@@ -185,6 +185,12 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#unusedParam-ref">unusedParam</a></td>
         <td>Detects unused params and suggests to name them as `_` (underscore).
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
+        <td>Detects Yoda style expressions that suggest to replace them.
 
 </td>
       </tr>
@@ -380,7 +386,28 @@ default:
 ```
 
 
-`elseif` is syntax-only checker (fast).<a name="evalOrder-ref"></a>
+`elseif` is syntax-only checker (fast).<a name="emptyFmt-ref"></a>
+## emptyFmt
+Detects usages of formatting functions without formatting arguments.
+
+
+
+**Before:**
+```go
+fmt.Sprintf("whatever")
+fmt.Errorf("whereever")
+
+```
+
+**After:**
+```go
+fmt.Sprint("whatever")
+errors.New("whereever")
+
+```
+
+
+<a name="evalOrder-ref"></a>
 ## evalOrder
 Detects potentially unsafe dependencies on evaluation order.
 
@@ -855,3 +882,4 @@ if ptr != nil {}
 ```
 
 
+`yodaStyleExpr` is very opinionated.
