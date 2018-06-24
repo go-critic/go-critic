@@ -12,7 +12,6 @@ package lint
 
 import (
 	"go/ast"
-	"strings"
 )
 
 func init() {
@@ -35,23 +34,23 @@ func (c *emptyFmtChecker) VisitExpr(expr ast.Expr) {
 	case 1:
 		switch name {
 		case "fmt.Sprintf":
-			c.warn(call, name, "fmt.Sprint")
+			c.warn(call, "fmt.Sprint")
 		case "log.Printf":
-			c.warn(call, name, "log.Print")
+			c.warn(call, "log.Print")
 		case "log.Panicf":
-			c.warn(call, name, "log.Panic")
+			c.warn(call, "log.Panic")
 		case "log.Fatalf":
-			c.warn(call, name, "log.Fatal")
+			c.warn(call, "log.Fatal")
 		case "fmt.Errorf":
-			c.warn(call, name, "errors.New")
+			c.warn(call, "errors.New")
 		}
 	case 2:
 		if name == "fmt.Fprintf" {
-			c.warn(call, name, "fmt.Fprint")
+			c.warn(call, "fmt.Fprint")
 		}
 	}
 }
 
-func (c *emptyFmtChecker) warn(cause *ast.CallExpr, original, suggestion string) {
-	c.ctx.Warn(cause, "consider to change function to %s", strings.Replace(original, original, suggestion, 1))
+func (c *emptyFmtChecker) warn(cause *ast.CallExpr, suggestion string) {
+	c.ctx.Warn(cause, "consider to change function to %s", suggestion)
 }
