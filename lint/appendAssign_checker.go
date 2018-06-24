@@ -28,14 +28,6 @@ type appendAssignChecker struct {
 	checkerBase
 }
 
-func (c *appendAssignChecker) checkAssign(lhs, rhs ast.Expr) {
-	call, ok := rhs.(*ast.CallExpr)
-	if !ok || qualifiedName(call.Fun) != "append" {
-		return
-	}
-	c.checkAppend(lhs, call)
-}
-
 func (c *appendAssignChecker) VisitStmt(stmt ast.Stmt) {
 	assign, ok := stmt.(*ast.AssignStmt)
 	if !ok || assign.Tok != token.ASSIGN || len(assign.Lhs) != len(assign.Rhs) {
