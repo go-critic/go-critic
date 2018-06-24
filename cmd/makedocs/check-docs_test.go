@@ -8,6 +8,8 @@ const (
 	testdataPath = "./testdata"
 )
 
+var docCheckers []checkerDoc
+
 func parseFiles(path string) []checkerDoc {
 	pkgs := getPkgs(path, "_test.go")
 	for name, f := range pkgs["lint"].Files {

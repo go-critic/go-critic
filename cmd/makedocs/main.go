@@ -36,8 +36,6 @@ type checkerDoc struct {
 
 var checkers []checkerDoc
 
-var docCheckers []checkerDoc
-
 func main() {
 	tmpl, err := template.ParseFiles(templatesPath + "overview.md.tmpl")
 	if err != nil {
