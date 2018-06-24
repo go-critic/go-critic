@@ -42,12 +42,6 @@ func (c *appendAssignChecker) VisitStmt(stmt ast.Stmt) {
 	}
 }
 
-func (c *appendAssignChecker) matchSlices(cause ast.Node, x, y ast.Expr) {
-	if !astequal.Expr(x, astutil.Unparen(y)) {
-		c.warn(cause)
-	}
-}
-
 func (c *appendAssignChecker) checkAppend(x ast.Expr, call *ast.CallExpr) {
 	if call.Ellipsis != token.NoPos {
 		// Try to detect `xs = append(ys, xs...)` idiom.
@@ -92,7 +86,12 @@ func (c *appendAssignChecker) checkAppend(x ast.Expr, call *ast.CallExpr) {
 	case *ast.IndexExpr, *ast.Ident, *ast.SelectorExpr:
 		c.matchSlices(call, x, y)
 	}
+}
 
+func (c *appendAssignChecker) matchSlices(cause ast.Node, x, y ast.Expr) {
+	if !astequal.Expr(x, astutil.Unparen(y)) {
+		c.warn(cause)
+	}
 }
 
 func (c *appendAssignChecker) warn(cause ast.Node) {
