@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"go/ast"
 	"go/parser"
 	"go/token"
 	"io/ioutil"
@@ -35,18 +36,15 @@ type checkerDoc struct {
 
 var checkers []checkerDoc
 
+var docCheckers []checkerDoc
+
 func main() {
 	tmpl, err := template.ParseFiles(templatesPath + "overview.md.tmpl")
 	if err != nil {
 		log.Fatal(err)
 	}
-	pkgs, err := parser.ParseDir(&token.FileSet{}, checkersPath,
-		func(inf os.FileInfo) bool {
-			return strings.HasSuffix(inf.Name(), "_checker.go")
-		}, parser.ParseComments)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	pkgs := getPkgs(checkersPath, "_checker.go")
 
 	for _, r := range lint.RuleList() {
 		log.Printf("parsing %s\n", r.Name())
@@ -62,12 +60,7 @@ func main() {
 			Experimental:    r.Experimental,
 			VeryOpinionated: r.VeryOpinionated,
 		}
-		for _, comment := range f.Comments {
-			if strings.HasPrefix(comment.Text(), "!") {
-				parseComment(comment.Text(), &c)
-				break
-			}
-		}
+		parseComments(f, &c)
 		checkers = append(checkers, c)
 
 	}
@@ -163,4 +156,37 @@ func parseNote(lines []string, index *int, c *checkerDoc) error {
 		*index++
 	}
 	return nil
+}
+
+func getPkgs(path string, suffix string) map[string]*ast.Package {
+	filter := func(inf os.FileInfo) bool {
+		return strings.HasSuffix(inf.Name(), suffix)
+	}
+
+	pkgs, err := parser.ParseDir(&token.FileSet{}, path,
+		filter, parser.ParseComments)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return pkgs
+}
+
+func parseComments(file *ast.File, cd *checkerDoc) {
+	for _, comment := range file.Comments {
+		if strings.HasPrefix(comment.Text(), "!") {
+			parseComment(comment.Text(), cd)
+			break
+		}
+	}
+}
+
+func parseFiles(path string) []checkerDoc {
+	pkgs := getPkgs(path, "_test.go")
+	for name, f := range pkgs["lint"].Files {
+		d := checkerDoc{Name: name}
+		parseComments(f, &d)
+		docCheckers = append(docCheckers, d)
+	}
+	return docCheckers
 }
