@@ -8,6 +8,16 @@ const (
 	testdataPath = "./testdata"
 )
 
+func parseFiles(path string) []checkerDoc {
+	pkgs := getPkgs(path, "_test.go")
+	for name, f := range pkgs["lint"].Files {
+		d := checkerDoc{Name: name}
+		parseComments(f, &d)
+		docCheckers = append(docCheckers, d)
+	}
+	return docCheckers
+}
+
 func TestOutput(t *testing.T) {
 	wantDoc := checkerDoc{
 		ShortDescription: "This is short desc",
