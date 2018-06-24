@@ -27,14 +27,16 @@ type namedConstChecker struct {
 }
 
 func (c *namedConstChecker) EnterChilds(x ast.Node) bool {
-	if x, ok := x.(*ast.BinaryExpr); ok {
+	switch x := x.(type) {
+	case *ast.BinaryExpr:
 		// TODO(quasilyte): figure out how to handle
 		// things like 1*time.Second without false
 		// positives without adhoc check and without
 		// introducing too much of false negatives.
 		return !c.isTimeExpr(x)
+	default:
+		return true
 	}
-	return true
 }
 
 func (c *namedConstChecker) isTimeExpr(x *ast.BinaryExpr) bool {
@@ -79,7 +81,13 @@ func (c *namedConstChecker) VisitExpr(x ast.Expr) {
 			continue
 		}
 		if constant.Compare(tv.Value, token.EQL, cv.Val()) {
-			c.warn(x, tv.Value, cv)
+			// Current way to avoid false positives for definitions
+			// themself is to compare positions.
+			defLine := c.ctx.fileSet.Position(cv.Pos()).Line
+			usageLine := c.ctx.fileSet.Position(x.Pos()).Line
+			if defLine != usageLine {
+				c.warn(x, tv.Value, cv)
+			}
 		}
 	}
 }

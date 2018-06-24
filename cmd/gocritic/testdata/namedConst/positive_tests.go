@@ -13,19 +13,39 @@ const (
 	colBlue
 )
 
-func returnRaw1() color {
-	/// use colDefault instead of 0
-	return 0
-}
+type typename string
 
-func returnRaw2() time.Duration {
-	/// use time.Nanosecond instead of 1
-	return 1
-}
+const (
+	tnInt    typename = "int"
+	tnString typename = "string"
+)
 
-func returnRaw4() color {
-	/// use colRed instead of 1
-	return 1
+func rawReturn() {
+	_ = func() color {
+		/// use colDefault instead of 0
+		return 0
+	}
+
+	_ = func() time.Duration {
+		/// use time.Nanosecond instead of 1
+		return 1
+	}
+
+	_ = func() color {
+		/// use colRed instead of 1
+		return 1
+	}
+
+	_ = func() typename {
+		/// use tnInt instead of "int"
+		return "int"
+	}
+
+	_ = func() typename {
+		/// use tnInt instead of "int"
+		/// use tnString instead of "string"
+		return "int" + typename("/") + "string"
+	}
 }
 
 func conversions() {
