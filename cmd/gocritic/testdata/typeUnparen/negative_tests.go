@@ -74,3 +74,7 @@ func ptrCast() {
 
 	_ = (***int)(nil)
 }
+
+func goodMethodExpr() {
+	_ = (*noopWriter).myWrite
+}

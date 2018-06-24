@@ -162,3 +162,8 @@ func conversions() {
 	/// could simplify ***(*(int)) to ****int
 	_ = (***(*(int)))(nil)
 }
+
+func methodExpr() {
+	/// could simplify *(noopWriter) to *noopWriter
+	_ = (*(noopWriter)).myWrite
+}
