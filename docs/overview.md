@@ -95,12 +95,6 @@ Go source code linter that brings checks that are currently not implemented in o
 
 </td>
       </tr>
-      <tr>
-        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
-        <td>Detects Yoda style expressions that suggest to replace them.
-
-</td>
-      </tr>
 </table>
 
 **Experimental:**
@@ -110,6 +104,12 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Name</th>
     <th>Short description</th>
   </tr>
+      <tr>
+        <td><a href="#appendAssign-ref">appendAssign</a></td>
+        <td>Detects suspicious append result assignments.
+
+</td>
+      </tr>
       <tr>
         <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a></td>
         <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
@@ -131,6 +131,12 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#dupCase-ref">dupCase</a></td>
         <td>Detects duplicated case clauses inside switch statements.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#emptyFmt-ref">emptyFmt</a></td>
+        <td>Detects usages of formatting functions without formatting arguments.
 
 </td>
       </tr>
@@ -188,7 +194,34 @@ Go source code linter that brings checks that are currently not implemented in o
 
 </td>
       </tr>
+      <tr>
+        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
+        <td>Detects Yoda style expressions that suggest to replace them.
+
+</td>
+      </tr>
 </table>
+
+
+<a name="appendAssign-ref"></a>
+## appendAssign
+Detects suspicious append result assignments.
+
+
+
+**Before:**
+```go
+p.positives = append(p.negatives, x)
+p.negatives = append(p.negatives, y)
+
+```
+
+**After:**
+```go
+p.positives = append(p.positives, x)
+p.negatives = append(p.negatives, y)
+
+```
 
 
 <a name="appendCombine-ref"></a>
@@ -380,7 +413,28 @@ default:
 ```
 
 
-`elseif` is syntax-only checker (fast).<a name="evalOrder-ref"></a>
+`elseif` is syntax-only checker (fast).<a name="emptyFmt-ref"></a>
+## emptyFmt
+Detects usages of formatting functions without formatting arguments.
+
+
+
+**Before:**
+```go
+fmt.Sprintf("whatever")
+fmt.Errorf("wherever")
+
+```
+
+**After:**
+```go
+fmt.Sprint("whatever")
+errors.New("wherever")
+
+```
+
+
+<a name="evalOrder-ref"></a>
 ## evalOrder
 Detects potentially unsafe dependencies on evaluation order.
 
@@ -855,3 +909,4 @@ if ptr != nil {}
 ```
 
 
+`yodaStyleExpr` is very opinionated.

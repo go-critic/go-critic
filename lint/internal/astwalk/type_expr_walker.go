@@ -54,12 +54,10 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 		// These casts are represented as call expressions.
 		// Because it's impossible for the visitor to distinguish such
 		// "required" parenthesis, walker skips outmost parenthesis in such cases.
-		parens, ok := x.Fun.(*ast.ParenExpr)
-		if ok && lintutil.IsTypeExpr(w.info, parens.X) && astp.IsStarExpr(parens.X) {
-			ast.Inspect(parens.X, w.walk)
-			return false
-		}
-		return true
+		return w.inspectInner(x.Fun)
+	case *ast.SelectorExpr:
+		// Like with conversions, method expressions are another special.
+		return w.inspectInner(x.X)
 	case *ast.StarExpr:
 		if lintutil.IsTypeExpr(w.info, x.X) {
 			return w.visit(x)
@@ -87,6 +85,15 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 		return false
 	case *ast.ArrayType:
 		return w.visit(x)
+	}
+	return true
+}
+
+func (w *typeExprWalker) inspectInner(x ast.Expr) bool {
+	parens, ok := x.(*ast.ParenExpr)
+	if ok && lintutil.IsTypeExpr(w.info, parens.X) && astp.IsStarExpr(parens.X) {
+		ast.Inspect(parens.X, w.walk)
+		return false
 	}
 	return true
 }

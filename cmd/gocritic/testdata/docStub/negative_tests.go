@@ -1,6 +1,6 @@
 package checker_test
 
 // Bar returns string.
-func Bar() {
+func Bar() {}
 
-}
+func foo() {}
