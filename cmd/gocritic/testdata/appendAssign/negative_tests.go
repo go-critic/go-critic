@@ -73,7 +73,6 @@ func appendNotInAssignment() {
 
 	var v1 = append(xs, 1)
 	var (
-		_  = 1
 		v2 = append(xs, v1[0])
 		v3 = append(v2[:], ys[0])
 	)
