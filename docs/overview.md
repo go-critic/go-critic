@@ -105,6 +105,12 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Short description</th>
   </tr>
       <tr>
+        <td><a href="#appendAssign-ref">appendAssign</a></td>
+        <td>Detects suspicious append result assignments.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a></td>
         <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
 
@@ -153,6 +159,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#namedConst-ref">namedConst</a></td>
+        <td>Detects literals that can be replaced with defined named const.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
         <td>Detects input and output parameters that have a type of pointer to referential type.
 
@@ -195,6 +207,27 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
 </table>
+
+
+<a name="appendAssign-ref"></a>
+## appendAssign
+Detects suspicious append result assignments.
+
+
+
+**Before:**
+```go
+p.positives = append(p.negatives, x)
+p.negatives = append(p.negatives, y)
+
+```
+
+**After:**
+```go
+p.positives = append(p.positives, x)
+p.negatives = append(p.negatives, y)
+
+```
 
 
 <a name="appendCombine-ref"></a>
@@ -395,14 +428,14 @@ Detects usages of formatting functions without formatting arguments.
 **Before:**
 ```go
 fmt.Sprintf("whatever")
-fmt.Errorf("whereever")
+fmt.Errorf("wherever")
 
 ```
 
 **After:**
 ```go
 fmt.Sprint("whatever")
-errors.New("whereever")
+errors.New("wherever")
 
 ```
 
@@ -513,6 +546,26 @@ a := qwert + 1
 b := qwert + 2
 c := qwert + 3
 v := (a+x) + (b+x) + (c+x)
+
+```
+
+
+<a name="namedConst-ref"></a>
+## namedConst
+Detects literals that can be replaced with defined named const.
+
+
+
+**Before:**
+```go
+// pos has type of token.Pos.
+if pos != 0 {}
+
+```
+
+**After:**
+```go
+if pos != token.NoPos {}
 
 ```
 
