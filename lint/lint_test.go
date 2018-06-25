@@ -66,17 +66,20 @@ func TestChecker(t *testing.T) {
 
 				for _, warn := range warns {
 					t.Logf("Warning `%s`", warn.Text)
-					var lineString, ruleName, text string
-					unpackSubmatches(warn.Text, warningRE, &lineString, &ruleName, &text)
-					line, err := strconv.Atoi(lineString)
-					if err != nil {
-						// 	t.Errorf("%s: invalid line number in %s", testFilename, lineString)
-					}
+
+					line := getWarnLine(ctx, warn.Node)
+					// var lineString, ruleName, text string
+					// unpackSubmatches(warn.Text, warningRE, &lineString, &ruleName, &text)
+					// line, err := strconv.Atoi(lineString)
+					t.Log(line)
+					// if err != nil {
+					// 	t.Errorf("%s: invalid line number in %s", testFilename, lineString)
+					// }
 					// if ruleName != rule.name {
 					// 	t.Errorf("%s: unexpected checker name: %s", testFilename, ruleName)
 					// 	continue
 					// }
-					if w := find(testWarns, line, text); w != nil {
+					if w := find(t, testWarns, line, warn.Text); w != nil {
 						if w.matched {
 							t.Errorf("%s:%d: multiple matches for %s", testFilename, line, w)
 						}
@@ -117,8 +120,9 @@ func TestChecker(t *testing.T) {
 	}
 }
 
-func find(warnings map[int][]*warning, line int, text string) *warning {
+func find(t *testing.T, warnings map[int][]*warning, line int, text string) *warning {
 	for _, y := range warnings[line] {
+		t.Logf("`%s` VS `%s`", text, y.text)
 		if text == y.text {
 			return y
 		}
@@ -192,7 +196,7 @@ func newTestFileWarning(t *testing.T, filapath string) map[int][]*warning {
 
 func (w warning) String() string {
 	return w.text
-	return "/// " + w.text
+	// return "/// " + w.text
 }
 
 func unpackSubmatches(s string, re *regexp.Regexp, dst ...*string) {
