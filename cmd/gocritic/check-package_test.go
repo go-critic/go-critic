@@ -107,18 +107,15 @@ func TestOutput(t *testing.T) {
 				unpackSubmatches(l, warningRE, &lineString, &ruleName, &text)
 				line, err := strconv.Atoi(lineString)
 				if err != nil {
-					t.Errorf("%s: invalid line number in %s",
-						testFilename, lineString)
+					t.Errorf("%s: invalid line number in %s", testFilename, lineString)
 				}
 				if ruleName != rule.name {
-					t.Errorf("%s: unexpected checker name: %s",
-						testFilename, ruleName)
+					t.Errorf("%s: unexpected checker name: %s", testFilename, ruleName)
 					continue
 				}
 				if w := f.Find(line, text); w != nil {
 					if w.matched {
-						t.Errorf("%s:%d: multiple matches for %s",
-							testFilename, line, w)
+						t.Errorf("%s:%d: multiple matches for %s", testFilename, line, w)
 					}
 					w.matched = true
 				} else {

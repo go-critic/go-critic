@@ -42,6 +42,9 @@ type importShadowChecker struct {
 }
 
 func (c *importShadowChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {
+	if c.ctx.Context.pkg == nil {
+		return
+	}
 	for _, imp := range c.ctx.Context.pkg.Imports() {
 		if imp.Name() == def.ID.Name {
 			c.warnImportShadowed(def.ID, imp)
