@@ -9,6 +9,8 @@ import (
 	"github.com/go-critic/go-critic/cmd/lintwalk"
 )
 
+var version = "0.3.2"
+
 // subCommand is an implementation of a gocritic sub-command.
 type subCommand struct {
 	// main is command entry point.
@@ -33,6 +35,11 @@ var subCommands = []*subCommand{
 		main:  lintwalk.Main,
 		name:  "check-project",
 		short: "run gocritic over specified source tree, recursively",
+	},
+	{
+		main:  printVersion,
+		name:  "version",
+		short: "print go-critic version",
 	},
 }
 
@@ -59,6 +66,10 @@ func main() {
 	// The called function may exit with non-zero status.
 	// No code should follow this call.
 	cmd.main()
+}
+
+func printVersion() {
+	fmt.Printf("go-critic version: %s\n", version)
 }
 
 // findSubCommand looks up subCommand by it's name.
