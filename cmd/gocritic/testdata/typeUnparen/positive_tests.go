@@ -122,3 +122,48 @@ var _ = []interface{}{
 		)
 	},
 }
+
+/// could simplify *(noopWriter) to *noopWriter
+var _ myWriter = (*(noopWriter))(nil)
+
+func typeAssert(x interface{}) {
+	/// could simplify (int) to int
+	_ = x.((int))
+
+	/// could simplify (*(int)) to *int
+	_ = x.((*(int)))
+
+	/// could simplify *(int) to *int
+	_ = x.(*(int))
+}
+
+func newCall() {
+	/// could simplify (int) to int
+	_ = new((int))
+
+	/// could simplify *(*(*(int))) to ***int
+	_ = new(*(*(*(int))))
+}
+
+func conversions() {
+	/// could simplify (int) to int
+	/// could simplify (int32) to int32
+	_ = int((int)((int32)(0)))
+
+	/// could simplify (int) to int
+	_ = (int)(1)
+
+	/// could simplify *(int) to *int
+	_ = (*(int))(nil)
+
+	/// could simplify *(*(int)) to **int
+	_ = (*(*(int)))(nil)
+
+	/// could simplify ***(*(int)) to ****int
+	_ = (***(*(int)))(nil)
+}
+
+func methodExpr() {
+	/// could simplify *(noopWriter) to *noopWriter
+	_ = (*(noopWriter)).myWrite
+}

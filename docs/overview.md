@@ -30,12 +30,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#docStub-ref">docStub</a></td>
-        <td>Detects comments that silence go lint complaints about doc-comment.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#elseif-ref">elseif</a></td>
         <td>Detects repeated if-else statements and suggests to replace them with switch statement.
 
@@ -54,12 +48,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
-        <td>Detects input and output parameters that have a type of pointer to referential type.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
         <td>Detects expensive copies of `for` loop range expressions.
 
@@ -74,12 +62,6 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
         <td>Detects switch statements that could be better written as if statements.
-
-</td>
-      </tr>
-      <tr>
-        <td><a href="#stdExpr-ref">stdExpr</a></td>
-        <td>Detects constant expressions that can be replaced by a named constant
 
 </td>
       </tr>
@@ -108,18 +90,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
-        <td>Detects calls of unexported method from unexported type outside that type.
-
-</td>
-      </tr>
-      <tr>
-        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
-        <td>For functions with multiple return values, detects unnamed results
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#unslice-ref">unslice</a></td>
         <td>Detects slice expressions that can be simplified to sliced expression itself.
 
@@ -135,8 +105,50 @@ Go source code linter that brings checks that are currently not implemented in o
     <th>Short description</th>
   </tr>
       <tr>
+        <td><a href="#appendAssign-ref">appendAssign</a></td>
+        <td>Detects suspicious append result assignments.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a></td>
         <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#boolOpt-ref">boolOpt</a></td>
+        <td>Detects bool expressions that can be simplified.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#docStub-ref">docStub</a></td>
+        <td>Detects comments that silence go lint complaints about doc-comment.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#dupCase-ref">dupCase</a></td>
+        <td>Detects duplicated case clauses inside switch statements.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#emptyFmt-ref">emptyFmt</a></td>
+        <td>Detects usages of formatting functions without formatting arguments.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#evalOrder-ref">evalOrder</a></td>
+        <td>Detects potentially unsafe dependencies on evaluation order.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#importShadow-ref">importShadow</a></td>
+        <td>Detects when imported package names shadowed in assignments.
 
 </td>
       </tr>
@@ -147,13 +159,75 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#namedConst-ref">namedConst</a></td>
+        <td>Detects literals that can be replaced with defined named const.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
+        <td>Detects input and output parameters that have a type of pointer to referential type.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#regexpMust-ref">regexpMust</a></td>
+        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#stdExpr-ref">stdExpr</a></td>
+        <td>Detects constant expressions that can be replaced by a named constant
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
+        <td>Detects calls of unexported method from unexported type outside that type.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
+        <td>For functions with multiple return values, detects unnamed results
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#unusedParam-ref">unusedParam</a></td>
         <td>Detects unused params and suggests to name them as `_` (underscore).
 
 </td>
       </tr>
+      <tr>
+        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
+        <td>Detects Yoda style expressions that suggest to replace them.
+
+</td>
+      </tr>
 </table>
 
+
+<a name="appendAssign-ref"></a>
+## appendAssign
+Detects suspicious append result assignments.
+
+
+
+**Before:**
+```go
+p.positives = append(p.negatives, x)
+p.negatives = append(p.negatives, y)
+
+```
+
+**After:**
+```go
+p.positives = append(p.positives, x)
+p.negatives = append(p.negatives, y)
+
+```
 
 
 <a name="appendCombine-ref"></a>
@@ -176,6 +250,44 @@ xs = append(xs, 1, 2)
 ```
 
 
+<a name="boolFuncPrefix-ref"></a>
+## boolFuncPrefix
+Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+
+
+**Before:**
+```go
+func Enabled() bool
+
+```
+
+**After:**
+```go
+func IsEnabled() bool
+
+```
+
+
+`boolFuncPrefix` is very opinionated.<a name="boolOpt-ref"></a>
+## boolOpt
+Detects bool expressions that can be simplified.
+
+
+
+**Before:**
+```go
+a := !(elapsed >= expectElapsedMin)
+b := !(x) == !(y)
+
+```
+
+**After:**
+```go
+a := elapsed < expectElapsedMin
+b := (x) == (y)
+
+```
 
 
 <a name="builtinShadow-ref"></a>
@@ -204,9 +316,8 @@ func main() {
 
 ```
 
-`builtinShadow` is syntax-only checker (fast).
 
-<a name="captLocal-ref"></a>
+`builtinShadow` is syntax-only checker (fast).<a name="captLocal-ref"></a>
 ## captLocal
 Detects capitalized names for local variables.
 
@@ -224,9 +335,8 @@ func f(in int, out *int) (err error) {}
 
 ```
 
-`captLocal` is syntax-only checker (fast).
 
-<a name="docStub-ref"></a>
+`captLocal` is syntax-only checker (fast).<a name="docStub-ref"></a>
 ## docStub
 Detects comments that silence go lint complaints about doc-comment.
 
@@ -249,8 +359,30 @@ func Foo() {
 
 ```
 
-`docStub` is syntax-only checker (fast).> You can either remove a comment to let go lint find it or change stub to useful comment.
+> You can either remove a comment to let go lint find it or change stub to useful comment.
 > This checker makes it easier to detect stubs, the action is up to you.
+
+`docStub` is syntax-only checker (fast).<a name="dupCase-ref"></a>
+## dupCase
+Detects duplicated case clauses inside switch statements.
+
+
+
+**Before:**
+```go
+switch x {
+case ys[0], ys[1], ys[2], ys[0], ys[4]:
+}
+
+```
+
+**After:**
+```go
+switch x {
+case ys[0], ys[1], ys[2], ys[3], ys[4]:
+}
+
+```
 
 
 <a name="elseif-ref"></a>
@@ -286,7 +418,51 @@ default:
 
 ```
 
-`elseif` is syntax-only checker (fast).
+
+`elseif` is syntax-only checker (fast).<a name="emptyFmt-ref"></a>
+## emptyFmt
+Detects usages of formatting functions without formatting arguments.
+
+
+
+**Before:**
+```go
+fmt.Sprintf("whatever")
+fmt.Errorf("wherever")
+
+```
+
+**After:**
+```go
+fmt.Sprint("whatever")
+errors.New("wherever")
+
+```
+
+
+<a name="evalOrder-ref"></a>
+## evalOrder
+Detects potentially unsafe dependencies on evaluation order.
+
+
+
+**Before:**
+```go
+return mayModifySlice(&xs), xs[0]
+
+```
+
+**After:**
+```go
+// A)
+v := mayModifySlice(&xs)
+return v, xs[0]
+// B)
+v := xs[0]
+return mayModifySlice(&xs), v
+
+```
+
 
 <a name="flagDeref-ref"></a>
 ## flagDeref
@@ -307,9 +483,91 @@ flag.BoolVar(&b, "b", false, "b docs")
 
 ```
 
-`flagDeref` is syntax-only checker (fast).> Dereferencing returned pointers will lead to hard to find errors
+> Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
+`flagDeref` is syntax-only checker (fast).<a name="importShadow-ref"></a>
+## importShadow
+Detects when imported package names shadowed in assignments.
+
+
+
+**Before:**
+```go
+import (
+    "fmt"
+    "math"
+)
+func main() {
+    fmt.Println(math.Pi)
+    // shadowing math package
+    math := 10
+    fmt.Println(len)
+}
+
+```
+
+**After:**
+```go
+import (
+    "fmt"
+    "math"
+)
+func main() {
+    fmt.Println(math.Pi)
+    // change identificator name
+    value := 10
+    fmt.Println(value)
+}
+
+```
+
+
+<a name="longChain-ref"></a>
+## longChain
+Detects repeated expression chains and suggest to refactor them.
+
+
+
+**Before:**
+```go
+a := q.w.e.r.t + 1
+b := q.w.e.r.t + 2
+c := q.w.e.r.t + 3
+v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
+
+```
+
+**After:**
+```go
+x := xs[i+1]
+qwert := q.w.e.r.t
+a := qwert + 1
+b := qwert + 2
+c := qwert + 3
+v := (a+x) + (b+x) + (c+x)
+
+```
+
+
+<a name="namedConst-ref"></a>
+## namedConst
+Detects literals that can be replaced with defined named const.
+
+
+
+**Before:**
+```go
+// pos has type of token.Pos.
+if pos != 0 {}
+
+```
+
+**After:**
+```go
+if pos != token.NoPos {}
+
+```
 
 
 <a name="paramTypeCombine-ref"></a>
@@ -330,9 +588,8 @@ func foo(a, b, c, d, e, f, g int) {}
 
 ```
 
-`paramTypeCombine` is syntax-only checker (fast).
 
-<a name="ptrToRefParam-ref"></a>
+`paramTypeCombine` is syntax-only checker (fast).<a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
 Detects input and output parameters that have a type of pointer to referential type.
 
@@ -352,7 +609,6 @@ func f(m map[string]int) (ch chan *int)
 
 > Slices are not as referential as maps or channels, but it's usually
 > better to return them by value rather than modyfing them by pointer.
-
 
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
@@ -378,7 +634,6 @@ for _, x := range &xs {
 }
 
 ```
-
 
 
 <a name="rangeValCopy-ref"></a>
@@ -407,6 +662,24 @@ for i := range xs {
 ```
 
 
+<a name="regexpMust-ref"></a>
+## regexpMust
+Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
+
+
+
+**Before:**
+```go
+re, _ := regexp.Compile(`const pattern`)
+
+```
+
+**After:**
+```go
+re := regexp.MustCompile(`const pattern`)
+
+```
+
 
 <a name="singleCaseSwitch-ref"></a>
 ## singleCaseSwitch
@@ -431,9 +704,8 @@ if x, ok := x.(int); ok {
 
 ```
 
-`singleCaseSwitch` is syntax-only checker (fast).
 
-<a name="stdExpr-ref"></a>
+`singleCaseSwitch` is syntax-only checker (fast).<a name="stdExpr-ref"></a>
 ## stdExpr
 Detects constant expressions that can be replaced by a named constant
 
@@ -452,7 +724,6 @@ intBytes := make([]byte, bits.IntSize)
 maxVal := math.MaxInt8
 
 ```
-
 
 
 <a name="switchTrue-ref"></a>
@@ -479,9 +750,8 @@ case x > y:
 
 ```
 
-`switchTrue` is syntax-only checker (fast).
 
-<a name="typeSwitchVar-ref"></a>
+`switchTrue` is syntax-only checker (fast).<a name="typeSwitchVar-ref"></a>
 ## typeSwitchVar
 Detects type switches that can benefit from type guard clause with variable.
 
@@ -514,7 +784,6 @@ default:
 ```
 
 
-
 <a name="typeUnparen-ref"></a>
 ## typeUnparen
 Detects unneded parenthesis inside type expressions and suggests to remove them.
@@ -537,9 +806,8 @@ func foo() []func([]func()) {
 
 ```
 
-`typeUnparen` is syntax-only checker (fast).
 
-<a name="underef-ref"></a>
+`typeUnparen` is syntax-only checker (fast).<a name="underef-ref"></a>
 ## underef
 Detects dereference expressions that can be omitted.
 
@@ -558,7 +826,6 @@ k.field = 5
 _ := a[5]
 
 ```
-
 
 
 <a name="unexportedCall-ref"></a>
@@ -589,9 +856,8 @@ func baz() {
 
 ```
 
-`unexportedCall` is very opinionated.
 
-<a name="unnamedResult-ref"></a>
+`unexportedCall` is very opinionated.<a name="unnamedResult-ref"></a>
 ## unnamedResult
 For functions with multiple return values, detects unnamed results
 
@@ -608,7 +874,6 @@ func f() (float64, float64)
 func f() (x, y float64)
 
 ```
-
 
 
 <a name="unslice-ref"></a>
@@ -632,81 +897,6 @@ copy(b, values...)
 ```
 
 
-
-
-
-<a name="boolFuncPrefix-ref"></a>
-## boolFuncPrefix
-Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
-
-
-
-**Before:**
-```go
-func Enabled() bool
-
-```
-
-**After:**
-```go
-func IsEnabled() bool
-
-```
-
-`boolFuncPrefix` is very opinionated.
-
-
-> You can either remove a comment to let go lint find it or change stub to useful comment.
-> This checker makes it easier to detect stubs, the action is up to you.
-
-
-> Dereferencing returned pointers will lead to hard to find errors
-> where flag values are not updated after flag.Parse().
-
-
-<a name="longChain-ref"></a>
-## longChain
-Detects repeated expression chains and suggest to refactor them.
-
-
-
-**Before:**
-```go
-a := q.w.e.r.t + 1
-b := q.w.e.r.t + 2
-c := q.w.e.r.t + 3
-v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
-
-```
-
-**After:**
-```go
-x := xs[i+1]
-qwert := q.w.e.r.t
-a := qwert + 1
-b := qwert + 2
-c := qwert + 3
-v := (a+x) + (b+x) + (c+x)
-
-```
-
-
-
-> Slices are not as referential as maps or channels, but it's usually
-> better to return them by value rather than modyfing them by pointer.
-
-
-
-
-
-
-
-
-
-
-
-
-
 <a name="unusedParam-ref"></a>
 ## unusedParam
 Detects unused params and suggests to name them as `_` (underscore).
@@ -726,3 +916,23 @@ func f(a int, _ float64) // everything is cool
 ```
 
 
+<a name="yodaStyleExpr-ref"></a>
+## yodaStyleExpr
+Detects Yoda style expressions that suggest to replace them.
+
+
+
+**Before:**
+```go
+if nil != ptr {}
+
+```
+
+**After:**
+```go
+if ptr != nil {}
+
+```
+
+
+`yodaStyleExpr` is very opinionated.

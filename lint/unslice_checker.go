@@ -25,14 +25,15 @@ type unsliceChecker struct {
 
 func (c *unsliceChecker) VisitLocalExpr(expr ast.Expr) {
 	if expr, ok := expr.(*ast.SliceExpr); ok {
-		if expr.Low == nil && expr.High == nil {
-			typ := c.ctx.typesInfo.TypeOf(expr)
-			switch typ := typ.(type) {
-			case *types.Basic:
-				if typ.Kind() == types.String {
-					c.warn(expr)
-				}
-			}
+		// No need to worry about 3-index slicing,
+		// because it's only permitted if expr.High is not nil.
+		if expr.Low != nil || expr.High != nil {
+			return
+		}
+		switch c.ctx.typesInfo.TypeOf(expr.X).(type) {
+		case *types.Slice, *types.Basic:
+			// Basic kind catches strings, Slice cathes everything else.
+			c.warn(expr)
 		}
 	}
 }

@@ -40,7 +40,6 @@ Go source code linter that brings checks that are currently not implemented in o
 
 
 {{ range .Checkers -}}
-{{- if not .Experimental }}
 <a name=" {{- .Name -}} -ref"></a>
 ## {{ .Name }}
 {{ .ShortDescription -}}
@@ -57,40 +56,11 @@ Go source code linter that brings checks that are currently not implemented in o
 {{ .After }}
 ```
 
+{{ .Note }}
 {{ if .SyntaxOnly -}}
   `{{.Name}}` is syntax-only checker (fast).
 {{- end -}}
 {{ if .VeryOpinionated -}}
   `{{.Name}}` is very opinionated.
 {{- end -}}
-{{ end -}}
-{{ .Note }}
-{{ end -}}
-
-{{ range .Checkers -}}
-{{- if .Experimental }}
-<a name=" {{- .Name -}} -ref"></a>
-## {{ .Name }}
-{{ .ShortDescription -}}
-
-{{ .Description }}
-
-**Before:**
-```go
-{{ .Before }}
-```
-
-**After:**
-```go
-{{ .After }}
-```
-
-{{ if .SyntaxOnly -}}
-  `{{.Name}}` is syntax-only checker (fast).
-{{- end -}}
-{{ if .VeryOpinionated -}}
-  `{{.Name}}` is very opinionated.
-{{- end -}}
-{{ end -}}
-{{ .Note }}
 {{ end -}}

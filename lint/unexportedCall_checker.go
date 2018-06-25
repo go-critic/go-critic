@@ -24,7 +24,7 @@ import (
 )
 
 func init() {
-	addChecker(&unexportedCallChecker{}, attrVeryOpinionated)
+	addChecker(&unexportedCallChecker{}, attrVeryOpinionated, attrExperimental)
 }
 
 type unexportedCallChecker struct {

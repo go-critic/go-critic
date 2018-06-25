@@ -39,7 +39,7 @@ import (
 // For example: func(http.ResponseWriter, *http.Request) => http.HandlerFunc.
 
 func init() {
-	addChecker(&stdExprChecker{})
+	addChecker(&stdExprChecker{}, attrExperimental)
 }
 
 // mathConstant describes named constant value defined in "math" package.

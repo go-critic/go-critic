@@ -54,3 +54,27 @@ type structWithEmbedding struct {
 	structToEmbed
 	Field int
 }
+
+var _ interface{} = (*int)(nil)
+
+type myWriter interface {
+	myWrite()
+}
+
+type noopWriter struct{}
+
+func (*noopWriter) myWrite() {}
+
+var _ myWriter = (*noopWriter)(nil)
+
+func ptrCast() {
+	_ = (*int)(nil)
+
+	_ = (*int)((*int)(nil))
+
+	_ = (***int)(nil)
+}
+
+func goodMethodExpr() {
+	_ = (*noopWriter).myWrite
+}
