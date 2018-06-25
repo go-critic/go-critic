@@ -39,7 +39,7 @@ var subCommands = []*subCommand{
 	{
 		main:  printVersion,
 		name:  "version",
-		short: "print go-critic version",
+		short: "print gocritic version",
 	},
 }
 
@@ -69,7 +69,7 @@ func main() {
 }
 
 func printVersion() {
-	fmt.Printf("go-critic version: %s\n", version)
+	log.Println(version)
 }
 
 // findSubCommand looks up subCommand by it's name.
