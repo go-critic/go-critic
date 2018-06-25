@@ -62,32 +62,33 @@ func (c *namedConstChecker) VisitExpr(x ast.Expr) {
 	if !ok {
 		return
 	}
-	named, ok := tv.Type.(*types.Named)
+	usageType, ok := tv.Type.(*types.Named)
 	if !ok {
 		return
 	}
+
 	// This linear search is not efficient, but does not
 	// bite hard since only few expressions make it up to
 	// this point. May consider building an index though.
-	typObj := named.Obj()
-	top := typObj.Pkg().Scope()
+	top := usageType.Obj().Pkg().Scope()
 	for _, name := range top.Names() {
 		cv, ok := top.Lookup(name).(*types.Const)
 		if !ok {
 			continue
 		}
-		typ2, ok := cv.Type().(*types.Named)
-		if !ok || typ2.Obj() != typObj {
+		defType, ok := cv.Type().(*types.Named)
+		if !ok || defType.Obj() != usageType.Obj() {
 			continue
 		}
-		if constant.Compare(tv.Value, token.EQL, cv.Val()) {
-			// Current way to avoid false positives for definitions
-			// themself is to compare positions.
-			defLine := c.ctx.fileSet.Position(cv.Pos()).Line
-			usageLine := c.ctx.fileSet.Position(x.Pos()).Line
-			if defLine != usageLine {
-				c.warn(x, tv.Value, cv)
-			}
+		if !constant.Compare(tv.Value, token.EQL, cv.Val()) {
+			continue
+		}
+		// Current way to avoid false positives for definitions
+		// themself is to compare positions.
+		defPos := c.ctx.fileSet.Position(cv.Pos())
+		usagePos := c.ctx.fileSet.Position(x.Pos())
+		if defPos.Line != usagePos.Line || defPos.Filename != usagePos.Filename {
+			c.warn(x, tv.Value, cv)
 		}
 	}
 }
