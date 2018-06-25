@@ -159,6 +159,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#namedConst-ref">namedConst</a></td>
+        <td>Detects literals that can be replaced with defined named const.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
         <td>Detects input and output parameters that have a type of pointer to referential type.
 
@@ -540,6 +546,26 @@ a := qwert + 1
 b := qwert + 2
 c := qwert + 3
 v := (a+x) + (b+x) + (c+x)
+
+```
+
+
+<a name="namedConst-ref"></a>
+## namedConst
+Detects literals that can be replaced with defined named const.
+
+
+
+**Before:**
+```go
+// pos has type of token.Pos.
+if pos != 0 {}
+
+```
+
+**After:**
+```go
+if pos != token.NoPos {}
 
 ```
 
