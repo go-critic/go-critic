@@ -69,6 +69,9 @@ func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
 	for {
 		switch e := stmt.Else.(type) {
 		case *ast.IfStmt:
+			if e.Init != nil {
+				return 0 // Give up
+			}
 			// Else if.
 			stmt = e
 			count++
