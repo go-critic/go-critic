@@ -47,5 +47,5 @@ type shadower struct{}
 /// shadow of imported package 'fmt'
 func (fmt shadower) f() {}
 
-//TODO: shadow of imported package 'xmath'
+/// shadow of imported package 'xmath'
 func renamedImportShadow(xmath int) {}
