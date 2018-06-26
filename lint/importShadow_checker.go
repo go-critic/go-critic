@@ -46,15 +46,15 @@ func (c *importShadowChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {
 		if v == nil || v.Parent() == nil {
 			continue
 		}
-		for _, name := range v.Parent().Names() {
-			pkg, ok := v.Parent().Lookup(name).(*types.PkgName)
-			if !ok {
-				continue
-			}
-			if name == def.ID.Name {
-				c.warnImportShadowed(def.ID, name, pkg.Imported())
-			}
+		elem := v.Parent().Lookup(def.ID.Name)
+		if elem == nil {
+			continue
 		}
+		pkg, ok := elem.(*types.PkgName)
+		if !ok {
+			continue
+		}
+		c.warnImportShadowed(def.ID, def.ID.Name, pkg.Imported())
 	}
 }
 
