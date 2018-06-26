@@ -56,6 +56,12 @@ type (
 		walkerEvents
 		VisitTypeExpr(ast.Expr)
 	}
+
+	// LocalCommentVisitor visits every comment inside function body.
+	LocalCommentVisitor interface {
+		walkerEvents
+		VisitLocalComment(*ast.CommentGroup)
+	}
 )
 
 // walkerEvents describes common hooks available for every visitor.
@@ -72,6 +78,7 @@ type walkerEvents interface {
 	//	- FuncDeclVisitor
 	//	- StmtListVisitor
 	//	- LocalDefVisitor
+	//	- LocalCommentVisitor
 	EnterChilds(ast.Node) bool
 }
 
