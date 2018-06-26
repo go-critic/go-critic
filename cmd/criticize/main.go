@@ -2,7 +2,6 @@ package criticize
 
 import (
 	"flag"
-	"fmt"
 	"go/ast"
 	"go/build"
 	"go/parser"
@@ -100,8 +99,6 @@ func parseArgv(l *linter) {
 	if *enable != enableAll && l.withOpinionated {
 		blame("-withOpinionated used with -enable=%q", *enable)
 	}
-
-	fmt.Printf("`%v` `%v`\n", *enable, *disable)
 
 	switch *enable {
 	case enableAll:
