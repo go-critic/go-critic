@@ -194,9 +194,7 @@ func isGenerated(f *ast.File) bool {
 
 func (l *linter) getFilename(f *ast.File) string {
 	// see https://github.com/golang/go/issues/24498
-	fname := l.prog.Fset.Position(f.Pos()).String() // ex: /usr/go/src/pkg/main.go:1:1
-	fname = strings.Split(fname, ":")[0]            // ex: /usr/go/src/pkg/main.go
-	return filepath.Base(fname)                     // ex: main.go
+	return filepath.Base(l.prog.Fset.Position(f.Pos()).Filename)
 }
 
 // ExitCode returns status code that should be used as an argument to os.Exit.

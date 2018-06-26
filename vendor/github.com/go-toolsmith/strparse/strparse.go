@@ -41,14 +41,18 @@ func Stmt(s string) ast.Stmt {
 	if err != nil {
 		return BadStmt
 	}
-	return node.Decls[0].(*ast.FuncDecl).Body.List[0]
+	fn := node.Decls[0].(*ast.FuncDecl)
+	if len(fn.Body.List) != 1 {
+		return BadStmt
+	}
+	return fn.Body.List[0]
 }
 
 // Decl parses single declaration node from s.
 // In case of parse error, BadDecl is returned.
 func Decl(s string) ast.Decl {
 	node, err := parser.ParseFile(token.NewFileSet(), "", "package main;"+s, 0)
-	if err != nil {
+	if err != nil || len(node.Decls) != 1 {
 		return BadDecl
 	}
 	return node.Decls[0]
