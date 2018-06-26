@@ -1,14 +1,12 @@
 package lint
 
 import (
-	"go/ast"
 	"go/parser"
 	"go/types"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -21,47 +19,52 @@ var (
 	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
 )
 
-func TestChecker(t *testing.T) {
+func TestCheckers(t *testing.T) {
 	for _, rule := range RuleList() {
 		t.Run(rule.Name(), func(t *testing.T) {
 			pkgPath := testdataPkgPath + rule.Name()
 
 			prog := newProg(t, pkgPath)
 			pkgInfo := prog.Imported[pkgPath]
-			files := prog.Imported[pkgPath].Files
 
 			ctx := NewContext(prog.Fset, sizes)
 			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 
-			for _, f := range files {
-				filename := getFilename(prog, f)
-				testFilepath := filepath.Join("testdata", rule.Name(), filename)
-				goldenWarns := newGoldenFile(t, testFilepath)
-
-				var unexpectedWarns []string
-
-				warns := NewChecker(rule, ctx).Check(f)
-
-				for _, warn := range warns {
-					line := getWarnLine(ctx, warn.Node)
-
-					if w := goldenWarns.find(line, warn.Text); w != nil {
-						if w.matched {
-							t.Errorf("%s:%d: multiple matches for %s", testFilepath, line, w)
-						}
-						w.matched = true
-					} else {
-						unexpectedWarns = append(unexpectedWarns, warn.Text)
-					}
-				}
-
-				goldenWarns.checkUnmatched(t, testFilepath)
-
-				for _, l := range unexpectedWarns {
-					t.Errorf("unexpected warn: `%s`", l)
-				}
-			}
+			checkFiles(t, rule, ctx, prog, pkgPath)
 		})
+	}
+}
+
+func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pkgPath string) {
+	files := prog.Imported[pkgPath].Files
+
+	for _, f := range files {
+		filename := filepath.Base(prog.Fset.Position(f.Pos()).Filename)
+		testFilepath := filepath.Join("testdata", rule.Name(), filename)
+		goldenWarns := newGoldenFile(t, testFilepath)
+
+		var unexpectedWarns []string
+
+		warns := NewChecker(rule, ctx).Check(f)
+
+		for _, warn := range warns {
+			line := ctx.FileSet().Position(warn.Node.Pos()).Line
+
+			if w := goldenWarns.find(line, warn.Text); w != nil {
+				if w.matched {
+					t.Errorf("%s:%d: multiple matches for %s", testFilepath, line, w)
+				}
+				w.matched = true
+			} else {
+				unexpectedWarns = append(unexpectedWarns, warn.Text)
+			}
+		}
+
+		goldenWarns.checkUnmatched(t, testFilepath)
+
+		for _, l := range unexpectedWarns {
+			t.Errorf("unexpected warn: `%s`", l)
+		}
 	}
 }
 
@@ -122,19 +125,6 @@ func (f *goldenFile) checkUnmatched(t *testing.T, testFilepath string) {
 			t.Errorf("%s:%d: unmatched `%s`", testFilepath, line, w)
 		}
 	}
-}
-
-func getWarnLine(ctx *Context, node ast.Node) int {
-	loc := ctx.FileSet().Position(node.Pos()).String()
-	num, _ := strconv.Atoi(strings.Split(loc, ":")[1])
-	return num
-}
-
-func getFilename(prog *loader.Program, f *ast.File) string {
-	// see https://github.com/golang/go/issues/24498
-	fname := prog.Fset.Position(f.Pos()).String() // ex: /usr/go/src/pkg/main.go:1:1
-	fname = strings.Split(fname, ":")[0]          // ex: /usr/go/src/pkg/main.go
-	return filepath.Base(fname)                   // ex: main.go
 }
 
 func newProg(t *testing.T, pkgPath string) *loader.Program {
