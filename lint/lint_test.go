@@ -18,116 +18,110 @@ import (
 var (
 	testdataPkgPath    = "github.com/go-critic/go-critic/lint/testdata/"
 	sizes              = types.SizesFor("gc", runtime.GOARCH)
-	warningRE          = regexp.MustCompile(`.*?:(\d+):\d+: ([a-zA-Z\-/]*): (.*)`)
 	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
 )
 
 func TestChecker(t *testing.T) {
-	// b := make([]byte, 1000)
-	// var memLog = bytes.NewBuffer(b)
-	// log.SetOutput(memLog)
-	// file, err := os.Create("myfile")
-	// if err != nil {
-	//     log.Fatal(err)
-	// }
-	// mw := io.MultiWriter(os.Stdout, file)
-	// fmt.Fprintln(mw, "This line will be written to stdout and also to a file")
-
-	for _, rule := range RuleList()[:] {
+	for _, rule := range RuleList() {
 		t.Run(rule.Name(), func(t *testing.T) {
-			if rule.Name() != "evalOrder" {
-				return
-			}
 			pkgPath := testdataPkgPath + rule.Name()
 
 			prog := newProg(t, pkgPath)
-			files := prog.Imported[pkgPath].Files
-			ctx := NewContext(prog.Fset, sizes)
 			pkgInfo := prog.Imported[pkgPath]
+			files := prog.Imported[pkgPath].Files
+
+			ctx := NewContext(prog.Fset, sizes)
 			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 
 			for _, f := range files {
 				filename := getFilename(prog, f)
-				testFilename := filepath.Join("testdata", rule.Name(), filename)
-				t.Logf("%s %s", filename, testFilename)
-				testWarns := newTestFileWarning(t, testFilename)
+				testFilepath := filepath.Join("testdata", rule.Name(), filename)
+				goldenWarns := newGoldenFile(t, testFilepath)
+
+				var unexpectedWarns []string
 
 				warns := NewChecker(rule, ctx).Check(f)
-				t.Logf("scanned %v, expected %v", len(warns), len(testWarns))
-
-				// if !warningRE.MatchString(l) {
-				// 	// Something that doen't look like a warning.
-				// 	// Probably debug output or checker runtime error.
-				// 	unexpectedLines = append(unexpectedLines, l)
-				// 	continue
-				// }
-
-				var unexpectedLines []string
 
 				for _, warn := range warns {
-					t.Logf("Warning `%s`", warn.Text)
-
 					line := getWarnLine(ctx, warn.Node)
-					// var lineString, ruleName, text string
-					// unpackSubmatches(warn.Text, warningRE, &lineString, &ruleName, &text)
-					// line, err := strconv.Atoi(lineString)
-					t.Log(line)
-					// if err != nil {
-					// 	t.Errorf("%s: invalid line number in %s", testFilename, lineString)
-					// }
-					// if ruleName != rule.name {
-					// 	t.Errorf("%s: unexpected checker name: %s", testFilename, ruleName)
-					// 	continue
-					// }
-					if w := find(t, testWarns, line, warn.Text); w != nil {
+
+					if w := goldenWarns.find(line, warn.Text); w != nil {
 						if w.matched {
-							t.Errorf("%s:%d: multiple matches for %s", testFilename, line, w)
+							t.Errorf("%s:%d: multiple matches for %s", testFilepath, line, w)
 						}
 						w.matched = true
 					} else {
-						unexpectedLines = append(unexpectedLines, warn.Text)
+						unexpectedWarns = append(unexpectedWarns, warn.Text)
 					}
 				}
 
-				for line := range testWarns {
-					for _, w := range testWarns[line] {
-						if w.matched {
-							continue
-						}
-						t.Errorf("%s:%d: unmatched `%s`", testFilename, line, w)
-					}
-				}
-				for _, l := range unexpectedLines {
-					t.Errorf("unexpected line in output: %s", l)
-				}
+				goldenWarns.checkUnmatched(t, testFilepath)
 
-				// unexpectedLines := []string{}
-				// for i, warn := range warns {
-				// 	line := getWarnLine(ctx, warn.Node)
-				// 	twarn, ok := testWarns[line]
-				// 	if !ok {
-				// 		unexpectedLines = append(unexpectedLines, warn.Text)
-				// 		continue
-				// 	}
-				// 	if warn.Text != twarn {
-				// 		t.Errorf("got `%s`, want `%s`", warn.Text, testWarns[i])
-				// 	} else {
-				// 		delete(testWarns, line)
-				// 	}
-				// }
+				for _, l := range unexpectedWarns {
+					t.Errorf("unexpected warn: `%s`", l)
+				}
 			}
 		})
 	}
 }
 
-func find(t *testing.T, warnings map[int][]*warning, line int, text string) *warning {
-	for _, y := range warnings[line] {
-		t.Logf("`%s` VS `%s`", text, y.text)
+type goldenFile struct {
+	warnings map[int][]*warning
+}
+
+type warning struct {
+	matched bool
+	text    string
+}
+
+func (w warning) String() string {
+	return w.text
+}
+
+func newGoldenFile(t *testing.T, filepath string) *goldenFile {
+	testData, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		t.Fatalf("can't find checker tests: %v", err)
+	}
+	lines := strings.Split(string(testData), "\n")
+
+	warnings := make(map[int][]*warning)
+	var pending []*warning
+
+	for i, l := range lines {
+		if warningDirectiveRE.MatchString(l) {
+			var m warning
+			unpackSubmatches(l, warningDirectiveRE, &m.text)
+			pending = append(pending, &m)
+		} else {
+			if len(pending) != 0 {
+				line := i + 1
+				warnings[line] = append([]*warning{}, pending...)
+				pending = pending[:0]
+			}
+		}
+	}
+	return &goldenFile{warnings: warnings}
+}
+
+func (f *goldenFile) find(line int, text string) *warning {
+	for _, y := range f.warnings[line] {
 		if text == y.text {
 			return y
 		}
 	}
 	return nil
+}
+
+func (f *goldenFile) checkUnmatched(t *testing.T, testFilepath string) {
+	for line := range f.warnings {
+		for _, w := range f.warnings[line] {
+			if w.matched {
+				continue
+			}
+			t.Errorf("%s:%d: unmatched `%s`", testFilepath, line, w)
+		}
+	}
 }
 
 func getWarnLine(ctx *Context, node ast.Node) int {
@@ -162,41 +156,6 @@ func newProg(t *testing.T, pkgPath string) *loader.Program {
 		t.Fatalf("%s package is not properly loaded", pkgPath)
 	}
 	return prog
-}
-
-type warning struct {
-	matched bool
-	text    string
-}
-
-func newTestFileWarning(t *testing.T, filapath string) map[int][]*warning {
-	testData, err := ioutil.ReadFile(filapath)
-	if err != nil {
-		t.Fatalf("can't find checker tests: %v", err)
-	}
-	lines := strings.Split(string(testData), "\n")
-
-	warnings := make(map[int][]*warning)
-	var pending []*warning
-	for i, l := range lines {
-		if !warningDirectiveRE.MatchString(l) {
-			if len(pending) != 0 {
-				line := i + 1
-				warnings[line] = append([]*warning{}, pending...)
-				pending = pending[:0]
-			}
-			continue
-		}
-		var m warning
-		unpackSubmatches(l, warningDirectiveRE, &m.text)
-		pending = append(pending, &m)
-	}
-	return warnings
-}
-
-func (w warning) String() string {
-	return w.text
-	// return "/// " + w.text
 }
 
 func unpackSubmatches(s string, re *regexp.Regexp, dst ...*string) {
