@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"go/ast"
 	"go/parser"
 	"go/types"
 	"io/ioutil"
@@ -39,7 +40,7 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 	files := prog.Imported[pkgPath].Files
 
 	for _, f := range files {
-		filename := filepath.Base(prog.Fset.Position(f.Pos()).Filename)
+		filename := getFilename(prog, f)
 		testFilepath := filepath.Join("testdata", rule.Name(), filename)
 		goldenWarns := newGoldenFile(t, testFilepath)
 
@@ -66,6 +67,11 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 			t.Errorf("unexpected warn: `%s`", l)
 		}
 	}
+}
+
+func getFilename(prog *loader.Program, f *ast.File) string {
+	// see https://github.com/golang/go/issues/24498
+	return filepath.Base(prog.Fset.Position(f.Pos()).Filename)
 }
 
 type goldenFile struct {
