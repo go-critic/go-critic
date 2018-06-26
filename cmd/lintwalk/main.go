@@ -32,6 +32,8 @@ func getPackagePrefix(dir string) string {
 func Main() {
 	enable := flag.String("enable", "all",
 		`forwarded to linter "as is"`)
+	disable := flag.String("disable", "",
+		`forwarded to linter "as is"`)
 	exclude := flag.String("exclude", "testdata/|vendor/|builtin/",
 		`regexp used to skip package names`)
 	checkGenerated := flag.Bool("checkGenerated", false, `forwarded to linter "as is"`)
@@ -88,6 +90,7 @@ func Main() {
 	args := []string{
 		"check-package",
 		"-enable", *enable,
+		"-disable", *disable,
 		"-checkGenerated=" + fmt.Sprint(*checkGenerated),
 		"-shorterErrLocation=" + fmt.Sprint(*shorterErrLocation),
 	}

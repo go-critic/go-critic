@@ -2,6 +2,7 @@ package criticize
 
 import (
 	"flag"
+	"fmt"
 	"go/ast"
 	"go/build"
 	"go/parser"
@@ -73,6 +74,8 @@ func parseArgv(l *linter) {
 
 	enable := flag.String("enable", enableAll,
 		`comma-separated list of enabled checkers`)
+	disable := flag.String("disable", "",
+		`comma-separated list of disabled checkers`)
 	flag.BoolVar(&l.withExperimental, `withExperimental`, false,
 		`only for -enable=all, include experimental checks`)
 	flag.BoolVar(&l.withOpinionated, `withOpinionated`, false,
@@ -98,9 +101,19 @@ func parseArgv(l *linter) {
 		blame("-withOpinionated used with -enable=%q", *enable)
 	}
 
+	fmt.Printf("`%v` `%v`\n", *enable, *disable)
+
 	switch *enable {
 	case enableAll:
-		// Special case. l.enabledCheckers remains nil.
+		for _, rule := range lint.RuleList() {
+			if rule.Experimental && !l.withExperimental {
+				continue
+			}
+			if rule.VeryOpinionated && !l.withOpinionated {
+				continue
+			}
+			l.enabledCheckers = append(l.enabledCheckers, rule.Name())
+		}
 	case "":
 		// Empty slice. Semantically "disable-all".
 		// Can be used to run all pipelines without actual checkers.
@@ -108,6 +121,28 @@ func parseArgv(l *linter) {
 	default:
 		// Comma-separated list of names.
 		l.enabledCheckers = strings.Split(*enable, ",")
+	}
+
+	switch *disable {
+	case "all":
+		l.enabledCheckers
+	}
+	if *disable != "" {
+		disabled := strings.Split(*disable, ",")
+		filtred := l.enabledCheckers[:0]
+
+		for _, e := range l.enabledCheckers {
+			found := false
+			for _, d := range disabled {
+				if e == d {
+					found = true
+				}
+			}
+			if !found {
+				filtred = append(filtred, e)
+			}
+		}
+		l.enabledCheckers = filtred[:]
 	}
 }
 
