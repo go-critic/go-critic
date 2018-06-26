@@ -125,9 +125,10 @@ func parseArgv(l *linter) {
 
 	switch *disable {
 	case "all":
-		l.enabledCheckers
-	}
-	if *disable != "" {
+		l.enabledCheckers = l.enabledCheckers[:0]
+	case "":
+		// nothing to disable, skip
+	default:
 		disabled := strings.Split(*disable, ",")
 		filtred := l.enabledCheckers[:0]
 
