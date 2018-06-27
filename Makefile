@@ -17,3 +17,9 @@ ci:
 	go tool vet .
 	go test -v -race -count=1 ./...
 	gometalinter.v2 --skip=testdata --vendor ./... 
+	gocritic check-project `pwd`
+
+tools:
+	go get -u gopkg.in/alecthomas/gometalinter.v2
+	gometalinter.v2 --install
+	go get -u github.com/go-critic/go-critic/...
