@@ -25,48 +25,62 @@ type unnamedResultChecker struct {
 func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	results := decl.Type.Results
 	switch {
-	case results == nil || results.NumFields() < 2:
-		return
+	case results == nil:
+		return // Function has no results
+	case len(results.List) > 0 && results.List[0].Names != nil:
+		return // Skip named results
+	}
 
-	case results.NumFields() == 2:
-		typ1, typ2 := c.getResultsTypes(results.List)
-		if len(results.List[0].Names) == 2 ||
-			(!c.isBoolOrError(typ1) && c.isBoolOrError(typ2)) {
-			// no need to name results for (T, error) or (T, bool)
-		} else {
+	typeName := func(x ast.Expr) string { return c.typeName(c.ctx.typesInfo.TypeOf(x)) }
+	isError := func(x ast.Expr) bool { return qualifiedName(x) == "error" }
+	isBool := func(x ast.Expr) bool { return qualifiedName(x) == "bool" }
+
+	// Main difference with case of len=2 is that we permit any
+	// typ1 as long as second type is either error or bool.
+	if results.NumFields() == 2 {
+		typ1, typ2 := results.List[0].Type, results.List[1].Type
+		name1, name2 := typeName(typ1), typeName(typ2)
+		cond := (name1 != name2 && name2 != "") ||
+			(!isError(typ1) && isError(typ2)) ||
+			(!isBool(typ1) && isBool(typ2))
+		if !cond {
 			c.warn(decl)
 		}
+		return
+	}
 
-	default:
-		for _, res := range results.List {
-			if len(res.Names) == 0 {
-				c.warn(decl)
-				break
-			}
+	seen := make(map[string]bool, len(results.List))
+	for i := range results.List {
+		typ := results.List[i].Type
+		name := typeName(typ)
+		isLast := i == len(results.List)-1
+
+		cond := !seen[name] ||
+			(isLast && (isError(typ) || isBool(typ)))
+		if !cond {
+			c.warn(decl)
+			return
 		}
+
+		seen[name] = true
+	}
+}
+
+func (c *unnamedResultChecker) typeName(typ types.Type) string {
+	switch typ := typ.(type) {
+	case *types.Array:
+		return c.typeName(typ.Elem())
+	case *types.Pointer:
+		return c.typeName(typ.Elem())
+	case *types.Slice:
+		return c.typeName(typ.Elem())
+	case *types.Named:
+		return typ.Obj().Name()
+	default:
+		return ""
 	}
 }
 
 func (c *unnamedResultChecker) warn(n ast.Node) {
 	c.ctx.Warn(n, "consider to give name to results")
-}
-
-func (c *unnamedResultChecker) getResultsTypes(fields []*ast.Field) (res1, res2 ast.Expr) {
-	if len(fields) == 2 {
-		return fields[0].Type, fields[1].Type
-	}
-	return fields[0].Type, fields[0].Type
-}
-
-func (c *unnamedResultChecker) isBoolOrError(expr ast.Expr) bool {
-	switch typ := c.ctx.typesInfo.TypeOf(expr).(type) {
-	case *types.Named:
-		return typ.Obj().Name() == "error"
-
-	case *types.Basic:
-		return typ.Kind() == types.Bool
-
-	default:
-		return false
-	}
 }
