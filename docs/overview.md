@@ -123,6 +123,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#commentedOutCode-ref">commentedOutCode</a></td>
+        <td>Detects commented-out code inside function bodies.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#docStub-ref">docStub</a></td>
         <td>Detects comments that silence go lint complaints about doc-comment.
 
@@ -336,7 +342,27 @@ func f(in int, out *int) (err error) {}
 ```
 
 
-`captLocal` is syntax-only checker (fast).<a name="docStub-ref"></a>
+`captLocal` is syntax-only checker (fast).<a name="commentedOutCode-ref"></a>
+## commentedOutCode
+Detects commented-out code inside function bodies.
+
+
+
+**Before:**
+```go
+// fmt.Println("Debugging hard")
+foo(1, 2)
+
+```
+
+**After:**
+```go
+foo(1, 2)
+
+```
+
+
+<a name="docStub-ref"></a>
 ## docStub
 Detects comments that silence go lint complaints about doc-comment.
 
