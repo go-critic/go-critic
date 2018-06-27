@@ -20,6 +20,35 @@ var (
 	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
 )
 
+func TestSanity(t *testing.T) {
+	for _, rule := range RuleList() {
+		t.Run(rule.Name(), func(t *testing.T) {
+			pkgPath := testdataPkgPath + "/_sanity"
+
+			prog := newProg(t, pkgPath)
+			pkgInfo := prog.Imported[pkgPath]
+
+			ctx := NewContext(prog.Fset, sizes)
+			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
+
+			// checkSanity(t, rule, ctx, prog, pkgPath)
+
+			files := prog.Imported[pkgPath].Files
+
+			for _, f := range files {
+				defer func() {
+					r := recover()
+					if r != nil {
+						t.Errorf("unexpected panic: `%v`", r)
+					}
+				}()
+
+				_ = NewChecker(rule, ctx).Check(f)
+			}
+		})
+	}
+}
+
 func TestCheckers(t *testing.T) {
 	for _, rule := range RuleList() {
 		t.Run(rule.Name(), func(t *testing.T) {

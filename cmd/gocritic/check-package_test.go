@@ -6,17 +6,12 @@ import (
 	"os/exec"
 	"runtime"
 	"testing"
-
-	"github.com/go-critic/go-critic/lint"
 )
 
 const (
 	// binary is test linter executable name.
 	// Using "exe" suffix to make it work on Windows as well.
 	binary = "testlint.exe"
-
-	// linterCmdPath holds full path to linter main pkg path.
-	linterCmdPath = "github.com/go-critic/go-critic/cmd/gocritic/"
 )
 
 func TestMain(m *testing.M) {
@@ -30,43 +25,6 @@ func TestMain(m *testing.M) {
 	_ = os.Remove(binary)
 
 	os.Exit(exitStatus)
-}
-
-type ruleTest struct {
-	name string
-}
-
-var ruleList []ruleTest
-
-func init() {
-	for _, rule := range lint.RuleList() {
-		ruleList = append(ruleList, ruleTest{
-			name: rule.Name(),
-		})
-	}
-}
-
-func runChecker(name, pkgPath string) (output []byte, err error) {
-	cmd := exec.Command("./"+binary,
-		"check-package",
-		"-enable", name,
-		"-failcode", "0",
-		pkgPath)
-	return cmd.CombinedOutput()
-}
-
-func TestSanity(t *testing.T) {
-	saneRules := ruleList[:0]
-	for _, rule := range ruleList {
-		pkgPath := linterCmdPath + "testdata/_sanity"
-		output, err := runChecker(rule.name, pkgPath)
-		if err != nil {
-			t.Errorf("%s failed sanity checks: %v:\n%s", rule.name, err, output)
-			continue
-		}
-		saneRules = append(saneRules, rule)
-	}
-	ruleList = saneRules
 }
 
 func buildLinter() {
