@@ -31,8 +31,6 @@ func TestSanity(t *testing.T) {
 			ctx := NewContext(prog.Fset, sizes)
 			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 
-			// checkSanity(t, rule, ctx, prog, pkgPath)
-
 			files := prog.Imported[pkgPath].Files
 
 			for _, f := range files {
