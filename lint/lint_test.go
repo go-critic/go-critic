@@ -20,7 +20,11 @@ var (
 	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
 )
 
-var ruleList = RuleList()
+var ruleList []*Rule
+
+func init() {
+	ruleList = RuleList()
+}
 
 func TestSanity(t *testing.T) {
 	saneRules := ruleList[:0]
