@@ -51,3 +51,32 @@ func (f *foo) f9() (bool, func() int) {
 func f10() (int, int, float64, float64) {
 	return 0, 0, 0, 0
 }
+
+/// consider to give name to results
+func doubleError() (error, error) {
+	return nil, nil
+}
+
+type namedInt int
+
+type namedStruct struct{}
+
+/// consider to give name to results
+func named2ptr() (namedInt, *namedInt) {
+	return 0, nil
+}
+
+/// consider to give name to results
+func named2() (namedInt, namedInt) {
+	return 0, 0
+}
+
+/// consider to give name to results
+func named3() (namedInt, namedStruct, namedInt) {
+	return 0, namedStruct{}, 0
+}
+
+/// consider to give name to results
+func namedAndPrimitive() (namedInt, int) {
+	return 0, 0
+}
