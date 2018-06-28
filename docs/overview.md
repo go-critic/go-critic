@@ -129,6 +129,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#deferInLoop-ref">deferInLoop</a></td>
+        <td>Detects defer in loop and warns that it will not be executed till the end of function's scope.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#docStub-ref">docStub</a></td>
         <td>Detects comments that silence go lint complaints about doc-comment.
 
@@ -155,6 +161,12 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
         <td>Detects when imported package names shadowed in assignments.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#lenNil-ref">lenNil</a></td>
+        <td>Detects immediate dereferencing of `flag` package pointers.
 
 </td>
       </tr>
@@ -362,6 +374,31 @@ foo(1, 2)
 ```
 
 
+<a name="deferInLoop-ref"></a>
+## deferInLoop
+Detects defer in loop and warns that it will not be executed till the end of function's scope.
+
+
+
+**Before:**
+```go
+for i := range [10]int{} {
+		defer f(i) // will be executed only at the end of func
+}
+
+```
+
+**After:**
+```go
+for i := range [10]int{} {
+		func() {
+			defer f(i)
+	 	}
+}
+
+```
+
+
 <a name="docStub-ref"></a>
 ## docStub
 Detects comments that silence go lint complaints about doc-comment.
@@ -548,6 +585,28 @@ func main() {
 
 ```
 
+
+<a name="lenNil-ref"></a>
+## lenNil
+Detects immediate dereferencing of `flag` package pointers.
+
+
+
+**Before:**
+```go
+b := *flag.Bool("b", false, "b docs")
+
+```
+
+**After:**
+```go
+var b bool
+flag.BoolVar(&b, "b", false, "b docs")
+
+```
+
+> Dereferencing returned pointers will lead to hard to find errors
+> where flag values are not updated after flag.Parse().
 
 <a name="longChain-ref"></a>
 ## longChain
