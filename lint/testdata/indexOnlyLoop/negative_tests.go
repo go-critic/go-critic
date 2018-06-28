@@ -17,3 +17,11 @@ func closeNonPtrFiles(files []os.File) {
 		files[i].Close()
 	}
 }
+
+func indexReuse(filesA []*os.File, filesB []*os.File) {
+	for i := range filesA {
+		if filesA[i] == filesB[i] {
+			fmt.Println("equal")
+		}
+	}
+}
