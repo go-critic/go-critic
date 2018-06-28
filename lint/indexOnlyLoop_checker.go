@@ -38,10 +38,21 @@ type indexOnlyLoopChecker struct {
 func (c *indexOnlyLoopChecker) VisitStmt(stmt ast.Stmt) {
 	if s, ok := stmt.(*ast.RangeStmt); ok && s.Key != nil {
 		sX := s.X.(*ast.Ident).Obj
-		// sX is always declaration of some *ast.ArrayType
+		var tp ast.Expr
+		switch sXField := sX.Decl.(type) {
+		case *ast.Field: // go 1.10
+			tp = sXField.Type
+		case *ast.ValueSpec: // go 1.11
+			tp = sXField.Type
+		default:
+			return
+		}
+		// sX should always be of *ast.ArrayType type
 		// cause we are in *ast.RangeStmt statement
-		sXField := sX.Decl.(*ast.Field)
-		sxFiledType := sXField.Type.(*ast.ArrayType)
+		sxFiledType, ok := tp.(*ast.ArrayType)
+		if !ok {
+			return
+		}
 		if _, ok = sxFiledType.Elt.(*ast.StarExpr); !ok {
 			return
 		}
