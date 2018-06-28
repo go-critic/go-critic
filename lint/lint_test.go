@@ -5,6 +5,7 @@ import (
 	"go/parser"
 	"go/types"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -22,8 +23,14 @@ var (
 
 var ruleList []*Rule
 
-func init() {
+func TestMain(m *testing.M) {
+	// Can't do RuleList call in ordinary init due to initialization
+	// order dependency. There are 2 solutions:
+	//	1. make this package "external" test like "lint_test"
+	//	2. use TestMain to run tests after we assign ruleList, after inits.
+	// We're going with (2) here.
 	ruleList = RuleList()
+	os.Exit(m.Run())
 }
 
 func TestSanity(t *testing.T) {
