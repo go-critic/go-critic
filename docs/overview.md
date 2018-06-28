@@ -159,6 +159,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
+        <td>Detects when range loop is iterating over container which has pointer-type elements
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.
 
@@ -544,6 +550,38 @@ func main() {
     // change identificator name
     value := 10
     fmt.Println(value)
+}
+
+```
+
+
+<a name="indexOnlyLoop-ref"></a>
+## indexOnlyLoop
+Detects when range loop is iterating over container which has pointer-type elements
+
+container[key] occurs more than once inside loop body, suggest using for key, v := range container form.
+
+
+**Before:**
+```go
+func closeFiles(files []*os.File) {
+    for i := range files {
+        if files[i] != nil {
+           files[i].Close()
+        }
+    }
+}
+
+```
+
+**After:**
+```go
+func closeFilesSuggester(files []*os.File) {
+    for _, f := range files {
+        if f != nil {
+            f.Close()
+        }
+    }
 }
 
 ```
