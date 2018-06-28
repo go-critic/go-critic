@@ -16,6 +16,8 @@ package lint
 
 import (
 	"go/ast"
+
+	"github.com/go-toolsmith/astp"
 )
 
 func init() {
@@ -29,23 +31,22 @@ type deferInLoopChecker struct {
 func (c *deferInLoopChecker) VisitStmt(stmt ast.Stmt) {
 	var body *ast.BlockStmt
 	loop, ok := stmt.(*ast.RangeStmt)
-	if !ok {
+	if ok {
+		body = loop.Body
+	} else {
 		loop, ok := stmt.(*ast.ForStmt)
 		if !ok {
 			return
 		}
 		body = loop.Body
-	} else {
-		body = loop.Body
 	}
 	for _, s := range body.List {
-		dfr, ok := s.(*ast.DeferStmt)
-		if ok {
-			c.warn(dfr)
+		if astp.IsDeferStmt(s) {
+			c.warn(s)
 		}
 	}
 }
 
-func (c *deferInLoopChecker) warn(cause *ast.DeferStmt) {
+func (c *deferInLoopChecker) warn(cause ast.Stmt) {
 	c.ctx.Warn(cause, "defer will be executed only at the end of the func's scope")
 }

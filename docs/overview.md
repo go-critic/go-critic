@@ -165,12 +165,6 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#lenNil-ref">lenNil</a></td>
-        <td>Detects immediate dereferencing of `flag` package pointers.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.
 
@@ -585,28 +579,6 @@ func main() {
 
 ```
 
-
-<a name="lenNil-ref"></a>
-## lenNil
-Detects immediate dereferencing of `flag` package pointers.
-
-
-
-**Before:**
-```go
-b := *flag.Bool("b", false, "b docs")
-
-```
-
-**After:**
-```go
-var b bool
-flag.BoolVar(&b, "b", false, "b docs")
-
-```
-
-> Dereferencing returned pointers will lead to hard to find errors
-> where flag values are not updated after flag.Parse().
 
 <a name="longChain-ref"></a>
 ## longChain
