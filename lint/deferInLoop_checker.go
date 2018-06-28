@@ -11,7 +11,7 @@ package lint
 // for i := range [10]int{} {
 // 		func() {
 // 			defer f(i)
-//	 	}
+//	 	}(i)
 // }
 
 import (
