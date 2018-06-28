@@ -43,6 +43,13 @@ func qualifiedName(x ast.Expr) string {
 	}
 }
 
+func callQualifiedName(x ast.Node) string {
+	if call, ok := x.(*ast.CallExpr); ok {
+		return qualifiedName(call.Fun)
+	}
+	return ""
+}
+
 // findNode applies pred for root and all it's childs until it returns true.
 // Matched node is returned.
 // If none of the nodes matched predicate, nil is returned.
@@ -56,4 +63,8 @@ func findNode(root ast.Node, pred func(ast.Node) bool) ast.Node {
 		return true
 	})
 	return found
+}
+
+func containsNode(root ast.Node, pred func(x ast.Node) bool) bool {
+	return findNode(root, pred) != nil
 }
