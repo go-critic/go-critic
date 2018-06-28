@@ -4,14 +4,14 @@ package lint
 //
 // @Before:
 // for i := range [10]int{} {
-// 		defer f(i) // will be executed only at the end of func
+// 	defer f(i) // will be executed only at the end of func
 // }
 //
 // @After:
 // for i := range [10]int{} {
-// 		func(i int) {
-// 			defer f(i)
-//	 	}(i)
+// 	func(i int) {
+// 		defer f(i)
+// 	}(i)
 // }
 
 import (
