@@ -13,7 +13,7 @@ func printFilesIndexes(files []*os.File) {
 
 func closeNonPtrFiles(files []os.File) {
 	for i := range files {
-		fmt.Println(files[i].Name)
+		fmt.Println(files[i].Name())
 		files[i].Close()
 	}
 }
