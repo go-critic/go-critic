@@ -5,9 +5,9 @@ import (
 	"go/ast"
 )
 
-//! Detects when range loop is iterating over container which has pointer-type elements
-// (that is, any *T or reference-like type as map or chan) using only key variable (no value) and
-// container[key] occurs more than once inside loop body, suggest using for key, v := range container form.
+//! Detects when range loop is iterating over container which has pointer-type elements (that is, any *T or reference-like type as map or chan) using only key variable (no value) and container[key] occurs more than once inside loop body
+//
+// Suggests to use for key, v := range container form.
 //
 // @Before:
 // func closeFiles(files []*os.File) {

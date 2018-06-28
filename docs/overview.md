@@ -160,7 +160,7 @@ Go source code linter that brings checks that are currently not implemented in o
       </tr>
       <tr>
         <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
-        <td>Detects when range loop is iterating over container which has pointer-type elements
+        <td>Detects when range loop is iterating over container which has pointer-type elements (that is, any *T or reference-like type as map or chan) using only key variable (no value) and container[key] occurs more than once inside loop body
 
 </td>
       </tr>
@@ -557,9 +557,9 @@ func main() {
 
 <a name="indexOnlyLoop-ref"></a>
 ## indexOnlyLoop
-Detects when range loop is iterating over container which has pointer-type elements
+Detects when range loop is iterating over container which has pointer-type elements (that is, any *T or reference-like type as map or chan) using only key variable (no value) and container[key] occurs more than once inside loop body
 
-container[key] occurs more than once inside loop body, suggest using for key, v := range container form.
+Suggests to use for key, v := range container form.
 
 
 **Before:**
