@@ -4,9 +4,11 @@ package lint
 //
 // @Before:
 // if nil != ptr {}
+// return 10 > a
 //
 // @After:
 // if ptr != nil {}
+// return a < 10
 
 import (
 	"go/ast"
@@ -29,10 +31,13 @@ func (c *yodaStyleExprChecker) VisitLocalExpr(expr ast.Expr) {
 	if !ok {
 		return
 	}
-	if binexpr.Op == token.EQL || binexpr.Op == token.NEQ {
+	switch binexpr.Op {
+	case token.EQL, token.NEQ, token.LSS, token.GTR, token.LEQ, token.GEQ:
 		if c.isConstExpr(binexpr.X) && !c.isConstExpr(binexpr.Y) {
 			c.warn(binexpr)
 		}
+	default:
+		// we are't interested in another operations
 	}
 }
 
@@ -42,6 +47,16 @@ func (c *yodaStyleExprChecker) isConstExpr(expr ast.Expr) bool {
 
 func (c *yodaStyleExprChecker) warn(expr *ast.BinaryExpr) {
 	e := astcopy.BinaryExpr(expr)
+	switch expr.Op {
+	case token.LSS:
+		e.Op = token.GTR
+	case token.GTR:
+		e.Op = token.LSS
+	case token.LEQ:
+		e.Op = token.GEQ
+	case token.GEQ:
+		e.Op = token.LEQ
+	}
 	e.X, e.Y = e.Y, e.X
 	c.ctx.Warn(expr, "consider to change order in expression to %s", e)
 }
