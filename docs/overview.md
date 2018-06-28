@@ -377,7 +377,7 @@ Detects defer in loop and warns that it will not be executed till the end of fun
 **Before:**
 ```go
 for i := range [10]int{} {
-		defer f(i) // will be executed only at the end of func
+	defer f(i) // will be executed only at the end of func
 }
 
 ```
@@ -385,9 +385,9 @@ for i := range [10]int{} {
 **After:**
 ```go
 for i := range [10]int{} {
-		func() {
-			defer f(i)
-	 	}
+	func(i int) {
+		defer f(i)
+	}(i)
 }
 
 ```
