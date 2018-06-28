@@ -29,18 +29,16 @@ type deferInLoopChecker struct {
 }
 
 func (c *deferInLoopChecker) VisitStmt(stmt ast.Stmt) {
-	var body *ast.BlockStmt
-	loop, ok := stmt.(*ast.RangeStmt)
-	if ok {
-		body = loop.Body
-	} else {
-		loop, ok := stmt.(*ast.ForStmt)
-		if !ok {
-			return
-		}
-		body = loop.Body
+	switch stmt := stmt.(type) {
+	case *ast.RangeStmt:
+		c.checkLoopBody(stmt.Body.List)
+	case *ast.ForStmt:
+		c.checkLoopBody(stmt.Body.List)
 	}
-	for _, s := range body.List {
+}
+
+func (c *deferInLoopChecker) checkLoopBody(body []ast.Stmt) {
+	for _, s := range body {
 		if astp.IsDeferStmt(s) {
 			c.warn(s)
 		}
