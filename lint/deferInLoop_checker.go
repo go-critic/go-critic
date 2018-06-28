@@ -9,7 +9,7 @@ package lint
 //
 // @After:
 // for i := range [10]int{} {
-// 		func() {
+// 		func(i int) {
 // 			defer f(i)
 //	 	}(i)
 // }
