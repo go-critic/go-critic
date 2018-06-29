@@ -123,6 +123,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#caseOrder-ref">caseOrder</a></td>
+        <td>Detects erroneous case order inside switch statements.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#commentedOutCode-ref">commentedOutCode</a></td>
         <td>Detects commented-out code inside function bodies.
 
@@ -342,7 +348,35 @@ func f(in int, out *int) (err error) {}
 ```
 
 
-`captLocal` is syntax-only checker (fast).<a name="commentedOutCode-ref"></a>
+`captLocal` is syntax-only checker (fast).<a name="caseOrder-ref"></a>
+## caseOrder
+Detects erroneous case order inside switch statements.
+
+
+
+**Before:**
+```go
+switch x.(type) {
+case ast.Expr:
+	fmt.Println("expr")
+case *ast.BasicLit:
+	fmt.Println("basic lit") // Never executed
+}
+```
+
+**After:**
+```go
+switch x.(type) {
+case *ast.BasicLit:
+	fmt.Println("basic lit") // Now reachable
+case ast.Expr:
+	fmt.Println("expr")
+}
+
+```
+
+
+<a name="commentedOutCode-ref"></a>
 ## commentedOutCode
 Detects commented-out code inside function bodies.
 
