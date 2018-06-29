@@ -1,8 +1,8 @@
+## Checks overview
+
+This page describes checks supported by [go-critic](https://github.com/go-critic/go-critic) linter.
+
 [//]: # (This is generated file, please don't edit it yourself.)
-
-## Overview
-
-Go source code linter that brings checks that are currently not implemented in other linters.
 
 ## Checkers:
 
