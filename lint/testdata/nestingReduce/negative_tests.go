@@ -29,3 +29,21 @@ func noWarnings3(a interface{}) {
 		noWarnings3(a)
 	}
 }
+
+func noWarnings4(a int) {
+	if a == 5 {
+		a++
+		a++
+		a++
+		a++
+		a++
+		a++
+	}
+	a++
+	a++
+	a++
+	a++
+	a++
+	a++
+	a++
+}
