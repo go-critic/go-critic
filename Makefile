@@ -23,3 +23,6 @@ tools:
 	go get -u gopkg.in/alecthomas/gometalinter.v2
 	gometalinter.v2 --install
 	go get -u github.com/go-critic/go-critic/...
+
+install:
+	go install github.com/go-critic/go-critic/...
