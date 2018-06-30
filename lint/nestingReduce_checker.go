@@ -28,9 +28,6 @@ type nestingReduceChecker struct {
 }
 
 func (c *nestingReduceChecker) VisitFuncDecl(decl *ast.FuncDecl) {
-	if decl.Body == nil {
-		return
-	}
 	c.checkBody(decl.Body.List)
 	for _, stmt := range decl.Body.List {
 		switch stmt := stmt.(type) {
@@ -66,5 +63,5 @@ func (c *nestingReduceChecker) checkIf(stmt *ast.IfStmt) bool {
 }
 
 func (c *nestingReduceChecker) warn(node ast.Node) {
-	c.ctx.Warn(node, "Nesting level could be reduced.")
+	c.ctx.Warn(node, "nesting level could be reduced")
 }
