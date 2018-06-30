@@ -183,6 +183,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#nestingReduce-ref">nestingReduce</a></td>
+        <td>Finds where nesting level could be reduced.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
         <td>Detects input and output parameters that have a type of pointer to referential type.
 
@@ -366,7 +372,6 @@ case *ast.BasicLit:
 case ast.Expr:
 	fmt.Println("expr")
 }
-
 ```
 
 
@@ -624,6 +629,32 @@ if pos != 0 {}
 **After:**
 ```go
 if pos != token.NoPos {}
+```
+
+
+<a name="nestingReduce-ref"></a>
+## nestingReduce
+Finds where nesting level could be reduced.
+
+
+
+**Before:**
+```go
+for _, v := range a {
+   if v.Bool {
+       ...
+   }
+}
+```
+
+**After:**
+```go
+for _, v := range a {
+   if ! v.Bool {
+       continue
+   }
+   ...
+}
 ```
 
 
