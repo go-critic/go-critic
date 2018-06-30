@@ -14,7 +14,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
   {{- range .Checkers }}
     {{- if not .Experimental }}
       <tr>
-        <td><a href="#{{.Name}}-ref">{{.Name}}</a>{{ if .VeryOpinionated }}&#x1f913{{ end }}</td>
+        <td><a href="#{{.Name}}-ref">{{.Name}}</a>{{ if .VeryOpinionated }} &#x1f913{{ end }}</td>
         <td>{{.ShortDescription}}</td>
       </tr>
     {{- end }}
@@ -31,7 +31,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
   {{- range .Checkers }}
     {{- if .Experimental }}
       <tr>
-        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a>{{ if .VeryOpinionated }}&#x1f913{{ end }}</td>
+        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a>{{ if .VeryOpinionated }} &#x1f913{{ end }}</td>
         <td>{{.ShortDescription}}</td>
       </tr>
     {{- end }}
