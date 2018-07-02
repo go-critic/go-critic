@@ -1,8 +1,8 @@
+## Checks overview
+
+This page describes checks supported by [go-critic](https://github.com/go-critic/go-critic) linter.
+
 [//]: # (This is generated file, please don't edit it yourself.)
-
-## Overview
-
-Go source code linter that brings checks that are currently not implemented in other linters.
 
 ## Checkers:
 
@@ -111,7 +111,7 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a></td>
+        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> &#x1f913</td>
         <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
 
 </td>
@@ -119,6 +119,24 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#boolOpt-ref">boolOpt</a></td>
         <td>Detects bool expressions that can be simplified.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#caseOrder-ref">caseOrder</a></td>
+        <td>Detects erroneous case order inside switch statements.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#commentedOutCode-ref">commentedOutCode</a></td>
+        <td>Detects commented-out code inside function bodies.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#deferInLoop-ref">deferInLoop</a></td>
+        <td>Detects defer in loop and warns that it will not be executed till the end of function's scope.
 
 </td>
       </tr>
@@ -153,6 +171,12 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
+        <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
+        <td>Detects for loops that can benefit from rewrite to range loop.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.
 
@@ -161,6 +185,12 @@ Go source code linter that brings checks that are currently not implemented in o
       <tr>
         <td><a href="#namedConst-ref">namedConst</a></td>
         <td>Detects literals that can be replaced with defined named const.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#nestingReduce-ref">nestingReduce</a></td>
+        <td>Finds where nesting level could be reduced.
 
 </td>
       </tr>
@@ -183,7 +213,7 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#unexportedCall-ref">unexportedCall</a></td>
+        <td><a href="#unexportedCall-ref">unexportedCall</a> &#x1f913</td>
         <td>Detects calls of unexported method from unexported type outside that type.
 
 </td>
@@ -201,7 +231,7 @@ Go source code linter that brings checks that are currently not implemented in o
 </td>
       </tr>
       <tr>
-        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
+        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> &#x1f913</td>
         <td>Detects Yoda style expressions that suggest to replace them.
 
 </td>
@@ -219,14 +249,12 @@ Detects suspicious append result assignments.
 ```go
 p.positives = append(p.negatives, x)
 p.negatives = append(p.negatives, y)
-
 ```
 
 **After:**
 ```go
 p.positives = append(p.positives, x)
 p.negatives = append(p.negatives, y)
-
 ```
 
 
@@ -240,13 +268,11 @@ Detects `append` chains to the same slice that can be done in a single `append` 
 ```go
 xs = append(xs, 1)
 xs = append(xs, 2)
-
 ```
 
 **After:**
 ```go
 xs = append(xs, 1, 2)
-
 ```
 
 
@@ -259,13 +285,11 @@ Detects function returning only bool and suggests to add Is/Has/Contains prefix 
 **Before:**
 ```go
 func Enabled() bool
-
 ```
 
 **After:**
 ```go
 func IsEnabled() bool
-
 ```
 
 
@@ -279,14 +303,12 @@ Detects bool expressions that can be simplified.
 ```go
 a := !(elapsed >= expectElapsedMin)
 b := !(x) == !(y)
-
 ```
 
 **After:**
 ```go
 a := elapsed < expectElapsedMin
 b := (x) == (y)
-
 ```
 
 
@@ -303,7 +325,6 @@ func main() {
     len := 10
     println(len)
 }
-
 ```
 
 **After:**
@@ -313,7 +334,6 @@ func main() {
     length := 10
     println(length)
 }
-
 ```
 
 
@@ -326,17 +346,83 @@ Detects capitalized names for local variables.
 **Before:**
 ```go
 func f(IN int, OUT *int) (ERR error) {}
-
 ```
 
 **After:**
 ```go
 func f(in int, out *int) (err error) {}
-
 ```
 
 
-`captLocal` is syntax-only checker (fast).<a name="docStub-ref"></a>
+`captLocal` is syntax-only checker (fast).<a name="caseOrder-ref"></a>
+## caseOrder
+Detects erroneous case order inside switch statements.
+
+
+
+**Before:**
+```go
+switch x.(type) {
+case ast.Expr:
+	fmt.Println("expr")
+case *ast.BasicLit:
+	fmt.Println("basic lit") // Never executed
+}
+```
+
+**After:**
+```go
+switch x.(type) {
+case *ast.BasicLit:
+	fmt.Println("basic lit") // Now reachable
+case ast.Expr:
+	fmt.Println("expr")
+}
+```
+
+
+<a name="commentedOutCode-ref"></a>
+## commentedOutCode
+Detects commented-out code inside function bodies.
+
+
+
+**Before:**
+```go
+// fmt.Println("Debugging hard")
+foo(1, 2)
+```
+
+**After:**
+```go
+foo(1, 2)
+```
+
+
+<a name="deferInLoop-ref"></a>
+## deferInLoop
+Detects defer in loop and warns that it will not be executed till the end of function's scope.
+
+
+
+**Before:**
+```go
+for i := range [10]int{} {
+	defer f(i) // will be executed only at the end of func
+}
+```
+
+**After:**
+```go
+for i := range [10]int{} {
+	func(i int) {
+		defer f(i)
+	}(i)
+}
+```
+
+
+<a name="docStub-ref"></a>
 ## docStub
 Detects comments that silence go lint complaints about doc-comment.
 
@@ -348,7 +434,6 @@ Detects comments that silence go lint complaints about doc-comment.
 func Foo() {
      // ...
 }
-
 ```
 
 **After:**
@@ -356,7 +441,6 @@ func Foo() {
 func Foo() {
      // ...
 }
-
 ```
 
 > You can either remove a comment to let go lint find it or change stub to useful comment.
@@ -373,7 +457,6 @@ Detects duplicated case clauses inside switch statements.
 switch x {
 case ys[0], ys[1], ys[2], ys[0], ys[4]:
 }
-
 ```
 
 **After:**
@@ -381,7 +464,6 @@ case ys[0], ys[1], ys[2], ys[0], ys[4]:
 switch x {
 case ys[0], ys[1], ys[2], ys[3], ys[4]:
 }
-
 ```
 
 
@@ -402,7 +484,6 @@ if cond1 {
 } else {
 	// Code C.
 }
-
 ```
 
 **After:**
@@ -415,7 +496,6 @@ case cond2:
 default:
 	// Code C.
 }
-
 ```
 
 
@@ -429,14 +509,12 @@ Detects usages of formatting functions without formatting arguments.
 ```go
 fmt.Sprintf("whatever")
 fmt.Errorf("wherever")
-
 ```
 
 **After:**
 ```go
 fmt.Sprint("whatever")
 errors.New("wherever")
-
 ```
 
 
@@ -449,7 +527,6 @@ Detects potentially unsafe dependencies on evaluation order.
 **Before:**
 ```go
 return mayModifySlice(&xs), xs[0]
-
 ```
 
 **After:**
@@ -460,7 +537,6 @@ return v, xs[0]
 // B)
 v := xs[0]
 return mayModifySlice(&xs), v
-
 ```
 
 
@@ -473,14 +549,12 @@ Detects immediate dereferencing of `flag` package pointers.
 **Before:**
 ```go
 b := *flag.Bool("b", false, "b docs")
-
 ```
 
 **After:**
 ```go
 var b bool
 flag.BoolVar(&b, "b", false, "b docs")
-
 ```
 
 > Dereferencing returned pointers will lead to hard to find errors
@@ -504,7 +578,6 @@ func main() {
     math := 10
     fmt.Println(len)
 }
-
 ```
 
 **After:**
@@ -518,6 +591,37 @@ func main() {
     // change identificator name
     value := 10
     fmt.Println(value)
+}
+```
+
+
+<a name="indexOnlyLoop-ref"></a>
+## indexOnlyLoop
+Detects for loops that can benefit from rewrite to range loop.
+
+Suggests to use for key, v := range container form.
+
+
+**Before:**
+```go
+func closeFiles(files []*os.File) {
+    for i := range files {
+        if files[i] != nil {
+           files[i].Close()
+        }
+    }
+}
+
+```
+
+**After:**
+```go
+func closeFilesSuggester(files []*os.File) {
+    for _, f := range files {
+        if f != nil {
+            f.Close()
+        }
+    }
 }
 
 ```
@@ -535,7 +639,6 @@ a := q.w.e.r.t + 1
 b := q.w.e.r.t + 2
 c := q.w.e.r.t + 3
 v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
-
 ```
 
 **After:**
@@ -546,7 +649,6 @@ a := qwert + 1
 b := qwert + 2
 c := qwert + 3
 v := (a+x) + (b+x) + (c+x)
-
 ```
 
 
@@ -560,13 +662,37 @@ Detects literals that can be replaced with defined named const.
 ```go
 // pos has type of token.Pos.
 if pos != 0 {}
-
 ```
 
 **After:**
 ```go
 if pos != token.NoPos {}
+```
 
+
+<a name="nestingReduce-ref"></a>
+## nestingReduce
+Finds where nesting level could be reduced.
+
+
+
+**Before:**
+```go
+for _, v := range a {
+   if v.Bool {
+       ...
+   }
+}
+```
+
+**After:**
+```go
+for _, v := range a {
+   if ! v.Bool {
+       continue
+   }
+   ...
+}
 ```
 
 
@@ -579,13 +705,11 @@ Detects if function parameters could be combined by type and suggest the way to 
 **Before:**
 ```go
 func foo(a, b int, c, d int, e, f int, g int) {}
-
 ```
 
 **After:**
 ```go
 func foo(a, b, c, d, e, f, g int) {}
-
 ```
 
 
@@ -598,13 +722,11 @@ Detects input and output parameters that have a type of pointer to referential t
 **Before:**
 ```go
 func f(m *map[string]int) (ch *chan *int)
-
 ```
 
 **After:**
 ```go
 func f(m map[string]int) (ch chan *int)
-
 ```
 
 > Slices are not as referential as maps or channels, but it's usually
@@ -623,7 +745,6 @@ var xs [256]byte
 for _, x := range xs {
 	// Loop body.
 }
-
 ```
 
 **After:**
@@ -632,7 +753,6 @@ var xs [256]byte
 for _, x := range &xs {
 	// Loop body.
 }
-
 ```
 
 
@@ -648,7 +768,6 @@ xs := make([][1024]byte, length)
 for _, x := range xs {
 	// Loop body.
 }
-
 ```
 
 **After:**
@@ -658,7 +777,6 @@ for i := range xs {
 	x := &xs[i]
 	// Loop body.
 }
-
 ```
 
 
@@ -671,13 +789,11 @@ Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
 **Before:**
 ```go
 re, _ := regexp.Compile(`const pattern`)
-
 ```
 
 **After:**
 ```go
 re := regexp.MustCompile(`const pattern`)
-
 ```
 
 
@@ -693,7 +809,6 @@ switch x := x.(type) {
 case int:
      ...
 }
-
 ```
 
 **After:**
@@ -701,7 +816,6 @@ case int:
 if x, ok := x.(int); ok {
    ...
 }
-
 ```
 
 
@@ -715,14 +829,12 @@ Detects constant expressions that can be replaced by a named constant
 ```go
 intBytes := make([]byte, unsafe.Sizeof(0))
 maxVal := 1<<7 - 1
-
 ```
 
 **After:**
 ```go
 intBytes := make([]byte, bits.IntSize)
 maxVal := math.MaxInt8
-
 ```
 
 
@@ -738,7 +850,6 @@ switch true {
 case x > y:
 	// ...
 }
-
 ```
 
 **After:**
@@ -747,7 +858,6 @@ switch {
 case x > y:
 	// ...
 }
-
 ```
 
 
@@ -767,7 +877,6 @@ case point:
 default:
 	return 0
 }
-
 ```
 
 **After:**
@@ -780,7 +889,6 @@ case point:
 default:
 	return 0
 }
-
 ```
 
 
@@ -795,7 +903,6 @@ Detects unneded parenthesis inside type expressions and suggests to remove them.
 func foo() [](func([](func()))) {
      ...
 }
-
 ```
 
 **After:**
@@ -803,7 +910,6 @@ func foo() [](func([](func()))) {
 func foo() []func([]func()) {
      ...
 }
-
 ```
 
 
@@ -817,14 +923,12 @@ Detects dereference expressions that can be omitted.
 ```go
 (*k).field = 5
 _ := (*a)[5] // only if a is array
-
 ```
 
 **After:**
 ```go
 k.field = 5
 _ := a[5]
-
 ```
 
 
@@ -842,7 +946,6 @@ func baz() {
 	var fo foo
 	fo.bar()
 }
-
 ```
 
 **After:**
@@ -853,7 +956,6 @@ func baz() {
 	var fo foo
 	fo.Bar()
 }
-
 ```
 
 
@@ -866,13 +968,11 @@ For functions with multiple return values, detects unnamed results
 **Before:**
 ```go
 func f() (float64, float64)
-
 ```
 
 **After:**
 ```go
 func f() (x, y float64)
-
 ```
 
 
@@ -886,14 +986,12 @@ Detects slice expressions that can be simplified to sliced expression itself.
 ```go
 f(s[:]) // s is string
 copy(b[:], values...) // b is []byte
-
 ```
 
 **After:**
 ```go
 f(s)
 copy(b, values...)
-
 ```
 
 
@@ -906,13 +1004,11 @@ Detects unused params and suggests to name them as `_` (underscore).
 **Before:**
 ```go
 func f(a int, b float64) // b isn't used inside function body
-
 ```
 
 **After:**
 ```go
 func f(a int, _ float64) // everything is cool
-
 ```
 
 
@@ -925,13 +1021,11 @@ Detects Yoda style expressions that suggest to replace them.
 **Before:**
 ```go
 if nil != ptr {}
-
 ```
 
 **After:**
 ```go
 if ptr != nil {}
-
 ```
 
 

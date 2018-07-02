@@ -89,6 +89,8 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 			return astwalk.WalkerForLocalDef(v, ctx.typesInfo)
 		case astwalk.TypeExprVisitor:
 			return astwalk.WalkerForTypeExpr(v, ctx.typesInfo)
+		case astwalk.LocalCommentVisitor:
+			return astwalk.WalkerForLocalComment(v)
 		default:
 			panic(fmt.Sprintf("%T does not implement known visitor interface", c))
 		}

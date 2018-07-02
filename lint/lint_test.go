@@ -5,6 +5,7 @@ import (
 	"go/parser"
 	"go/types"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -20,8 +21,53 @@ var (
 	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
 )
 
+var ruleList []*Rule
+
+func TestMain(m *testing.M) {
+	// Can't do RuleList call in ordinary init due to initialization
+	// order dependency. There are 2 solutions:
+	//	1. make this package "external" test like "lint_test"
+	//	2. use TestMain to run tests after we assign ruleList, after inits.
+	// We're going with (2) here.
+	ruleList = RuleList()
+	os.Exit(m.Run())
+}
+
+func TestSanity(t *testing.T) {
+	saneRules := ruleList[:0]
+
+	for _, rule := range ruleList {
+		t.Run(rule.Name(), func(t *testing.T) {
+			pkgPath := testdataPkgPath + "/_sanity"
+
+			prog := newProg(t, pkgPath)
+			pkgInfo := prog.Imported[pkgPath]
+
+			ctx := NewContext(prog.Fset, sizes)
+			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
+
+			files := prog.Imported[pkgPath].Files
+
+			for _, f := range files {
+				defer func() {
+					r := recover()
+					if r != nil {
+						t.Errorf("unexpected panic: `%v`", r)
+					} else {
+						saneRules = append(saneRules, rule)
+					}
+				}()
+
+				_ = NewChecker(rule, ctx).Check(f)
+			}
+		})
+	}
+
+	ruleList = saneRules
+}
+
 func TestCheckers(t *testing.T) {
-	for _, rule := range RuleList() {
+	for _, rule := range ruleList {
 		t.Run(rule.Name(), func(t *testing.T) {
 			pkgPath := testdataPkgPath + rule.Name()
 

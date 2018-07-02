@@ -2,12 +2,11 @@ language: go
 go:
   - 1.x
 before_install:
-  - go get -u gopkg.in/alecthomas/gometalinter.v2
-  - gometalinter.v2 --install
+  - make tools
 install:
   - # Prevent default install action "go get -t -v ./...".
 script:
-  - go get -t -v ./...
-  - go tool vet .
-  - go test -v -race ./...
-  - gometalinter.v2 --skip=testdata --vendor ./...
+  - make ci
+after_success:
+  - make cover
+  - bash <(curl -s https://codecov.io/bash)
