@@ -1,9 +1,9 @@
 # go-critic
 
-[![Build Status](travis-image)](travis-url)
-[![Go Report Card](go-report-image)](go-report-url)
+[![Build Status][travis-image]][travis-url]
+[![Go Report Card][go-report-image]][go-report-url]
 [![GoDoc][godoc-image]][godoc-url]
-[![codecov](codecov-image)](codecov-url)
+[![codecov][codecov-image]][codecov-url]
 
 [travis-image]: https://travis-ci.org/go-critic/go-critic.svg?branch=master
 [travis-url]: https://travis-ci.org/go-critic/go-critic
