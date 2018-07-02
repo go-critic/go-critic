@@ -140,7 +140,7 @@ func parseArgv(l *linter) {
 				filtred = append(filtred, e)
 			}
 		}
-		l.enabledCheckers = filtred[:]
+		l.enabledCheckers = filtred
 	}
 }
 
