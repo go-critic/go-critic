@@ -6,5 +6,7 @@ before_install:
 install:
   - # Prevent default install action "go get -t -v ./...".
 script:
-  - make cover
   - make ci
+after_success:
+  - make cover
+  - bash <(curl -s https://codecov.io/bash)
