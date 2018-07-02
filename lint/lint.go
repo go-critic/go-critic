@@ -63,7 +63,7 @@ func (r *Rule) Name() string { return r.name }
 //
 // Rule must be non-nil and known to the lint package.
 // Valid rule list can be obtained by RuleList call.
-func NewChecker(rule *Rule, ctx *Context) *Checker {
+func NewChecker(rule *Rule, ctx *Context, params map[string]interface{}) *Checker {
 	if rule == nil {
 		panic("nil rule given")
 	}
@@ -73,6 +73,7 @@ func NewChecker(rule *Rule, ctx *Context) *Checker {
 	}
 	return c.clone(context{
 		Context: ctx,
+		params:  params,
 		printer: astfmt.NewPrinter(ctx.fileSet),
 	})
 }

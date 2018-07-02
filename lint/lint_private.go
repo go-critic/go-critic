@@ -47,6 +47,8 @@ const (
 type context struct {
 	*Context
 
+	params map[string]interface{}
+
 	// printer used to format warning text.
 	printer *astfmt.Printer
 
