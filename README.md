@@ -58,7 +58,7 @@ Examples:
 | --- | --- |
 | `gocritic check-package fmt` | Runs all stable checkers on fmt package |
 | `gocritic check-package pkg1 pkg2` | Run all stable checkers on pkg1 and pkg2 |
-| `gocritic check-package -enable elseif,param-name fmt` | Runs specified checkers on fmt package |
+| `gocritic check-package -enable elseif,paramName fmt` | Runs specified checkers on fmt package |
 | `gocritic check-project $GOROOT/src` | Run all stable checkers on entire GOROOT |
 | `gocritic check-project $GOPATH/src` | Run all stable checkers on entire GOPATH |
 | `gocritic check-project $GOPATH/src/foo` | Run all stable checkers on all packages under GOPATH/src/foo |
