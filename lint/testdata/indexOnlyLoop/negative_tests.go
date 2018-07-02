@@ -1,8 +1,6 @@
 package checker_test
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func printFilesIndexes(files []*string) {
 	f := func(s int) {}
@@ -22,9 +20,37 @@ func closeNonPtrFiles(files []string) {
 }
 
 func indexReuse(filesA []*string, filesB []*string) {
+	f := func() {}
+
 	for i := range filesA {
 		if filesA[i] == filesB[i] {
-			fmt.Println("equal")
+			f()
 		}
+	}
+}
+
+func channelUse() {
+	f := func(s string) {}
+
+	c := make(chan string)
+	for val := range c {
+		f(val)
+	}
+}
+
+func sliceUse() {
+	f := func(s string) {}
+
+	v := []string{}
+	for _, val := range v[:] {
+		f(val)
+	}
+}
+
+func rangeOverString() {
+	f := func(s rune) {}
+
+	for _, ch := range "abcdef" {
+		f(ch)
 	}
 }

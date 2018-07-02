@@ -37,23 +37,37 @@ type indexOnlyLoopChecker struct {
 
 func (c *indexOnlyLoopChecker) VisitStmt(stmt ast.Stmt) {
 	if s, ok := stmt.(*ast.RangeStmt); ok && s.Key != nil {
-		sX := s.X.(*ast.Ident).Obj
-		var tp ast.Expr
-		switch sXField := sX.Decl.(type) {
-		case *ast.Field: // go 1.10
-			tp = sXField.Type
-		case *ast.ValueSpec: // go 1.11
-			tp = sXField.Type
+
+		var sXIdentObj *ast.Object
+		switch sX := s.X.(type) {
+		case *ast.Ident:
+			sXIdentObj = sX.Obj
+		case *ast.SliceExpr:
+			sXIdent, ok := sX.X.(*ast.Ident)
+			if !ok {
+				return
+			}
+			sXIdentObj = sXIdent.Obj
 		default:
 			return
 		}
-		// sX should always be of *ast.ArrayType type
-		// cause we are in *ast.RangeStmt statement
-		sxFiledType, ok := tp.(*ast.ArrayType)
+
+		var typ ast.Expr
+		switch sXFieldDecl := sXIdentObj.Decl.(type) {
+		case *ast.Field: // go 1.10
+			typ = sXFieldDecl.Type
+		case *ast.ValueSpec: // go 1.11
+			typ = sXFieldDecl.Type
+		default:
+			return
+		}
+		// sX should always be of *ast.ArrayType type cause we are in *ast.RangeStmt statement
+		// and even for *ast.SliceExpr, sXIdentObj will point to underlying array which have *ast.ArrayType
+		sxFieldType, ok := typ.(*ast.ArrayType)
 		if !ok {
 			return
 		}
-		if _, ok = sxFiledType.Elt.(*ast.StarExpr); !ok {
+		if _, ok = sxFieldType.Elt.(*ast.StarExpr); !ok {
 			return
 		}
 		sKey := s.Key.(*ast.Ident).Obj
@@ -63,15 +77,15 @@ func (c *indexOnlyLoopChecker) VisitStmt(stmt ast.Stmt) {
 			if iExpr, ok := n.(*ast.IndexExpr); ok {
 				x := iExpr.X.(*ast.Ident).Obj
 				key := iExpr.Index.(*ast.Ident).Obj
-				if x == sX && key == sKey {
+				if x == sXIdentObj && key == sKey {
 					count++
 				}
 			}
-			// stop DFS traverse if we found more then one usage
+			// stop DFS traverse if we found more than one usage
 			return count < 2
 		})
 		if count > 1 {
-			c.warn(stmt, fmt.Sprintf("for _, value := range %s", sX.Name))
+			c.warn(stmt, fmt.Sprintf("for _, value := range %s", sXIdentObj.Name))
 		}
 	}
 }
