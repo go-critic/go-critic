@@ -49,7 +49,7 @@ func (c *typeSwitchVarChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 	}
 	// Must be a *ast.ExprStmt then.
 	expr := root.Assign.(*ast.ExprStmt).X.(*ast.TypeAssertExpr).X
-	object := c.ctx.typesInfo.ObjectOf(c.identOf(expr))
+	object := c.ctx.typesInfo.ObjectOf(identOf(expr))
 	if object == nil {
 		return // Give up: can't handle shadowing without object
 	}
@@ -68,7 +68,7 @@ func (c *typeSwitchVarChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 			assert2 := findNode(stmt, func(x ast.Node) bool {
 				return astequal.Node(&assert1, x)
 			})
-			if object == c.ctx.typesInfo.ObjectOf(c.identOf(assert2)) {
+			if object == c.ctx.typesInfo.ObjectOf(identOf(assert2)) {
 				c.warn(root, i)
 				break
 			}
@@ -78,29 +78,4 @@ func (c *typeSwitchVarChecker) checkTypeSwitch(root *ast.TypeSwitchStmt) {
 
 func (c *typeSwitchVarChecker) warn(node ast.Node, caseIndex int) {
 	c.ctx.Warn(node, "case %d can benefit from type switch with assignment", caseIndex)
-}
-
-// identOf returns identifier for x that can be used to obtain associated types.Object.
-// Returns nil for expressions that yield temporary results, like `f().field`.
-//
-// TODO: is this generally useful and can be placed in util.go?
-func (c *typeSwitchVarChecker) identOf(x ast.Node) *ast.Ident {
-	switch x := x.(type) {
-	case *ast.Ident:
-		// Found ident.
-		return x
-	case *ast.TypeAssertExpr:
-		// x.(type) - x may contain ident.
-		return c.identOf(x.X)
-	case *ast.IndexExpr:
-		// x[i] - x may contain ident.
-		return c.identOf(x.X)
-	case *ast.SelectorExpr:
-		// x.y - x may contain ident.
-		return c.identOf(x.X)
-
-	default:
-		// Note that this function is not comprehensive.
-		return nil
-	}
 }
