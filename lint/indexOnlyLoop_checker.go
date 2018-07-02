@@ -5,7 +5,7 @@ import (
 	"go/ast"
 )
 
-//! Detects when range loop is iterating over container which has pointer-type elements (that is, any *T or reference-like type as map or chan) using only key variable (no value) and container[key] occurs more than once inside loop body
+//! Detects for loops that can benefit from rewrite to range loop.
 //
 // Suggests to use for key, v := range container form.
 //
