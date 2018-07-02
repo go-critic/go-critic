@@ -6,4 +6,5 @@ before_install:
 install:
   - # Prevent default install action "go get -t -v ./...".
 script:
+  - make cover
   - make ci
