@@ -1,7 +1,15 @@
 # go-critic
 
-[![Build Status](https://travis-ci.org/go-critic/go-critic.svg?branch=master)](https://travis-ci.org/go-critic/go-critic)
-[![Go Report Card](https://goreportcard.com/badge/github.com/go-critic/go-critic)](https://goreportcard.com/report/github.com/go-critic/go-critic)
+[![Build Status](travis-image)](travis-url)
+[![Go Report Card](go-report-image)](go-report-url)
+[![GoDoc][godoc-image]][godoc-url]
+
+[travis-image]: https://travis-ci.org/go-critic/go-critic.svg?branch=master
+[travis-url]: https://travis-ci.org/go-critic/go-critic
+[go-report-image]: https://goreportcard.com/badge/github.com/go-critic/go-critic
+[go-report-url]: https://goreportcard.com/report/github.com/go-critic/go-critic
+[godoc-image]: https://godoc.org/github.com/go-critic/go-critic/lint?status.svg
+[godoc-url]: https://godoc.org/github.com/go-critic/go-critic/lint
 
 Go source code linter providing checks currently missing from other linters.
 
