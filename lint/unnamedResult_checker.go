@@ -20,9 +20,21 @@ func init() {
 
 type unnamedResultChecker struct {
 	checkerBase
+
+	onlyExported bool
+}
+
+func (c *unnamedResultChecker) Init() {
+	v, has := c.ctx.params["onlyExported"]
+	if flag, ok := v.(bool); has && ok {
+		c.onlyExported = flag
+	}
 }
 
 func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {
+	if c.onlyExported && !ast.IsExported(decl.Name.Name) {
+		return
+	}
 	results := decl.Type.Results
 	switch {
 	case results == nil:
