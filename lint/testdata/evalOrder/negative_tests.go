@@ -8,6 +8,17 @@ func typeConversions() {
 		return unsafe.Pointer(&xs[0]), unsafe.Pointer(&xs[0])
 	}
 
+	_ = func(xs []int) {
+		// OK: unsafe.Pointer is not a function call.
+		_ = unsafe.Sizeof(xs)
+		_ = unsafe.Alignof(xs)
+		type A struct {
+			a int
+		}
+		a := A{}
+		_ = unsafe.Offsetof(a.a)
+	}
+
 	_ = func(x int) (a, b, c *int) {
 		return (*int)(&x), (*int)(&x), (*int)(&x)
 	}
