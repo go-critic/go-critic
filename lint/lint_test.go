@@ -87,8 +87,8 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 
 	for _, f := range files {
 		filename := getFilename(prog, f)
-		testFilepath := filepath.Join("testdata", rule.Name(), filename)
-		goldenWarns := newGoldenFile(t, testFilepath)
+		testFilename := filepath.Join("testdata", rule.Name(), filename)
+		goldenWarns := newGoldenFile(t, testFilename)
 
 		var unexpectedWarns []string
 
@@ -99,7 +99,7 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 
 			if w := goldenWarns.find(line, warn.Text); w != nil {
 				if w.matched {
-					t.Errorf("%s:%d: multiple matches for %s", testFilepath, line, w)
+					t.Errorf("%s:%d: multiple matches for %s", testFilename, line, w)
 				}
 				w.matched = true
 			} else {
@@ -107,7 +107,7 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 			}
 		}
 
-		goldenWarns.checkUnmatched(t, testFilepath)
+		goldenWarns.checkUnmatched(t, testFilename)
 
 		for _, l := range unexpectedWarns {
 			t.Errorf("unexpected warn: `%s`", l)
@@ -133,8 +133,8 @@ func (w warning) String() string {
 	return w.text
 }
 
-func newGoldenFile(t *testing.T, filepath string) *goldenFile {
-	testData, err := ioutil.ReadFile(filepath)
+func newGoldenFile(t *testing.T, filename string) *goldenFile {
+	testData, err := ioutil.ReadFile(filename)
 	if err != nil {
 		t.Fatalf("can't find checker tests: %v", err)
 	}
@@ -168,13 +168,13 @@ func (f *goldenFile) find(line int, text string) *warning {
 	return nil
 }
 
-func (f *goldenFile) checkUnmatched(t *testing.T, testFilepath string) {
+func (f *goldenFile) checkUnmatched(t *testing.T, testFilename string) {
 	for line := range f.warnings {
 		for _, w := range f.warnings[line] {
 			if w.matched {
 				continue
 			}
-			t.Errorf("%s:%d: unmatched `%s`", testFilepath, line, w)
+			t.Errorf("%s:%d: unmatched `%s`", testFilename, line, w)
 		}
 	}
 }
