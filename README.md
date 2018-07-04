@@ -1,7 +1,18 @@
 # go-critic
 
-[![Build Status](https://travis-ci.org/go-critic/go-critic.svg?branch=master)](https://travis-ci.org/go-critic/go-critic)
-[![Go Report Card](https://goreportcard.com/badge/github.com/go-critic/go-critic)](https://goreportcard.com/report/github.com/go-critic/go-critic)
+[![Build Status][travis-image]][travis-url]
+[![Go Report Card][go-report-image]][go-report-url]
+[![GoDoc][godoc-image]][godoc-url]
+[![codecov][codecov-image]][codecov-url]
+
+[travis-image]: https://travis-ci.org/go-critic/go-critic.svg?branch=master
+[travis-url]: https://travis-ci.org/go-critic/go-critic
+[go-report-image]: https://goreportcard.com/badge/github.com/go-critic/go-critic
+[go-report-url]: https://goreportcard.com/report/github.com/go-critic/go-critic
+[godoc-image]: https://godoc.org/github.com/go-critic/go-critic/lint?status.svg
+[godoc-url]: https://godoc.org/github.com/go-critic/go-critic/lint
+[codecov-image]: https://codecov.io/gh/go-critic/go-critic/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/go-critic/go-critic
 
 Go source code linter providing checks currently missing from other linters.
 
@@ -47,7 +58,7 @@ Examples:
 | --- | --- |
 | `gocritic check-package fmt` | Runs all stable checkers on fmt package |
 | `gocritic check-package pkg1 pkg2` | Run all stable checkers on pkg1 and pkg2 |
-| `gocritic check-package -enable elseif,param-name fmt` | Runs specified checkers on fmt package |
+| `gocritic check-package -enable elseif,paramName fmt` | Runs specified checkers on fmt package |
 | `gocritic check-project $GOROOT/src` | Run all stable checkers on entire GOROOT |
 | `gocritic check-project $GOPATH/src` | Run all stable checkers on entire GOPATH |
 | `gocritic check-project $GOPATH/src/foo` | Run all stable checkers on all packages under GOPATH/src/foo |

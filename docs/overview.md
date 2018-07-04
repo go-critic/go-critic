@@ -171,6 +171,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
+        <td>Detects for loops that can benefit from rewrite to range loop.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them.
 
@@ -569,6 +575,38 @@ func myFunc(filepath string) {
 ```go
 func myFunc(filename string) {
 }
+```
+
+
+<a name="indexOnlyLoop-ref"></a>
+## indexOnlyLoop
+Detects for loops that can benefit from rewrite to range loop.
+
+Suggests to use for key, v := range container form.
+
+
+**Before:**
+```go
+func closeFiles(files []*os.File) {
+    for i := range files {
+        if files[i] != nil {
+           files[i].Close()
+        }
+    }
+}
+
+```
+
+**After:**
+```go
+func closeFilesSuggester(files []*os.File) {
+    for _, f := range files {
+        if f != nil {
+            f.Close()
+        }
+    }
+}
+
 ```
 
 

@@ -17,4 +17,10 @@ func f() {
 
 	/// consider to change function to log.Print
 	log.Printf("whenever")
+
+	/// consider to change function to log.Panic
+	log.Panicf("AAAAAAA")
+
+	/// consider to change function to log.Fatal
+	log.Fatalf("oh :(")
 }
