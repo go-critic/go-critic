@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/types"
@@ -113,6 +114,40 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 			t.Errorf("unexpected warn: `%s`", l)
 		}
 	}
+}
+
+func TestIncorrectRule(t *testing.T) {
+	func(t *testing.T) {
+		defer func() {
+			r := recover()
+			if r == nil {
+				t.Fatal("expected panic on nil rule")
+			}
+			if r != "nil rule given" {
+				t.Fatalf("expected `nil rule given`, got %v", r)
+			}
+		}()
+		NewChecker(nil, nil)
+	}(t)
+
+	func(t *testing.T) {
+		name := "i-don-not-exist"
+
+		defer func() {
+			r := recover()
+			if r == nil {
+				t.Fatal("expected panic on incorrect name")
+			}
+
+			want := fmt.Sprintf("rule %q is undefined", name)
+			if r != want {
+				t.Fatalf("expected `%v`, got %v", want, r)
+			}
+		}()
+
+		r := &Rule{name: name}
+		NewChecker(r, nil)
+	}(t)
 }
 
 func getFilename(prog *loader.Program, f *ast.File) string {
