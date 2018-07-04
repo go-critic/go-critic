@@ -4,10 +4,10 @@ package lint
 //
 // @Before:
 // // pos has type of token.Pos.
-// if pos != 0 {}
+// return pos != 0
 //
 // @After:
-// if pos != token.NoPos {}
+// return pos != token.NoPos
 
 import (
 	"go/ast"

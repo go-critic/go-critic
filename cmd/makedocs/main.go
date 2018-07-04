@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"go/format"
 	"go/parser"
 	"go/token"
 	"io/ioutil"
@@ -102,6 +103,26 @@ func parseComment(text string, c *checker) {
 			log.Println(err)
 		}
 	}
+	validateSnippets(c)
+}
+
+func validateSnippets(c *checker) {
+	if want := gofmt(c.Before); want != c.Before {
+		log.Printf("%s @Before formatting mismatch:\nhave: %s\nwant: %s",
+			c.Name, c.Before, want)
+	}
+	if want := gofmt(c.After); want != c.After {
+		log.Printf("%s @After formatting mismatch:\nhave: %s\nwant: %s",
+			c.Name, c.After, want)
+	}
+}
+
+func gofmt(code string) string {
+	out, err := format.Source([]byte(code))
+	if err != nil {
+		return err.Error()
+	}
+	return string(out)
 }
 
 func parseShortDesc(lines []string, index *int, c *checker) error {

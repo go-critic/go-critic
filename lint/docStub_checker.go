@@ -5,12 +5,10 @@ package lint
 // @Before:
 // // Foo ...
 // func Foo() {
-//      // ...
 // }
 //
 // @After:
 // func Foo() {
-//      // ...
 // }
 //
 // @Note:

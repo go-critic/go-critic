@@ -315,18 +315,18 @@ Detects when predeclared identifiers shadowed in assignments.
 **Before:**
 ```go
 func main() {
-    // shadowing len function
-    len := 10
-    println(len)
+	// shadowing len function
+	len := 10
+	println(len)
 }
 ```
 
 **After:**
 ```go
 func main() {
-    // change identificator name
-    length := 10
-    println(length)
+	// change identificator name
+	length := 10
+	println(length)
 }
 ```
 
@@ -426,14 +426,12 @@ Detects comments that silence go lint complaints about doc-comment.
 ```go
 // Foo ...
 func Foo() {
-     // ...
 }
 ```
 
 **After:**
 ```go
 func Foo() {
-     // ...
 }
 ```
 
@@ -562,29 +560,14 @@ Detects when imported package names shadowed in assignments.
 
 **Before:**
 ```go
-import (
-    "fmt"
-    "math"
-)
-func main() {
-    fmt.Println(math.Pi)
-    // shadowing math package
-    math := 10
-    fmt.Println(len)
+// "path/filepath" is imported.
+func myFunc(filepath string) {
 }
 ```
 
 **After:**
 ```go
-import (
-    "fmt"
-    "math"
-)
-func main() {
-    fmt.Println(math.Pi)
-    // change identificator name
-    value := 10
-    fmt.Println(value)
+func myFunc(filename string) {
 }
 ```
 
@@ -600,7 +583,7 @@ Detects repeated expression chains and suggest to refactor them.
 a := q.w.e.r.t + 1
 b := q.w.e.r.t + 2
 c := q.w.e.r.t + 3
-v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
+v := (a + xs[i+1]) + (b + xs[i+1]) + (c + xs[i+1])
 ```
 
 **After:**
@@ -610,7 +593,7 @@ qwert := q.w.e.r.t
 a := qwert + 1
 b := qwert + 2
 c := qwert + 3
-v := (a+x) + (b+x) + (c+x)
+v := (a + x) + (b + x) + (c + x)
 ```
 
 
@@ -623,12 +606,12 @@ Detects literals that can be replaced with defined named const.
 **Before:**
 ```go
 // pos has type of token.Pos.
-if pos != 0 {}
+return pos != 0
 ```
 
 **After:**
 ```go
-if pos != token.NoPos {}
+return pos != token.NoPos
 ```
 
 
@@ -641,19 +624,19 @@ Finds where nesting level could be reduced.
 **Before:**
 ```go
 for _, v := range a {
-   if v.Bool {
-       ...
-   }
+	if v.Bool {
+		body()
+	}
 }
 ```
 
 **After:**
 ```go
 for _, v := range a {
-   if ! v.Bool {
-       continue
-   }
-   ...
+	if !v.Bool {
+		continue
+	}
+	body()
 }
 ```
 
@@ -769,14 +752,14 @@ Detects switch statements that could be better written as if statements.
 ```go
 switch x := x.(type) {
 case int:
-     ...
+	body()
 }
 ```
 
 **After:**
 ```go
 if x, ok := x.(int); ok {
-   ...
+	body()
 }
 ```
 
@@ -862,16 +845,12 @@ Detects unneded parenthesis inside type expressions and suggests to remove them.
 
 **Before:**
 ```go
-func foo() [](func([](func()))) {
-     ...
-}
+type foo [](func([](func())))
 ```
 
 **After:**
 ```go
-func foo() []func([]func()) {
-     ...
-}
+type foo []func([]func())
 ```
 
 
@@ -902,21 +881,15 @@ Detects calls of unexported method from unexported type outside that type.
 
 **Before:**
 ```go
-type foo struct{}
-func (f foo) bar() int { return 1 }
-func baz() {
-	var fo foo
+func baz(f foo) {
 	fo.bar()
 }
 ```
 
 **After:**
 ```go
-type foo struct{}
-func (f foo) Bar() int { return 1 } // now Bar is exported
-func baz() {
-	var fo foo
-	fo.Bar()
+func baz(f foo) {
+	fo.Bar() // Made method exported
 }
 ```
 
@@ -946,7 +919,7 @@ Detects slice expressions that can be simplified to sliced expression itself.
 
 **Before:**
 ```go
-f(s[:]) // s is string
+f(s[:])               // s is string
 copy(b[:], values...) // b is []byte
 ```
 
@@ -982,12 +955,12 @@ Detects Yoda style expressions that suggest to replace them.
 
 **Before:**
 ```go
-if nil != ptr {}
+return nil != ptr
 ```
 
 **After:**
 ```go
-if ptr != nil {}
+return ptr != nil
 ```
 
 
