@@ -73,9 +73,6 @@ func (c *appendAssignChecker) checkAppend(x ast.Expr, call *ast.CallExpr) {
 		}
 	}
 
-	if id, ok := x.(*ast.Ident); ok && id.Name == "_" {
-		return // Don't check assignments to blank ident
-	}
 	switch y := call.Args[0].(type) {
 	case *ast.SliceExpr:
 		if _, ok := c.ctx.typesInfo.TypeOf(y.X).(*types.Array); ok {

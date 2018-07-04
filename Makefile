@@ -1,6 +1,6 @@
 .PHONY: test test-checker ci cover tools docs
 
-PKG = $(shell go list ./...)
+PKG = github.com/go-critic/go-critic/lint github.com/go-critic/go-critic/lint/internal/astwalk github.com/go-critic/go-critic/lint/internal/lintutil
 
 %:      # stubs to get makefile param for `test-checker` command
 	@:	# see: https://stackoverflow.com/a/6273809/433041

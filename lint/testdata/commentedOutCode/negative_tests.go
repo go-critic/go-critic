@@ -27,4 +27,8 @@ func permittedComments() {
 
 	// multi line commentary text
 	// example that should not trigger the warning.
+
+	// type myInt int
+
+	// <-ch
 }
