@@ -3,27 +3,12 @@ package lint
 //! Detects when imported package names shadowed in assignments.
 //
 // @Before:
-// import (
-//     "fmt"
-//     "math"
-// )
-// func main() {
-//     fmt.Println(math.Pi)
-//     // shadowing math package
-//     math := 10
-//     fmt.Println(len)
+// // "path/filepath" is imported.
+// func myFunc(filepath string) {
 // }
 //
 // @After:
-// import (
-//     "fmt"
-//     "math"
-// )
-// func main() {
-//     fmt.Println(math.Pi)
-//     // change identificator name
-//     value := 10
-//     fmt.Println(value)
+// func myFunc(filename string) {
 // }
 
 import (

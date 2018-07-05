@@ -3,10 +3,10 @@ package lint
 //! Detects Yoda style expressions that suggest to replace them.
 //
 // @Before:
-// if nil != ptr {}
+// return nil != ptr
 //
 // @After:
-// if ptr != nil {}
+// return ptr != nil
 
 import (
 	"go/ast"
