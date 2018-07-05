@@ -6,17 +6,17 @@ import "go/ast"
 //
 // @Before:
 // for _, v := range a {
-//    if v.Bool {
-//        ...
-//    }
+// 	if v.Bool {
+// 		body()
+// 	}
 // }
 //
 // @After:
 // for _, v := range a {
-//    if ! v.Bool {
-//        continue
-//    }
-//    ...
+// 	if !v.Bool {
+// 		continue
+// 	}
+// 	body()
 // }
 
 func init() {
