@@ -28,3 +28,13 @@ type myString string
 func convertPtr(x string) *myString {
 	return (*myString)(&x)
 }
+
+type myInterface interface {
+	f()
+}
+
+func interfacePtr() {
+	var val myInterface
+	ptrInterface := &val
+	(*(ptrInterface)).f()
+}
