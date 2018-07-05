@@ -96,7 +96,7 @@ func parseComment(text string, c *checkerDoc) {
 	validateSnippets(c)
 }
 
-func validateSnippets(c *checker) {
+func validateSnippets(c *checkerDoc) {
 	if want := gofmt(c.Before); want != c.Before {
 		log.Printf("%s @Before formatting mismatch:\nhave: %s\nwant: %s",
 			c.Name, c.Before, want)
