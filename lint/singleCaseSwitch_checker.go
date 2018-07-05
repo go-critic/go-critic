@@ -5,12 +5,12 @@ package lint
 // @Before:
 // switch x := x.(type) {
 // case int:
-//      ...
+// 	body()
 // }
 //
 // @After:
 // if x, ok := x.(int); ok {
-//    ...
+// 	body()
 // }
 
 import (

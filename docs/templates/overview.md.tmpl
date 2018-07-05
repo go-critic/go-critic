@@ -1,8 +1,8 @@
+## Checks overview
+
+This page describes checks supported by [go-critic](https://github.com/go-critic/go-critic) linter.
+
 [//]: # (This is generated file, please don't edit it yourself.)
-
-## Overview
-
-Go source code linter that brings checks that are currently not implemented in other linters.
 
 ## Checkers:
 
@@ -14,7 +14,7 @@ Go source code linter that brings checks that are currently not implemented in o
   {{- range .Checkers }}
     {{- if not .Experimental }}
       <tr>
-        <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+        <td><a href="#{{.Name}}-ref">{{.Name}}</a>{{ if .VeryOpinionated }} &#x1f913{{ end }}</td>
         <td>{{.ShortDescription}}</td>
       </tr>
     {{- end }}
@@ -31,7 +31,7 @@ Go source code linter that brings checks that are currently not implemented in o
   {{- range .Checkers }}
     {{- if .Experimental }}
       <tr>
-        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a></td>
+        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a>{{ if .VeryOpinionated }} &#x1f913{{ end }}</td>
         <td>{{.ShortDescription}}</td>
       </tr>
     {{- end }}
@@ -48,12 +48,12 @@ Go source code linter that brings checks that are currently not implemented in o
 
 **Before:**
 ```go
-{{ .Before }}
+{{ .Before -}}
 ```
 
 **After:**
 ```go
-{{ .After }}
+{{ .After -}}
 ```
 
 {{ .Note }}

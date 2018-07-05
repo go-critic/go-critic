@@ -29,7 +29,7 @@
   branch = "master"
   name = "github.com/go-toolsmith/strparse"
   packages = ["."]
-  revision = "f69bf8079030b334aaf0737675b8bc4cde9b25d7"
+  revision = "71162a977d98e0f84f53e3b1424e54a9a3b615ef"
 
 [[projects]]
   branch = "master"
@@ -39,7 +39,7 @@
     "go/buildutil",
     "go/loader"
   ]
-  revision = "25b95b48224cce18163c7d49dcfb89a2d5ecd209"
+  revision = "56e9b8e653c818f46a96eb4828aba7be54271a69"
 
 [solve-meta]
   analyzer-name = "dep"

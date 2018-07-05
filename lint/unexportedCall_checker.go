@@ -3,19 +3,13 @@ package lint
 //! Detects calls of unexported method from unexported type outside that type.
 //
 // @Before:
-// type foo struct{}
-// func (f foo) bar() int { return 1 }
-// func baz() {
-// 	var fo foo
+// func baz(f foo) {
 // 	fo.bar()
 // }
 //
 // @After:
-// type foo struct{}
-// func (f foo) Bar() int { return 1 } // now Bar is exported
-// func baz() {
-// 	var fo foo
-// 	fo.Bar()
+// func baz(f foo) {
+// 	fo.Bar() // Made method exported
 // }
 
 import (

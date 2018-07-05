@@ -4,16 +4,16 @@ package lint
 //
 // @Before:
 // func main() {
-//     // shadowing len function
-//     len := 10
-//     println(len)
+// 	// shadowing len function
+// 	len := 10
+// 	println(len)
 // }
 //
 // @After:
 // func main() {
-//     // change identificator name
-//     length := 10
-//     println(length)
+// 	// change identificator name
+// 	length := 10
+// 	println(length)
 // }
 
 import (
