@@ -6,7 +6,7 @@ package lint
 // a := q.w.e.r.t + 1
 // b := q.w.e.r.t + 2
 // c := q.w.e.r.t + 3
-// v := (a+xs[i+1]) + (b+xs[i+1]) + (c+xs[i+1])
+// v := (a + xs[i+1]) + (b + xs[i+1]) + (c + xs[i+1])
 //
 // @After:
 // x := xs[i+1]
@@ -14,7 +14,7 @@ package lint
 // a := qwert + 1
 // b := qwert + 2
 // c := qwert + 3
-// v := (a+x) + (b+x) + (c+x)
+// v := (a + x) + (b + x) + (c + x)
 
 import (
 	"go/ast"
