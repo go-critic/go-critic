@@ -52,12 +52,15 @@ func (c *ptrToRefParamChecker) checkParams(params []*ast.Field) {
 }
 
 func (c *ptrToRefParamChecker) isRefType(x types.Type) bool {
-	switch x.(type) {
-	case *types.Map, *types.Chan, *types.Slice:
+	switch typ := x.(type) {
+	case *types.Map, *types.Chan, *types.Slice, *types.Interface:
 		return true
-	default:
-		return false
+	case *types.Named:
+		if _, ok := typ.Underlying().(*types.Interface); ok {
+			return true
+		}
 	}
+	return false
 }
 
 func (c *ptrToRefParamChecker) warn(id *ast.Ident) {
