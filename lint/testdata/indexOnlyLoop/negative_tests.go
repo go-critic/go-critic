@@ -54,3 +54,11 @@ func rangeOverString() {
 		f(ch)
 	}
 }
+
+func shadowed() {
+	var xs []*string
+	for k := range xs {
+		var xs []int
+		println(xs[k] + xs[k])
+	}
+}

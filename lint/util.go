@@ -77,9 +77,18 @@ func identOf(x ast.Node) *ast.Ident {
 	case *ast.StarExpr:
 		// *x - x may contain ident.
 		return identOf(x.X)
+	case *ast.SliceExpr:
+		// x[:] - x may contain ident.
+		return identOf(x.X)
 
 	default:
 		// Note that this function is not comprehensive.
 		return nil
 	}
+}
+
+// typeIsPointer reports whether typ has type of *types.Pointer.
+func typeIsPointer(typ types.Type) bool {
+	_, ok := typ.(*types.Pointer)
+	return ok
 }
