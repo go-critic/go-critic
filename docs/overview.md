@@ -30,14 +30,14 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#elseif-ref">elseif</a></td>
-        <td>Detects repeated if-else statements and suggests to replace them with switch statement.
+        <td><a href="#flagDeref-ref">flagDeref</a></td>
+        <td>Detects immediate dereferencing of `flag` package pointers.
 
 </td>
       </tr>
       <tr>
-        <td><a href="#flagDeref-ref">flagDeref</a></td>
-        <td>Detects immediate dereferencing of `flag` package pointers.
+        <td><a href="#ifElseChain-ref">ifElseChain</a></td>
+        <td>Detects repeated if-else statements and suggests to replace them with switch statement.
 
 </td>
       </tr>
@@ -465,39 +465,7 @@ case ys[0], ys[1], ys[2], ys[3], ys[4]:
 ```
 
 
-<a name="elseif-ref"></a>
-## elseif
-Detects repeated if-else statements and suggests to replace them with switch statement.
-
-Permits single else or else-if; repeated else-if or else + else-if
-will trigger suggestion to use switch statement.
-
-
-**Before:**
-```go
-if cond1 {
-	// Code A.
-} else if cond2 {
-	// Code B.
-} else {
-	// Code C.
-}
-```
-
-**After:**
-```go
-switch {
-case cond1:
-	// Code A.
-case cond2:
-	// Code B.
-default:
-	// Code C.
-}
-```
-
-
-`elseif` is syntax-only checker (fast).<a name="emptyFmt-ref"></a>
+<a name="emptyFmt-ref"></a>
 ## emptyFmt
 Detects usages of formatting functions without formatting arguments.
 
@@ -558,7 +526,39 @@ flag.BoolVar(&b, "b", false, "b docs")
 > Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
-`flagDeref` is syntax-only checker (fast).<a name="importShadow-ref"></a>
+`flagDeref` is syntax-only checker (fast).<a name="ifElseChain-ref"></a>
+## ifElseChain
+Detects repeated if-else statements and suggests to replace them with switch statement.
+
+Permits single else or else-if; repeated else-if or else + else-if
+will trigger suggestion to use switch statement.
+
+
+**Before:**
+```go
+if cond1 {
+	// Code A.
+} else if cond2 {
+	// Code B.
+} else {
+	// Code C.
+}
+```
+
+**After:**
+```go
+switch {
+case cond1:
+	// Code A.
+case cond2:
+	// Code B.
+default:
+	// Code C.
+}
+```
+
+
+`ifElseChain` is syntax-only checker (fast).<a name="importShadow-ref"></a>
 ## importShadow
 Detects when imported package names shadowed in assignments.
 

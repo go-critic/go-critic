@@ -29,17 +29,17 @@ import (
 )
 
 func init() {
-	addChecker(&elseifChecker{}, attrSyntaxOnly)
+	addChecker(&ifElseChainChecker{}, attrSyntaxOnly)
 }
 
-type elseifChecker struct {
+type ifElseChainChecker struct {
 	checkerBase
 
 	cause   *ast.IfStmt
 	visited map[*ast.IfStmt]bool
 }
 
-func (c *elseifChecker) EnterFunc(fn *ast.FuncDecl) bool {
+func (c *ifElseChainChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	if fn.Body == nil {
 		return false
 	}
@@ -47,7 +47,7 @@ func (c *elseifChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	return true
 }
 
-func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {
+func (c *ifElseChainChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.IfStmt); ok {
 		if c.visited[stmt] {
 			return
@@ -57,14 +57,14 @@ func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {
 	}
 }
 
-func (c *elseifChecker) checkIfStmt(stmt *ast.IfStmt) {
+func (c *ifElseChainChecker) checkIfStmt(stmt *ast.IfStmt) {
 	const minThreshold = 2
 	if c.countIfelseLen(stmt) >= minThreshold {
 		c.warn()
 	}
 }
 
-func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
+func (c *ifElseChainChecker) countIfelseLen(stmt *ast.IfStmt) int {
 	count := 0
 	for {
 		switch e := stmt.Else.(type) {
@@ -86,6 +86,6 @@ func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
 	}
 }
 
-func (c *elseifChecker) warn() {
+func (c *ifElseChainChecker) warn() {
 	c.ctx.Warn(c.cause, "should rewrite if-else to switch statement")
 }
