@@ -34,3 +34,27 @@ func f6(c int, a, b *chan string) {}
 func f7() (a, b *chan string) {
 	return nil, nil
 }
+
+/// consider `a' to be of non-pointer type
+/// consider `b' to be of non-pointer type
+func f8(a, b *interface{}) {}
+
+/// consider `a' to be of non-pointer type
+/// consider `b' to be of non-pointer type
+func f9() (a, b *interface{}) {
+	return nil, nil
+}
+
+type myInterface interface {
+	f()
+}
+
+/// consider `a' to be of non-pointer type
+/// consider `b' to be of non-pointer type
+func f10(a, b *myInterface) {}
+
+/// consider `a' to be of non-pointer type
+/// consider `b' to be of non-pointer type
+func f11() (a, b *myInterface) {
+	return nil, nil
+}

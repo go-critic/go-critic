@@ -1,91 +1,47 @@
 package lint
 
-//! Detects repeated if-else statements and suggests to replace them with switch statement.
-//
-// Permits single else or else-if; repeated else-if or else + else-if
-// will trigger suggestion to use switch statement.
+//! Detects else with nested if statement that can be replaced with else-if.
 //
 // @Before:
 // if cond1 {
-// 	// Code A.
-// } else if cond2 {
-// 	// Code B.
 // } else {
-// 	// Code C.
+// 	if x := cond2; x {
+// 	}
 // }
 //
 // @After:
-// switch {
-// case cond1:
-// 	// Code A.
-// case cond2:
-// 	// Code B.
-// default:
-// 	// Code C.
+// if cond1 {
+// } else if x := cond2; x {
 // }
 
 import (
 	"go/ast"
+
+	"github.com/go-toolsmith/astp"
 )
 
 func init() {
-	addChecker(&elseifChecker{}, attrSyntaxOnly)
+	// Opinionated because it does give questionable advices for cases
+	// where else with nested if is used for readability with preceding if body.
+	addChecker(&elseifChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
 type elseifChecker struct {
 	checkerBase
-
-	cause   *ast.IfStmt
-	visited map[*ast.IfStmt]bool
-}
-
-func (c *elseifChecker) EnterFunc(fn *ast.FuncDecl) bool {
-	if fn.Body == nil {
-		return false
-	}
-	c.visited = make(map[*ast.IfStmt]bool)
-	return true
 }
 
 func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.IfStmt); ok {
-		if c.visited[stmt] {
+		elseBody, ok := stmt.Else.(*ast.BlockStmt)
+		if !ok || len(elseBody.List) != 1 {
 			return
 		}
-		c.cause = stmt
-		c.checkIfStmt(stmt)
-	}
-}
-
-func (c *elseifChecker) checkIfStmt(stmt *ast.IfStmt) {
-	const minThreshold = 2
-	if c.countIfelseLen(stmt) >= minThreshold {
-		c.warn()
-	}
-}
-
-func (c *elseifChecker) countIfelseLen(stmt *ast.IfStmt) int {
-	count := 0
-	for {
-		switch e := stmt.Else.(type) {
-		case *ast.IfStmt:
-			if e.Init != nil {
-				return 0 // Give up
-			}
-			// Else if.
-			stmt = e
-			count++
-			c.visited[e] = true
-		case *ast.BlockStmt:
-			// Else branch.
-			return count + 1
-		default:
-			// No else or else if.
-			return count
+		if astp.IsIfStmt(elseBody.List[0]) {
+			c.warn(stmt.Else)
 		}
 	}
 }
 
-func (c *elseifChecker) warn() {
-	c.ctx.Warn(c.cause, "should rewrite if-else to switch statement")
+func (c *elseifChecker) warn(cause ast.Node) {
+	c.ctx.Warn(cause, "can replace 'else {if cond {}}' with 'else if cond {}'")
 }

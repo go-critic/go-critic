@@ -74,8 +74,13 @@ func (c *underefChecker) checkStarExpr(expr *ast.StarExpr) bool {
 		return false
 	}
 
+	el := typ.Elem()
 	// Checks if dereference of typ is pointer.
-	if _, ok := typ.Elem().(*types.Pointer); ok {
+	if _, ok := el.(*types.Pointer); ok {
+		return false
+	}
+	// Check if dereference of typ is interface.
+	if _, ok := el.Underlying().(*types.Interface); ok {
 		return false
 	}
 

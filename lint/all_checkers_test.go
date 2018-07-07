@@ -20,6 +20,7 @@ var (
 	testdataPkgPath    = "github.com/go-critic/go-critic/lint/testdata/"
 	sizes              = types.SizesFor("gc", runtime.GOARCH)
 	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
+	commentRE          = regexp.MustCompile(`^\s*//`)
 )
 
 var ruleList []*Rule
@@ -91,8 +92,7 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 		testFilename := filepath.Join("testdata", rule.Name(), filename)
 		goldenWarns := newGoldenFile(t, testFilename)
 
-		var unexpectedWarns []string
-
+		stripDirectives(f)
 		warns := NewChecker(rule, ctx).Check(f)
 
 		for _, warn := range warns {
@@ -100,18 +100,29 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 
 			if w := goldenWarns.find(line, warn.Text); w != nil {
 				if w.matched {
-					t.Errorf("%s:%d: multiple matches for %s", testFilename, line, w)
+					t.Errorf("%s:%d: multiple matches for %s",
+						testFilename, line, w)
 				}
 				w.matched = true
 			} else {
-				unexpectedWarns = append(unexpectedWarns, warn.Text)
+				t.Errorf("%s:%d: unexpected warn: %s",
+					testFilename, line, warn.Text)
 			}
 		}
 
 		goldenWarns.checkUnmatched(t, testFilename)
+	}
+}
 
-		for _, l := range unexpectedWarns {
-			t.Errorf("unexpected warn: `%s`", l)
+// stripDirectives replaces "///" comments with empty single-line
+// comments, so the checkers that inspect comments see ordinary
+// comment groups (with extra newlines, but that's not important).
+func stripDirectives(f *ast.File) {
+	for _, cg := range f.Comments {
+		for _, c := range cg.List {
+			if strings.HasPrefix(c.Text, "/// ") {
+				c.Text = "//"
+			}
 		}
 	}
 }
@@ -183,12 +194,15 @@ func newGoldenFile(t *testing.T, filename string) *goldenFile {
 			var m warning
 			unpackSubmatches(l, warningDirectiveRE, &m.text)
 			pending = append(pending, &m)
-		} else {
-			if len(pending) != 0 {
-				line := i + 1
-				warnings[line] = append([]*warning{}, pending...)
-				pending = pending[:0]
+		} else if len(pending) != 0 {
+			line := i + 1
+			if commentRE.MatchString(l) {
+				// Hack to make it possible to attach directives
+				// to a proper single-line comment position.
+				line -= len(pending)
 			}
+			warnings[line] = append([]*warning{}, pending...)
+			pending = pending[:0]
 		}
 	}
 	return &goldenFile{warnings: warnings}
