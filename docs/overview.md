@@ -111,7 +111,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> &#x1f913</td>
+        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
         <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
 
 </td>
@@ -153,7 +153,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#elseif-ref">elseif</a> &#x1f913</td>
+        <td><a href="#elseif-ref">elseif</a> :nerd_face:</td>
         <td>Detects else with nested if statement that can be replaced with else-if.
 
 </td>
@@ -219,7 +219,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#unexportedCall-ref">unexportedCall</a> &#x1f913</td>
+        <td><a href="#unexportedCall-ref">unexportedCall</a> :nerd_face:</td>
         <td>Detects calls of unexported method from unexported type outside that type.
 
 </td>
@@ -237,7 +237,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> &#x1f913</td>
+        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
         <td>Detects Yoda style expressions that suggest to replace them.
 
 </td>
