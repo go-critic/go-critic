@@ -1,23 +1,36 @@
 package checker_test
 
-func closeFiles(files []*string) {
-	f := func(s *string) {}
+func closeFile(f *string) {}
 
-	/// key variable occurs more then once in the loop; consider using for _, value := range files
+func closeFiles(files []*string) {
+	/// i occurs more than once in the loop; consider using for _, value := range files
 	for i := range files {
 		if files[i] != nil {
-			f(files[i])
+			closeFile(files[i])
 		}
 	}
 }
 
 func sliceLoop(files []*string) {
-	f := func(s *string) {}
-
-	/// key variable occurs more then once in the loop; consider using for _, value := range files
+	/// k occurs more than once in the loop; consider using for _, value := range files
 	for k := range files[:] {
 		if files[k] != nil {
-			f(files[k])
+			closeFile(files[k])
+		}
+	}
+}
+
+func nestedLoop(files []*string) {
+	/// k occurs more than once in the loop; consider using for _, value := range files
+	for k := range files[:] {
+		if files[k] != nil {
+			closeFile(files[k])
+		}
+
+		var xs []*int
+		/// j occurs more than once in the loop; consider using for _, value := range xs
+		for j := range xs {
+			println(*xs[j] + *xs[j])
 		}
 	}
 }
