@@ -10,21 +10,17 @@ import (
 // Suggests to use for key, v := range container form.
 //
 // @Before:
-// func closeFiles(files []*os.File) {
-//     for i := range files {
-//         if files[i] != nil {
-//            files[i].Close()
-//         }
-//     }
+// for i := range files {
+// 	if files[i] != nil {
+// 		files[i].Close()
+// 	}
 // }
 //
 // @After:
-// func closeFilesSuggester(files []*os.File) {
-//     for _, f := range files {
-//         if f != nil {
-//             f.Close()
-//         }
-//     }
+// for _, f := range files {
+// 	if f != nil {
+// 		f.Close()
+// 	}
 // }
 
 func init() {
