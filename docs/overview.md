@@ -153,6 +153,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#elseif-ref">elseif</a> &#x1f913</td>
+        <td>Detects else with nested if statement that can be replaced with else-if.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#emptyFmt-ref">emptyFmt</a></td>
         <td>Detects usages of formatting functions without formatting arguments.
 
@@ -465,7 +471,30 @@ case ys[0], ys[1], ys[2], ys[3], ys[4]:
 ```
 
 
-<a name="emptyFmt-ref"></a>
+<a name="elseif-ref"></a>
+## elseif
+Detects else with nested if statement that can be replaced with else-if.
+
+
+
+**Before:**
+```go
+if cond1 {
+} else {
+	if x := cond2; x {
+	}
+}
+```
+
+**After:**
+```go
+if cond1 {
+} else if x := cond2; x {
+}
+```
+
+
+`elseif` is very opinionated.<a name="emptyFmt-ref"></a>
 ## emptyFmt
 Detects usages of formatting functions without formatting arguments.
 
