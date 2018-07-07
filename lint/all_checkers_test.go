@@ -91,8 +91,6 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 		testFilename := filepath.Join("testdata", rule.Name(), filename)
 		goldenWarns := newGoldenFile(t, testFilename)
 
-		var unexpectedWarns []string
-
 		warns := NewChecker(rule, ctx).Check(f)
 
 		for _, warn := range warns {
@@ -100,19 +98,17 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 
 			if w := goldenWarns.find(line, warn.Text); w != nil {
 				if w.matched {
-					t.Errorf("%s:%d: multiple matches for %s", testFilename, line, w)
+					t.Errorf("%s:%d: multiple matches for %s",
+						testFilename, line, w)
 				}
 				w.matched = true
 			} else {
-				unexpectedWarns = append(unexpectedWarns, warn.Text)
+				t.Errorf("%s:%d: unexpected warn: %s",
+					testFilename, line, warn.Text)
 			}
 		}
 
 		goldenWarns.checkUnmatched(t, testFilename)
-
-		for _, l := range unexpectedWarns {
-			t.Errorf("unexpected warn: `%s`", l)
-		}
 	}
 }
 
