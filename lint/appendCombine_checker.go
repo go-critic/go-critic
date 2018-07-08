@@ -1,14 +1,5 @@
 package lint
 
-//! Detects `append` chains to the same slice that can be done in a single `append` call.
-//
-// @Before:
-// xs = append(xs, 1)
-// xs = append(xs, 2)
-//
-// @After:
-// xs = append(xs, 1, 2)
-
 import (
 	"go/ast"
 	"go/token"
@@ -22,6 +13,14 @@ func init() {
 
 type appendCombineChecker struct {
 	checkerBase
+}
+
+func (c *appendCombineChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects `append` chains to the same slice that can be done in a single `append` call"
+	d.Before = `
+xs = append(xs, 1)
+xs = append(xs, 2)`
+	d.After = `xs = append(xs, 1, 2)`
 }
 
 func (c *appendCombineChecker) VisitStmtList(list []ast.Stmt) {

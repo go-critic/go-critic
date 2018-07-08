@@ -1,14 +1,5 @@
 package lint
 
-//! For functions with multiple return values, detects unnamed results
-//  that do not match `(T, error)` or `(T, bool)` pattern.
-//
-// @Before:
-// func f() (float64, float64)
-//
-// @After:
-// func f() (x, y float64)
-
 import (
 	"go/ast"
 	"go/types"
@@ -20,6 +11,12 @@ func init() {
 
 type unnamedResultChecker struct {
 	checkerBase
+}
+
+func (c *unnamedResultChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects unnamed results that may benefit from names"
+	d.Before = `func f() (float64, float64)`
+	d.After = `func f() (x, y float64)`
 }
 
 func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {

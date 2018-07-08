@@ -1,15 +1,5 @@
 package lint
 
-//! Detects suspicious append result assignments.
-//
-// @Before:
-// p.positives = append(p.negatives, x)
-// p.negatives = append(p.negatives, y)
-//
-// @After:
-// p.positives = append(p.positives, x)
-// p.negatives = append(p.negatives, y)
-
 import (
 	"go/ast"
 	"go/token"
@@ -26,6 +16,16 @@ func init() {
 
 type appendAssignChecker struct {
 	checkerBase
+}
+
+func (c *appendAssignChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects suspicious append result assignments"
+	d.Before = `
+p.positives = append(p.negatives, x)
+p.negatives = append(p.negatives, y)`
+	d.After = `
+p.positives = append(p.positives, x)
+p.negatives = append(p.negatives, y)`
 }
 
 func (c *appendAssignChecker) VisitStmt(stmt ast.Stmt) {

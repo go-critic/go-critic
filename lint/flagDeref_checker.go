@@ -1,19 +1,5 @@
 package lint
 
-//! Detects immediate dereferencing of `flag` package pointers.
-// Suggests using `XxxVar` functions to achieve desired effect.
-//
-// @Before:
-// b := *flag.Bool("b", false, "b docs")
-//
-// @After:
-// var b bool
-// flag.BoolVar(&b, "b", false, "b docs")
-//
-// @Note:
-// > Dereferencing returned pointers will lead to hard to find errors
-// > where flag values are not updated after flag.Parse().
-
 import (
 	"go/ast"
 )
@@ -26,6 +12,17 @@ type flagDerefChecker struct {
 	checkerBase
 
 	flagPtrFuncs map[string]bool
+}
+
+func (c *flagDerefChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects immediate dereferencing of `flag` package pointers."
+	d.Before = `b := *flag.Bool("b", false, "b docs")`
+	d.After = `
+var b bool
+flag.BoolVar(&b, "b", false, "b docs")`
+	d.Note = `
+Dereferencing returned pointers will lead to hard to find errors
+where flag values are not updated after flag.Parse().`
 }
 
 func (c *flagDerefChecker) Init() {

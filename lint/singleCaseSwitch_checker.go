@@ -1,18 +1,5 @@
 package lint
 
-//! Detects switch statements that could be better written as if statements.
-//
-// @Before:
-// switch x := x.(type) {
-// case int:
-// 	body()
-// }
-//
-// @After:
-// if x, ok := x.(int); ok {
-// 	body()
-// }
-
 import (
 	"go/ast"
 )
@@ -23,6 +10,19 @@ func init() {
 
 type singleCaseSwitchChecker struct {
 	checkerBase
+}
+
+func (c *singleCaseSwitchChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects switch statements that could be better written as if statements"
+	d.Before = `
+switch x := x.(type) {
+case int:
+	body()
+}`
+	d.After = `
+if x, ok := x.(int); ok {
+	body()
+}`
 }
 
 func (c *singleCaseSwitchChecker) VisitStmt(stmt ast.Stmt) {

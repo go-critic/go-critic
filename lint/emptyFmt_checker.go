@@ -1,15 +1,5 @@
 package lint
 
-//! Detects usages of formatting functions without formatting arguments.
-//
-// @Before:
-// fmt.Sprintf("whatever")
-// fmt.Errorf("wherever")
-//
-// @After:
-// fmt.Sprint("whatever")
-// errors.New("wherever")
-
 import (
 	"go/ast"
 )
@@ -20,6 +10,16 @@ func init() {
 
 type emptyFmtChecker struct {
 	checkerBase
+}
+
+func (c *emptyFmtChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects usages of formatting functions without formatting arguments"
+	d.Before = `
+fmt.Sprintf("whatever")
+fmt.Errorf("wherever")`
+	d.After = `
+fmt.Sprint("whatever")
+errors.New("wherever")`
 }
 
 func (c *emptyFmtChecker) VisitExpr(expr ast.Expr) {

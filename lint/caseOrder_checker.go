@@ -1,23 +1,5 @@
 package lint
 
-//! Detects erroneous case order inside switch statements.
-//
-// @Before:
-// switch x.(type) {
-// case ast.Expr:
-// 	fmt.Println("expr")
-// case *ast.BasicLit:
-// 	fmt.Println("basic lit") // Never executed
-// }
-//
-// @After:
-// switch x.(type) {
-// case *ast.BasicLit:
-// 	fmt.Println("basic lit") // Now reachable
-// case ast.Expr:
-// 	fmt.Println("expr")
-// }
-
 import (
 	"go/ast"
 	"go/types"
@@ -29,6 +11,24 @@ func init() {
 
 type caseOrderChecker struct {
 	checkerBase
+}
+
+func (c *caseOrderChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects erroneous case order inside switch statements"
+	d.Before = `
+switch x.(type) {
+case ast.Expr:
+	fmt.Println("expr")
+case *ast.BasicLit:
+	fmt.Println("basic lit") // Never executed
+}`
+	d.After = `
+switch x.(type) {
+case *ast.BasicLit:
+	fmt.Println("basic lit") // Now reachable
+case ast.Expr:
+	fmt.Println("expr")
+}`
 }
 
 func (c *caseOrderChecker) VisitStmt(stmt ast.Stmt) {

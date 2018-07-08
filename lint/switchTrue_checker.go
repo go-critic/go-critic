@@ -1,19 +1,5 @@
 package lint
 
-//! Detects switch-over-bool statements that use explicit `true` tag value.
-//
-// @Before:
-// switch true {
-// case x > y:
-// 	// ...
-// }
-//
-// @After:
-// switch {
-// case x > y:
-// 	// ...
-// }
-
 import "go/ast"
 
 func init() {
@@ -22,6 +8,18 @@ func init() {
 
 type switchTrueChecker struct {
 	checkerBase
+}
+
+func (c *switchTrueChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects switch-over-bool statements that use explicit `true` tag value"
+	d.Before = `
+switch true {
+case x > y:
+}`
+	d.After = `
+switch {
+case x > y:
+}`
 }
 
 func (c *switchTrueChecker) VisitStmt(stmt ast.Stmt) {

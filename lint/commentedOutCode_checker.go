@@ -1,14 +1,5 @@
 package lint
 
-//! Detects commented-out code inside function bodies.
-//
-// @Before:
-// // fmt.Println("Debugging hard")
-// foo(1, 2)
-//
-// @After:
-// foo(1, 2)
-
 import (
 	"go/ast"
 	"go/token"
@@ -23,6 +14,14 @@ func init() {
 
 type commentedOutCodeChecker struct {
 	checkerBase
+}
+
+func (c *commentedOutCodeChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects commented-out code inside function bodies"
+	d.Before = `
+// fmt.Println("Debugging hard")
+foo(1, 2)`
+	d.After = `foo(1, 2)`
 }
 
 func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {

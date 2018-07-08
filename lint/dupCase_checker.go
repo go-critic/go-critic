@@ -1,17 +1,5 @@
 package lint
 
-//! Detects duplicated case clauses inside switch statements.
-//
-// @Before:
-// switch x {
-// case ys[0], ys[1], ys[2], ys[0], ys[4]:
-// }
-//
-// @After:
-// switch x {
-// case ys[0], ys[1], ys[2], ys[3], ys[4]:
-// }
-
 import (
 	"go/ast"
 
@@ -26,6 +14,18 @@ type dupCaseChecker struct {
 	checkerBase
 
 	astSet lintutil.AstSet
+}
+
+func (c *dupCaseChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects duplicated case clauses inside switch statements"
+	d.Before = `
+switch x {
+case ys[0], ys[1], ys[2], ys[0], ys[4]:
+}`
+	d.After = `
+switch x {
+case ys[0], ys[1], ys[2], ys[3], ys[4]:
+}`
 }
 
 func (c *dupCaseChecker) VisitStmt(stmt ast.Stmt) {

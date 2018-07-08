@@ -1,15 +1,5 @@
 package lint
 
-//! Detects bool expressions that can be simplified.
-//
-// @Before:
-// a := !(elapsed >= expectElapsedMin)
-// b := !(x) == !(y)
-//
-// @After:
-// a := elapsed < expectElapsedMin
-// b := (x) == (y)
-
 import (
 	"go/ast"
 	"go/token"
@@ -21,6 +11,16 @@ import (
 
 func init() {
 	addChecker(&boolOptChecker{}, attrExperimental)
+}
+
+func (c *boolOptChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects bool expressions that can be simplified"
+	d.Before = `
+a := !(elapsed >= expectElapsedMin)
+b := !(x) == !(y)`
+	d.After = `
+a := elapsed < expectElapsedMin
+b := (x) == (y)`
 }
 
 type boolOptChecker struct {

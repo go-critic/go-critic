@@ -1,13 +1,5 @@
 package lint
 
-//! Detects unused params and suggests to name them as `_` (underscore).
-//
-// @Before:
-// func f(a int, b float64) // b isn't used inside function body
-//
-// @After:
-// func f(a int, _ float64) // everything is cool
-
 import (
 	"go/ast"
 )
@@ -18,6 +10,12 @@ func init() {
 
 type unusedParamChecker struct {
 	checkerBase
+}
+
+func (c *unusedParamChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects unused params and suggests to name them as `_` (underscore)"
+	d.Before = `func f(a int, b float64) // b isn't used inside function body`
+	d.After = `func f(a int, _ float64) // everything is cool`
 }
 
 func (c *unusedParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {

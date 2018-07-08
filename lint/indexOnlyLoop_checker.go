@@ -5,30 +5,29 @@ import (
 	"go/types"
 )
 
-//! Detects for loops that can benefit from rewrite to range loop.
-//
-// Suggests to use for key, v := range container form.
-//
-// @Before:
-// for i := range files {
-// 	if files[i] != nil {
-// 		files[i].Close()
-// 	}
-// }
-//
-// @After:
-// for _, f := range files {
-// 	if f != nil {
-// 		f.Close()
-// 	}
-// }
-
 func init() {
 	addChecker(&indexOnlyLoopChecker{}, attrExperimental)
 }
 
 type indexOnlyLoopChecker struct {
 	checkerBase
+}
+
+func (c *indexOnlyLoopChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects for loops that can benefit from rewrite to range loop"
+	d.Details = "Suggests to use for key, v := range container form."
+	d.Before = `
+for i := range files {
+	if files[i] != nil {
+		files[i].Close()
+	}
+}`
+	d.After = `
+for _, f := range files {
+	if f != nil {
+		f.Close()
+	}
+}`
 }
 
 func (c *indexOnlyLoopChecker) VisitStmt(stmt ast.Stmt) {

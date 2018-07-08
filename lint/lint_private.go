@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"reflect"
+	"strings"
 
 	"github.com/go-critic/go-critic/lint/internal/astwalk"
 	"github.com/go-toolsmith/astfmt"
@@ -30,8 +31,13 @@ type checkerProto struct {
 //
 // See checkerBase and its implementation of this interface for more info.
 type abstractChecker interface {
-	BindContext(*context)
-	Init()
+	BindContext(*context) // See checkerBase.BindContext
+	Init()                // See checkerBase.Init
+
+	// InitDocs fills Documentation object associated with checker.
+	// Mandatory fields are Summary, Before and After.
+	// See other checkers implementation for examples.
+	InitDocs(*Documentation)
 }
 
 type checkerAttribute int
@@ -70,6 +76,23 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 	cloneAbstractChecker := func(c abstractChecker) abstractChecker {
 		dynType := reflect.ValueOf(c).Elem().Type()
 		return reflect.New(dynType).Interface().(abstractChecker)
+	}
+
+	trimDocs := func(d *Documentation) {
+		fields := []*string{
+			&d.Summary,
+			&d.Details,
+			&d.Before,
+			&d.After,
+			&d.Note,
+		}
+		for _, f := range fields {
+			*f = strings.TrimSpace(*f)
+		}
+	}
+
+	validateDocs := func(r *Rule) {
+		// TODO(quasilyte): validate documentation.
 	}
 
 	newFileWalker := func(ctx *context, c abstractChecker) astwalk.FileWalker {
@@ -112,6 +135,10 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 			panic(fmt.Sprintf("unexpected checkerAttribute"))
 		}
 	}
+	// Prepare associated documentation.
+	c.InitDocs(&rule.Doc)
+	trimDocs(&rule.Doc)
+	validateDocs(&rule)
 
 	proto := checkerProto{rule: &rule}
 	proto.clone = func(ctx context) *Checker {

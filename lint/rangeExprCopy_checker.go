@@ -1,21 +1,5 @@
 package lint
 
-//! Detects expensive copies of `for` loop range expressions.
-//
-// Suggests to use pointer to array to avoid the copy using `&` on range expression.
-//
-// @Before:
-// var xs [256]byte
-// for _, x := range xs {
-// 	// Loop body.
-// }
-//
-// @After:
-// var xs [256]byte
-// for _, x := range &xs {
-// 	// Loop body.
-// }
-
 import (
 	"go/ast"
 	"go/types"
@@ -27,6 +11,21 @@ func init() {
 
 type rangeExprCopyChecker struct {
 	checkerBase
+}
+
+func (c *rangeExprCopyChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects expensive copies of `for` loop range expressions"
+	d.Details = "Suggests to use pointer to array to avoid the copy using `&` on range expression."
+	d.Before = `
+var xs [256]byte
+for _, x := range xs {
+	// Loop body.
+}`
+	d.After = `
+var xs [256]byte
+for _, x := range &xs {
+	// Loop body.
+}`
 }
 
 func (c *rangeExprCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {

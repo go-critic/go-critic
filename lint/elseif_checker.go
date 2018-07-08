@@ -1,19 +1,5 @@
 package lint
 
-//! Detects else with nested if statement that can be replaced with else-if.
-//
-// @Before:
-// if cond1 {
-// } else {
-// 	if x := cond2; x {
-// 	}
-// }
-//
-// @After:
-// if cond1 {
-// } else if x := cond2; x {
-// }
-
 import (
 	"go/ast"
 
@@ -28,6 +14,20 @@ func init() {
 
 type elseifChecker struct {
 	checkerBase
+}
+
+func (c *elseifChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects else with nested if statement that can be replaced with else-if"
+	d.Before = `
+if cond1 {
+} else {
+	if x := cond2; x {
+	}
+}`
+	d.After = `
+if cond1 {
+} else if x := cond2; x {
+}`
 }
 
 func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {

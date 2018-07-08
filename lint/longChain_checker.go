@@ -1,21 +1,5 @@
 package lint
 
-//! Detects repeated expression chains and suggest to refactor them.
-//
-// @Before:
-// a := q.w.e.r.t + 1
-// b := q.w.e.r.t + 2
-// c := q.w.e.r.t + 3
-// v := (a + xs[i+1]) + (b + xs[i+1]) + (c + xs[i+1])
-//
-// @After:
-// x := xs[i+1]
-// qwert := q.w.e.r.t
-// a := qwert + 1
-// b := qwert + 2
-// c := qwert + 3
-// v := (a + x) + (b + x) + (c + x)
-
 import (
 	"go/ast"
 	"go/types"
@@ -37,6 +21,22 @@ type longChainChecker struct {
 	// reported is a set of reported expression strings.
 	// Used to avoid duplicated warnings.
 	reported map[string]bool
+}
+
+func (c *longChainChecker) InitDocs(d *Documentation) {
+	d.Summary = "Detects repeated expression chains and suggest to refactor them"
+	d.Before = `
+a := q.w.e.r.t + 1
+b := q.w.e.r.t + 2
+c := q.w.e.r.t + 3
+v := (a + xs[i+1]) + (b + xs[i+1]) + (c + xs[i+1])`
+	d.After = `
+x := xs[i+1]
+qwert := q.w.e.r.t
+a := qwert + 1
+b := qwert + 2
+c := qwert + 3
+v := (a + x) + (b + x) + (c + x)`
 }
 
 func (c *longChainChecker) EnterFunc(fn *ast.FuncDecl) bool {
