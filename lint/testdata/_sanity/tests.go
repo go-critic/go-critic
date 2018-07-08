@@ -165,6 +165,8 @@ func (*myString) noReceiverName2() (a, b string) { return "", "" }
 
 var noInit1, noInit2 int
 
+func variadicArg(xs ...interface{}) {}
+
 func funcCalls() {
 	f0 := func() {}
 	f1 := func(x int) {}
