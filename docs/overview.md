@@ -171,6 +171,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#hugeParam-ref">hugeParam</a></td>
+        <td>Detects params that incur excessive amount of copying.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
         <td>Detects when imported package names shadowed in assignments.
 
@@ -555,7 +561,24 @@ flag.BoolVar(&b, "b", false, "b docs")
 > Dereferencing returned pointers will lead to hard to find errors
 > where flag values are not updated after flag.Parse().
 
-`flagDeref` is syntax-only checker (fast).<a name="ifElseChain-ref"></a>
+`flagDeref` is syntax-only checker (fast).<a name="hugeParam-ref"></a>
+## hugeParam
+Detects params that incur excessive amount of copying.
+
+
+
+**Before:**
+```go
+func f(x [1024]int) {}
+```
+
+**After:**
+```go
+func f(x *[1024]int) {}
+```
+
+
+<a name="ifElseChain-ref"></a>
 ## ifElseChain
 Detects repeated if-else statements and suggests to replace them with switch statement.
 
