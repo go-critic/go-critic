@@ -15,7 +15,7 @@ type docStubChecker struct {
 	badCommentRE *regexp.Regexp
 }
 
-func (c *docStubChecker) InitDocs(d *Documentation) {
+func (c *docStubChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects comments that silence go lint complaints about doc-comment"
 	d.Before = `
 // Foo ...

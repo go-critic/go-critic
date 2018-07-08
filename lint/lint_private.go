@@ -34,10 +34,10 @@ type abstractChecker interface {
 	BindContext(*context) // See checkerBase.BindContext
 	Init()                // See checkerBase.Init
 
-	// InitDocs fills Documentation object associated with checker.
+	// InitDocumentation fills Documentation object associated with checker.
 	// Mandatory fields are Summary, Before and After.
 	// See other checkers implementation for examples.
-	InitDocs(*Documentation)
+	InitDocumentation(*Documentation)
 }
 
 type checkerAttribute int
@@ -136,7 +136,7 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 		}
 	}
 	// Prepare associated documentation.
-	c.InitDocs(&rule.Doc)
+	c.InitDocumentation(&rule.Doc)
 	trimDocs(&rule.Doc)
 	validateDocs(&rule)
 

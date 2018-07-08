@@ -51,7 +51,7 @@ type stdExprChecker struct {
 	suggestionToExpression map[string]ast.Expr
 }
 
-func (c *stdExprChecker) InitDocs(d *Documentation) {
+func (c *stdExprChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects constant expressions that can be replaced by a stdlib const"
 	d.Before = `
 intBytes := make([]byte, unsafe.Sizeof(0))

@@ -16,7 +16,7 @@ type commentedOutCodeChecker struct {
 	checkerBase
 }
 
-func (c *commentedOutCodeChecker) InitDocs(d *Documentation) {
+func (c *commentedOutCodeChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects commented-out code inside function bodies"
 	d.Before = `
 // fmt.Println("Debugging hard")

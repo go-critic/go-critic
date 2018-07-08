@@ -12,7 +12,7 @@ type singleCaseSwitchChecker struct {
 	checkerBase
 }
 
-func (c *singleCaseSwitchChecker) InitDocs(d *Documentation) {
+func (c *singleCaseSwitchChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects switch statements that could be better written as if statements"
 	d.Before = `
 switch x := x.(type) {

@@ -16,7 +16,7 @@ type elseifChecker struct {
 	checkerBase
 }
 
-func (c *elseifChecker) InitDocs(d *Documentation) {
+func (c *elseifChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects else with nested if statement that can be replaced with else-if"
 	d.Before = `
 if cond1 {

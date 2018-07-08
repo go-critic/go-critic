@@ -16,7 +16,7 @@ type dupCaseChecker struct {
 	astSet lintutil.AstSet
 }
 
-func (c *dupCaseChecker) InitDocs(d *Documentation) {
+func (c *dupCaseChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects duplicated case clauses inside switch statements"
 	d.Before = `
 switch x {

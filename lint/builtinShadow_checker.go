@@ -16,7 +16,7 @@ type builtinShadowChecker struct {
 	builtins map[string]bool
 }
 
-func (c *builtinShadowChecker) InitDocs(d *Documentation) {
+func (c *builtinShadowChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects when predeclared identifiers shadowed in assignments"
 	d.Before = `
 len := 10

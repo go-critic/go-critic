@@ -10,7 +10,7 @@ type switchTrueChecker struct {
 	checkerBase
 }
 
-func (c *switchTrueChecker) InitDocs(d *Documentation) {
+func (c *switchTrueChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects switch-over-bool statements that use explicit `true` tag value"
 	d.Before = `
 switch true {

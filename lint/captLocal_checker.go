@@ -17,7 +17,7 @@ type captLocalChecker struct {
 	upcaseNames map[string]bool
 }
 
-func (c *captLocalChecker) InitDocs(d *Documentation) {
+func (c *captLocalChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects capitalized names for local variables"
 	d.Before = `func f(IN int, OUT *int) (ERR error) {}`
 	d.After = `func f(in int, out *int) (err error) {}`

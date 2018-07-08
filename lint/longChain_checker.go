@@ -23,7 +23,7 @@ type longChainChecker struct {
 	reported map[string]bool
 }
 
-func (c *longChainChecker) InitDocs(d *Documentation) {
+func (c *longChainChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects repeated expression chains and suggest to refactor them"
 	d.Before = `
 a := q.w.e.r.t + 1

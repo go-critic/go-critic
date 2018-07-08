@@ -13,7 +13,7 @@ type rangeExprCopyChecker struct {
 	checkerBase
 }
 
-func (c *rangeExprCopyChecker) InitDocs(d *Documentation) {
+func (c *rangeExprCopyChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects expensive copies of `for` loop range expressions"
 	d.Details = "Suggests to use pointer to array to avoid the copy using `&` on range expression."
 	d.Before = `

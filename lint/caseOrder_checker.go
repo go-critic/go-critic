@@ -13,7 +13,7 @@ type caseOrderChecker struct {
 	checkerBase
 }
 
-func (c *caseOrderChecker) InitDocs(d *Documentation) {
+func (c *caseOrderChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects erroneous case order inside switch statements"
 	d.Before = `
 switch x.(type) {

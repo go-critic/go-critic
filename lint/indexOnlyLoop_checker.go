@@ -13,7 +13,7 @@ type indexOnlyLoopChecker struct {
 	checkerBase
 }
 
-func (c *indexOnlyLoopChecker) InitDocs(d *Documentation) {
+func (c *indexOnlyLoopChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects for loops that can benefit from rewrite to range loop"
 	d.Details = "Suggests to use for key, v := range container form."
 	d.Before = `

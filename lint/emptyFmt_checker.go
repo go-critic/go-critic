@@ -12,7 +12,7 @@ type emptyFmtChecker struct {
 	checkerBase
 }
 
-func (c *emptyFmtChecker) InitDocs(d *Documentation) {
+func (c *emptyFmtChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects usages of formatting functions without formatting arguments"
 	d.Before = `
 fmt.Sprintf("whatever")

@@ -18,7 +18,7 @@ type typeUnparenChecker struct {
 	cause ast.Node // Last warning cause
 }
 
-func (c *typeUnparenChecker) InitDocs(d *Documentation) {
+func (c *typeUnparenChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects unneded parenthesis inside type expressions and suggests to remove them"
 	d.Before = "type foo [](func([](func())))"
 	d.After = "type foo []func([]func())"

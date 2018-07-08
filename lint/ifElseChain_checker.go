@@ -15,7 +15,7 @@ type ifElseChainChecker struct {
 	visited map[*ast.IfStmt]bool
 }
 
-func (c *ifElseChainChecker) InitDocs(d *Documentation) {
+func (c *ifElseChainChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects repeated if-else statements and suggests to replace them with switch statement"
 	d.Before = `
 if cond1 {

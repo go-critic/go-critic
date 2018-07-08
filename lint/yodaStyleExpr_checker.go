@@ -16,7 +16,7 @@ type yodaStyleExprChecker struct {
 	checkerBase
 }
 
-func (c *yodaStyleExprChecker) InitDocs(d *Documentation) {
+func (c *yodaStyleExprChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects Yoda style expressions that suggest to replace them"
 	d.Before = `return nil != ptr`
 	d.After = `return ptr != nil`

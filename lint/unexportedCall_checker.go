@@ -15,7 +15,7 @@ type unexportedCallChecker struct {
 	recvName string
 }
 
-func (c *unexportedCallChecker) InitDocs(d *Documentation) {
+func (c *unexportedCallChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects calls of unexported method from unexported type outside that type"
 	d.Before = `
 func baz(f foo) {

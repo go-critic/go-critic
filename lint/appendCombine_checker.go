@@ -15,7 +15,7 @@ type appendCombineChecker struct {
 	checkerBase
 }
 
-func (c *appendCombineChecker) InitDocs(d *Documentation) {
+func (c *appendCombineChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects `append` chains to the same slice that can be done in a single `append` call"
 	d.Before = `
 xs = append(xs, 1)

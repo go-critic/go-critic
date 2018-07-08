@@ -24,7 +24,7 @@ type evalOrderChecker struct {
 	depSet lintutil.AstSet
 }
 
-func (c *evalOrderChecker) InitDocs(d *Documentation) {
+func (c *evalOrderChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects potentially unsafe dependencies on evaluation order"
 	d.Before = `return mayModifySlice(&xs), xs[0]`
 	d.After = `

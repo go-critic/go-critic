@@ -18,7 +18,7 @@ type appendAssignChecker struct {
 	checkerBase
 }
 
-func (c *appendAssignChecker) InitDocs(d *Documentation) {
+func (c *appendAssignChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects suspicious append result assignments"
 	d.Before = `
 p.positives = append(p.negatives, x)

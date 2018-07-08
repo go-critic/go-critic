@@ -16,7 +16,7 @@ type regexpMustChecker struct {
 	checkerBase
 }
 
-func (c *regexpMustChecker) InitDocs(d *Documentation) {
+func (c *regexpMustChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`"
 	d.Before = `re, _ := regexp.Compile("const pattern")`
 	d.After = `re := regexp.MustCompile("const pattern")`

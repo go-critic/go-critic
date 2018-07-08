@@ -13,7 +13,7 @@ type unsliceChecker struct {
 	checkerBase
 }
 
-func (c *unsliceChecker) InitDocs(d *Documentation) {
+func (c *unsliceChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects slice expressions that can be simplified to sliced expression itself"
 	d.Before = `
 f(s[:])               // s is string

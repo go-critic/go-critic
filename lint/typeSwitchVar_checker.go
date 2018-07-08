@@ -15,7 +15,7 @@ type typeSwitchVarChecker struct {
 	checkerBase
 }
 
-func (c *typeSwitchVarChecker) InitDocs(d *Documentation) {
+func (c *typeSwitchVarChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects type switches that can benefit from type guard clause with variable"
 	d.Before = `
 switch v.(type) {

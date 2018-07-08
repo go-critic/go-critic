@@ -14,7 +14,7 @@ type paramTypeCombineChecker struct {
 	checkerBase
 }
 
-func (c *paramTypeCombineChecker) InitDocs(d *Documentation) {
+func (c *paramTypeCombineChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects if function parameters could be combined by type and suggest the way to do it"
 	d.Before = `func foo(a, b int, c, d int, e, f int, g int) {}`
 	d.After = `func foo(a, b, c, d, e, f, g int) {}`

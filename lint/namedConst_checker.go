@@ -17,7 +17,7 @@ type namedConstChecker struct {
 	checkerBase
 }
 
-func (c *namedConstChecker) InitDocs(d *Documentation) {
+func (c *namedConstChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects literals that can be replaced with defined named const"
 	d.Before = `
 // pos has type of token.Pos.

@@ -13,7 +13,7 @@ type underefChecker struct {
 	checkerBase
 }
 
-func (c *underefChecker) InitDocs(d *Documentation) {
+func (c *underefChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects dereference expressions that can be omitted"
 	d.Before = `
 (*k).field = 5

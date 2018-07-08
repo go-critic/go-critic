@@ -12,7 +12,7 @@ type rangeValCopyChecker struct {
 	checkerBase
 }
 
-func (c *rangeValCopyChecker) InitDocs(d *Documentation) {
+func (c *rangeValCopyChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects loops that copy big objects during each iteration"
 	d.Details = "Suggests to use index access or take address and make use pointer instead."
 	d.Before = `

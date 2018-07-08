@@ -13,7 +13,7 @@ type ptrToRefParamChecker struct {
 	checkerBase
 }
 
-func (c *ptrToRefParamChecker) InitDocs(d *Documentation) {
+func (c *ptrToRefParamChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects input and output parameters that have a type of pointer to referential type"
 	d.Before = `func f(m *map[string]int) (ch *chan *int)`
 	d.After = `func f(m map[string]int) (ch chan *int)`

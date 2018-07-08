@@ -12,7 +12,7 @@ type unusedParamChecker struct {
 	checkerBase
 }
 
-func (c *unusedParamChecker) InitDocs(d *Documentation) {
+func (c *unusedParamChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects unused params and suggests to name them as `_` (underscore)"
 	d.Before = `func f(a int, b float64) // b isn't used inside function body`
 	d.After = `func f(a int, _ float64) // everything is cool`

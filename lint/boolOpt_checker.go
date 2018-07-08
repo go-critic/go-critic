@@ -13,7 +13,7 @@ func init() {
 	addChecker(&boolOptChecker{}, attrExperimental)
 }
 
-func (c *boolOptChecker) InitDocs(d *Documentation) {
+func (c *boolOptChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects bool expressions that can be simplified"
 	d.Before = `
 a := !(elapsed >= expectElapsedMin)

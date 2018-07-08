@@ -13,7 +13,7 @@ type unnamedResultChecker struct {
 	checkerBase
 }
 
-func (c *unnamedResultChecker) InitDocs(d *Documentation) {
+func (c *unnamedResultChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects unnamed results that may benefit from names"
 	d.Before = `func f() (float64, float64)`
 	d.After = `func f() (x, y float64)`

@@ -14,7 +14,7 @@ type deferInLoopChecker struct {
 	checkerBase
 }
 
-func (c *deferInLoopChecker) InitDocs(d *Documentation) {
+func (c *deferInLoopChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects defer in loop and warns that it will not be executed till the end of function's scope"
 	d.Before = `
 for i := range [10]int{} {

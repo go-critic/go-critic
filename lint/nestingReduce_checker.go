@@ -10,7 +10,7 @@ type nestingReduceChecker struct {
 	checkerBase
 }
 
-func (c *nestingReduceChecker) InitDocs(d *Documentation) {
+func (c *nestingReduceChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Finds where nesting level could be reduced"
 	d.Before = `
 for _, v := range a {

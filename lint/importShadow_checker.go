@@ -15,7 +15,7 @@ type importShadowChecker struct {
 	checkerBase
 }
 
-func (c *importShadowChecker) InitDocs(d *Documentation) {
+func (c *importShadowChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects when imported package names shadowed in assignments"
 	d.Before = `
 // "path/filepath" is imported.
