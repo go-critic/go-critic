@@ -86,10 +86,8 @@ func (c *dupSubExprChecker) checkBinaryExpr(expr *ast.BinaryExpr) {
 }
 
 func (c *dupSubExprChecker) resultIsFloat(expr ast.Expr) bool {
-	if typ, ok := c.ctx.typesInfo.TypeOf(expr).(*types.Basic); ok {
-		return typ.Info()&types.IsFloat != 0
-	}
-	return false
+	typ, ok := c.ctx.typesInfo.TypeOf(expr).(*types.Basic)
+	return ok && typ.Info()&types.IsFloat != 0
 }
 
 func (c *dupSubExprChecker) isSafe(expr ast.Expr) bool {
@@ -104,7 +102,7 @@ func (c *dupSubExprChecker) isSafe(expr ast.Expr) bool {
 	case *ast.BinaryExpr:
 		return c.isSafe(expr.X) && c.isSafe(expr.Y)
 	case *ast.UnaryExpr:
-		return c.isSafe(expr.X) && expr.Op != token.ARROW
+		return expr.Op != token.ARROW && c.isSafe(expr.X)
 	case *ast.BasicLit, *ast.Ident:
 		return true
 	case *ast.IndexExpr:
