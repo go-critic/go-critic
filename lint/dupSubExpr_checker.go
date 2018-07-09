@@ -4,12 +4,12 @@ package lint
 //
 // @Before:
 // sort.Slice(xs, func(i, j int) bool {
-// 	return xs[i].v < xs[i].v // Same indexes
+// 	return xs[i].v < xs[i].v // Duplicated index
 // })
 //
 // @After:
 // sort.Slice(xs, func(i, j int) bool {
-// 	return xs[i].v < xs[j].v // Different indexes
+// 	return xs[i].v < xs[j].v
 // })
 
 import (
@@ -110,6 +110,8 @@ func (c *dupSubExprChecker) isSafe(expr ast.Expr) bool {
 	case *ast.IndexExpr:
 		return c.isSafe(expr.X) && c.isSafe(expr.Index)
 	case *ast.SelectorExpr:
+		return c.isSafe(expr.X)
+	case *ast.ParenExpr:
 		return c.isSafe(expr.X)
 	default:
 		return false
