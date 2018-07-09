@@ -147,6 +147,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#dupBranchBody-ref">dupBranchBody</a></td>
+        <td>Detects duplicated branch bodies inside conditional statements.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#dupCase-ref">dupCase</a></td>
         <td>Detects duplicated case clauses inside switch statements.
 
@@ -456,7 +462,32 @@ func Foo() {
 > You can either remove a comment to let go lint find it or change stub to useful comment.
 > This checker makes it easier to detect stubs, the action is up to you.
 
-`docStub` is syntax-only checker (fast).<a name="dupCase-ref"></a>
+`docStub` is syntax-only checker (fast).<a name="dupBranchBody-ref"></a>
+## dupBranchBody
+Detects duplicated branch bodies inside conditional statements.
+
+
+
+**Before:**
+```go
+if cond {
+	println("cond=true")
+} else {
+	println("cond=true")
+}
+```
+
+**After:**
+```go
+if cond {
+	println("cond=true")
+} else {
+	println("cond=false")
+}
+```
+
+
+<a name="dupCase-ref"></a>
 ## dupCase
 Detects duplicated case clauses inside switch statements.
 
