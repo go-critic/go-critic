@@ -4,12 +4,12 @@ package lint
 //
 // @Before:
 // sort.Slice(xs, func(i, j int) bool {
-// 	return xs[i].v < xs[i].v // Same index
+// 	return xs[i].v < xs[i].v // Same indexes
 // })
 //
 // @After:
 // sort.Slice(xs, func(i, j int) bool {
-// 	return xs[i].v < xs[j].v // Different index
+// 	return xs[i].v < xs[j].v // Different indexes
 // })
 
 import (
@@ -80,7 +80,7 @@ func (c *dupSubExprChecker) checkBinaryExpr(expr *ast.BinaryExpr) {
 	if c.resultIsFloat(expr.X) && c.floatOpsSet[expr.Op] {
 		return
 	}
-	if c.opSet[expr.Op] && astequal.Expr(expr.X, expr.Y) {
+	if c.isSafe(expr) && c.opSet[expr.Op] && astequal.Expr(expr.X, expr.Y) {
 		c.warn(expr)
 	}
 }
