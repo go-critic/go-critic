@@ -159,6 +159,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#dupSubExpr-ref">dupSubExpr</a></td>
+        <td>Detects suspicious duplicated sub-expressions.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#elseif-ref">elseif</a> :nerd_face:</td>
         <td>Detects else with nested if statement that can be replaced with else-if.
 
@@ -505,6 +511,27 @@ case ys[0], ys[1], ys[2], ys[0], ys[4]:
 switch x {
 case ys[0], ys[1], ys[2], ys[3], ys[4]:
 }
+```
+
+
+<a name="dupSubExpr-ref"></a>
+## dupSubExpr
+Detects suspicious duplicated sub-expressions.
+
+
+
+**Before:**
+```go
+sort.Slice(xs, func(i, j int) bool {
+	return xs[i].v < xs[i].v // Same index
+})
+```
+
+**After:**
+```go
+sort.Slice(xs, func(i, j int) bool {
+	return xs[i].v < xs[j].v // Different index
+})
 ```
 
 
