@@ -117,8 +117,8 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#boolOpt-ref">boolOpt</a></td>
-        <td>Detects bool expressions that can be simplified.
+        <td><a href="#boolSimplify-ref">boolSimplify</a></td>
+        <td>Detects bool expressions that can be simplified for the sake of readability.
 
 </td>
       </tr>
@@ -317,9 +317,9 @@ func IsEnabled() bool
 ```
 
 
-`boolFuncPrefix` is very opinionated.<a name="boolOpt-ref"></a>
-## boolOpt
-Detects bool expressions that can be simplified.
+`boolFuncPrefix` is very opinionated.<a name="boolSimplify-ref"></a>
+## boolSimplify
+Detects bool expressions that can be simplified for the sake of readability.
 
 
 
@@ -523,14 +523,14 @@ Detects suspicious duplicated sub-expressions.
 **Before:**
 ```go
 sort.Slice(xs, func(i, j int) bool {
-	return xs[i].v < xs[i].v // Same index
+	return xs[i].v < xs[i].v // Duplicated index
 })
 ```
 
 **After:**
 ```go
 sort.Slice(xs, func(i, j int) bool {
-	return xs[i].v < xs[j].v // Different index
+	return xs[i].v < xs[j].v
 })
 ```
 
