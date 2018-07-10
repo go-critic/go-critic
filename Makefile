@@ -20,7 +20,7 @@ ci:
 
 ci-tests:
 	go tool vet .
-	go test -v -race -count=1 github.com/go-critic/go-critic/lint
+	go test -v -race -count=1 ./...
 	gocritic check-project `pwd`
 
 ci-gometalinter:
