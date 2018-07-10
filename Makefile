@@ -30,9 +30,7 @@ ci-gometalinter:
 
 cover:
 	go get -u github.com/mattn/goveralls
-	@for pkg in ${PKG}; \
-		do goveralls -package $$pkg -covermode atomic -service travis-ci -repotoken ${COVERALLS_TOKEN} \
-	done	
+	@for pkg in ${PKG}; do goveralls -package $$pkg -covermode atomic -service travis-ci -repotoken ${COVERALLS_TOKEN}; done	
 
 install:
 	go install ./cmd/gocritic
