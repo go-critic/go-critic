@@ -1,6 +1,9 @@
 language: go
 go:
   - 1.x
+env:
+  - TEST_SUITE=tests
+  - TEST_SUITE=gometalinter
 before_install:
   - make tools
 install:

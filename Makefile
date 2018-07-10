@@ -16,10 +16,15 @@ docs:
 
 ci:
 	go get -t -v ./...
+	@if [ "$(TEST_SUITE)" = "gometalinter" ]; then make gometalinter; else make ci-tests; fi
+
+ci-tests:
 	go tool vet .
-	go test -v -race -count=1 ./...
-	gometalinter.v2 --skip=testdata --vendor ./...
+	go test -v -race -count=1 github.com/go-critic/go-critic/lint
 	gocritic check-project `pwd`
+
+gometalinter:
+	gometalinter.v2 --skip=testdata --vendor ./...
 
 cover:
 	@echo "" > coverage.out
