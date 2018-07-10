@@ -30,11 +30,11 @@ ci-gometalinter:
 
 cover:
 	go get -u github.com/mattn/goveralls
-	@for d in ${PKG}; \
-		go test -coverprofile=profile.out -covermode=set $$d; \
-		goveralls -coverprofile profile.out -service travis-ci -repotoken ${COVERALLS_TOKEN} \
-		rm profile.out; \
-	done	
+	goveralls -pkg github.com/go-critic/go-critic/lint -service travis-ci -repotoken ${COVERALLS_TOKEN} \
+	# @for d in ${PKG}; \
+	# 	go test -coverprofile=profile.out -covermode=set $$d; \
+	# 	rm profile.out; \
+	# done	
 
 install:
 	go install ./cmd/gocritic
