@@ -29,6 +29,7 @@ ci-gometalinter:
 	gometalinter.v2 --skip=testdata --vendor ./...
 
 cover:
+	go get -u github.com/mattn/goveralls
 	@echo "" > coverage.out
 	@for d in ${PKG}; \
 		do echo "" > profile.out; \
@@ -36,6 +37,7 @@ cover:
 		cat profile.out >> coverage.out; \
 		rm profile.out; \
 	done
+	$GOPATH/bin/goveralls -service=travis-ci -coverprofile=coverage.out
 
 install:
 	go install ./cmd/gocritic
