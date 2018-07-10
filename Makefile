@@ -29,13 +29,8 @@ ci-gometalinter:
 	gometalinter.v2 --skip=testdata --vendor ./...
 
 cover:
-	@echo "" > coverage.out
-	@for d in ${PKG}; \
-		do echo "" > profile.out; \
-		go test -coverprofile=profile.out -covermode=set $$d; \
-		cat profile.out >> coverage.out; \
-		rm profile.out; \
-	done
+	go get -u github.com/mattn/goveralls
+	goveralls -package github.com/go-critic/go-critic/lint -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 install:
 	go install ./cmd/gocritic
