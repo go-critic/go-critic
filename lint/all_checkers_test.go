@@ -71,6 +71,7 @@ func TestSanity(t *testing.T) {
 func TestCheckers(t *testing.T) {
 	for _, rule := range ruleList {
 		t.Run(rule.Name(), func(t *testing.T) {
+			t.Parallel()
 			pkgPath := testdataPkgPath + rule.Name()
 
 			prog := newProg(t, pkgPath)
