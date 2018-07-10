@@ -39,7 +39,7 @@ cover:
 		rm profile.out; \
 	done
 	
-	goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
+	goveralls -coverprofile=coverage.out -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 install:
 	go install ./cmd/gocritic
