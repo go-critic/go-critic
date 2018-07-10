@@ -30,16 +30,11 @@ ci-gometalinter:
 
 cover:
 	go get -u github.com/mattn/goveralls
-
-	@echo "" > coverage.out
 	@for d in ${PKG}; \
-		do echo "" > profile.out; \
 		go test -coverprofile=profile.out -covermode=set $$d; \
-		cat profile.out >> coverage.out; \
+		goveralls -coverprofile profile.out -service travis-ci -repotoken ${COVERALLS_TOKEN} \
 		rm profile.out; \
-	done
-	
-	goveralls -coverprofile=coverage.out -service travis-ci -repotoken ${COVERALLS_TOKEN}
+	done	
 
 install:
 	go install ./cmd/gocritic
