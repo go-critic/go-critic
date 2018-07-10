@@ -34,7 +34,7 @@ type defaultCaseOrderChecker struct {
 
 func (c *defaultCaseOrderChecker) VisitStmt(stmt ast.Stmt) {
 	swtch, ok := stmt.(*ast.SwitchStmt)
-	if !ok || swtch.Body == nil || swtch.Body.List == nil {
+	if !ok {
 		return
 	}
 	for i, stmt := range swtch.Body.List {
@@ -42,8 +42,11 @@ func (c *defaultCaseOrderChecker) VisitStmt(stmt ast.Stmt) {
 		if !ok {
 			continue
 		}
-		if caseStmt.List == nil && (i != 0 && i != len(swtch.Body.List)-1) {
-			c.warn(caseStmt)
+		// is `default` case
+		if caseStmt.List == nil {
+			if i != 0 && i != len(swtch.Body.List)-1 {
+				c.warn(caseStmt)
+			}
 		}
 	}
 }
