@@ -25,14 +25,14 @@ package lint
 import "go/ast"
 
 func init() {
-	addChecker(&defaultCasePosChecker{}, attrSyntaxOnly)
+	addChecker(&defaultCaseOrderChecker{}, attrSyntaxOnly)
 }
 
-type defaultCasePosChecker struct {
+type defaultCaseOrderChecker struct {
 	checkerBase
 }
 
-func (c *defaultCasePosChecker) VisitStmt(stmt ast.Stmt) {
+func (c *defaultCaseOrderChecker) VisitStmt(stmt ast.Stmt) {
 	swtch, ok := stmt.(*ast.SwitchStmt)
 	if !ok || swtch.Body == nil || swtch.Body.List == nil {
 		return
@@ -48,6 +48,6 @@ func (c *defaultCasePosChecker) VisitStmt(stmt ast.Stmt) {
 	}
 }
 
-func (c *defaultCasePosChecker) warn(cause *ast.CaseClause) {
+func (c *defaultCaseOrderChecker) warn(cause *ast.CaseClause) {
 	c.ctx.Warn(cause, "consider to make `default` case as first or as last case")
 }
