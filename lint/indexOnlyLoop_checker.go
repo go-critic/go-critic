@@ -3,6 +3,8 @@ package lint
 import (
 	"go/ast"
 	"go/types"
+
+	"github.com/go-toolsmith/astequal"
 )
 
 //! Detects for loops that can benefit from rewrite to range loop.
@@ -33,7 +35,7 @@ type indexOnlyLoopChecker struct {
 
 func (c *indexOnlyLoopChecker) VisitStmt(stmt ast.Stmt) {
 	rng, ok := stmt.(*ast.RangeStmt)
-	if !ok || rng.Key == nil {
+	if !ok || rng.Key == nil || rng.Value != nil {
 		return
 	}
 	iterated := c.ctx.typesInfo.ObjectOf(identOf(rng.X))
@@ -43,6 +45,9 @@ func (c *indexOnlyLoopChecker) VisitStmt(stmt ast.Stmt) {
 	count := 0
 	ast.Inspect(rng.Body, func(n ast.Node) bool {
 		if n, ok := n.(*ast.IndexExpr); ok {
+			if !astequal.Expr(n.Index, rng.Key) {
+				return true
+			}
 			if iterated == c.ctx.typesInfo.ObjectOf(identOf(n.X)) {
 				count++
 			}
