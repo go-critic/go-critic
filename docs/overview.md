@@ -111,14 +111,14 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
-        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+        <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
+        <td>Detects bool expressions that can be simplified for the sake of readability.
 
 </td>
       </tr>
       <tr>
-        <td><a href="#boolOpt-ref">boolOpt</a></td>
-        <td>Detects bool expressions that can be simplified.
+        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
+        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
 
 </td>
       </tr>
@@ -300,6 +300,25 @@ xs = append(xs, 1, 2)
 ```
 
 
+<a name="boolExprSimplify-ref"></a>
+## boolExprSimplify
+Detects bool expressions that can be simplified for the sake of readability.
+
+
+
+**Before:**
+```go
+a := !(elapsed >= expectElapsedMin)
+b := !(x) == !(y)
+```
+
+**After:**
+```go
+a := elapsed < expectElapsedMin
+b := (x) == (y)
+```
+
+
 <a name="boolFuncPrefix-ref"></a>
 ## boolFuncPrefix
 Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
@@ -317,26 +336,7 @@ func IsEnabled() bool
 ```
 
 
-`boolFuncPrefix` is very opinionated.<a name="boolOpt-ref"></a>
-## boolOpt
-Detects bool expressions that can be simplified.
-
-
-
-**Before:**
-```go
-a := !(elapsed >= expectElapsedMin)
-b := !(x) == !(y)
-```
-
-**After:**
-```go
-a := elapsed < expectElapsedMin
-b := (x) == (y)
-```
-
-
-<a name="builtinShadow-ref"></a>
+`boolFuncPrefix` is very opinionated.<a name="builtinShadow-ref"></a>
 ## builtinShadow
 Detects when predeclared identifiers shadowed in assignments.
 
@@ -523,14 +523,14 @@ Detects suspicious duplicated sub-expressions.
 **Before:**
 ```go
 sort.Slice(xs, func(i, j int) bool {
-	return xs[i].v < xs[i].v // Same index
+	return xs[i].v < xs[i].v // Duplicated index
 })
 ```
 
 **After:**
 ```go
 sort.Slice(xs, func(i, j int) bool {
-	return xs[i].v < xs[j].v // Different index
+	return xs[i].v < xs[j].v
 })
 ```
 
