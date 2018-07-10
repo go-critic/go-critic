@@ -20,10 +20,10 @@ import (
 )
 
 func init() {
-	addChecker(&boolSimplifyChecker{}, attrExperimental)
+	addChecker(&boolExprSimplifyChecker{}, attrExperimental)
 }
 
-type boolSimplifyChecker struct {
+type boolExprSimplifyChecker struct {
 	checkerBase
 
 	cause ast.Node // Last warning cause
@@ -35,14 +35,14 @@ type boolSimplifyChecker struct {
 	nilBinaryExpr *ast.BinaryExpr
 }
 
-func (c *boolSimplifyChecker) Init() {
+func (c *boolExprSimplifyChecker) Init() {
 	c.nilUnaryExpr = &ast.UnaryExpr{}
 	c.nilBinaryExpr = &ast.BinaryExpr{}
 }
 
-func (c *boolSimplifyChecker) EnterChilds(x ast.Node) bool { return c.cause != x }
+func (c *boolExprSimplifyChecker) EnterChilds(x ast.Node) bool { return c.cause != x }
 
-func (c *boolSimplifyChecker) VisitExpr(x ast.Expr) {
+func (c *boolExprSimplifyChecker) VisitExpr(x ast.Expr) {
 	// TODO: avoid eager copy?
 	// Can't be stable until wasted copying is fixed.
 	y := c.simplifyBool(astcopy.Expr(x))
@@ -51,7 +51,7 @@ func (c *boolSimplifyChecker) VisitExpr(x ast.Expr) {
 	}
 }
 
-func (c *boolSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
+func (c *boolExprSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 	return astutil.Apply(x, nil, func(cur *astutil.Cursor) bool {
 		return c.doubleNegation(cur) ||
 			c.negatedEquals(cur) ||
@@ -60,7 +60,7 @@ func (c *boolSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 	}).(ast.Expr)
 }
 
-func (c *boolSimplifyChecker) doubleNegation(cur *astutil.Cursor) bool {
+func (c *boolExprSimplifyChecker) doubleNegation(cur *astutil.Cursor) bool {
 	neg1 := c.unaryNot(cur.Node())
 	neg2 := c.unaryNot(astutil.Unparen(neg1.X))
 	if neg1 != c.nilUnaryExpr && neg2 != c.nilUnaryExpr {
@@ -70,7 +70,7 @@ func (c *boolSimplifyChecker) doubleNegation(cur *astutil.Cursor) bool {
 	return false
 }
 
-func (c *boolSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
+func (c *boolExprSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
 	x, ok := cur.Node().(*ast.BinaryExpr)
 	if !ok || x.Op != token.EQL {
 		return false
@@ -85,7 +85,7 @@ func (c *boolSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
 	return false
 }
 
-func (c *boolSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
+func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 	neg := c.unaryNot(cur.Node())
 	cmp := c.binaryExpr(astutil.Unparen(neg.X))
 	if neg == c.nilUnaryExpr || cmp == c.nilBinaryExpr {
@@ -116,7 +116,7 @@ func (c *boolSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 
 // binaryExpr coerces x into binary expr if possible,
 // otherwise returns c.nilBinaryExpr.
-func (c *boolSimplifyChecker) binaryExpr(x ast.Node) *ast.BinaryExpr {
+func (c *boolExprSimplifyChecker) binaryExpr(x ast.Node) *ast.BinaryExpr {
 	binexp, ok := x.(*ast.BinaryExpr)
 	if !ok {
 		return c.nilBinaryExpr
@@ -126,7 +126,7 @@ func (c *boolSimplifyChecker) binaryExpr(x ast.Node) *ast.BinaryExpr {
 
 // unaryNot coerces x into unary not if possible,
 // otherwise returns c.nilUnaryExpr.
-func (c *boolSimplifyChecker) unaryNot(x ast.Node) *ast.UnaryExpr {
+func (c *boolExprSimplifyChecker) unaryNot(x ast.Node) *ast.UnaryExpr {
 	neg, ok := x.(*ast.UnaryExpr)
 	if !ok || neg.Op != token.NOT {
 		return c.nilUnaryExpr
@@ -134,7 +134,7 @@ func (c *boolSimplifyChecker) unaryNot(x ast.Node) *ast.UnaryExpr {
 	return neg
 }
 
-func (c *boolSimplifyChecker) warn(cause, suggestion ast.Expr) {
+func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {
 	c.cause = cause
 	c.ctx.Warn(cause, "can simplify `%s` to `%s`", cause, suggestion)
 }

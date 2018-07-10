@@ -111,14 +111,14 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
-        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+        <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
+        <td>Detects bool expressions that can be simplified for the sake of readability.
 
 </td>
       </tr>
       <tr>
-        <td><a href="#boolSimplify-ref">boolSimplify</a></td>
-        <td>Detects bool expressions that can be simplified for the sake of readability.
+        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
+        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
 
 </td>
       </tr>
@@ -300,25 +300,8 @@ xs = append(xs, 1, 2)
 ```
 
 
-<a name="boolFuncPrefix-ref"></a>
-## boolFuncPrefix
-Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
-
-
-
-**Before:**
-```go
-func Enabled() bool
-```
-
-**After:**
-```go
-func IsEnabled() bool
-```
-
-
-`boolFuncPrefix` is very opinionated.<a name="boolSimplify-ref"></a>
-## boolSimplify
+<a name="boolExprSimplify-ref"></a>
+## boolExprSimplify
 Detects bool expressions that can be simplified for the sake of readability.
 
 
@@ -336,7 +319,24 @@ b := (x) == (y)
 ```
 
 
-<a name="builtinShadow-ref"></a>
+<a name="boolFuncPrefix-ref"></a>
+## boolFuncPrefix
+Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+
+
+**Before:**
+```go
+func Enabled() bool
+```
+
+**After:**
+```go
+func IsEnabled() bool
+```
+
+
+`boolFuncPrefix` is very opinionated.<a name="builtinShadow-ref"></a>
 ## builtinShadow
 Detects when predeclared identifiers shadowed in assignments.
 
