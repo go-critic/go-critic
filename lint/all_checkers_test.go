@@ -190,17 +190,8 @@ func newGoldenFile(t *testing.T, filename string) *goldenFile {
 	var pending []*warning
 
 	for i, l := range lines {
-		if warningDirectiveRE.MatchString(l) {
-			var m warning
-			submatches := warningDirectiveRE.FindStringSubmatch(l)
-
-			// Skip [0] which is a "whole match".
-			if len(submatches) > 0 {
-				for _, submatch := range submatches[1:] {
-					m.text = submatch
-				}
-			}
-			pending = append(pending, &m)
+		if m := warningDirectiveRE.FindStringSubmatch(l); m != nil {
+			pending = append(pending, &warning{text: m[1]})
 		} else if len(pending) != 0 {
 			line := i + 1
 			if commentRE.MatchString(l) {
