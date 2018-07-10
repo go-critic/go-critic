@@ -16,14 +16,16 @@ docs:
 
 ci:
 	go get -t -v ./...
-	@if [ "$(TEST_SUITE)" = "gometalinter" ]; then make gometalinter; else make ci-tests; fi
+	@if [ "$(TEST_SUITE)" = "gometalinter" ]; then make ci-gometalinter; else make ci-tests; fi
 
 ci-tests:
 	go tool vet .
 	go test -v -race -count=1 github.com/go-critic/go-critic/lint
 	gocritic check-project `pwd`
 
-gometalinter:
+ci-gometalinter:
+	go get -u gopkg.in/alecthomas/gometalinter.v2
+	gometalinter.v2 --install
 	gometalinter.v2 --skip=testdata --vendor ./...
 
 cover:
@@ -34,11 +36,6 @@ cover:
 		cat profile.out >> coverage.out; \
 		rm profile.out; \
 	done
-
-tools:
-	go get -u gopkg.in/alecthomas/gometalinter.v2
-	gometalinter.v2 --install
-	go get -u github.com/go-critic/go-critic/...
 
 install:
 	go install ./cmd/gocritic
