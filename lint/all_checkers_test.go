@@ -192,7 +192,14 @@ func newGoldenFile(t *testing.T, filename string) *goldenFile {
 	for i, l := range lines {
 		if warningDirectiveRE.MatchString(l) {
 			var m warning
-			unpackSubmatches(l, warningDirectiveRE, &m.text)
+			submatches := warningDirectiveRE.FindStringSubmatch(l)
+
+			// Skip [0] which is a "whole match".
+			if len(submatches) > 0 {
+				for _, submatch := range submatches[1:] {
+					m.text = submatch
+				}
+			}
 			pending = append(pending, &m)
 		} else if len(pending) != 0 {
 			line := i + 1
@@ -247,14 +254,4 @@ func newProg(t *testing.T, pkgPath string) *loader.Program {
 		t.Fatalf("%s package is not properly loaded", pkgPath)
 	}
 	return prog
-}
-
-func unpackSubmatches(s string, re *regexp.Regexp, dst ...*string) {
-	submatches := re.FindStringSubmatch(s)
-	// Skip [0] which is a "whole match".
-	if len(submatches) > 0 {
-		for i, submatch := range submatches[1:] {
-			*dst[i] = submatch
-		}
-	}
 }
