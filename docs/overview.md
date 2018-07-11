@@ -30,12 +30,6 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
-        <td><a href="#defaultCaseOrder-ref">defaultCaseOrder</a></td>
-        <td>Detects when default case in switch isn't on 1st or last position.
-
-</td>
-      </tr>
-      <tr>
         <td><a href="#flagDeref-ref">flagDeref</a></td>
         <td>Detects immediate dereferencing of `flag` package pointers.
 
@@ -137,6 +131,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#commentedOutCode-ref">commentedOutCode</a></td>
         <td>Detects commented-out code inside function bodies.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#defaultCaseOrder-ref">defaultCaseOrder</a></td>
+        <td>Detects when default case in switch isn't on 1st or last position.
 
 </td>
       </tr>
