@@ -164,7 +164,10 @@ func (l *linter) LoadConfig() {
 	}
 
 	var params map[string]interface{}
-	json.Unmarshal(raw, &params)
+	if err := json.Unmarshal(raw, &params); err != nil {
+		log.Fatalf("cannot parse config file, got error: %s", err)
+		return
+	}
 
 	l.checkerParams = make(map[string]map[string]interface{})
 	for k, v := range params {
