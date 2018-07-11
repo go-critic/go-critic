@@ -25,7 +25,7 @@ package lint
 import "go/ast"
 
 func init() {
-	addChecker(&defaultCaseOrderChecker{}, attrSyntaxOnly)
+	addChecker(&defaultCaseOrderChecker{}, attrExperimental, attrSyntaxOnly)
 }
 
 type defaultCaseOrderChecker struct {

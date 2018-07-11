@@ -135,6 +135,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#defaultCaseOrder-ref">defaultCaseOrder</a></td>
+        <td>Detects when default case in switch isn't on 1st or last position.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#deferInLoop-ref">deferInLoop</a></td>
         <td>Detects defer in loop and warns that it will not be executed till the end of function's scope.
 
@@ -423,7 +429,38 @@ foo(1, 2)
 ```
 
 
-<a name="deferInLoop-ref"></a>
+<a name="defaultCaseOrder-ref"></a>
+## defaultCaseOrder
+Detects when default case in switch isn't on 1st or last position.
+
+
+
+**Before:**
+```go
+switch {
+case x > y:
+	// ...
+default: // <- not the best position
+	// ...
+case x == 10:
+	// ...
+}
+```
+
+**After:**
+```go
+switch {
+case x > y:
+	// ...
+case x == 10:
+	// ...
+default: // <- everything is good
+	// ...
+}
+```
+
+
+`defaultCaseOrder` is syntax-only checker (fast).<a name="deferInLoop-ref"></a>
 ## deferInLoop
 Detects defer in loop and warns that it will not be executed till the end of function's scope.
 
