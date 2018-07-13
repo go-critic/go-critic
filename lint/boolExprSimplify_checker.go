@@ -56,6 +56,7 @@ func (c *boolExprSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 		return c.doubleNegation(cur) ||
 			c.negatedEquals(cur) ||
 			c.invertComparison(cur) ||
+			c.combineChecks(cur) ||
 			true
 	}).(ast.Expr)
 }
@@ -114,6 +115,38 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 	return true
 }
 
+func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
+	or := c.logicalOr(cur.Node())
+	lhs := c.binaryExpr(astutil.Unparen(or.X))
+	rhs := c.binaryExpr(astutil.Unparen(or.Y))
+
+	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
+		return false
+	}
+	if !isSafeExpr(lhs.X) || !isSafeExpr(lhs.Y) {
+		return false
+	}
+
+	combTable := [...]struct {
+		x      token.Token
+		y      token.Token
+		result token.Token
+	}{
+		{token.GTR, token.EQL, token.GEQ},
+		{token.EQL, token.GTR, token.GEQ},
+		{token.LSS, token.EQL, token.LEQ},
+		{token.EQL, token.LSS, token.LEQ},
+	}
+	for _, comb := range &combTable {
+		if comb.x == lhs.Op && comb.y == rhs.Op {
+			lhs.Op = comb.result
+			cur.Replace(lhs)
+			return true
+		}
+	}
+	return false
+}
+
 // binaryExpr coerces x into binary expr if possible,
 // otherwise returns c.nilBinaryExpr.
 func (c *boolExprSimplifyChecker) binaryExpr(x ast.Node) *ast.BinaryExpr {
@@ -132,6 +165,14 @@ func (c *boolExprSimplifyChecker) unaryNot(x ast.Node) *ast.UnaryExpr {
 		return c.nilUnaryExpr
 	}
 	return neg
+}
+
+func (c *boolExprSimplifyChecker) logicalOr(x ast.Node) *ast.BinaryExpr {
+	or, ok := x.(*ast.BinaryExpr)
+	if !ok || or.Op != token.LOR {
+		return c.nilBinaryExpr
+	}
+	return or
 }
 
 func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {
