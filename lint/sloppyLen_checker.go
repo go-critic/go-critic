@@ -20,14 +20,14 @@ import (
 )
 
 func init() {
-	addChecker(&uselessLenChecker{}, attrSyntaxOnly, attrExperimental)
+	addChecker(&sloppyLenChecker{}, attrSyntaxOnly, attrExperimental)
 }
 
-type uselessLenChecker struct {
+type sloppyLenChecker struct {
 	checkerBase
 }
 
-func (c *uselessLenChecker) VisitExpr(x ast.Expr) {
+func (c *sloppyLenChecker) VisitExpr(x ast.Expr) {
 	expr, ok := x.(*ast.BinaryExpr)
 	if !ok {
 		return
@@ -40,17 +40,17 @@ func (c *uselessLenChecker) VisitExpr(x ast.Expr) {
 	}
 }
 
-func (c *uselessLenChecker) isLenCall(x ast.Expr) bool {
+func (c *sloppyLenChecker) isLenCall(x ast.Expr) bool {
 	call, ok := x.(*ast.CallExpr)
 	return ok && qualifiedName(call.Fun) == "len" && len(call.Args) == 1
 }
 
-func (c *uselessLenChecker) isZero(x ast.Expr) bool {
+func (c *sloppyLenChecker) isZero(x ast.Expr) bool {
 	value, ok := x.(*ast.BasicLit)
 	return ok && value.Value == "0"
 }
 
-func (c *uselessLenChecker) warn(cause *ast.BinaryExpr) {
+func (c *sloppyLenChecker) warn(cause *ast.BinaryExpr) {
 	info := ""
 	switch cause.Op {
 	case token.LSS:
