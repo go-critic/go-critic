@@ -80,7 +80,7 @@ func (c *dupSubExprChecker) checkBinaryExpr(expr *ast.BinaryExpr) {
 	if c.resultIsFloat(expr.X) && c.floatOpsSet[expr.Op] {
 		return
 	}
-	if c.isSafe(expr) && c.opSet[expr.Op] && astequal.Expr(expr.X, expr.Y) {
+	if isSafeExpr(expr) && c.opSet[expr.Op] && astequal.Expr(expr.X, expr.Y) {
 		c.warn(expr)
 	}
 }
@@ -88,32 +88,6 @@ func (c *dupSubExprChecker) checkBinaryExpr(expr *ast.BinaryExpr) {
 func (c *dupSubExprChecker) resultIsFloat(expr ast.Expr) bool {
 	typ, ok := c.ctx.typesInfo.TypeOf(expr).(*types.Basic)
 	return ok && typ.Info()&types.IsFloat != 0
-}
-
-func (c *dupSubExprChecker) isSafe(expr ast.Expr) bool {
-	// This list switch is not comprehensive and uses
-	// whitelist to be on the conservative side.
-	// Can be extended as needed.
-	//
-	// Note that it is not very strict "safe" as
-	// index expressions are permitted even though they
-	// may cause panics.
-	switch expr := expr.(type) {
-	case *ast.BinaryExpr:
-		return c.isSafe(expr.X) && c.isSafe(expr.Y)
-	case *ast.UnaryExpr:
-		return expr.Op != token.ARROW && c.isSafe(expr.X)
-	case *ast.BasicLit, *ast.Ident:
-		return true
-	case *ast.IndexExpr:
-		return c.isSafe(expr.X) && c.isSafe(expr.Index)
-	case *ast.SelectorExpr:
-		return c.isSafe(expr.X)
-	case *ast.ParenExpr:
-		return c.isSafe(expr.X)
-	default:
-		return false
-	}
 }
 
 func (c *dupSubExprChecker) warn(cause *ast.BinaryExpr) {
