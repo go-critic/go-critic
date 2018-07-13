@@ -137,7 +137,7 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 		{token.LSS, token.EQL, token.LEQ},
 		{token.EQL, token.LSS, token.LEQ},
 	}
-	for _, comb := range combTable {
+	for _, comb := range &combTable {
 		if comb.x == lhs.Op && comb.y == rhs.Op {
 			lhs.Op = comb.result
 			cur.Replace(lhs)
