@@ -71,7 +71,11 @@ func TestSanity(t *testing.T) {
 func TestCheckers(t *testing.T) {
 	for _, rule := range ruleList {
 		t.Run(rule.Name(), func(t *testing.T) {
-			pkgPath := testdataPkgPath + rule.Name()
+			testRule := rule
+			if testing.CoverMode() == "" {
+				t.Parallel()
+			}
+			pkgPath := testdataPkgPath + testRule.Name()
 
 			prog := newProg(t, pkgPath)
 			pkgInfo := prog.Imported[pkgPath]
@@ -79,7 +83,7 @@ func TestCheckers(t *testing.T) {
 			ctx := NewContext(prog.Fset, sizes)
 			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 
-			checkFiles(t, rule, ctx, prog, pkgPath)
+			checkFiles(t, testRule, ctx, prog, pkgPath)
 		})
 	}
 }
@@ -190,10 +194,8 @@ func newGoldenFile(t *testing.T, filename string) *goldenFile {
 	var pending []*warning
 
 	for i, l := range lines {
-		if warningDirectiveRE.MatchString(l) {
-			var m warning
-			unpackSubmatches(l, warningDirectiveRE, &m.text)
-			pending = append(pending, &m)
+		if m := warningDirectiveRE.FindStringSubmatch(l); m != nil {
+			pending = append(pending, &warning{text: m[1]})
 		} else if len(pending) != 0 {
 			line := i + 1
 			if commentRE.MatchString(l) {
@@ -247,14 +249,4 @@ func newProg(t *testing.T, pkgPath string) *loader.Program {
 		t.Fatalf("%s package is not properly loaded", pkgPath)
 	}
 	return prog
-}
-
-func unpackSubmatches(s string, re *regexp.Regexp, dst ...*string) {
-	submatches := re.FindStringSubmatch(s)
-	// Skip [0] which is a "whole match".
-	if len(submatches) > 0 {
-		for i, submatch := range submatches[1:] {
-			*dst[i] = submatch
-		}
-	}
 }

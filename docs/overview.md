@@ -81,12 +81,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects suspicious append result assignments</td>
       </tr>
       <tr>
-        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
-        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name</td>
+        <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
+        <td>Detects bool expressions that can be simplified</td>
       </tr>
       <tr>
-        <td><a href="#boolOpt-ref">boolOpt</a></td>
-        <td>Detects bool expressions that can be simplified</td>
+        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
+        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name</td>
       </tr>
       <tr>
         <td><a href="#caseOrder-ref">caseOrder</a></td>
@@ -97,6 +97,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects commented-out code inside function bodies</td>
       </tr>
       <tr>
+        <td><a href="#defaultCaseOrder-ref">defaultCaseOrder</a></td>
+        <td>Detects when default case in switch isn't on 1st or last position</td>
+      </tr>
+      <tr>
         <td><a href="#deferInLoop-ref">deferInLoop</a></td>
         <td>Detects defer in loop and warns that it will not be executed till the end of function's scope</td>
       </tr>
@@ -105,8 +109,16 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects comments that silence go lint complaints about doc-comment</td>
       </tr>
       <tr>
+        <td><a href="#dupBranchBody-ref">dupBranchBody</a></td>
+        <td>Detects duplicated branch bodies inside conditional statements</td>
+      </tr>
+      <tr>
         <td><a href="#dupCase-ref">dupCase</a></td>
         <td>Detects duplicated case clauses inside switch statements</td>
+      </tr>
+      <tr>
+        <td><a href="#dupSubExpr-ref">dupSubExpr</a></td>
+        <td>Detects suspicious duplicated sub-expressions</td>
       </tr>
       <tr>
         <td><a href="#elseif-ref">elseif</a> :nerd_face:</td>
@@ -119,6 +131,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#evalOrder-ref">evalOrder</a></td>
         <td>Detects potentially unsafe dependencies on evaluation order</td>
+      </tr>
+      <tr>
+        <td><a href="#hugeParam-ref">hugeParam</a></td>
+        <td>Detects params that incur excessive amount of copying</td>
       </tr>
       <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
@@ -147,6 +163,14 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#regexpMust-ref">regexpMust</a></td>
         <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
+      </tr>
+      <tr>
+        <td><a href="#sloppyLen-ref">sloppyLen</a></td>
+        <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
+      </tr>
+      <tr>
+        <td><a href="#sqlRowsClose-ref">sqlRowsClose</a></td>
+        <td>Detects uses of *sql.Rows without call Close method</td>
       </tr>
       <tr>
         <td><a href="#stdExpr-ref">stdExpr</a></td>
@@ -204,23 +228,8 @@ xs = append(xs, 2)```
 xs = append(xs, 1, 2)```
 
 
-<a name="boolFuncPrefix-ref"></a>
-## boolFuncPrefix
-Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
-
-
-
-**Before:**
-```go
-func Enabled() bool```
-
-**After:**
-```go
-func IsEnabled() bool```
-
-
-`boolFuncPrefix` is very opinionated.<a name="boolOpt-ref"></a>
-## boolOpt
+<a name="boolExprSimplify-ref"></a>
+## boolExprSimplify
 Detects bool expressions that can be simplified.
 
 
@@ -236,7 +245,22 @@ a := elapsed < expectElapsedMin
 b := (x) == (y)```
 
 
-<a name="builtinShadow-ref"></a>
+<a name="boolFuncPrefix-ref"></a>
+## boolFuncPrefix
+Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
+
+
+
+**Before:**
+```go
+func Enabled() bool```
+
+**After:**
+```go
+func IsEnabled() bool```
+
+
+`boolFuncPrefix` is very opinionated.<a name="builtinShadow-ref"></a>
 ## builtinShadow
 Detects when predeclared identifiers shadowed in assignments.
 
@@ -309,7 +333,36 @@ foo(1, 2)```
 foo(1, 2)```
 
 
-<a name="deferInLoop-ref"></a>
+<a name="defaultCaseOrder-ref"></a>
+## defaultCaseOrder
+Detects when default case in switch isn't on 1st or last position.
+
+
+
+**Before:**
+```go
+switch {
+case x > y:
+	// ...
+default: // <- not the best position
+	// ...
+case x == 10:
+	// ...
+}```
+
+**After:**
+```go
+switch {
+case x > y:
+	// ...
+case x == 10:
+	// ...
+default: // <- last case (could also be the first one)
+	// ...
+}```
+
+
+`defaultCaseOrder` is syntax-only checker (fast).<a name="deferInLoop-ref"></a>
 ## deferInLoop
 Detects defer in loop and warns that it will not be executed till the end of function's scope.
 
@@ -349,7 +402,30 @@ func Foo() {
 
 You can either remove a comment to let go lint find it or change stub to useful comment.
 This checker makes it easier to detect stubs, the action is up to you.
-`docStub` is syntax-only checker (fast).<a name="dupCase-ref"></a>
+`docStub` is syntax-only checker (fast).<a name="dupBranchBody-ref"></a>
+## dupBranchBody
+Detects duplicated branch bodies inside conditional statements.
+
+
+
+**Before:**
+```go
+if cond {
+	println("cond=true")
+} else {
+	println("cond=true")
+}```
+
+**After:**
+```go
+if cond {
+	println("cond=true")
+} else {
+	println("cond=false")
+}```
+
+
+<a name="dupCase-ref"></a>
 ## dupCase
 Detects duplicated case clauses inside switch statements.
 
@@ -366,6 +442,25 @@ case ys[0], ys[1], ys[2], ys[0], ys[4]:
 switch x {
 case ys[0], ys[1], ys[2], ys[3], ys[4]:
 }```
+
+
+<a name="dupSubExpr-ref"></a>
+## dupSubExpr
+Detects suspicious duplicated sub-expressions.
+
+
+
+**Before:**
+```go
+sort.Slice(xs, func(i, j int) bool {
+	return xs[i].v < xs[i].v // Duplicated index
+})```
+
+**After:**
+```go
+sort.Slice(xs, func(i, j int) bool {
+	return xs[i].v < xs[j].v
+})```
 
 
 <a name="elseif-ref"></a>
@@ -443,7 +538,22 @@ flag.BoolVar(&b, "b", false, "b docs")```
 
 Dereferencing returned pointers will lead to hard to find errors
 where flag values are not updated after flag.Parse().
-`flagDeref` is syntax-only checker (fast).<a name="ifElseChain-ref"></a>
+`flagDeref` is syntax-only checker (fast).<a name="hugeParam-ref"></a>
+## hugeParam
+Detects params that incur excessive amount of copying.
+
+
+
+**Before:**
+```go
+func f(x [1024]int) {}```
+
+**After:**
+```go
+func f(x *[1024]int) {}```
+
+
+<a name="ifElseChain-ref"></a>
 ## ifElseChain
 Detects repeated if-else statements and suggests to replace them with switch statement.
 
@@ -685,7 +795,45 @@ if x, ok := x.(int); ok {
 }```
 
 
-`singleCaseSwitch` is syntax-only checker (fast).<a name="stdExpr-ref"></a>
+`singleCaseSwitch` is syntax-only checker (fast).<a name="sloppyLen-ref"></a>
+## sloppyLen
+Detects usage of `len` when result is obvious or doesn't make sense.
+
+
+
+**Before:**
+```go
+len(arr) >= 0 // Sloppy
+len(arr) <= 0 // Sloppy
+len(arr) < 0  // Doesn't make sense at all```
+
+**After:**
+```go
+len(arr) > 0
+len(arr) == 0```
+
+
+`sloppyLen` is syntax-only checker (fast).<a name="sqlRowsClose-ref"></a>
+## sqlRowsClose
+Detects uses of *sql.Rows without call Close method.
+
+
+
+**Before:**
+```go
+rows, _ := db.Query( /**/ )
+for rows.Next {
+}```
+
+**After:**
+```go
+rows, _ := db.Query( /**/ )
+for rows.Next {
+}
+rows.Close()```
+
+
+<a name="stdExpr-ref"></a>
 ## stdExpr
 Detects constant expressions that can be replaced by a stdlib const.
 

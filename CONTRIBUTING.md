@@ -1,4 +1,4 @@
-# Contributing to kfulint
+# Contributing to go-critic
 
 Most of the conventions and rules are derived from [Go](https://github.com/golang/go) project.
 
@@ -8,7 +8,7 @@ Some sections are copied from [ZeroMQ C4](https://rfc.zeromq.org/spec:42/C4/) (C
 
 There are three main ways to contribute:
 
-1. Join [issue tracker](https://github.com/PieselBois/kfulint/issues) and help us with
+1. Join [issue tracker](https://github.com/go-critic/go-critic/issues) and help us with
    feature requests, bug reports (including false-positive results), etc.
 
 2. Submit code patches: you can add a new checker, fix or improve already existing checkers
@@ -18,8 +18,8 @@ There are three main ways to contribute:
 
 The simplest and recommended way to make a first contribution is to fix minor style issue
 like typo or missing doc comment. You can also filter issues by using
-[help wanted](https://github.com/PieselBois/kfulint/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) and
-[good first issue](https://github.com/PieselBois/kfulint/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) labels.
+[help wanted](https://github.com/go-critic/go-critic/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) and
+[good first issue](https://github.com/go-critic/go-critic/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) labels.
 
 ## Code review
 
@@ -79,12 +79,12 @@ These rules aslo applies to **pull requests**.
 
 4. Add entry to checkers list in `lint.go`. It could be a good idea to mark recently added checker as `experimental`.
 
-5. Add test directory that is named after the checker in `cmd/kfulint/testdata`.
+5. Add test directory that is named after the checker in `lint/testdata`.
 
 6. Add `positive_tests.go` and `negative_tests.go` files in that directory and add some positive and negative tests there.
 
 7. Run tests. They must fail as your checker does not check anything yet.  
-Tests can be run with `go test -v github.com/PieselBois/kfulint/cmd/kfulint`.
+Tests can be run with `go test -v -race -count=1 ./...`.
 
 8. Implement checker itself. Make tests pass.
 

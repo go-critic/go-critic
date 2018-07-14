@@ -14,7 +14,8 @@ import (
 )
 
 func packagePath() []string {
-	return []string{runtime.GOROOT(), build.Default.GOPATH}
+	goPath := strings.Split(build.Default.GOPATH, string(os.PathListSeparator))
+	return append([]string{runtime.GOROOT()}, goPath...)
 }
 
 func getPackagePrefix(dir string) string {
