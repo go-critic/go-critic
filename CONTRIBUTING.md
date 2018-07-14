@@ -77,7 +77,7 @@ These rules also applies to **pull requests**.
 
 3. Define checker type and constructor function.
 
-4. Add entry to checkers list in `lint.go`. It could be a good idea to mark recently added checker as `experimental`.
+4. Register checker with `addChecker` function in `init()`. It could be a good idea to mark recently added checker as `experimental`.
 
 5. Add test directory that is named after the checker in `lint/testdata`.
 
