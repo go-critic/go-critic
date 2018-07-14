@@ -50,7 +50,9 @@ type linter struct {
 func Main() {
 	var l linter
 	parseArgv(&l)
-	l.LoadConfig()
+	if l.configFile != "" {
+		l.LoadConfig()
+	}
 	l.LoadProgram()
 	l.InitCheckers()
 
