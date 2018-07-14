@@ -22,6 +22,30 @@ func normalLocalUseWithDefer() {
     return
 }
 
+/*
+func normalLocalUseWithAnonDefer() {
+    db, err := sql.Open("postgres", "")
+    if err != nil {
+        return
+    }
+
+    rows, err := db.Query("SELECT * FROM testtable")
+    if err != nil {
+        return
+    }
+    defer func() {
+        rows.Close()
+    }()
+
+    for rows.Next() {
+        var testdata string
+        rows.Scan(&testdata)
+    }
+
+    return
+}
+*/
+
 func normalLocalUseWithoutDefer() {
     db, err := sql.Open("postgres", "")
     if err != nil {
@@ -141,4 +165,13 @@ func testMethodCloseRowsWithoutDefer(rows *sql.Rows) {
         rows.Scan(&testdata)
     }
     rows.Close()
+}
+
+func testPosMethodReturningRows(db *sql.DB) (*sql.Rows, error) {
+    rows, err := db.Query("SELECT * FROM testtable")
+    if err != nil {
+        return nil, err
+    }
+
+    return rows, nil
 }

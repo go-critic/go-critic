@@ -13,7 +13,7 @@ package lint
 // for rows.Next {
 //   ...
 // }
-// rows.Close
+// rows.Close()
 
 import (
 	"go/ast"
@@ -39,12 +39,9 @@ func (c *lostSQLCloseForRowsChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	var paramVal types.Object
 	for _, p := range params.List {
 		t := c.ctx.typesInfo.TypeOf(p.Type)
-		if t != nil {
-			switch t.String() {
-			case "*database/sql.Rows":
-				paramVal = c.ctx.typesInfo.ObjectOf(identOf(p.Names[0]))
-				break
-			}
+		if t != nil && t.String() == "*database/sql.Rows" {
+			paramVal = c.ctx.typesInfo.ObjectOf(identOf(p.Names[0]))
+			break
 		}
 	}
 
@@ -77,15 +74,13 @@ func (c *lostSQLCloseForRowsChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 		case *ast.ExprStmt:
 			switch b := b.X.(type) {
 			case *ast.CallExpr:
-				switch b.Fun.(type) {
-				case *ast.SelectorExpr:
+				if bb, ok := b.Fun.(*ast.SelectorExpr); ok {
 					// Detect call Close for sql.Rows variables
-					b := b.Fun.(*ast.SelectorExpr)
-					funcName := qualifiedName(b.Sel)
+					funcName := qualifiedName(bb.Sel)
 					if funcName == "Close" {
-						closeVars = append(closeVars, c.ctx.typesInfo.ObjectOf(identOf(b.X)))
+						closeVars = append(closeVars, c.ctx.typesInfo.ObjectOf(identOf(bb.X)))
 					}
-				default:
+				} else {
 					// Detect call other functions with sql.Rows variable in parameters
 					for _, v := range b.Args {
 						t := c.ctx.typesInfo.TypeOf(v)
@@ -97,8 +92,7 @@ func (c *lostSQLCloseForRowsChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 			}
 		case *ast.DeferStmt:
 			// Detect call Close for sql.Rows variables over defer declaration
-			switch b := b.Call.Fun.(type) {
-			case *ast.SelectorExpr:
+			if b, ok := b.Call.Fun.(*ast.SelectorExpr); ok {
 				funcName := qualifiedName(b.Sel)
 				if funcName == "Close" {
 					closeVars = append(closeVars, c.ctx.typesInfo.ObjectOf(identOf(b.X)))
@@ -112,9 +106,9 @@ func (c *lostSQLCloseForRowsChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	// Check function parameter local variable
 	if paramVal != nil {
 		// If parameter variable present in return or in other functions call or Close present - PASS
-		if !varInList(paramVal, returnVars) &&
-		   !varInList(paramVal, callVars) &&
-		   !varInList(paramVal, closeVars) {
+		if !c.varInList(paramVal, returnVars) &&
+		   !c.varInList(paramVal, callVars) &&
+		   !c.varInList(paramVal, closeVars) {
 			c.ctx.Warn(paramVal.Parent(), "param variable db.Rows have not Close call")
 		}
 	}
@@ -122,15 +116,15 @@ func (c *lostSQLCloseForRowsChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	// Check local variables
 	for _, l := range localVars {
 		// If local variable present in return or in other functions call or Close present - PASS
-		if !varInList(l, returnVars) &&
-		   !varInList(l, callVars) &&
-		   !varInList(l, closeVars) {
+		if !c.varInList(l, returnVars) &&
+		   !c.varInList(l, callVars) &&
+		   !c.varInList(l, closeVars) {
 			c.ctx.Warn(l.Parent(), "local variable db.Rows have not Close call")
 		}
 	}
 }
 
-func varInList(v types.Object, list []types.Object) bool {
+func (c *lostSQLCloseForRowsChecker) varInList(v types.Object, list []types.Object) bool {
 	for _, r := range list {
 		if v == r {
 			return true
