@@ -79,7 +79,7 @@ func parseArgv(l *linter) {
 
 	enable := flag.String("enable", enableAll,
 		`comma-separated list of enabled checkers`)
-	flag.StringVar(&l.configFile, `config`, `.gocritic.json`,
+	flag.StringVar(&l.configFile, "config", "",
 		`name of JSON file containing checkers configurations`)
 	disable := flag.String("disable", "",
 		`comma-separated list of disabled checkers`)
@@ -153,13 +153,9 @@ func parseArgv(l *linter) {
 }
 
 func (l *linter) LoadConfig() {
-	if _, err := os.Stat(l.configFile); err != nil {
-		return
-	}
-
 	raw, err := ioutil.ReadFile(l.configFile)
 	if err != nil {
-		log.Fatalf("cannot read config file %s, got error: %s", l.configFile, err)
+		log.Printf("cannot read config file %s, got error: %s", l.configFile, err)
 		return
 	}
 
