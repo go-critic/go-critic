@@ -132,7 +132,6 @@ func stripDirectives(f *ast.File) {
 }
 
 func TestIncorrectRule(t *testing.T) {
-	print("DBG: TestIncorrectRule\n")
 	func(t *testing.T) {
 		defer func() {
 			r := recover()
