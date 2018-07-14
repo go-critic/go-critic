@@ -71,10 +71,11 @@ func TestSanity(t *testing.T) {
 func TestCheckers(t *testing.T) {
 	for _, rule := range ruleList {
 		t.Run(rule.Name(), func(t *testing.T) {
+			testRule := rule
 			if testing.CoverMode() == "" {
 				t.Parallel()
 			}
-			pkgPath := testdataPkgPath + rule.Name()
+			pkgPath := testdataPkgPath + testRule.Name()
 
 			prog := newProg(t, pkgPath)
 			pkgInfo := prog.Imported[pkgPath]
@@ -82,7 +83,7 @@ func TestCheckers(t *testing.T) {
 			ctx := NewContext(prog.Fset, sizes)
 			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 
-			checkFiles(t, rule, ctx, prog, pkgPath)
+			checkFiles(t, testRule, ctx, prog, pkgPath)
 		})
 	}
 }
@@ -131,6 +132,7 @@ func stripDirectives(f *ast.File) {
 }
 
 func TestIncorrectRule(t *testing.T) {
+	print("DBG: TestIncorrectRule\n")
 	func(t *testing.T) {
 		defer func() {
 			r := recover()
