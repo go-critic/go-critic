@@ -82,5 +82,5 @@ func (c *unnamedResultChecker) typeName(typ types.Type) string {
 }
 
 func (c *unnamedResultChecker) warn(n ast.Node) {
-	c.ctx.Warn(n, "consider to give name to results")
+	c.ctx.Warn(n, "consider giving a name to these results")
 }

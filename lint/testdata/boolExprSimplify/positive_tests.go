@@ -4,6 +4,30 @@ var (
 	x, y, z bool
 )
 
+func combineChecks() {
+	var x, y int
+
+	/// can simplify `x > y || x == y` to `x >= y`
+	_ = x > y || x == y
+	/// can simplify `x == y || x > y` to `x >= y`
+	_ = x == y || x > y
+
+	/// can simplify `(x > y) || (x == y)` to `x >= y`
+	_ = (x > y) || (x == y)
+	/// can simplify `(x == y) || (x > y)` to `x >= y`
+	_ = (x == y) || (x > y)
+
+	/// can simplify `x < y || x == y` to `x <= y`
+	_ = x < y || x == y
+	/// can simplify `x == y || x < y` to `x <= y`
+	_ = x == y || x < y
+
+	/// can simplify `(x < y) || (x == y)` to `x <= y`
+	_ = (x < y) || (x == y)
+	/// can simplify `(x == y) || (x < y)` to `x <= y`
+	_ = (x == y) || (x < y)
+}
+
 func doubleNegation() {
 	/// can simplify `!!x` to `x`
 	_ = !!x

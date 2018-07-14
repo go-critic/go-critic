@@ -69,6 +69,10 @@ Examples:
 
 This project aims to be contribution-friendly.
 
+Our chats: [English](https://t.me/joinchat/DWka6g9VbCADtJI5J5w8nQ) or
+[Russian](https://t.me/joinchat/DWka6kba5sa_EwTgmd3Vng)
+([Telegram website](https://telegram.org/))
+
 We're using an optimistic merging strategy most of the time.
 In short, this means that if your contribution has some flaws, we can still merge it and then
 fix them by ourselves. Experimental and work-in-progress checkers are isolated, so nothing bad will happen.
