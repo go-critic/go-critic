@@ -3,15 +3,13 @@ package lint
 //! Detects use *sql.Rows without call Close method.
 //
 // @Before:
-// rows, _ := db.Query(...)
+// rows, _ := db.Query( /**/ )
 // for rows.Next {
-//   ...
 // }
 //
 // @After:
-// rows, _ := db.Query(...)
+// rows, _ := db.Query( /**/ )
 // for rows.Next {
-//   ...
 // }
 // rows.Close()
 
@@ -26,10 +24,10 @@ const (
 )
 
 func init() {
-	addChecker(&lostSQLCloseForRowsChecker{}, attrExperimental)
+	addChecker(&sqlRowsCloseChecker{}, attrExperimental)
 }
 
-type lostSQLCloseForRowsChecker struct {
+type sqlRowsCloseChecker struct {
 	checkerBase
 }
 
@@ -38,7 +36,7 @@ type lostSQLCloseForRowsChecker struct {
 // 2. Not returning in functions results;
 // 3. Not call Close method for variable;
 
-func (c *lostSQLCloseForRowsChecker) VisitFuncDecl(decl *ast.FuncDecl) {
+func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	// Function parameter variable
 	params := decl.Type.Params
 	var paramVal types.Object
@@ -128,7 +126,7 @@ func (c *lostSQLCloseForRowsChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	}
 }
 
-func (c *lostSQLCloseForRowsChecker) varInList(v types.Object, list []types.Object) bool {
+func (c *sqlRowsCloseChecker) varInList(v types.Object, list []types.Object) bool {
 	for _, r := range list {
 		if v == r {
 			return true
