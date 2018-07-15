@@ -20,7 +20,6 @@ import (
 
 const (
 	rowsTypePTR = "*database/sql.Rows"
-	rowsType    = "database/sql.Rows"
 )
 
 func init() {
