@@ -3,7 +3,7 @@
 [![Build Status][travis-image]][travis-url]
 [![Go Report Card][go-report-image]][go-report-url]
 [![GoDoc][godoc-image]][godoc-url]
-[![codecov][codecov-image]][codecov-url]
+[![coverage][coverage-image]][coverage-url]
 
 [travis-image]: https://travis-ci.org/go-critic/go-critic.svg?branch=master
 [travis-url]: https://travis-ci.org/go-critic/go-critic
@@ -11,8 +11,8 @@
 [go-report-url]: https://goreportcard.com/report/github.com/go-critic/go-critic
 [godoc-image]: https://godoc.org/github.com/go-critic/go-critic/lint?status.svg
 [godoc-url]: https://godoc.org/github.com/go-critic/go-critic/lint
-[codecov-image]: https://codecov.io/gh/go-critic/go-critic/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/go-critic/go-critic
+[coverage-image]: https://coveralls.io/repos/github/go-critic/go-critic/badge.svg?branch=master
+[coverage-url]: https://coveralls.io/github/go-critic/go-critic?branch=master
 
 Go source code linter providing checks currently missing from other linters.
 
