@@ -71,22 +71,38 @@ These rules also applies to **pull requests**.
 
 ## How to add new checker
 
+Always use existing checkers as a reference if in doubdts.
+If you struggle for a long time, consider joining our dev chats,
+you'll find all answers there in a short time.
+
+[English](https://t.me/joinchat/DWka6g9VbCADtJI5J5w8nQ)  
+[Russian](https://t.me/joinchat/DWka6kba5sa_EwTgmd3Vng)  
+([Telegram website](https://telegram.org/))
+
 1. Come up with checker idea. Concentrate on what it checks.
 
 2. Select one of the base checkers kind (example: expr checker, stmt checker, etc.).
+   See [lint/internal/astwalk/visitor.go](/lint/internal/astwalk/visitor.go) for the whole list.
+   If none seem to match your needs, use `FuncDeclVisitor`.
 
-3. Define checker type and constructor function.
+3. Define checker type and constructor function inside a new file under `lint/${checkerName}_checker.go`.
 
-4. Register checker with `addChecker` function in `init()`. It could be a good idea to mark recently added checker as `experimental`.
+4. Add `InitDocumentation(d *Documentation)` method. Fill `Summary`, `Before` and `After` fields.
 
-5. Add test directory that is named after the checker in `lint/testdata`.
+5. Register checker with `addChecker` function in `init()`. It could be a good idea to mark recently added checker as `experimental`.
+   To do so, pass `attrExperimental` argument to the `addChecker` call.
 
-6. Add `positive_tests.go` and `negative_tests.go` files in that directory and add some positive and negative tests there.
+6. Add test directory that is named after the checker in `lint/testdata`.
 
-7. Run tests. They must fail as your checker does not check anything yet.  
-Tests can be run with `go test -v -race -count=1 ./...`.
+7. Add `positive_tests.go` and `negative_tests.go` files in that directory and add some positive and negative tests there.
+   Positive tests catch warnings, negative tests are used to avoid false positives.
+   See existing [positive_tests.go](/lint/testdata/ifElseChain/positive_tests.go) files for inspiration.
 
-8. Implement checker itself. Make tests pass.
+8. Run tests. They must fail as your checker does not check anything yet.  
+   Tests can be run with `go test -v -race -count=1 ./...`.
+
+9. Implement checker itself. Make tests pass.
+   `make ci` can be useful to check whether CI build will be successful.
 
 ## Dependencies
 
