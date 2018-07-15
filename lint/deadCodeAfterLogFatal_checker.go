@@ -1,14 +1,5 @@
 package lint
 
-//! Detects dead code that follow panic/fatal logging.
-//
-// @Before:
-// log.Fatal("exits function")
-// return
-//
-// @After:
-// log.Fatal("exits function")
-
 import (
 	"go/ast"
 )
@@ -19,6 +10,14 @@ func init() {
 
 type deadCodeAfterLogFatalChecker struct {
 	checkerBase
+}
+
+func (c *deadCodeAfterLogFatalChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects dead code that follow panic/fatal logging"
+	d.Before = `
+log.Fatal("exits function")
+return`
+	d.After = `log.Fatal("exits function")`
 }
 
 func (c *deadCodeAfterLogFatalChecker) VisitStmtList(stmts []ast.Stmt) {

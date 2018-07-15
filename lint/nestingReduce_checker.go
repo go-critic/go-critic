@@ -2,29 +2,29 @@ package lint
 
 import "go/ast"
 
-//! Finds where nesting level could be reduced.
-//
-// @Before:
-// for _, v := range a {
-// 	if v.Bool {
-// 		body()
-// 	}
-// }
-//
-// @After:
-// for _, v := range a {
-// 	if !v.Bool {
-// 		continue
-// 	}
-// 	body()
-// }
-
 func init() {
 	addChecker(&nestingReduceChecker{}, attrExperimental)
 }
 
 type nestingReduceChecker struct {
 	checkerBase
+}
+
+func (c *nestingReduceChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Finds where nesting level could be reduced"
+	d.Before = `
+for _, v := range a {
+	if v.Bool {
+		body()
+	}
+}`
+	d.After = `
+for _, v := range a {
+	if !v.Bool {
+		continue
+	}
+	body()
+}`
 }
 
 func (c *nestingReduceChecker) VisitFuncDecl(decl *ast.FuncDecl) {

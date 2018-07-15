@@ -1,19 +1,5 @@
 package lint
 
-//! Detects defer in loop and warns that it will not be executed till the end of function's scope.
-//
-// @Before:
-// for i := range [10]int{} {
-// 	defer f(i) // will be executed only at the end of func
-// }
-//
-// @After:
-// for i := range [10]int{} {
-// 	func(i int) {
-// 		defer f(i)
-// 	}(i)
-// }
-
 import (
 	"go/ast"
 
@@ -26,6 +12,20 @@ func init() {
 
 type deferInLoopChecker struct {
 	checkerBase
+}
+
+func (c *deferInLoopChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects defer in loop and warns that it will not be executed till the end of function's scope"
+	d.Before = `
+for i := range [10]int{} {
+	defer f(i) // will be executed only at the end of func
+}`
+	d.After = `
+for i := range [10]int{} {
+	func(i int) {
+		defer f(i)
+	}(i)
+}`
 }
 
 func (c *deferInLoopChecker) VisitStmt(stmt ast.Stmt) {

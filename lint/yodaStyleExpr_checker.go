@@ -1,13 +1,5 @@
 package lint
 
-//! Detects Yoda style expressions that suggest to replace them.
-//
-// @Before:
-// return nil != ptr
-//
-// @After:
-// return ptr != nil
-
 import (
 	"go/ast"
 	"go/token"
@@ -22,6 +14,12 @@ func init() {
 
 type yodaStyleExprChecker struct {
 	checkerBase
+}
+
+func (c *yodaStyleExprChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects Yoda style expressions that suggest to replace them"
+	d.Before = `return nil != ptr`
+	d.After = `return ptr != nil`
 }
 
 func (c *yodaStyleExprChecker) VisitLocalExpr(expr ast.Expr) {

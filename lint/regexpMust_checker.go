@@ -1,13 +1,5 @@
 package lint
 
-//! Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
-//
-// @Before:
-// re, _ := regexp.Compile(`const pattern`)
-//
-// @After:
-// re := regexp.MustCompile(`const pattern`)
-
 import (
 	"go/ast"
 	"strings"
@@ -22,6 +14,12 @@ func init() {
 
 type regexpMustChecker struct {
 	checkerBase
+}
+
+func (c *regexpMustChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`"
+	d.Before = `re, _ := regexp.Compile("const pattern")`
+	d.After = `re := regexp.MustCompile("const pattern")`
 }
 
 func (c *regexpMustChecker) VisitExpr(x ast.Expr) {

@@ -1,15 +1,5 @@
 package lint
 
-//! Detects bool expressions that can be simplified for the sake of readability.
-//
-// @Before:
-// a := !(elapsed >= expectElapsedMin)
-// b := !(x) == !(y)
-//
-// @After:
-// a := elapsed < expectElapsedMin
-// b := (x) == (y)
-
 import (
 	"go/ast"
 	"go/token"
@@ -33,6 +23,16 @@ type boolExprSimplifyChecker struct {
 	// when doing type-assertion that may return nil.
 	nilUnaryExpr  *ast.UnaryExpr
 	nilBinaryExpr *ast.BinaryExpr
+}
+
+func (c *boolExprSimplifyChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects bool expressions that can be simplified"
+	d.Before = `
+a := !(elapsed >= expectElapsedMin)
+b := !(x) == !(y)`
+	d.After = `
+a := elapsed < expectElapsedMin
+b := (x) == (y)`
 }
 
 func (c *boolExprSimplifyChecker) Init() {

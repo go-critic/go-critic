@@ -4,20 +4,18 @@ import (
 	"go/ast"
 )
 
-//! Detects params that incur excessive amount of copying.
-//
-// @Before:
-// func f(x [1024]int) {}
-//
-// @After:
-// func f(x *[1024]int) {}
-
 func init() {
 	addChecker(&hugeParamChecker{}, attrExperimental)
 }
 
 type hugeParamChecker struct {
 	checkerBase
+}
+
+func (c *hugeParamChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects params that incur excessive amount of copying"
+	d.Before = `func f(x [1024]int) {}`
+	d.After = `func f(x *[1024]int) {}`
 }
 
 func (c *hugeParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {

@@ -1,29 +1,5 @@
 package lint
 
-//! Detects repeated if-else statements and suggests to replace them with switch statement.
-//
-// Permits single else or else-if; repeated else-if or else + else-if
-// will trigger suggestion to use switch statement.
-//
-// @Before:
-// if cond1 {
-// 	// Code A.
-// } else if cond2 {
-// 	// Code B.
-// } else {
-// 	// Code C.
-// }
-//
-// @After:
-// switch {
-// case cond1:
-// 	// Code A.
-// case cond2:
-// 	// Code B.
-// default:
-// 	// Code C.
-// }
-
 import (
 	"go/ast"
 )
@@ -37,6 +13,30 @@ type ifElseChainChecker struct {
 
 	cause   *ast.IfStmt
 	visited map[*ast.IfStmt]bool
+}
+
+func (c *ifElseChainChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects repeated if-else statements and suggests to replace them with switch statement"
+	d.Before = `
+if cond1 {
+	// Code A.
+} else if cond2 {
+	// Code B.
+} else {
+	// Code C.
+}`
+	d.After = `
+switch {
+case cond1:
+	// Code A.
+case cond2:
+	// Code B.
+default:
+	// Code C.
+}`
+	d.Note = `
+Permits single else or else-if; repeated else-if or else + else-if
+will trigger suggestion to use switch statement.`
 }
 
 func (c *ifElseChainChecker) EnterFunc(fn *ast.FuncDecl) bool {

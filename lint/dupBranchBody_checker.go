@@ -1,21 +1,5 @@
 package lint
 
-//! Detects duplicated branch bodies inside conditional statements.
-//
-// @Before:
-// if cond {
-// 	println("cond=true")
-// } else {
-// 	println("cond=true")
-// }
-//
-// @After:
-// if cond {
-// 	println("cond=true")
-// } else {
-// 	println("cond=false")
-// }
-
 import (
 	"go/ast"
 
@@ -28,6 +12,22 @@ func init() {
 
 type dupBranchBodyChecker struct {
 	checkerBase
+}
+
+func (c *dupBranchBodyChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects duplicated branch bodies inside conditional statements"
+	d.Before = `
+if cond {
+	println("cond=true")
+} else {
+	println("cond=true")
+}`
+	d.After = `
+if cond {
+	println("cond=true")
+} else {
+	println("cond=false")
+}`
 }
 
 func (c *dupBranchBodyChecker) VisitStmt(stmt ast.Stmt) {
