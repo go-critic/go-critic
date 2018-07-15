@@ -237,6 +237,18 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 </td>
       </tr>
       <tr>
+        <td><a href="#sloppyLen-ref">sloppyLen</a></td>
+        <td>Detects usage of `len` when result is obvious or doesn't make sense.
+
+</td>
+      </tr>
+      <tr>
+        <td><a href="#sqlRowsClose-ref">sqlRowsClose</a></td>
+        <td>Detects use *sql.Rows without call Close method.
+
+</td>
+      </tr>
+      <tr>
         <td><a href="#stdExpr-ref">stdExpr</a></td>
         <td>Detects constant expressions that can be replaced by a named constant
 
@@ -943,7 +955,49 @@ if x, ok := x.(int); ok {
 ```
 
 
-`singleCaseSwitch` is syntax-only checker (fast).<a name="stdExpr-ref"></a>
+`singleCaseSwitch` is syntax-only checker (fast).<a name="sloppyLen-ref"></a>
+## sloppyLen
+Detects usage of `len` when result is obvious or doesn't make sense.
+
+
+
+**Before:**
+```go
+len(arr) >= 0
+len(arr) <= 0
+len(arr) < 0
+```
+
+**After:**
+```go
+len(arr) > 0
+len(arr) == 0
+```
+
+
+`sloppyLen` is syntax-only checker (fast).<a name="sqlRowsClose-ref"></a>
+## sqlRowsClose
+Detects use *sql.Rows without call Close method.
+
+
+
+**Before:**
+```go
+rows, _ := db.Query( /**/ )
+for rows.Next {
+}
+```
+
+**After:**
+```go
+rows, _ := db.Query( /**/ )
+for rows.Next {
+}
+rows.Close()
+```
+
+
+<a name="stdExpr-ref"></a>
 ## stdExpr
 Detects constant expressions that can be replaced by a named constant
 

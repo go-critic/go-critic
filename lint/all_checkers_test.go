@@ -60,7 +60,7 @@ func TestSanity(t *testing.T) {
 					}
 				}()
 
-				_ = NewChecker(rule, ctx).Check(f)
+				_ = NewChecker(rule, ctx, nil).Check(f)
 			}
 		})
 	}
@@ -97,7 +97,7 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 		goldenWarns := newGoldenFile(t, testFilename)
 
 		stripDirectives(f)
-		warns := NewChecker(rule, ctx).Check(f)
+		warns := NewChecker(rule, ctx, nil).Check(f)
 
 		for _, warn := range warns {
 			line := ctx.FileSet().Position(warn.Node.Pos()).Line
@@ -142,7 +142,7 @@ func TestIncorrectRule(t *testing.T) {
 				t.Fatalf("expected `nil rule given`, got %v", r)
 			}
 		}()
-		NewChecker(nil, nil)
+		NewChecker(nil, nil, nil)
 	}(t)
 
 	func(t *testing.T) {
@@ -161,7 +161,7 @@ func TestIncorrectRule(t *testing.T) {
 		}()
 
 		r := &Rule{name: name}
-		NewChecker(r, nil)
+		NewChecker(r, nil, nil)
 	}(t)
 }
 

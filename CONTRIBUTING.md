@@ -67,7 +67,7 @@ please add some useful content about issues in our contributing.md
 2. Issue description should contain detailed information about it. If it is bug request, please write steps to reproduce it.
 If it is feature request, please describe problem it could solve. Also you could tell us your solution to that problem.
 
-These rules aslo applies to **pull requests**.
+These rules also applies to **pull requests**.
 
 ## How to add new checker
 
@@ -77,7 +77,7 @@ These rules aslo applies to **pull requests**.
 
 3. Define checker type and constructor function.
 
-4. Add entry to checkers list in `lint.go`. It could be a good idea to mark recently added checker as `experimental`.
+4. Register checker with `addChecker` function in `init()`. It could be a good idea to mark recently added checker as `experimental`.
 
 5. Add test directory that is named after the checker in `lint/testdata`.
 
