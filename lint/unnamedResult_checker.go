@@ -11,6 +11,12 @@ func init() {
 
 type unnamedResultChecker struct {
 	checkerBase
+
+	checkExported bool
+}
+
+func (c *unnamedResultChecker) Init() {
+	c.checkExported = c.ctx.params.Bool("checkExported", false)
 }
 
 func (c *unnamedResultChecker) InitDocumentation(d *Documentation) {
@@ -20,6 +26,9 @@ func (c *unnamedResultChecker) InitDocumentation(d *Documentation) {
 }
 
 func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {
+	if c.checkExported && !ast.IsExported(decl.Name.Name) {
+		return
+	}
 	results := decl.Type.Results
 	switch {
 	case results == nil:

@@ -3,6 +3,7 @@ package lint
 import (
 	"fmt"
 	"go/ast"
+	"log"
 	"reflect"
 	"strings"
 
@@ -48,6 +49,38 @@ const (
 	attrVeryOpinionated
 )
 
+type parameters map[string]interface{}
+
+func (p parameters) Int(key string, defaultValue int) int {
+	if value, ok := p[key]; ok {
+		if value, ok := value.(int); ok {
+			return value
+		}
+		log.Printf("incorrect value for `%s`, want int", key)
+	}
+	return defaultValue
+}
+
+func (p parameters) String(key, defaultValue string) string {
+	if value, ok := p[key]; ok {
+		if value, ok := value.(string); ok {
+			return value
+		}
+		log.Printf("incorrect value for `%s`, want int", key)
+	}
+	return defaultValue
+}
+
+func (p parameters) Bool(key string, defaultValue bool) bool {
+	if value, ok := p[key]; ok {
+		if value, ok := value.(bool); ok {
+			return value
+		}
+		log.Printf("incorrect value for `%s`, want bool", key)
+	}
+	return defaultValue
+}
+
 // context is checker-local context copy.
 // Fields that are not from Context itself are writeable.
 type context struct {
@@ -55,6 +88,8 @@ type context struct {
 
 	// printer used to format warning text.
 	printer *astfmt.Printer
+
+	params parameters
 
 	warnings []Warning
 }

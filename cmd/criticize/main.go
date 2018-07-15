@@ -1,11 +1,13 @@
 package criticize
 
 import (
+	"encoding/json"
 	"flag"
 	"go/ast"
 	"go/build"
 	"go/parser"
 	"go/types"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,6 +33,8 @@ type linter struct {
 
 	// Command line flags:
 
+	configFile string
+
 	withOpinionated    bool
 	withExperimental   bool
 	checkGenerated     bool
@@ -39,12 +43,16 @@ type linter struct {
 	packages        []string
 	enabledCheckers []string
 	failureExitCode int
+	checkerParams   map[string]map[string]interface{}
 }
 
 // Main implements gocritic sub-command entry point.
 func Main() {
 	var l linter
 	parseArgv(&l)
+	if l.configFile != "" {
+		l.LoadConfig()
+	}
 	l.LoadProgram()
 	l.InitCheckers()
 
@@ -73,6 +81,8 @@ func parseArgv(l *linter) {
 
 	enable := flag.String("enable", enableAll,
 		`comma-separated list of enabled checkers`)
+	flag.StringVar(&l.configFile, "config", "",
+		`name of JSON file containing checkers configurations`)
 	disable := flag.String("disable", "",
 		`comma-separated list of disabled checkers`)
 	flag.BoolVar(&l.withExperimental, `withExperimental`, false,
@@ -144,6 +154,29 @@ func parseArgv(l *linter) {
 	}
 }
 
+func (l *linter) LoadConfig() {
+	raw, err := ioutil.ReadFile(l.configFile)
+	if err != nil {
+		log.Printf("cannot read config file %s, got error: %s", l.configFile, err)
+		return
+	}
+
+	var params map[string]interface{}
+	if err := json.Unmarshal(raw, &params); err != nil {
+		log.Fatalf("cannot parse config file, got error: %s", err)
+		return
+	}
+
+	l.checkerParams = make(map[string]map[string]interface{})
+	for k, v := range params {
+		if v, ok := v.(map[string]interface{}); ok {
+			l.checkerParams[k] = v
+		} else {
+			log.Printf("cannot parse value for %v", k)
+		}
+	}
+}
+
 func (l *linter) LoadProgram() {
 	sizes := types.SizesFor("gc", runtime.GOARCH)
 	if sizes == nil {
@@ -194,7 +227,11 @@ func (l *linter) InitCheckers() {
 		if !requested[rule.Name()] {
 			continue
 		}
-		l.checkers = append(l.checkers, lint.NewChecker(rule, l.ctx))
+		l.checkers = append(l.checkers, lint.NewChecker(
+			rule,
+			l.ctx,
+			l.checkerParams[rule.Name()],
+		))
 		delete(requested, rule.Name())
 	}
 
