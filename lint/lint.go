@@ -49,6 +49,7 @@ type AttributeSet struct {
 // Rule describes a named check that can be performed by the linter.
 type Rule struct {
 	AttributeSet
+	Doc Documentation
 
 	name string
 }
@@ -160,4 +161,19 @@ func (c *Context) SetPackageInfo(info *types.Info, pkg *types.Package) {
 // Must be called for every source code file being checked.
 func (c *Context) SetFileInfo(filename string) {
 	c.filename = filename
+}
+
+// Documentation holds rule structured documentation.
+type Documentation struct {
+	// Summary is a short one sentence description.
+	// Should not end with a period.
+	Summary string
+	// Details extends summary with additional info. Optional.
+	Details string
+	// Before is a code snippet of code that will violate rule.
+	Before string
+	// After is a code snippet of fixed code that complies to the rule.
+	After string
+	// Note is an optional caution message or advice.
+	Note string
 }

@@ -1,15 +1,5 @@
 package lint
 
-//! Detects slice expressions that can be simplified to sliced expression itself.
-//
-// @Before:
-// f(s[:])               // s is string
-// copy(b[:], values...) // b is []byte
-//
-// @After:
-// f(s)
-// copy(b, values...)
-
 import (
 	"go/ast"
 	"go/types"
@@ -21,6 +11,16 @@ func init() {
 
 type unsliceChecker struct {
 	checkerBase
+}
+
+func (c *unsliceChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects slice expressions that can be simplified to sliced expression itself"
+	d.Before = `
+f(s[:])               // s is string
+copy(b[:], values...) // b is []byte`
+	d.After = `
+f(s)
+copy(b, values...)`
 }
 
 func (c *unsliceChecker) VisitLocalExpr(expr ast.Expr) {

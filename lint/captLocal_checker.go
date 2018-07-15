@@ -1,13 +1,5 @@
 package lint
 
-//! Detects capitalized names for local variables.
-//
-// @Before:
-// func f(IN int, OUT *int) (ERR error) {}
-//
-// @After:
-// func f(in int, out *int) (err error) {}
-
 import (
 	"go/ast"
 	"strings"
@@ -23,6 +15,12 @@ type captLocalChecker struct {
 	checkerBase
 
 	upcaseNames map[string]bool
+}
+
+func (c *captLocalChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects capitalized names for local variables"
+	d.Before = `func f(IN int, OUT *int) (ERR error) {}`
+	d.After = `func f(in int, out *int) (err error) {}`
 }
 
 func (c *captLocalChecker) Init() {

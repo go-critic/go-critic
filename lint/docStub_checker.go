@@ -1,20 +1,5 @@
 package lint
 
-//! Detects comments that silence go lint complaints about doc-comment.
-//
-// @Before:
-// // Foo ...
-// func Foo() {
-// }
-//
-// @After:
-// func Foo() {
-// }
-//
-// @Note:
-// > You can either remove a comment to let go lint find it or change stub to useful comment.
-// > This checker makes it easier to detect stubs, the action is up to you.
-
 import (
 	"go/ast"
 	"regexp"
@@ -28,6 +13,20 @@ type docStubChecker struct {
 	checkerBase
 
 	badCommentRE *regexp.Regexp
+}
+
+func (c *docStubChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects comments that silence go lint complaints about doc-comment"
+	d.Before = `
+// Foo ...
+func Foo() {
+}`
+	d.After = `
+func Foo() {
+}`
+	d.Note = `
+You can either remove a comment to let go lint find it or change stub to useful comment.
+This checker makes it easier to detect stubs, the action is up to you.`
 }
 
 func (c *docStubChecker) Init() {

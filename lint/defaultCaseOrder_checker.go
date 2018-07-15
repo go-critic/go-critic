@@ -1,27 +1,5 @@
 package lint
 
-//! Detects when default case in switch isn't on 1st or last position.
-//
-// @Before:
-// switch {
-// case x > y:
-// 	// ...
-// default: // <- not the best position
-//	// ...
-// case x == 10:
-//	// ...
-// }
-//
-// @After:
-// switch {
-// case x > y:
-// 	// ...
-// case x == 10:
-//	// ...
-// default: // <- everything is good
-//	// ...
-// }
-
 import "go/ast"
 
 func init() {
@@ -30,6 +8,28 @@ func init() {
 
 type defaultCaseOrderChecker struct {
 	checkerBase
+}
+
+func (c *defaultCaseOrderChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects when default case in switch isn't on 1st or last position"
+	d.Before = `
+switch {
+case x > y:
+	// ...
+default: // <- not the best position
+	// ...
+case x == 10:
+	// ...
+}`
+	d.After = `
+switch {
+case x > y:
+	// ...
+case x == 10:
+	// ...
+default: // <- last case (could also be the first one)
+	// ...
+}`
 }
 
 func (c *defaultCaseOrderChecker) VisitStmt(stmt ast.Stmt) {

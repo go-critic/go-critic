@@ -1,17 +1,5 @@
 package lint
 
-//! Detects suspicious duplicated sub-expressions.
-//
-// @Before:
-// sort.Slice(xs, func(i, j int) bool {
-// 	return xs[i].v < xs[i].v // Duplicated index
-// })
-//
-// @After:
-// sort.Slice(xs, func(i, j int) bool {
-// 	return xs[i].v < xs[j].v
-// })
-
 import (
 	"go/ast"
 	"go/token"
@@ -32,6 +20,18 @@ type dupSubExprChecker struct {
 	opSet map[token.Token]bool
 
 	floatOpsSet map[token.Token]bool
+}
+
+func (c *dupSubExprChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects suspicious duplicated sub-expressions"
+	d.Before = `
+sort.Slice(xs, func(i, j int) bool {
+	return xs[i].v < xs[i].v // Duplicated index
+})`
+	d.After = `
+sort.Slice(xs, func(i, j int) bool {
+	return xs[i].v < xs[j].v
+})`
 }
 
 func (c *dupSubExprChecker) Init() {

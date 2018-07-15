@@ -1,27 +1,5 @@
 package lint
 
-//! Detects type switches that can benefit from type guard clause with variable.
-//
-// @Before:
-// switch v.(type) {
-// case int:
-// 	return v.(int)
-// case point:
-// 	return v.(point).x + v.(point).y
-// default:
-// 	return 0
-// }
-//
-// @After:
-// switch v := v.(type) {
-// case int:
-// 	return v
-// case point:
-// 	return v.x + v.y
-// default:
-// 	return 0
-// }
-
 import (
 	"go/ast"
 
@@ -35,6 +13,28 @@ func init() {
 
 type typeSwitchVarChecker struct {
 	checkerBase
+}
+
+func (c *typeSwitchVarChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects type switches that can benefit from type guard clause with variable"
+	d.Before = `
+switch v.(type) {
+case int:
+	return v.(int)
+case point:
+	return v.(point).x + v.(point).y
+default:
+	return 0
+}`
+	d.After = `
+switch v := v.(type) {
+case int:
+	return v
+case point:
+	return v.x + v.y
+default:
+	return 0
+}`
 }
 
 func (c *typeSwitchVarChecker) VisitStmt(stmt ast.Stmt) {

@@ -1,13 +1,5 @@
 package lint
 
-//! Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
-//
-// @Before:
-// func Enabled() bool
-//
-// @After:
-// func IsEnabled() bool
-
 import (
 	"go/ast"
 	"go/types"
@@ -20,6 +12,12 @@ func init() {
 
 type boolFuncPrefixChecker struct {
 	checkerBase
+}
+
+func (c *boolFuncPrefixChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name"
+	d.Before = "func Enabled() bool"
+	d.After = "func IsEnabled() bool"
 }
 
 func (c *boolFuncPrefixChecker) VisitFuncDecl(decl *ast.FuncDecl) {

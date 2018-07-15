@@ -1,13 +1,5 @@
 package lint
 
-//! Detects if function parameters could be combined by type and suggest the way to do it.
-//
-// @Before:
-// func foo(a, b int, c, d int, e, f int, g int) {}
-//
-// @After:
-// func foo(a, b, c, d, e, f, g int) {}
-
 import (
 	"go/ast"
 
@@ -20,6 +12,12 @@ func init() {
 
 type paramTypeCombineChecker struct {
 	checkerBase
+}
+
+func (c *paramTypeCombineChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects if function parameters could be combined by type and suggest the way to do it"
+	d.Before = `func foo(a, b int, c, d int, e, f int, g int) {}`
+	d.After = `func foo(a, b, c, d, e, f, g int) {}`
 }
 
 func (c *paramTypeCombineChecker) VisitFuncDecl(decl *ast.FuncDecl) {

@@ -1,16 +1,5 @@
 package lint
 
-//! Detects usage of `len` when result is obvious or doesn't make sense.
-//
-// @Before:
-// len(arr) >= 0
-// len(arr) <= 0
-// len(arr) < 0
-//
-// @After:
-// len(arr) > 0
-// len(arr) == 0
-
 import (
 	"go/ast"
 	"go/token"
@@ -25,6 +14,17 @@ func init() {
 
 type sloppyLenChecker struct {
 	checkerBase
+}
+
+func (c *sloppyLenChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects usage of `len` when result is obvious or doesn't make sense"
+	d.Before = `
+len(arr) >= 0 // Sloppy
+len(arr) <= 0 // Sloppy
+len(arr) < 0  // Doesn't make sense at all`
+	d.After = `
+len(arr) > 0
+len(arr) == 0`
 }
 
 func (c *sloppyLenChecker) VisitExpr(x ast.Expr) {

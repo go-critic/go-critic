@@ -1,15 +1,5 @@
 package lint
 
-//! Detects dereference expressions that can be omitted.
-//
-// @Before:
-// (*k).field = 5
-// _ := (*a)[5] // only if a is array
-//
-// @After:
-// k.field = 5
-// _ := a[5]
-
 import (
 	"go/ast"
 	"go/types"
@@ -21,6 +11,16 @@ func init() {
 
 type underefChecker struct {
 	checkerBase
+}
+
+func (c *underefChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects dereference expressions that can be omitted"
+	d.Before = `
+(*k).field = 5
+v := (*a)[5] // only if a is array`
+	d.After = `
+k.field = 5
+v := a[5]`
 }
 
 func (c *underefChecker) VisitExpr(expr ast.Expr) {

@@ -1,18 +1,5 @@
 package lint
 
-//! Detects use *sql.Rows without call Close method.
-//
-// @Before:
-// rows, _ := db.Query( /**/ )
-// for rows.Next {
-// }
-//
-// @After:
-// rows, _ := db.Query( /**/ )
-// for rows.Next {
-// }
-// rows.Close()
-
 import (
 	"go/ast"
 	"go/types"
@@ -28,6 +15,19 @@ func init() {
 
 type sqlRowsCloseChecker struct {
 	checkerBase
+}
+
+func (c *sqlRowsCloseChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects uses of *sql.Rows without call Close method"
+	d.Before = `
+rows, _ := db.Query( /**/ )
+for rows.Next {
+}`
+	d.After = `
+rows, _ := db.Query( /**/ )
+for rows.Next {
+}
+rows.Close()`
 }
 
 // Warning if sql.Rows local variables (including function parameters):
