@@ -117,8 +117,11 @@ func normalUseWhereRowsFromOtherMethodToOtherMethodWithDefer() {
     if err != nil {
         return
     }
+    defer rows.Close()
 
-    testMethodCloseRowsWithDefer(rows)
+    for rows.Next() {
+        testMethodWithRows(rows)
+    }
 
     return
 }
@@ -134,7 +137,10 @@ func normalUseWhereRowsFromOtherMethodToOtherMethodWithoutDefer() {
         return
     }
 
-    testMethodCloseRowsWithoutDefer(rows)
+    for rows.Next() {
+        testMethodWithRows(rows)
+    }
+    rows.Close()
 
     return
 }
@@ -150,21 +156,9 @@ func testMethodReturningRows(db *sql.DB) (*sql.Rows, error) {
     return rows, nil
 }
 
-func testMethodCloseRowsWithDefer(rows *sql.Rows) {
-    defer rows.Close()
-
-    for rows.Next() {
-        var testdata string
-        rows.Scan(&testdata)
-    }
-}
-
-func testMethodCloseRowsWithoutDefer(rows *sql.Rows) {
-    for rows.Next() {
-        var testdata string
-        rows.Scan(&testdata)
-    }
-    rows.Close()
+func testMethodWithRows(rows *sql.Rows) {
+    var testdata string
+    rows.Scan(&testdata)
 }
 
 func testPosMethodReturningRows(db *sql.DB) (*sql.Rows, error) {

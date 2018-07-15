@@ -20,7 +20,6 @@ import (
 
 const (
 	rowsTypePTR = "*database/sql.Rows"
-	rowsType    = "database/sql.Rows"
 )
 
 func init() {
@@ -37,21 +36,9 @@ type sqlRowsCloseChecker struct {
 // 3. Not call Close method for variable;
 
 func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
-	// Function parameter variable
-	params := decl.Type.Params
-	var paramVal types.Object
-	for _, p := range params.List {
-		t := c.ctx.typesInfo.TypeOf(p.Type)
-		if t != nil && t.String() == rowsTypePTR {
-			paramVal = c.ctx.typesInfo.ObjectOf(identOf(p.Names[0]))
-			break
-		}
-	}
-
 	localVars := make([]types.Object, 0)
 	returnVars := make([]types.Object, 0)
 	closeVars := make([]types.Object, 0)
-	callVars := make([]types.Object, 0)
 	for _, b := range decl.Body.List {
 		switch b := b.(type) {
 		case *ast.AssignStmt:
@@ -82,14 +69,6 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 					if funcName == "Close" {
 						closeVars = append(closeVars, c.ctx.typesInfo.ObjectOf(identOf(bb.X)))
 					}
-				} else {
-					// Detect call other functions with sql.Rows variable in parameters
-					for _, v := range b.Args {
-						t := c.ctx.typesInfo.TypeOf(v)
-						if t.String() == rowsTypePTR || t.String() == rowsType {
-							callVars = append(callVars, c.ctx.typesInfo.ObjectOf(identOf(v)))
-						}
-					}
 				}
 			}
 		case *ast.DeferStmt:
@@ -105,22 +84,10 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 
 	// CHECKS
 
-	// Check function parameter local variable
-	if paramVal != nil {
-		// If parameter variable present in return or in other functions call or Close present - PASS
-		if !c.varInList(paramVal, returnVars) &&
-			!c.varInList(paramVal, callVars) &&
-			!c.varInList(paramVal, closeVars) {
-			c.ctx.Warn(paramVal.Parent(), "param variable db.Rows have not Close call")
-		}
-	}
-
 	// Check local variables
 	for _, l := range localVars {
-		// If local variable present in return or in other functions call or Close present - PASS
-		if !c.varInList(l, returnVars) &&
-			!c.varInList(l, callVars) &&
-			!c.varInList(l, closeVars) {
+		// If local variable present in return or Close present - PASS
+		if !c.varInList(l, returnVars) && !c.varInList(l, closeVars) {
 			c.ctx.Warn(l.Parent(), "local variable db.Rows have not Close call")
 		}
 	}
