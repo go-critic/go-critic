@@ -41,4 +41,20 @@ func interfacePtr() {
 
 func withUnderlyingPtrOK(p underlyingPtr) {
 	_ = p.field
+
+	ptr2 := &p
+
+	_ = (*ptr2).field
+
+	ptr3 := &ptr2
+
+	_ = (**ptr3).field
+}
+
+func multiArrayDerefOK(xs **[2]int) {
+	_ = (*xs)[0]
+
+	xsPtr := &xs
+
+	_ = (**xsPtr)[1]
 }
