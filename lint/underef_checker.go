@@ -3,6 +3,8 @@ package lint
 import (
 	"go/ast"
 	"go/types"
+
+	"github.com/go-toolsmith/astp"
 )
 
 func init() {
@@ -51,18 +53,28 @@ func (c *underefChecker) VisitExpr(expr ast.Expr) {
 	}
 }
 
+func (c *underefChecker) underef(x *ast.ParenExpr) ast.Expr {
+	// If there is only 1 deref, can remove parenthesis,
+	// otherwise can remove StarExpr only.
+	dereferenced := x.X.(*ast.StarExpr).X
+	if astp.IsStarExpr(dereferenced) {
+		return &ast.ParenExpr{X: dereferenced}
+	}
+	return dereferenced
+}
+
 func (c *underefChecker) warnSelect(expr *ast.SelectorExpr) {
 	// TODO: add () to function output.
 	c.ctx.Warn(expr, "could simplify %s to %s.%s",
 		expr,
-		expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X,
+		c.underef(expr.X.(*ast.ParenExpr)),
 		expr.Sel.Name)
 }
 
 func (c *underefChecker) warnArray(expr *ast.IndexExpr) {
 	c.ctx.Warn(expr, "could simplify %s to %s[%s]",
 		expr,
-		expr.X.(*ast.ParenExpr).X.(*ast.StarExpr).X,
+		c.underef(expr.X.(*ast.ParenExpr)),
 		expr.Index)
 }
 
