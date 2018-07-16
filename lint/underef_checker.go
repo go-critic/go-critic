@@ -68,23 +68,17 @@ func (c *underefChecker) warnArray(expr *ast.IndexExpr) {
 
 // checkStarExpr checks if ast.StarExpr could be simplified.
 func (c *underefChecker) checkStarExpr(expr *ast.StarExpr) bool {
-	// Checks if expr is pointer type.
-	typ, ok := c.ctx.typesInfo.TypeOf(expr.X).(*types.Pointer)
+	typ, ok := c.ctx.typesInfo.TypeOf(expr.X).Underlying().(*types.Pointer)
 	if !ok {
 		return false
 	}
 
-	el := typ.Elem()
-	// Checks if dereference of typ is pointer.
-	if _, ok := el.(*types.Pointer); ok {
+	switch typ.Elem().Underlying().(type) {
+	case *types.Pointer, *types.Interface:
 		return false
+	default:
+		return true
 	}
-	// Check if dereference of typ is interface.
-	if _, ok := el.Underlying().(*types.Interface); ok {
-		return false
-	}
-
-	return true
 }
 
 func (c *underefChecker) checkArray(expr *ast.StarExpr) bool {

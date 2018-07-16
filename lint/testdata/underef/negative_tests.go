@@ -38,3 +38,7 @@ func interfacePtr() {
 	ptrInterface := &val
 	(*(ptrInterface)).f()
 }
+
+func withUnderlyingPtrOK(p underlyingPtr) {
+	_ = p.field
+}
