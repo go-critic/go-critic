@@ -42,3 +42,10 @@ func sampleCase3() {
 	/// could simplify (*k)[2] to k[2]
 	(*k)[2] = 3
 }
+
+type underlyingPtr *sampleStruct
+
+func withUnderlyingPtr(p underlyingPtr) {
+	/// could simplify (*p).field to p.field
+	_ = (*p).field
+}
