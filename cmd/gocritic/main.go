@@ -72,7 +72,7 @@ func printVersion() {
 	log.Println(version)
 }
 
-// findSubCommand looks up subCommand by it's name.
+// findSubCommand looks up subCommand by its name.
 // Returns nil if requested command not found.
 func findSubCommand(name string) *subCommand {
 	for _, cmd := range subCommands {
