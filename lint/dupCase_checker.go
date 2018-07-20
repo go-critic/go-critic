@@ -13,7 +13,7 @@ func init() {
 type dupCaseChecker struct {
 	checkerBase
 
-	astSet lintutil.AstSet
+	astSet lintutil.AstMap
 }
 
 func (c *dupCaseChecker) InitDocumentation(d *Documentation) {
@@ -39,7 +39,7 @@ func (c *dupCaseChecker) checkSwitch(stmt *ast.SwitchStmt) {
 	for i := range stmt.Body.List {
 		cc := stmt.Body.List[i].(*ast.CaseClause)
 		for _, x := range cc.List {
-			if !c.astSet.Insert(x) {
+			if !c.astSet.Insert(x, nil) {
 				c.warn(x)
 			}
 		}

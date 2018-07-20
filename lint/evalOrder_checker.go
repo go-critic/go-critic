@@ -21,7 +21,7 @@ type evalOrderChecker struct {
 	// active represents depencies that can cause undefined evaluation
 	// result if there are any equal active or passive dependency for any of them.
 	active []ast.Expr
-	depSet lintutil.AstSet
+	depSet lintutil.AstMap
 }
 
 func (c *evalOrderChecker) InitDocumentation(d *Documentation) {
@@ -127,7 +127,7 @@ func (c *evalOrderChecker) depsCount() int {
 	c.depSet.Clear()
 	deps := 0
 	for _, x := range c.active {
-		if !c.depSet.Insert(x) {
+		if !c.depSet.Insert(x, nil) {
 			deps++
 		}
 	}

@@ -1,28 +1,29 @@
 package checker_test
 
-import "unsafe"
-
-type t struct {
+type object struct {
 	a struct {
 		c struct {
+			x int
 			d struct {
-				e struct {
+				e [1]struct {
 					p1, p2, p3, p4 int
 				}
 			}
 		}
 
 		c1 struct {
+			y int
 			d struct {
-				e struct {
+				e [1]struct {
 					p1, p2, p3, p4 int
 				}
 			}
 		}
 
 		c2 struct {
+			z int
 			d struct {
-				e struct {
+				e [1]struct {
 					p1, p2, p3, p4 int
 				}
 			}
@@ -30,72 +31,32 @@ type t struct {
 	}
 }
 
-func add1(x int) int { return x + 1 }
-
-func binaryExpr() {
-	_ = add1(1 + 2 + 3 + 4)
-	_ = add1(1 + 2 + 3 + 4)
-	/// 1 + 2 + 3 + 4 repeated multiple times, consider assigning it to local variable
-	_ = add1(1 + 2 + 3 + 4)
+func newObj() *object {
+	return &object{}
 }
 
-func indexExpr(x [][][][]int) {
-	i := 0
-	_ = x[0][1][2][i+0]
-	_ = x[0][1][2][i+1]
-	/// x[0][1][2] repeated multiple times, consider assigning it to local variable
-	_ = x[0][1][2][i+2]
+func repeatedSubExpr() {
+	o := newObj()
+
+	/// o.a.c.d.e[0].p1 repeated multiple times, consider assigning it to local variable
+	_ = o.a.c.d.e[0].p1 + o.a.c.d.e[0].p1 + o.a.c.d.e[0].p1
+
+	/// o.a.c.d.e[0] repeated multiple times, consider assigning it to local variable
+	_ = o.a.c.d.e[0].p1 + o.a.c.d.e[0].p2 + o.a.c.d.e[0].p3
+
+	/// (o.a.c.x + o.a.c.x) repeated multiple times, consider assigning it to local variable
+	_ = (o.a.c.x + o.a.c.x) +
+		(o.a.c.x + o.a.c.x) +
+		(o.a.c.x + o.a.c.x)
 }
 
-func selectorExpr() {
-	b := t{}
+func repeatedCaseExpr() {
+	o := newObj()
 
-	switch 1 {
-	case b.a.c.d.e.p1:
-	case b.a.c.d.e.p2:
-	/// b.a.c.d.e repeated multiple times, consider assigning it to local variable
-	case b.a.c.d.e.p3:
-	case b.a.c.d.e.p4:
+	/// o.a.c.d.e[0] repeated multiple times, consider assigning it to local variable
+	switch {
+	case o.a.c.d.e[0].p1 == 0:
+	case o.a.c.d.e[0].p2 == 1:
+	case o.a.c.d.e[0].p3 == 2:
 	}
-}
-
-func callExpr() {
-	_ = uintptr(1 + 2 + 3 + 4)
-	_ = uintptr(1 + 2 + 3 + 4)
-	/// uintptr(1 + 2 + 3 + 4) repeated multiple times, consider assigning it to local variable
-	_ = uintptr(1 + 2 + 3 + 4)
-
-	_ = (int)(1 + 2 + 3 + 4)
-	_ = (int)(1 + 2 + 3 + 4)
-	/// (int)(1 + 2 + 3 + 4) repeated multiple times, consider assigning it to local variable
-	_ = (int)(1 + 2 + 3 + 4)
-
-	type myInt int
-
-	_ = myInt(1) + myInt(2)
-	_ = myInt(1) + myInt(2)
-	/// myInt(1) + myInt(2) repeated multiple times, consider assigning it to local variable
-	_ = myInt(1) + myInt(2)
-
-	type intAlias = myInt
-
-	_ = intAlias(1) + intAlias(2)
-	_ = intAlias(1) + intAlias(2)
-	/// intAlias(1) + intAlias(2) repeated multiple times, consider assigning it to local variable
-	_ = intAlias(1) + intAlias(2)
-
-	type struct1 struct{}
-	type struct2 struct{}
-
-	_ = struct2(struct1(struct2{}))
-	_ = struct2(struct1(struct2{}))
-	/// struct2(struct1(struct2{})) repeated multiple times, consider assigning it to local variable
-	_ = struct2(struct1(struct2{}))
-
-	var x int
-
-	_ = uintptr(unsafe.Pointer(&x))
-	_ = uintptr(unsafe.Pointer(&x))
-	/// uintptr(unsafe.Pointer(&x)) repeated multiple times, consider assigning it to local variable
-	_ = uintptr(unsafe.Pointer(&x))
 }

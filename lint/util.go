@@ -59,6 +59,11 @@ func findNode(root ast.Node, pred func(ast.Node) bool) ast.Node {
 	return found
 }
 
+// containsNode reports whether findNode(root, pred) returned non-nil node.
+func containsNode(root ast.Node, pred func(ast.Node) bool) bool {
+	return findNode(root, pred) != nil
+}
+
 // identOf returns identifier for x that can be used to obtain associated types.Object.
 // Returns nil for expressions that yield temporary results, like `f().field`.
 func identOf(x ast.Node) *ast.Ident {

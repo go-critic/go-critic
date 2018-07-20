@@ -3,8 +3,9 @@ package lint
 import (
 	"go/ast"
 	"go/types"
-	"strings"
 
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astequal"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -15,66 +16,72 @@ func init() {
 type longChainChecker struct {
 	checkerBase
 
-	// chains is a {expr string => count} mapping.
-	chains map[string]int
+	chains      lintutil.AstMap
+	reportedSet lintutil.AstMap
 
-	// reported is a set of reported expression strings.
-	// Used to avoid duplicated warnings.
-	reported map[string]bool
+	minComplexity int
+	minChainLen   int
 }
 
 func (c *longChainChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects repeated expression chains and suggest to refactor them"
 	d.Before = `
-a := q.w.e.r.t + 1
-b := q.w.e.r.t + 2
-c := q.w.e.r.t + 3
-v := (a + xs[i+1]) + (b + xs[i+1]) + (c + xs[i+1])`
+v := q.w.e.r[0].x + q.w.e.r[0].y + q.w.e.r[0].z`
 	d.After = `
-x := xs[i+1]
-qwert := q.w.e.r.t
-a := qwert + 1
-b := qwert + 2
-c := qwert + 3
-v := (a + x) + (b + x) + (c + x)`
+r := q.w.e.r[0]
+v := r.x + r.y + r.z`
 }
 
-func (c *longChainChecker) EnterFunc(fn *ast.FuncDecl) bool {
-	// Avoid checking functions of 1 statement.
-	// Both performance and false-positives reasons.
-	if fn.Body == nil || len(fn.Body.List) == 1 {
+func (c *longChainChecker) Init() {
+	c.minComplexity = c.ctx.params.Int("minComplexity", 8)
+	c.minChainLen = c.ctx.params.Int("minChainLen", 3)
+}
+
+func (c *longChainChecker) VisitFuncDecl(decl *ast.FuncDecl) {
+	ast.Inspect(decl.Body, func(x ast.Node) bool {
+		switch x := x.(type) {
+		case *ast.AssignStmt:
+			c.collectExprList(x.Rhs)
+			c.check(x.Rhs[0])
+		case *ast.SwitchStmt:
+			for _, cc := range x.Body.List {
+				cc := cc.(*ast.CaseClause)
+				c.collectExprList(cc.List)
+			}
+			c.check(x)
+		default:
+			return true
+		}
+		c.reset()
 		return false
-	}
-
-	c.chains = make(map[string]int)
-	c.reported = make(map[string]bool)
-	return true
+	})
 }
 
-func (c *longChainChecker) VisitLocalExpr(expr ast.Expr) {
-	// These constants are purely heuristical.
-	//
-	// TODO: for very big functions should increase minChainLen
-	// threshould or consider matching expressions only inside limited "window".
-	// This may not be worthwhile. Needs discussion.
-	const (
-		minComplexity = 6
-		minChainLen   = 3
-	)
+func (c *longChainChecker) reset() {
+	c.chains.Clear()
+	c.reportedSet.Clear()
+}
 
-	if c.exprComplexity(expr) < minComplexity {
-		return
+func (c *longChainChecker) collectExprList(list []ast.Expr) {
+	for _, expr := range list {
+		ast.Inspect(expr, func(x ast.Node) bool {
+			if x, ok := x.(ast.Expr); ok {
+				c.checkExpr(x)
+			}
+			return true
+		})
 	}
+}
 
-	s := c.ctx.printer.Sprint(expr)
-	if c.reported[s] {
-		return
-	}
-	c.chains[s]++
-	if c.chains[s] >= minChainLen {
+func (c *longChainChecker) check(cause ast.Node) {
+	for i := 0; i < c.chains.Len(); i++ {
+		if *c.chains.ValueAt(i).(*int) < c.minChainLen {
+			continue
+		}
+		node := c.chains.KeyAt(i)
 		isSubExpr := false
-		for s2 := range c.reported {
-			if strings.Contains(s2, s) {
+		for j := 0; j < c.reportedSet.Len(); j++ {
+			if c.astContains(c.reportedSet.KeyAt(j), node) {
 				isSubExpr = true
 				break
 			}
@@ -85,9 +92,28 @@ func (c *longChainChecker) VisitLocalExpr(expr ast.Expr) {
 		// That means if we already reported "a.b.c.d.e",
 		// don't bother reporting repeated "b.c.d".
 		if !isSubExpr {
-			c.warn(expr, s)
+			c.warn(cause, node)
 		}
-		c.reported[s] = true
+		c.reportedSet.Insert(node, nil)
+	}
+}
+
+func (c *longChainChecker) astContains(root, sub ast.Node) bool {
+	return containsNode(root, func(x ast.Node) bool {
+		return astequal.Node(x, sub)
+	})
+}
+
+func (c *longChainChecker) checkExpr(expr ast.Expr) {
+	if c.exprComplexity(expr) < c.minComplexity {
+		return
+	}
+
+	if count, ok := c.chains.Find(expr).(*int); ok {
+		*count++
+	} else {
+		count := 1
+		c.chains.Insert(expr, &count)
 	}
 }
 
@@ -96,6 +122,7 @@ func (c *longChainChecker) VisitLocalExpr(expr ast.Expr) {
 func (c *longChainChecker) exprComplexity(expr ast.Expr) int {
 	cost := 0
 	astutil.Apply(expr, nil, func(cur *astutil.Cursor) bool {
+		// TODO(quasilyte): make this type switch more exhaustive.
 		switch expr := cur.Node().(type) {
 		case *ast.ParenExpr:
 			// Does not increase cost.
@@ -107,8 +134,12 @@ func (c *longChainChecker) exprComplexity(expr ast.Expr) int {
 				return false
 			}
 			cost++
-		default:
+		case *ast.SelectorExpr, *ast.IndexExpr, *ast.Ident, *ast.BasicLit, *ast.BinaryExpr:
 			cost++
+		default:
+			// For now, skip all nodes that are not explicitly handled.
+			cost = 0
+			return false
 		}
 		return true
 	})
@@ -145,6 +176,6 @@ func (c *longChainChecker) isTypeConversion(call *ast.CallExpr) bool {
 	}
 }
 
-func (c *longChainChecker) warn(node ast.Node, s string) {
-	c.ctx.Warn(node, "%s repeated multiple times, consider assigning it to local variable", s)
+func (c *longChainChecker) warn(cause, expr ast.Node) {
+	c.ctx.Warn(cause, "%s repeated multiple times, consider assigning it to local variable", expr)
 }
