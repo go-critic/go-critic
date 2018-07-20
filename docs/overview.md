@@ -697,20 +697,13 @@ Detects repeated expression chains and suggest to refactor them.
 
 **Before:**
 ```go
-a := q.w.e.r.t + 1
-b := q.w.e.r.t + 2
-c := q.w.e.r.t + 3
-v := (a + xs[i+1]) + (b + xs[i+1]) + (c + xs[i+1])
+v := q.w.e.r[0].x + q.w.e.r[0].y + q.w.e.r[0].z
 ```
 
 **After:**
 ```go
-x := xs[i+1]
-qwert := q.w.e.r.t
-a := qwert + 1
-b := qwert + 2
-c := qwert + 3
-v := (a + x) + (b + x) + (c + x)
+r := q.w.e.r[0]
+v := r.x + r.y + r.z
 ```
 
 
