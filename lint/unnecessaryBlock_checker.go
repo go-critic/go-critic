@@ -27,17 +27,14 @@ print(x)`
 
 func (c *unnecessaryBlockChecker) VisitStmtList(statements []ast.Stmt) {
 	for _, stmt := range statements {
-		if blockStmt, ok := stmt.(*ast.BlockStmt); ok {
-			if c.hasAssignmentBlock(blockStmt) {
-				continue
-			}
-
-			c.warn(blockStmt)
+		stmt, ok := stmt.(*ast.BlockStmt)
+		if ok && !c.hasDefinitions(stmt) {
+			c.warn(stmt)
 		}
 	}
 }
 
-func (c *unnecessaryBlockChecker) hasAssignmentBlock(stmt *ast.BlockStmt) bool {
+func (c *unnecessaryBlockChecker) hasDefinitions(stmt *ast.BlockStmt) bool {
 	for _, bs := range stmt.List {
 		switch stmt := bs.(type) {
 		case *ast.AssignStmt:
