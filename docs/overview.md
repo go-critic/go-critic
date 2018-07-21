@@ -189,6 +189,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects unnamed results that may benefit from names</td>
       </tr>
       <tr>
+        <td><a href="#unnecessaryBlock-ref">unnecessaryBlock</a></td>
+        <td>Detects unnecessary braced statement blocks</td>
+      </tr>
+      <tr>
         <td><a href="#unusedParam-ref">unusedParam</a></td>
         <td>Detects unused params and suggests to name them as `_` (underscore)</td>
       </tr>
@@ -1066,7 +1070,28 @@ func f() (x, y float64)
 ```
 
 
-<a name="unslice-ref"></a>
+<a name="unnecessaryBlock-ref"></a>
+## unnecessaryBlock
+Detects unnecessary braced statement blocks.
+
+
+
+**Before:**
+```go
+x := 1
+{
+	print(x)
+}
+```
+
+**After:**
+```go
+x := 1
+print(x)
+```
+
+
+`unnecessaryBlock` is syntax-only checker (fast).<a name="unslice-ref"></a>
 ## unslice
 Detects slice expressions that can be simplified to sliced expression itself.
 
