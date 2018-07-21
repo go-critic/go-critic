@@ -39,6 +39,13 @@ func negative() {
 		}
 		break
 	}
+
+	for range []int{} {
+		println("block inside range stmt without defs is OK")
+		for range []int{} {
+			println("block inside range stmt without defs is OK")
+		}
+	}
 }
 
 func withTypeDef() {

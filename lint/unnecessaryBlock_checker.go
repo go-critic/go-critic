@@ -26,6 +26,11 @@ print(x)`
 }
 
 func (c *unnecessaryBlockChecker) VisitStmtList(statements []ast.Stmt) {
+	// Using StmtListVisitor instead of StmtVisitor makes it easier to avoid
+	// false positives on IfStmt, RangeStmt, ForStmt and alike.
+	// We only inspect BlockStmt inside statement lists, so this method is not
+	// called for IfStmt itself, for example.
+
 	for _, stmt := range statements {
 		stmt, ok := stmt.(*ast.BlockStmt)
 		if ok && !c.hasDefinitions(stmt) {
