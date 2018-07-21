@@ -2,10 +2,11 @@ package lint
 
 import (
 	"go/ast"
+	"go/token"
 )
 
 func init() {
-	addChecker(&unnecessaryBlockChecker{}, attrSyntaxOnly)
+	addChecker(&unnecessaryBlockChecker{}, attrExperimental, attrSyntaxOnly)
 }
 
 type unnecessaryBlockChecker struct {
@@ -17,7 +18,7 @@ func (c *unnecessaryBlockChecker) InitDocumentation(d *Documentation) {
 	d.Before = `
 x := 1
 {
-print(x)
+	print(x)
 }`
 	d.After = `
 x := 1
@@ -38,8 +39,16 @@ func (c *unnecessaryBlockChecker) VisitStmtList(statements []ast.Stmt) {
 
 func (c *unnecessaryBlockChecker) hasAssignmentBlock(stmt *ast.BlockStmt) bool {
 	for _, bs := range stmt.List {
-		if _, ok := bs.(*ast.AssignStmt); ok {
-			return true
+		switch stmt := bs.(type) {
+		case *ast.AssignStmt:
+			if stmt.Tok == token.DEFINE {
+				return true
+			}
+		case *ast.DeclStmt:
+			decl := stmt.Decl.(*ast.GenDecl)
+			if len(decl.Specs) != 0 {
+				return true
+			}
 		}
 	}
 
@@ -47,5 +56,5 @@ func (c *unnecessaryBlockChecker) hasAssignmentBlock(stmt *ast.BlockStmt) bool {
 }
 
 func (c *unnecessaryBlockChecker) warn(expr ast.Stmt) {
-	c.ctx.Warn(expr, "block doesn't have assignment statements, can be simply deleted")
+	c.ctx.Warn(expr, "block doesn't have definitions, can be simply deleted")
 }
