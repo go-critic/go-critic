@@ -29,15 +29,21 @@ func getPackagePrefix(dir string) string {
 	return ""
 }
 
+func dirIsHidden(dir string) bool {
+	return strings.HasPrefix(dir, ".") || strings.HasPrefix(dir, "_")
+}
+
 // Main implements gocritic sub-command entry point.
 func Main() {
 	enable := flag.String("enable", "all",
 		`forwarded to linter "as is"`)
 	disable := flag.String("disable", "",
 		`forwarded to linter "as is"`)
-	exclude := flag.String("exclude", "testdata/|vendor/|builtin/",
+	exclude := flag.String("exclude", `testdata/|vendor/|builtin/`,
 		`regexp used to skip package names`)
 	checkGenerated := flag.Bool("checkGenerated", false, `forwarded to linter "as is"`)
+	checkHidden := flag.Bool("checkHidden", false,
+		`whether to visit dirs those name start with "." or "_"`)
 	shorterErrLocation := flag.Bool("shorterErrLocation", true, `forwarded to linter "as is"`)
 
 	flag.Parse()
@@ -72,15 +78,18 @@ func Main() {
 			}
 			log.Printf("walk error: %v", e)
 		}
-		if info.IsDir() || !strings.HasSuffix(path, ".go") || excludeRE.MatchString(path) {
+		if info.IsDir() && dirIsHidden(filepath.Base(path)) {
+			if *checkHidden {
+				return nil // OK, visit anyway
+			}
+			return filepath.SkipDir
+		}
+		if !strings.HasSuffix(path, ".go") || excludeRE.MatchString(path) {
 			return nil
 		}
 
-		path = filepath.Dir(path)
-
-		path = getPackagePrefix(path)
-
-		packages[path] = true
+		importPath := getPackagePrefix(filepath.Dir(path))
+		packages[importPath] = true
 		return nil
 	})
 
