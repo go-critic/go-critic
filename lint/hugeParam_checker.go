@@ -10,12 +10,18 @@ func init() {
 
 type hugeParamChecker struct {
 	checkerBase
+
+	sizeThreshold int64
 }
 
 func (c *hugeParamChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects params that incur excessive amount of copying"
 	d.Before = `func f(x [1024]int) {}`
 	d.After = `func f(x *[1024]int) {}`
+}
+
+func (c *hugeParamChecker) Init() {
+	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 80))
 }
 
 func (c *hugeParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
@@ -28,12 +34,11 @@ func (c *hugeParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 }
 
 func (c *hugeParamChecker) checkParams(decl *ast.FuncDecl, params []*ast.Field) {
-	const sizeThreshold = 80 // TODO(quasilyte): should be configurable
 	for _, p := range params {
 		for _, id := range p.Names {
 			typ := c.ctx.typesInfo.TypeOf(id)
 			size := c.ctx.sizesInfo.Sizeof(typ)
-			if size >= sizeThreshold {
+			if size >= c.sizeThreshold {
 				c.warn(id, size)
 			}
 		}
