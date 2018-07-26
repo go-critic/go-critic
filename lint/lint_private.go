@@ -133,6 +133,8 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 	newFileWalker := func(ctx *context, c abstractChecker) astwalk.FileWalker {
 		// Infer proper AST traversing wrapper (walker).
 		switch v := c.(type) {
+		case astwalk.FileVisitor:
+			return astwalk.WalkerForFile(v)
 		case astwalk.FuncDeclVisitor:
 			return astwalk.WalkerForFuncDecl(v)
 		case astwalk.ExprVisitor:

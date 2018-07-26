@@ -11,6 +11,11 @@ type FileWalker interface {
 	WalkFile(*ast.File)
 }
 
+// WalkerForFile returns file walker implementation for FileVisitor.
+func WalkerForFile(v FileVisitor) FileWalker {
+	return &fileWalker{visitor: v}
+}
+
 // WalkerForFuncDecl returns file walker implementation for FuncDeclVisitor.
 func WalkerForFuncDecl(v FuncDeclVisitor) FileWalker {
 	return &funcDeclWalker{visitor: v}
