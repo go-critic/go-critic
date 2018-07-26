@@ -10,6 +10,8 @@ func init() {
 
 type rangeValCopyChecker struct {
 	checkerBase
+
+	sizeThreshold int64
 }
 
 func (c *rangeValCopyChecker) InitDocumentation(d *Documentation) {
@@ -28,6 +30,10 @@ for i := range xs {
 }`
 }
 
+func (c *rangeValCopyChecker) Init() {
+	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 48))
+}
+
 func (c *rangeValCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	return fn.Body != nil && !c.ctx.IsUnitTestFuncDecl(fn)
 }
@@ -41,8 +47,7 @@ func (c *rangeValCopyChecker) VisitStmt(stmt ast.Stmt) {
 	if typ == nil {
 		return
 	}
-	const sizeThreshold = 48
-	if size := c.ctx.sizesInfo.Sizeof(typ); size >= sizeThreshold {
+	if size := c.ctx.sizesInfo.Sizeof(typ); size >= c.sizeThreshold {
 		c.warn(rng, size)
 	}
 }
