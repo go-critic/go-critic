@@ -8,6 +8,8 @@ func init() {
 
 type nestingReduceChecker struct {
 	checkerBase
+
+	bodyWidth int
 }
 
 func (c *nestingReduceChecker) InitDocumentation(d *Documentation) {
@@ -27,41 +29,32 @@ for _, v := range a {
 }`
 }
 
-func (c *nestingReduceChecker) VisitFuncDecl(decl *ast.FuncDecl) {
-	c.checkBody(decl.Body.List)
-	for _, stmt := range decl.Body.List {
-		switch stmt := stmt.(type) {
-		case *ast.RangeStmt:
-			c.checkBody(stmt.Body.List)
-		case *ast.ForStmt:
-			c.checkBody(stmt.Body.List)
-		case *ast.IfStmt:
-			c.checkBody(stmt.Body.List)
-		default:
-		}
+func (c *nestingReduceChecker) Init() {
+	c.bodyWidth = c.ctx.params.Int("bodyWidth", 5)
+}
+
+func (c *nestingReduceChecker) VisitStmt(stmt ast.Stmt) {
+	switch stmt := stmt.(type) {
+	case *ast.ForStmt:
+		c.checkLoopBody(stmt.Body.List)
+	case *ast.RangeStmt:
+		c.checkLoopBody(stmt.Body.List)
 	}
 }
 
-func (c *nestingReduceChecker) checkBody(body []ast.Stmt) {
-	if len(body) == 1 {
-		if stmt, ok := body[0].(*ast.IfStmt); ok && c.checkIf(stmt) {
-			c.warn(stmt)
-		}
+func (c *nestingReduceChecker) checkLoopBody(body []ast.Stmt) {
+	if len(body) != 1 {
 		return
 	}
+	stmt, ok := body[0].(*ast.IfStmt)
+	if !ok {
+		return
+	}
+	if len(stmt.Body.List) >= c.bodyWidth && stmt.Else == nil {
+		c.warnLoop(stmt)
+	}
 }
 
-func (c *nestingReduceChecker) checkIf(stmt *ast.IfStmt) bool {
-	const warnLen = 4
-	if stmt.Init != nil {
-		return false
-	}
-	if len(stmt.Body.List) > warnLen {
-		return true
-	}
-	return false
-}
-
-func (c *nestingReduceChecker) warn(node ast.Node) {
-	c.ctx.Warn(node, "nesting level could be reduced")
+func (c *nestingReduceChecker) warnLoop(node ast.Node) {
+	c.ctx.Warn(node, "invert if cond, replace body with `continue`, move old body after the statement")
 }
