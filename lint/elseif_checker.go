@@ -14,6 +14,8 @@ func init() {
 
 type elseifChecker struct {
 	checkerBase
+
+	skipBalanced bool
 }
 
 func (c *elseifChecker) InitDocumentation(d *Documentation) {
@@ -30,15 +32,25 @@ if cond1 {
 }`
 }
 
+func (c *elseifChecker) Init() {
+	c.skipBalanced = c.ctx.params.Bool("skipBalanced", true)
+}
+
 func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {
 	if stmt, ok := stmt.(*ast.IfStmt); ok {
 		elseBody, ok := stmt.Else.(*ast.BlockStmt)
 		if !ok || len(elseBody.List) != 1 {
 			return
 		}
-		if astp.IsIfStmt(elseBody.List[0]) {
-			c.warn(stmt.Else)
+		if !astp.IsIfStmt(elseBody.List[0]) {
+			return
 		}
+		balanced := len(stmt.Body.List) == 1 &&
+			astp.IsIfStmt(stmt.Body.List[0])
+		if balanced && c.skipBalanced {
+			return // Configured to skip balanced statements
+		}
+		c.warn(stmt.Else)
 	}
 }
 
