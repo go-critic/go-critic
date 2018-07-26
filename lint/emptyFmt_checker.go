@@ -45,8 +45,11 @@ func (c *emptyFmtChecker) VisitExpr(expr ast.Expr) {
 			c.warn(call, "errors.New")
 		}
 	case 2:
-		if name == "fmt.Fprintf" {
+		switch name {
+		case "fmt.Fprintf":
 			c.warn(call, "fmt.Fprint")
+		case "errors.Wrapf":
+			c.warn(call, "errors.Wrap")
 		}
 	}
 }

@@ -3,6 +3,8 @@ package checker_test
 import (
 	"fmt"
 	"log"
+
+	"github.com/pkg/errors"
 )
 
 func g1() {
@@ -13,4 +15,6 @@ func g1() {
 	_ = fmt.Errorf("%s", "whereever")
 
 	log.Printf("%s", "whenever")
+
+	errors.Wrapf(nil, "%s", "however")
 }

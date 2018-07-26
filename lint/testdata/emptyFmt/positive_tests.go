@@ -3,6 +3,8 @@ package checker_test
 import (
 	"fmt"
 	"log"
+
+	"github.com/pkg/errors"
 )
 
 func f() {
@@ -23,4 +25,7 @@ func f() {
 
 	/// consider to change function to log.Fatal
 	log.Fatalf("oh :(")
+
+	/// consider to change function to errors.Wrap
+	errors.Wrapf(nil, "kernel panic")
 }
