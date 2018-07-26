@@ -11,6 +11,8 @@ func init() {
 
 type rangeExprCopyChecker struct {
 	checkerBase
+
+	sizeThreshold int64
 }
 
 func (c *rangeExprCopyChecker) InitDocumentation(d *Documentation) {
@@ -26,6 +28,10 @@ var xs [256]byte
 for _, x := range &xs {
 	// Loop body.
 }`
+}
+
+func (c *rangeExprCopyChecker) Init() {
+	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 96))
 }
 
 func (c *rangeExprCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
@@ -44,8 +50,7 @@ func (c *rangeExprCopyChecker) VisitStmt(stmt ast.Stmt) {
 	if _, ok := tv.Type.(*types.Array); !ok {
 		return
 	}
-	const sizeThreshold = 96 // Not recommended to set value lower than 64
-	if size := c.ctx.sizesInfo.Sizeof(tv.Type); size >= sizeThreshold {
+	if size := c.ctx.sizesInfo.Sizeof(tv.Type); size >= c.sizeThreshold {
 		c.warn(rng, size)
 	}
 }
