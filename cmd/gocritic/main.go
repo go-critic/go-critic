@@ -9,7 +9,7 @@ import (
 	"github.com/go-critic/go-critic/cmd/lintwalk"
 )
 
-var version = "0.3.2"
+var version = "0.3.3"
 
 // subCommand is an implementation of a gocritic sub-command.
 type subCommand struct {
