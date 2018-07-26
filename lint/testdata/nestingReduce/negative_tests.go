@@ -6,6 +6,34 @@ func noWarnings1() {
 	}
 }
 
+func loopWithIfElse(a []int) {
+	for _, v := range a {
+		if v == 5 {
+			_ = v
+			_ = v
+			_ = v
+			_ = v
+			_ = v
+			_ = v
+		} else {
+			// ...
+		}
+	}
+
+	for _, v := range a {
+		if v == 5 {
+			_ = v
+			_ = v
+			_ = v
+			_ = v
+			_ = v
+			_ = v
+		} else if v == 4 {
+			// ...
+		}
+	}
+}
+
 func noWarnings2() {
 	var a int
 	if a == 5 {
