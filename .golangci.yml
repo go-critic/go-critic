@@ -75,7 +75,6 @@ linters:
     - gofmt
     - goimports
     - golint
-    - gotype
     - gotypex
     - ineffassign
     - megacheck
