@@ -2,11 +2,6 @@ run:
   # timeout for analysis, e.g. 30s, 5m, default is 1m
   deadline: 3m
 
-# output configuration options
-output:
-  # colored-line-number|line-number|json|tab|checkstyle, default is "colored-line-number"
-  format: colored-line-number
-
 linters-settings:
   errcheck:
     # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`;
@@ -14,7 +9,7 @@ linters-settings:
     check-blank: false
   govet:
     # report about shadowed variables
-    check-shadowing: true
+    # check-shadowing: true
   golint:
     # minimal confidence for issues, default is 0.8
     min-confidence: 0.8
@@ -66,8 +61,6 @@ linters-settings:
 
 linters:
   enable:
-    - megacheck
-    - govet
     - deadcode
     - errcheck
     - gas
@@ -75,17 +68,15 @@ linters:
     - gofmt
     - goimports
     - golint
-    - gotypex
     - ineffassign
     - megacheck
     - misspell
     - nakedret
-    - safesql
     - structcheck
     - unconvert
     - varcheck
-    - vet
   disable:
     - maligned
+    - govet
     - prealloc
   fast: false
