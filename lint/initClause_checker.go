@@ -24,10 +24,9 @@ if cond {
 }
 
 func (c *initClauseChecker) VisitStmt(stmt ast.Stmt) {
-	if expr, ok := c.getInitClause(stmt).(*ast.ExprStmt); ok {
-		if !astp.IsAssignStmt(expr.X) {
-			c.warn(expr, stmt)
-		}
+	initClause := c.getInitClause(stmt)
+	if initClause != nil && !astp.IsAssignStmt(initClause) {
+		c.warn(stmt, initClause)
 	}
 }
 
@@ -42,10 +41,10 @@ func (c *initClauseChecker) getInitClause(x ast.Stmt) ast.Stmt {
 	}
 }
 
-func (c *initClauseChecker) warn(expr *ast.ExprStmt, stmt ast.Stmt) {
+func (c *initClauseChecker) warn(stmt, clause ast.Stmt) {
 	name := "if"
 	if astp.IsSwitchStmt(stmt) {
 		name = "switch"
 	}
-	c.ctx.Warn(expr, "consider to move `%s` before %s", expr, name)
+	c.ctx.Warn(stmt, "consider to move `%s` before %s", clause, name)
 }
