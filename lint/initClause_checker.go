@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	addChecker(&initClauseChecker{}, attrSyntaxOnly)
+	addChecker(&initClauseChecker{}, attrSyntaxOnly, attrExperimental)
 }
 
 type initClauseChecker struct {
@@ -16,13 +16,16 @@ type initClauseChecker struct {
 
 func (c *initClauseChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects non-assignment statements inside if/switch init clause."
-	d.Before = `123`
-	d.After = `123s`
+	d.Before = `if sideEffect(); cond {
+}`
+	d.After = `sideEffect()
+if cond {
+}`
 }
 
 func (c *initClauseChecker) VisitStmt(stmt ast.Stmt) {
 	if expr, ok := c.getInitClause(stmt).(*ast.ExprStmt); ok {
-		if astp.IsCallExpr(expr.X) {
+		if !astp.IsAssignStmt(expr.X) {
 			c.warn(expr, stmt)
 		}
 	}
