@@ -15,7 +15,7 @@ type initClauseChecker struct {
 }
 
 func (c *initClauseChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects non-assignment statements inside if/switch init clause."
+	d.Summary = "Detects non-assignment statements inside if/switch init clause"
 	d.Before = `if sideEffect(); cond {
 }`
 	d.After = `sideEffect()
