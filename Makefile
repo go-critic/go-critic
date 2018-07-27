@@ -16,17 +16,16 @@ docs:
 
 ci:
 	go get -t -v ./...
-	@if [ "$(TEST_SUITE)" = "gometalinter" ]; then make ci-gometalinter; else make ci-tests; fi
+	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
 	go tool vet .
 	go test -v -race -count=1 ./...
 	gocritic check-project `pwd`
 
-ci-gometalinter:
-	go get -u gopkg.in/alecthomas/gometalinter.v2
-	gometalinter.v2 --install
-	gometalinter.v2 --skip=testdata --vendor ./...
+ci-linter:
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.9.1
+	golangci-lint run
 
 cover:
 	go get -u github.com/mattn/goveralls

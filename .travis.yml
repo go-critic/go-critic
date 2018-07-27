@@ -3,7 +3,7 @@ go:
   - 1.x
 env:
   - TEST_SUITE=tests
-  - TEST_SUITE=gometalinter
+  - TEST_SUITE=linter
 install:
   - # Prevent default install action "go get -t -v ./...".
 script:
