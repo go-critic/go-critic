@@ -68,15 +68,42 @@ linters:
     - gofmt
     - goimports
     - golint
+    - gosimple
     - ineffassign
+    - interfacer
     - misspell
     - nakedret
+    - staticcheck
     - structcheck
+    - typecheck
     - unconvert
+    - unparam
+    - unused
     - varcheck
+    # - deadcode
+    # - errcheck
+    # - gas
+    # - goconst
+    # - gofmt
+    # - goimports
+    # - golint
+    # - ineffassign
+    # - misspell
+    # - nakedret
+    # - structcheck
+    # - unconvert
+    # - varcheck
   disable:
-    - maligned
-    - megacheck # https://github.com/golangci/golangci-lint/issues/157
     - govet
+    - megacheck
+    - depguard
+    - dupl
+    - gocyclo
+    - lll
+    - maligned
     - prealloc
+    # - maligned
+    # - megacheck # https://github.com/golangci/golangci-lint/issues/157
+    # - govet
+    # - prealloc
   fast: false
