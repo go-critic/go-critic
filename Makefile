@@ -26,7 +26,7 @@ ci-linter:
 	gocritic check-project `pwd`
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.9.1
 	# golangci-lint run -v
-	golangci-lint run -v --no-config --disable-all --enable=gosimple 
+	golangci-lint run -v --no-config --disable-all --enable=unparam 
 
 cover:
 	go get -u github.com/mattn/goveralls
