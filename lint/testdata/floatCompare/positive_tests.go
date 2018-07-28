@@ -50,4 +50,7 @@ func f4(a, b float64) {
 	/// change `a != b` to `math.Abs(a - b) >= eps`
 	_ = a == b && b != a || !(a != b)
 
+	// TODO: change `a == b+a` to `math.Abs(a - (b+a)) < eps`
+	/// change `a == b+a` to `math.Abs(a - b + a) < eps`
+	_ = a == b+a
 }
