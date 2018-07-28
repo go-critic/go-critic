@@ -69,7 +69,6 @@ linters:
     - goimports
     - golint
     - ineffassign
-    - megacheck
     - misspell
     - nakedret
     - structcheck
@@ -77,6 +76,7 @@ linters:
     - varcheck
   disable:
     - maligned
+    - megacheck # https://github.com/golangci/golangci-lint/issues/157
     - govet
     - prealloc
   fast: false
