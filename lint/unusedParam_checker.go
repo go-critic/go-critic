@@ -56,7 +56,7 @@ func (c *unusedParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 }
 
 func (c *unusedParamChecker) warn(param *ast.Ident) {
-	c.ctx.Warn(param, "parameter `%s` isn't used, consider to name it as `_`", param)
+	c.ctx.Warn(param, "rename `%s` to `_`", param)
 }
 
 func (c *unusedParamChecker) warnUnnamed(n ast.Node) {
