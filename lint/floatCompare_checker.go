@@ -4,8 +4,6 @@ import (
 	"go/ast"
 	"go/token"
 	"go/types"
-
-	"github.com/go-toolsmith/astcopy"
 )
 
 func init() {
@@ -40,13 +38,12 @@ func (c *floatCompareChecker) VisitLocalExpr(expr ast.Expr) {
 }
 
 func (c *floatCompareChecker) warn(expr *ast.BinaryExpr) {
-	e := astcopy.BinaryExpr(expr)
 	var op string
-	if e.Op == token.EQL {
+	if expr.Op == token.EQL {
 		op = "<"
 	} else {
 		op = ">="
 	}
 	c.ctx.Warn(expr, "consider to change way to compare floats in expression"+
-		" to math.Abs(%s - %s) %s eps", e.X, e.Y, op)
+		" to math.Abs(%s - %s) %s eps", expr.X, expr.Y, op)
 }
