@@ -15,13 +15,13 @@ type floatCompareChecker struct {
 }
 
 func (c *floatCompareChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects bool expressions that compare float variables"
+	d.Summary = "Detects fragile float variables comparisons"
 	d.Before = `
-var a, b float64 = 10.0, 20.0
-return a == b`
+// x and y are floats
+return x == y`
 	d.After = `
-var a, b float64 = 10.0, 20.0
-return math.Abs(a - b) < eps`
+// x and y are floats
+return math.Abs(x - y) < eps`
 }
 
 func (c *floatCompareChecker) VisitLocalExpr(expr ast.Expr) {
@@ -44,6 +44,6 @@ func (c *floatCompareChecker) warn(expr *ast.BinaryExpr) {
 	} else {
 		op = ">="
 	}
-	c.ctx.Warn(expr, "consider to change way to compare floats in expression"+
-		" to math.Abs(%s - %s) %s eps", expr.X, expr.Y, op)
+	c.ctx.Warn(expr, "change `%s` to `math.Abs(%s - %s) %s eps`",
+		expr, expr.X, expr.Y, op)
 }
