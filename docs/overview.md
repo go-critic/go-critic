@@ -149,6 +149,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects for loops that can benefit from rewrite to range loop</td>
       </tr>
       <tr>
+        <td><a href="#initClause-ref">initClause</a></td>
+        <td>Detects non-assignment statements inside if/switch init clause</td>
+      </tr>
+      <tr>
         <td><a href="#longChain-ref">longChain</a></td>
         <td>Detects repeated expression chains and suggest to refactor them</td>
       </tr>
@@ -717,6 +721,27 @@ for _, f := range files {
 
 
 
+<a name="initClause-ref"></a>
+## initClause
+Detects non-assignment statements inside if/switch init clause.
+
+
+
+**Before:**
+```go
+if sideEffect(); cond {
+}
+```
+
+**After:**
+```go
+sideEffect()
+if cond {
+}
+```
+
+
+`initClause` is syntax-only checker (fast).
 <a name="longChain-ref"></a>
 ## longChain
 Detects repeated expression chains and suggest to refactor them.
