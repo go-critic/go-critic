@@ -25,7 +25,7 @@ ci-tests:
 ci-linter:
 	gocritic check-project `pwd`
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.9.1
-	golangci-lint run
+	golangci-lint run -v
 
 cover:
 	go get -u github.com/mattn/goveralls
