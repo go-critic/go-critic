@@ -29,6 +29,7 @@ type linter struct {
 
 	checkers []*lint.Checker
 
+	noFail      bool
 	foundIssues bool // True if there any checker reported an issue
 
 	// Command line flags:
@@ -85,6 +86,8 @@ func parseArgv(l *linter) {
 		`name of JSON file containing checkers configurations`)
 	disable := flag.String("disable", "",
 		`comma-separated list of disabled checkers`)
+	flag.BoolVar(&l.noFail, `noFail`, false,
+		`enabling this flag will force go-critic to return with a successful exit code`)
 	flag.BoolVar(&l.withExperimental, `withExperimental`, false,
 		`only for -enable=all, include experimental checks`)
 	flag.BoolVar(&l.withOpinionated, `withOpinionated`, false,
@@ -206,21 +209,8 @@ func (l *linter) InitCheckers() {
 	requested := make(map[string]bool)
 	available := lint.RuleList()
 
-	if l.enabledCheckers == nil {
-		// Fill default checkers set.
-		for _, rule := range available {
-			if rule.Experimental && !l.withExperimental {
-				continue
-			}
-			if rule.VeryOpinionated && !l.withOpinionated {
-				continue
-			}
-			requested[rule.Name()] = true
-		}
-	} else {
-		for _, name := range l.enabledCheckers {
-			requested[name] = true
-		}
+	for _, name := range l.enabledCheckers {
+		requested[name] = true
 	}
 
 	for _, rule := range available {
@@ -269,7 +259,7 @@ func (l *linter) getFilename(f *ast.File) string {
 
 // ExitCode returns status code that should be used as an argument to os.Exit.
 func (l *linter) ExitCode() int {
-	if l.foundIssues {
+	if !l.noFail && l.foundIssues {
 		return l.failureExitCode
 	}
 	return 0
