@@ -39,6 +39,8 @@ func Main() {
 		`forwarded to linter "as is"`)
 	disable := flag.String("disable", "",
 		`forwarded to linter "as is"`)
+	noFail := flag.Bool("noFail", false,
+		`enabling this flag will force go-critic to return with a successful exit code`)
 	exclude := flag.String("exclude", `testdata/|vendor/|builtin/`,
 		`regexp used to skip package names`)
 	checkGenerated := flag.Bool("checkGenerated", false, `forwarded to linter "as is"`)
@@ -101,6 +103,7 @@ func Main() {
 		"check-package",
 		"-enable", *enable,
 		"-disable", *disable,
+		"-noFail=" + fmt.Sprint(*noFail),
 		"-checkGenerated=" + fmt.Sprint(*checkGenerated),
 		"-shorterErrLocation=" + fmt.Sprint(*shorterErrLocation),
 	}
