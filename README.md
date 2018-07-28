@@ -69,8 +69,8 @@ Examples:
 
 This project aims to be contribution-friendly.
 
-Our chats: [English](https://t.me/joinchat/DWka6g9VbCADtJI5J5w8nQ) or
-[Russian](https://t.me/joinchat/DWka6kba5sa_EwTgmd3Vng)
+Our chats: [English](https://t.me/go_critic_eng) or
+[Russian](https://t.me/go_critic_ru)
 ([Telegram website](https://telegram.org/))
 
 We're using an optimistic merging strategy most of the time.
