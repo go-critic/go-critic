@@ -7,6 +7,11 @@ func sampleCase2(k sampleInterface) {
 	k.(*sampleStruct).method()
 }
 
+func methodCall(v *sampleStruct) {
+	(*v).method() // Call on copy
+	v.method()
+}
+
 func multipleIndir1() {
 	type point struct{ x, y int }
 	pt := point{}
