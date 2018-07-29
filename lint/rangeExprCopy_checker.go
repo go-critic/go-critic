@@ -31,7 +31,7 @@ for _, x := range &xs {
 }
 
 func (c *rangeExprCopyChecker) Init() {
-	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 96))
+	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 512))
 }
 
 func (c *rangeExprCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
