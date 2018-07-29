@@ -13,6 +13,8 @@ func init() {
 
 type underefChecker struct {
 	checkerBase
+
+	skipRecvCopy bool
 }
 
 func (c *underefChecker) InitDocumentation(d *Documentation) {
@@ -25,6 +27,10 @@ k.field = 5
 v := a[5]`
 }
 
+func (c *underefChecker) Init() {
+	c.skipRecvCopy = c.ctx.params.Bool("skipRecvCopy", true)
+}
+
 func (c *underefChecker) VisitExpr(expr ast.Expr) {
 	switch n := expr.(type) {
 	case *ast.SelectorExpr:
@@ -32,6 +38,10 @@ func (c *underefChecker) VisitExpr(expr ast.Expr) {
 		if !ok {
 			return
 		}
+		if c.skipRecvCopy && c.isPtrRecvMethodCall(n.Sel) {
+			return
+		}
+
 		if expr, ok := expr.X.(*ast.StarExpr); ok {
 			if c.checkStarExpr(expr) {
 				c.warnSelect(n)
@@ -51,6 +61,15 @@ func (c *underefChecker) VisitExpr(expr ast.Expr) {
 			}
 		}
 	}
+}
+
+func (c *underefChecker) isPtrRecvMethodCall(fn *ast.Ident) bool {
+	typ, ok := c.ctx.typesInfo.TypeOf(fn).(*types.Signature)
+	if ok && typ != nil && typ.Recv() != nil {
+		_, ok := typ.Recv().Type().(*types.Pointer)
+		return ok && c.skipRecvCopy
+	}
+	return false
 }
 
 func (c *underefChecker) underef(x *ast.ParenExpr) ast.Expr {
