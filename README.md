@@ -1,6 +1,7 @@
 # go-critic
 
 [![Build Status][travis-image]][travis-url]
+[![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#code-analysis)
 [![Go Report Card][go-report-image]][go-report-url]
 [![GoDoc][godoc-image]][godoc-url]
 [![coverage][coverage-image]][coverage-url]

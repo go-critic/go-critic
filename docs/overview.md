@@ -137,6 +137,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects potentially unsafe dependencies on evaluation order</td>
       </tr>
       <tr>
+        <td><a href="#floatCompare-ref">floatCompare</a></td>
+        <td>Detects fragile float variables comparisons</td>
+      </tr>
+      <tr>
         <td><a href="#hugeParam-ref">hugeParam</a></td>
         <td>Detects params that incur excessive amount of copying</td>
       </tr>
@@ -624,6 +628,26 @@ flag.BoolVar(&b, "b", false, "b docs")
 Dereferencing returned pointers will lead to hard to find errors
 where flag values are not updated after flag.Parse().
 `flagDeref` is syntax-only checker (fast).
+<a name="floatCompare-ref"></a>
+## floatCompare
+Detects fragile float variables comparisons.
+
+
+
+**Before:**
+```go
+// x and y are floats
+return x == y
+```
+
+**After:**
+```go
+// x and y are floats
+return math.Abs(x - y) < eps
+```
+
+
+
 <a name="hugeParam-ref"></a>
 ## hugeParam
 Detects params that incur excessive amount of copying.
