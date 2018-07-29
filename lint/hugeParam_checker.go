@@ -28,12 +28,12 @@ func (c *hugeParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	// TODO(quasilyte): maybe it's worthwhile to permit skipping
 	// test files for this checker?
 	if decl.Recv != nil {
-		c.checkParams(decl, decl.Recv.List)
+		c.checkParams(decl.Recv.List)
 	}
-	c.checkParams(decl, decl.Type.Params.List)
+	c.checkParams(decl.Type.Params.List)
 }
 
-func (c *hugeParamChecker) checkParams(decl *ast.FuncDecl, params []*ast.Field) {
+func (c *hugeParamChecker) checkParams(params []*ast.Field) {
 	for _, p := range params {
 		for _, id := range p.Names {
 			typ := c.ctx.typesInfo.TypeOf(id)
