@@ -31,7 +31,7 @@ for i := range xs {
 }
 
 func (c *rangeValCopyChecker) Init() {
-	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 48))
+	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 128))
 }
 
 func (c *rangeValCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {

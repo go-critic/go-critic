@@ -2,8 +2,8 @@ package checker_test
 
 func warnings() {
 	{
-		var xs [256]byte
-		/// copy of xs (256 bytes) can be avoided with &xs
+		var xs [777]byte
+		/// copy of xs (777 bytes) can be avoided with &xs
 		for _, x := range xs {
 			_ = x
 		}
@@ -11,9 +11,9 @@ func warnings() {
 
 	{
 		var foo struct {
-			arr [400]byte
+			arr [768]byte
 		}
-		/// copy of foo.arr (400 bytes) can be avoided with &foo.arr
+		/// copy of foo.arr (768 bytes) can be avoided with &foo.arr
 		for _, x := range foo.arr {
 			_ = x
 		}

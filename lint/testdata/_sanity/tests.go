@@ -115,6 +115,15 @@ func initStatements() {
 	if _ = 0; true {
 	}
 
+	if variadicArg(1, 2, 3); false {
+	}
+
+	switch variadicArg(1, 2, 3); true {
+	}
+
+	for variadicArg(1, 2, 3); false; {
+	}
+
 	// select can't have init statement.
 }
 
