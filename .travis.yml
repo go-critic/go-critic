@@ -1,9 +1,9 @@
 language: go
 go:
-  - 1.x
+  - 1.10.x
 env:
   - TEST_SUITE=tests
-  - TEST_SUITE=gometalinter
+  - TEST_SUITE=linter
 install:
   - # Prevent default install action "go get -t -v ./...".
 script:
