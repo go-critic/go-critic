@@ -1,5 +1,7 @@
 package checker_test
 
+import "io"
+
 type reader interface {
 	Read([]byte) (int, error)
 }
@@ -9,6 +11,12 @@ type myReader struct{}
 func (myReader) Read(_ []byte) (int, error) { return 0, nil }
 
 func typeSwitches(x interface{}) {
+	switch x.(type) {
+	case io.Reader:
+	/// case *myReader must go before the io.Reader case
+	case *myReader:
+	}
+
 	switch x.(type) {
 	case reader:
 	/// case myReader must go before the reader case

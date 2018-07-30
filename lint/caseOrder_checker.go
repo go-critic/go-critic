@@ -42,7 +42,7 @@ func (c *caseOrderChecker) VisitStmt(stmt ast.Stmt) {
 
 func (c *caseOrderChecker) checkTypeSwitch(s *ast.TypeSwitchStmt) {
 	type ifaceType struct {
-		name string
+		node ast.Node
 		typ  *types.Interface
 	}
 	var ifaces []ifaceType // Interfaces seen so far
@@ -52,29 +52,18 @@ func (c *caseOrderChecker) checkTypeSwitch(s *ast.TypeSwitchStmt) {
 			typ := c.ctx.typesInfo.TypeOf(x)
 			for _, iface := range ifaces {
 				if types.Implements(typ, iface.typ) {
-					c.warnTypeSwitch(cc, typ, iface.name)
+					c.warnTypeSwitch(cc, x, iface.node)
 					break
 				}
 			}
 			if iface, ok := typ.Underlying().(*types.Interface); ok {
-				// Need to retrive object to get proper interface name.
-				name := "interface{}"
-				if obj := c.ctx.typesInfo.ObjectOf(identOf(x)); obj != nil {
-					name = obj.Name()
-				}
-				ifaces = append(ifaces, ifaceType{name: name, typ: iface})
+				ifaces = append(ifaces, ifaceType{node: x, typ: iface})
 			}
 		}
 	}
 }
 
-func (c *caseOrderChecker) warnTypeSwitch(cause ast.Node, typ types.Type, iface string) {
-	concrete := types.TypeString(typ, func(p *types.Package) string {
-		if p == nil || p == c.ctx.pkg {
-			return ""
-		}
-		return p.Name()
-	})
+func (c *caseOrderChecker) warnTypeSwitch(cause, concrete, iface ast.Node) {
 	c.ctx.Warn(cause, "case %s must go before the %s case", concrete, iface)
 }
 
