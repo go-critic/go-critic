@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	addChecker(&captLocalChecker{}, attrSyntaxOnly)
+	addChecker(&captLocalChecker{}, attrExperimental, attrSyntaxOnly)
 }
 
 type captLocalChecker struct {
