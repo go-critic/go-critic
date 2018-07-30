@@ -64,16 +64,14 @@ func findNode(root ast.Node, pred func(ast.Node) bool) ast.Node {
 func identOf(x ast.Node) *ast.Ident {
 	switch x := x.(type) {
 	case *ast.Ident:
-		// Found ident.
 		return x
+	case *ast.SelectorExpr:
+		return identOf(x.Sel)
 	case *ast.TypeAssertExpr:
 		// x.(type) - x may contain ident.
 		return identOf(x.X)
 	case *ast.IndexExpr:
 		// x[i] - x may contain ident.
-		return identOf(x.X)
-	case *ast.SelectorExpr:
-		// x.y - x may contain ident.
 		return identOf(x.X)
 	case *ast.StarExpr:
 		// *x - x may contain ident.
