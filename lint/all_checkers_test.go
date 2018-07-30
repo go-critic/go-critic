@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"testing"
 
@@ -54,7 +55,7 @@ func TestSanity(t *testing.T) {
 				defer func() {
 					r := recover()
 					if r != nil {
-						t.Errorf("unexpected panic: `%v`", r)
+						t.Errorf("unexpected panic: `%v`\n%s", r, debug.Stack())
 					} else {
 						saneRules = append(saneRules, rule)
 					}
