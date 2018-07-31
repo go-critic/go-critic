@@ -19,13 +19,13 @@ func (c *rangeExprCopyChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects expensive copies of `for` loop range expressions"
 	d.Details = "Suggests to use pointer to array to avoid the copy using `&` on range expression."
 	d.Before = `
-var xs [256]byte
-for _, x := range xs {
+var xs [2048]byte
+for _, x := range xs { // Copies 2048 bytes
 	// Loop body.
 }`
 	d.After = `
-var xs [256]byte
-for _, x := range &xs {
+var xs [2048]byte
+for _, x := range &xs { // No copy
 	// Loop body.
 }`
 }

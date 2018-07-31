@@ -78,7 +78,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       </tr>
       <tr>
         <td><a href="#assignOp-ref">assignOp</a></td>
-        <td>Detects assignments that can be simplified by using `<op>=`</td>
+        <td>Detects assignments that can be simplified by using assignment operators</td>
       </tr>
       <tr>
         <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
@@ -261,7 +261,7 @@ xs = append(xs, 1, 2)
 
 <a name="assignOp-ref"></a>
 ## assignOp
-Detects assignments that can be simplified by using `<op>=`.
+Detects assignments that can be simplified by using assignment operators.
 
 
 
@@ -936,16 +936,16 @@ Suggests to use pointer to array to avoid the copy using `&` on range expression
 
 **Before:**
 ```go
-var xs [256]byte
-for _, x := range xs {
+var xs [2048]byte
+for _, x := range xs { // Copies 2048 bytes
 	// Loop body.
 }
 ```
 
 **After:**
 ```go
-var xs [256]byte
-for _, x := range &xs {
+var xs [2048]byte
+for _, x := range &xs { // No copy
 	// Loop body.
 }
 ```
