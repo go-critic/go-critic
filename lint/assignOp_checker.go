@@ -17,7 +17,7 @@ type assignOpChecker struct {
 }
 
 func (c *assignOpChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects assignments that can be simplified by using `<op>=`"
+	d.Summary = "Detects assignments that can be simplified by using assignment operators"
 	d.Before = `x = x * 2`
 	d.After = `x *= 2`
 }
