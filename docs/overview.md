@@ -20,10 +20,6 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects when predeclared identifiers shadowed in assignments</td>
       </tr>
       <tr>
-        <td><a href="#captLocal-ref">captLocal</a></td>
-        <td>Detects capitalized names for local variables</td>
-      </tr>
-      <tr>
         <td><a href="#flagDeref-ref">flagDeref</a></td>
         <td>Detects immediate dereferencing of `flag` package pointers.</td>
       </tr>
@@ -87,6 +83,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
         <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name</td>
+      </tr>
+      <tr>
+        <td><a href="#captLocal-ref">captLocal</a></td>
+        <td>Detects capitalized names for local variables</td>
       </tr>
       <tr>
         <td><a href="#caseOrder-ref">caseOrder</a></td>
