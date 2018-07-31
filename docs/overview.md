@@ -77,6 +77,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects suspicious append result assignments</td>
       </tr>
       <tr>
+        <td><a href="#assignOp-ref">assignOp</a></td>
+        <td>Detects assignments that can be simplified by using `<op>=`</td>
+      </tr>
+      <tr>
         <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
         <td>Detects bool expressions that can be simplified</td>
       </tr>
@@ -247,6 +251,24 @@ xs = append(xs, 2)
 **After:**
 ```go
 xs = append(xs, 1, 2)
+```
+
+
+
+<a name="assignOp-ref"></a>
+## assignOp
+Detects assignments that can be simplified by using `<op>=`.
+
+
+
+**Before:**
+```go
+x = x * 2
+```
+
+**After:**
+```go
+x *= 2
 ```
 
 
