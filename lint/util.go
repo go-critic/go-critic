@@ -95,7 +95,7 @@ func typeIsPointer(typ types.Type) bool {
 // isSafeExpr reports whether expr is softly safe expression and contains
 // no significant side-effects. As opposed to strictly safe expressions,
 // soft safe expressions permit some forms of side-effects, like
-// panic possibility during indexing.
+// panic possibility during indexing or nil pointer dereference.
 func isSafeExpr(expr ast.Expr) bool {
 	// This list switch is not comprehensive and uses
 	// whitelist to be on the conservative side.
@@ -105,6 +105,8 @@ func isSafeExpr(expr ast.Expr) bool {
 	// index expressions are permitted even though they
 	// may cause panics.
 	switch expr := expr.(type) {
+	case *ast.StarExpr:
+		return isSafeExpr(expr.X)
 	case *ast.BinaryExpr:
 		return isSafeExpr(expr.X) && isSafeExpr(expr.Y)
 	case *ast.UnaryExpr:
