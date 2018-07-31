@@ -905,16 +905,16 @@ Suggests to use pointer to array to avoid the copy using `&` on range expression
 
 **Before:**
 ```go
-var xs [256]byte
-for _, x := range xs {
+var xs [2048]byte
+for _, x := range xs { // Copies 2048 bytes
 	// Loop body.
 }
 ```
 
 **After:**
 ```go
-var xs [256]byte
-for _, x := range &xs {
+var xs [2048]byte
+for _, x := range &xs { // No copy
 	// Loop body.
 }
 ```
