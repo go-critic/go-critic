@@ -174,7 +174,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       </tr>
       <tr>
         <td><a href="#nilValReturn-ref">nilValReturn</a></td>
-        <td>Detects return statements that return expression that yields nil</td>
+        <td>Detects return statements those results evaluate to nil</td>
       </tr>
       <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
@@ -866,7 +866,7 @@ for _, v := range a {
 
 <a name="nilValReturn-ref"></a>
 ## nilValReturn
-Detects return statements that return expression that yields nil.
+Detects return statements those results evaluate to nil.
 
 
 

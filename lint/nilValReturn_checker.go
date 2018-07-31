@@ -16,7 +16,7 @@ type nilValReturnChecker struct {
 }
 
 func (c *nilValReturnChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects return statements that return expression that yields nil"
+	d.Summary = "Detects return statements those results evaluate to nil"
 	d.Before = `
 if err == nil {
 	return err
