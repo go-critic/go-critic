@@ -45,8 +45,7 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 			// Detect local vars with sql.Rows types
 			if b.Lhs != nil {
 				for _, l := range b.Lhs {
-					t := c.ctx.typesInfo.TypeOf(l)
-					if t.String() == rowsTypePTR {
+					if c.typeString(l) == rowsTypePTR {
 						localVars = append(localVars, c.ctx.typesInfo.ObjectOf(identOf(l)))
 					}
 				}
@@ -82,8 +81,6 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 		}
 	}
 
-	// CHECKS
-
 	// Check local variables
 	for _, l := range localVars {
 		// If local variable present in return or Close present - PASS
@@ -91,6 +88,13 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 			c.ctx.Warn(l.Parent(), "local variable db.Rows have not Close call")
 		}
 	}
+}
+
+func (c *sqlRowsCloseChecker) typeString(x ast.Expr) string {
+	if typ := c.ctx.typesInfo.TypeOf(x); typ != nil {
+		return typ.String()
+	}
+	return ""
 }
 
 func (c *sqlRowsCloseChecker) varInList(v types.Object, list []types.Object) bool {

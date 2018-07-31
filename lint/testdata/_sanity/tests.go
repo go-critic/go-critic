@@ -191,3 +191,12 @@ func funcCalls() {
 	fVariadic(1, 2)
 	fVariadic([]int{1, 2}...)
 }
+
+func sliceExpressions(xs []int) {
+	_ = xs[:]
+	_ = xs[0:]
+	_ = xs[:0]
+	_ = xs[0:0]
+	_ = xs[:0:0]
+	_ = xs[0:0:0]
+}
