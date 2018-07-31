@@ -173,6 +173,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Finds where nesting level could be reduced</td>
       </tr>
       <tr>
+        <td><a href="#nilValReturn-ref">nilValReturn</a></td>
+        <td>Detects return statements that return expression that yields nil</td>
+      </tr>
+      <tr>
         <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
         <td>Detects input and output parameters that have a type of pointer to referential type</td>
       </tr>
@@ -855,6 +859,33 @@ for _, v := range a {
 		continue
 	}
 	body()
+}
+```
+
+
+
+<a name="nilValReturn-ref"></a>
+## nilValReturn
+Detects return statements that return expression that yields nil.
+
+
+
+**Before:**
+```go
+if err == nil {
+	return err
+}
+```
+
+**After:**
+```go
+// (A) - return nil explicitly
+if err == nil {
+	return nil
+}
+// (B) - typo in "==", change to "!="
+if err != nil {
+	return nil
 }
 ```
 
