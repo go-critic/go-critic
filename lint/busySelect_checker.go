@@ -72,7 +72,6 @@ func (c *busySelectChecker) hasBlockingStmt(stmts []ast.Stmt) bool {
 				return expr.Op == token.ARROW
 
 			case *ast.CallExpr:
-				// time.Sleep(...)
 				return qualifiedName(expr.Fun) == "time.Sleep"
 			}
 		}
