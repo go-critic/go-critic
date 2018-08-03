@@ -990,7 +990,7 @@ for _, x := range &xs { // No copy
 }
 ```
 
-
+See Go issue for details: https://github.com/golang/go/issues/15812
 
 <a name="rangeValCopy-ref"></a>
 ## rangeValCopy

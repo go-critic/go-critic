@@ -28,6 +28,7 @@ var xs [2048]byte
 for _, x := range &xs { // No copy
 	// Loop body.
 }`
+	d.Note = `See Go issue for details: https://github.com/golang/go/issues/15812`
 }
 
 func (c *rangeExprCopyChecker) Init() {
