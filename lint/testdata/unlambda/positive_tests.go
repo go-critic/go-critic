@@ -1,5 +1,9 @@
 package linter_test
 
+func returnIntError(x int) (int, error) {
+	return x, nil
+}
+
 func returnInt(x int) int {
 	return x
 }
@@ -7,6 +11,9 @@ func returnInt(x int) int {
 func functionLiterals() {
 	/// replace `func(x int) int { return returnInt(x) }` with `returnInt`
 	_ = func(x int) int { return returnInt(x) }
+
+	/// replace `func(x int) (int, error) { return returnIntError(x) }` with `returnIntError`
+	_ = func(x int) (int, error) { return returnIntError(x) }
 }
 
 type object struct{}

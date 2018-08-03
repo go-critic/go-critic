@@ -22,7 +22,18 @@ func complexCalls() {
 	}
 
 	_ = func(x int) int {
-		// Creates object as a part of expression
+		// Creates object as a part of expression.
 		return object{}.returnInt(x)
+	}
+
+	_ = func(x int) (int, error) {
+		// Return of multiple values.
+		return returnInt(x), nil
+	}
+
+	_ = func(x int) interface{} {
+		// The returnInt returns int, but enclosing func lit does
+		// return interface{}.
+		return returnInt(x)
 	}
 }
