@@ -1,56 +1,32 @@
 package checker_test
 
+func foo() float32 {
+	return 9.0
+}
+
 func f1() bool {
-	var a float32 = 10.0
-	var b int = 5.0
-	/// change `a == float32(b)` to `math.Abs(a - float32(b)) < eps`
-	return a == float32(b)
+	var p float32 = 10.0
+	var q float32 = 5.0
+	/// change `(p + q) == foo()` to `math.Abs((p + q) - foo()) < eps`
+	return (p + q) == foo()
 }
 
 func f2() bool {
 	var a float32 = 10.0
-	var b int = 5.0
-	/// change `a != float32(b)` to `math.Abs(a - float32(b)) >= eps`
-	return a != float32(b)
+	var b float32 = 5.0
+	/// change `2*a+4*b == 0.5` to `math.Abs(2*a + 4*b - 0.5) < eps`
+	return 2*a+4*b == 0.5
 }
 
 func f3() bool {
 	var a float32 = 10.0
-	var b int = 5.0
-	/// change `float32(a) != float32(b)` to `math.Abs(float32(a) - float32(b)) >= eps`
-	return float32(a) != float32(b)
+	var c float32 = 5.0
+	/// change `c == (a + 5)` to `math.Abs(c - (a + 5)) < eps`
+	return c == (a + 5)
 }
 
-func f4(a, b float64) {
-
-	/// change `a == b` to `math.Abs(a - b) < eps`
-	_ = a == b
-
-	/// change `a == b` to `math.Abs(a - b) < eps`
-	_ = !(a == b)
-
-	/// change `a == (b + a)` to `math.Abs(a - (b + a)) < eps`
-	_ = a == (b + a)
-
-	/// change `a != 40.0` to `math.Abs(a - 40.0) >= eps`
-	_ = a != 40.0
-
-	/// change `a*2 == b` to `math.Abs(a * 2 - b) < eps`
-	_ = a*2 == b
-
-	/// change `a == (b + 4)` to `math.Abs(a - (b + 4)) < eps`
-	_ = a == (b + 4)
-
-	/// change `a == b` to `math.Abs(a - b) < eps`
-	/// change `b != a` to `math.Abs(b - a) >= eps`
-	_ = a == b && b != a
-
-	/// change `a == b` to `math.Abs(a - b) < eps`
-	/// change `b != a` to `math.Abs(b - a) >= eps`
-	/// change `a != b` to `math.Abs(a - b) >= eps`
-	_ = a == b && b != a || !(a != b)
-
-	// TODO: change `a == b+a` to `math.Abs(a - (b+a)) < eps`
-	/// change `a == b+a` to `math.Abs(a - b + a) < eps`
-	_ = a == b+a
+func f4() bool {
+	var a float32 = 10.0
+	/// change `foo()+foo() == a+a` to `math.Abs(foo() + foo() - (a + a)) < eps`
+	return foo()+foo() == a+a
 }
