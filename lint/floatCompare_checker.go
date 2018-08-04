@@ -34,8 +34,10 @@ func (c *floatCompareChecker) VisitLocalExpr(expr ast.Expr) {
 		return
 	}
 	if binexpr.Op == token.EQL || binexpr.Op == token.NEQ {
-		if c.isFloatExpr(binexpr) && c.isMultiBinaryExpr(binexpr) &&
-			!c.isNaNCheckExpr(binexpr) && !c.isInfCheckExpr(binexpr) {
+		if c.isFloatExpr(binexpr) &&
+			c.isMultiBinaryExpr(binexpr) &&
+			!c.isNaNCheckExpr(binexpr) &&
+			!c.isInfCheckExpr(binexpr) {
 			c.warn(binexpr)
 		}
 	}
@@ -56,7 +58,7 @@ func (c *floatCompareChecker) isNaNCheckExpr(binexpr *ast.BinaryExpr) bool {
 func (c *floatCompareChecker) isInfCheckExpr(binexpr *ast.BinaryExpr) bool {
 	binx := astutil.Unparen(binexpr.X)
 	biny := astutil.Unparen(binexpr.Y)
-	expr, bin, ok := identExpr(binx, biny)
+	expr, bin, ok := c.identExpr(binx, biny)
 	if !ok {
 		return false
 	}
@@ -72,7 +74,7 @@ func (c *floatCompareChecker) isMultiBinaryExpr(binexpr *ast.BinaryExpr) bool {
 	return astp.IsBinaryExpr(exprx) || astp.IsBinaryExpr(expry)
 }
 
-func identExpr(x ast.Node, y ast.Node) (ast.Expr, *ast.BinaryExpr, bool) {
+func (c *floatCompareChecker) identExpr(x, y ast.Node) (ast.Expr, *ast.BinaryExpr, bool) {
 	expr1, ok1 := x.(*ast.BinaryExpr)
 	expr2, ok2 := y.(*ast.BinaryExpr)
 	switch {
