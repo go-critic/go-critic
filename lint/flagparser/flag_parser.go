@@ -43,7 +43,17 @@ type FlagParser struct {
 	ShorterErrLocation bool
 }
 
-func (fp *FlagParser) Error() error {
+func (fp *FlagParser) EnabledCheckers() []string {
+	return strings.Split(fp.Enable, ",")
+}
+
+func (fp *FlagParser) DisabledCheckers() []string {
+	return strings.Split(fp.Disable, ",")
+}
+
+func (fp *FlagParser) Parse() error {
+	flag.Parse()
+
 	if fp.Enable != EnableAll {
 		if fp.WithExperimental {
 			return fmt.Errorf("-withExperimental used with -enable=%q", fp.Enable)
@@ -54,18 +64,6 @@ func (fp *FlagParser) Error() error {
 	}
 
 	return nil
-}
-
-func (fp *FlagParser) EnabledCheckers() []string {
-	return strings.Split(fp.Enable, ",")
-}
-
-func (fp *FlagParser) DisabledCheckers() []string {
-	return strings.Split(fp.Disable, ",")
-}
-
-func (fp *FlagParser) Parse() {
-	flag.Parse()
 }
 
 func (fp *FlagParser) ParsedArgs() []string {

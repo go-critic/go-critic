@@ -73,15 +73,15 @@ func parseArgv(l *linter) {
 	}
 
 	l.fp = flagparser.NewFlagParser()
-	l.fp.Parse()
+
+	if err := l.fp.Parse(); err != nil {
+		blame(err.Error())
+	}
+
 	l.packages = l.fp.ParsedArgs()
 
 	if len(l.packages) == 0 {
 		blame("no packages specified\n")
-	}
-
-	if err := l.fp.Error(); err != nil {
-		blame(err.Error())
 	}
 
 	switch l.fp.Enable {
