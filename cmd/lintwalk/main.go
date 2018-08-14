@@ -2,7 +2,6 @@ package lintwalk
 
 import (
 	"flag"
-	"fmt"
 	"go/build"
 	"log"
 	"os"
@@ -11,6 +10,8 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+
+	"github.com/go-critic/go-critic/lint/flagparser"
 )
 
 func packagePath() []string {
@@ -35,16 +36,12 @@ func dirIsHidden(dir string) bool {
 
 // Main implements gocritic sub-command entry point.
 func Main() {
-	enable := flag.String("enable", "all",
-		`forwarded to linter "as is"`)
-	disable := flag.String("disable", "",
-		`forwarded to linter "as is"`)
+	fp := flagparser.NewFlagParser()
+
 	exclude := flag.String("exclude", `testdata/|vendor/|builtin/`,
 		`regexp used to skip package names`)
-	checkGenerated := flag.Bool("checkGenerated", false, `forwarded to linter "as is"`)
 	checkHidden := flag.Bool("checkHidden", false,
 		`whether to visit dirs those name start with "." or "_"`)
-	shorterErrLocation := flag.Bool("shorterErrLocation", true, `forwarded to linter "as is"`)
 
 	flag.Parse()
 
@@ -97,13 +94,8 @@ func Main() {
 		log.Fatalf("walk src-root: %v", err)
 	}
 
-	args := []string{
-		"check-package",
-		"-enable", *enable,
-		"-disable", *disable,
-		"-checkGenerated=" + fmt.Sprint(*checkGenerated),
-		"-shorterErrLocation=" + fmt.Sprint(*shorterErrLocation),
-	}
+	args := append([]string{"check-package"}, fp.Args()...)
+
 	for p := range packages {
 		args = append(args, p)
 	}

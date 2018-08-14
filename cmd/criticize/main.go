@@ -17,6 +17,7 @@ import (
 	"sync"
 
 	"github.com/go-critic/go-critic/lint"
+	"github.com/go-critic/go-critic/lint/flagparser"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -33,16 +34,10 @@ type linter struct {
 
 	// Command line flags:
 
-	configFile string
-
-	withOpinionated    bool
-	withExperimental   bool
-	checkGenerated     bool
-	shorterErrLocation bool
+	fp *flagparser.FlagParser
 
 	packages        []string
 	enabledCheckers []string
-	failureExitCode int
 	checkerParams   map[string]map[string]interface{}
 }
 
@@ -50,7 +45,7 @@ type linter struct {
 func Main() {
 	var l linter
 	parseArgv(&l)
-	if l.configFile != "" {
+	if l.fp.ConfigFile != "" {
 		l.LoadConfig()
 	}
 	l.LoadProgram()
@@ -72,51 +67,30 @@ func blame(format string, args ...interface{}) {
 // parseArgv processes command-line arguments and fills ctx argument with them.
 // Terminates program on error.
 func parseArgv(l *linter) {
-	const enableAll = "all"
-
 	flag.Usage = func() {
 		log.Printf("usage: [flags] package...")
 		flag.PrintDefaults()
 	}
 
-	enable := flag.String("enable", enableAll,
-		`comma-separated list of enabled checkers`)
-	flag.StringVar(&l.configFile, "config", "",
-		`name of JSON file containing checkers configurations`)
-	disable := flag.String("disable", "",
-		`comma-separated list of disabled checkers`)
-	flag.BoolVar(&l.withExperimental, `withExperimental`, false,
-		`only for -enable=all, include experimental checks`)
-	flag.BoolVar(&l.withOpinionated, `withOpinionated`, false,
-		`only for -enable=all, include very opinionated checks`)
-	flag.IntVar(&l.failureExitCode, "failcode", 1,
-		`exit code to be used when lint issues are found`)
-	flag.BoolVar(&l.checkGenerated, "checkGenerated", false,
-		`whether to check machine-generated files`)
-	flag.BoolVar(&l.shorterErrLocation, "shorterErrLocation", true,
-		`whether to replace error location prefix with $GOROOT and $GOPATH`)
-
-	flag.Parse()
-
-	l.packages = flag.Args()
+	l.fp = flagparser.NewFlagParser()
+	l.fp.Parse()
+	l.packages = l.fp.ParsedArgs()
 
 	if len(l.packages) == 0 {
 		blame("no packages specified\n")
 	}
-	if *enable != enableAll && l.withExperimental {
-		blame("-withExperimental used with -enable=%q", *enable)
-	}
-	if *enable != enableAll && l.withOpinionated {
-		blame("-withOpinionated used with -enable=%q", *enable)
+
+	if err := l.fp.Error(); err != nil {
+		blame(err.Error())
 	}
 
-	switch *enable {
-	case enableAll:
+	switch l.fp.Enable {
+	case flagparser.EnableAll:
 		for _, rule := range lint.RuleList() {
-			if rule.Experimental && !l.withExperimental {
+			if rule.Experimental && !l.fp.WithExperimental {
 				continue
 			}
-			if rule.VeryOpinionated && !l.withOpinionated {
+			if rule.VeryOpinionated && !l.fp.WithOpinionated {
 				continue
 			}
 			l.enabledCheckers = append(l.enabledCheckers, rule.Name())
@@ -127,21 +101,20 @@ func parseArgv(l *linter) {
 		l.enabledCheckers = []string{}
 	default:
 		// Comma-separated list of names.
-		l.enabledCheckers = strings.Split(*enable, ",")
+		l.enabledCheckers = l.fp.EnabledCheckers()
 	}
 
-	switch *disable {
-	case "all":
+	switch l.fp.Disable {
+	case flagparser.DisableAll:
 		l.enabledCheckers = l.enabledCheckers[:0]
 	case "":
 		// nothing to disable, skip
 	default:
-		disabled := strings.Split(*disable, ",")
 		filtred := l.enabledCheckers[:0]
 
 		for _, e := range l.enabledCheckers {
 			found := false
-			for _, d := range disabled {
+			for _, d := range l.fp.DisabledCheckers() {
 				if e == d {
 					found = true
 				}
@@ -155,9 +128,9 @@ func parseArgv(l *linter) {
 }
 
 func (l *linter) LoadConfig() {
-	raw, err := ioutil.ReadFile(l.configFile)
+	raw, err := ioutil.ReadFile(l.fp.ConfigFile)
 	if err != nil {
-		log.Printf("cannot read config file %s, got error: %s", l.configFile, err)
+		log.Printf("cannot read config file %s, got error: %s", l.fp.ConfigFile, err)
 		return
 	}
 
@@ -209,10 +182,10 @@ func (l *linter) InitCheckers() {
 	if l.enabledCheckers == nil {
 		// Fill default checkers set.
 		for _, rule := range available {
-			if rule.Experimental && !l.withExperimental {
+			if rule.Experimental && !l.fp.WithExperimental {
 				continue
 			}
-			if rule.VeryOpinionated && !l.withOpinionated {
+			if rule.VeryOpinionated && !l.fp.WithOpinionated {
 				continue
 			}
 			requested[rule.Name()] = true
@@ -251,7 +224,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 
 	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 	for _, f := range pkgInfo.Files {
-		if l.checkGenerated || !isGenerated(f) {
+		if l.fp.CheckGenerated || !isGenerated(f) {
 			l.ctx.SetFileInfo(l.getFilename(f))
 			l.checkFile(f)
 		}
@@ -270,7 +243,7 @@ func (l *linter) getFilename(f *ast.File) string {
 // ExitCode returns status code that should be used as an argument to os.Exit.
 func (l *linter) ExitCode() int {
 	if l.foundIssues {
-		return l.failureExitCode
+		return l.fp.FailureExitCode
 	}
 	return 0
 }
@@ -302,7 +275,7 @@ func (l *linter) checkFile(f *ast.File) {
 			for _, warn := range c.Check(f) {
 				l.foundIssues = true
 				loc := l.ctx.FileSet().Position(warn.Node.Pos()).String()
-				if l.shorterErrLocation {
+				if l.fp.ShorterErrLocation {
 					loc = shortenLocation(loc)
 				}
 				log.Printf("%s: %s: %v\n", loc, c.Rule, warn.Text)
