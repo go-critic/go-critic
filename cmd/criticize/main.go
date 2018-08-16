@@ -34,7 +34,7 @@ type linter struct {
 
 	// Command line flags:
 
-	fp *flagparser.FlagParser
+	flags *flagparser.FlagParser
 
 	packages        []string
 	enabledCheckers []string
@@ -45,7 +45,7 @@ type linter struct {
 func Main() {
 	var l linter
 	parseArgv(&l)
-	if l.fp.ConfigFile != "" {
+	if l.flags.ConfigFile != "" {
 		l.LoadConfig()
 	}
 	l.LoadProgram()
@@ -72,25 +72,25 @@ func parseArgv(l *linter) {
 		flag.PrintDefaults()
 	}
 
-	l.fp = flagparser.NewFlagParser()
+	l.flags = flagparser.NewFlagParser()
 
-	if err := l.fp.Parse(); err != nil {
+	if err := l.flags.Parse(); err != nil {
 		blame(err.Error())
 	}
 
-	l.packages = l.fp.ParsedArgs()
+	l.packages = l.flags.ParsedArgs()
 
 	if len(l.packages) == 0 {
 		blame("no packages specified\n")
 	}
 
-	switch l.fp.Enable {
+	switch l.flags.Enable {
 	case flagparser.EnableAll:
 		for _, rule := range lint.RuleList() {
-			if rule.Experimental && !l.fp.WithExperimental {
+			if rule.Experimental && !l.flags.WithExperimental {
 				continue
 			}
-			if rule.VeryOpinionated && !l.fp.WithOpinionated {
+			if rule.VeryOpinionated && !l.flags.WithOpinionated {
 				continue
 			}
 			l.enabledCheckers = append(l.enabledCheckers, rule.Name())
@@ -101,10 +101,10 @@ func parseArgv(l *linter) {
 		l.enabledCheckers = []string{}
 	default:
 		// Comma-separated list of names.
-		l.enabledCheckers = l.fp.EnabledCheckers()
+		l.enabledCheckers = l.flags.EnabledCheckers()
 	}
 
-	switch l.fp.Disable {
+	switch l.flags.Disable {
 	case flagparser.DisableAll:
 		l.enabledCheckers = l.enabledCheckers[:0]
 	case "":
@@ -114,7 +114,7 @@ func parseArgv(l *linter) {
 
 		for _, e := range l.enabledCheckers {
 			found := false
-			for _, d := range l.fp.DisabledCheckers() {
+			for _, d := range l.flags.DisabledCheckers() {
 				if e == d {
 					found = true
 				}
@@ -128,9 +128,9 @@ func parseArgv(l *linter) {
 }
 
 func (l *linter) LoadConfig() {
-	raw, err := ioutil.ReadFile(l.fp.ConfigFile)
+	raw, err := ioutil.ReadFile(l.flags.ConfigFile)
 	if err != nil {
-		log.Printf("cannot read config file %s, got error: %s", l.fp.ConfigFile, err)
+		log.Printf("cannot read config file %s, got error: %s", l.flags.ConfigFile, err)
 		return
 	}
 
@@ -182,10 +182,10 @@ func (l *linter) InitCheckers() {
 	if l.enabledCheckers == nil {
 		// Fill default checkers set.
 		for _, rule := range available {
-			if rule.Experimental && !l.fp.WithExperimental {
+			if rule.Experimental && !l.flags.WithExperimental {
 				continue
 			}
-			if rule.VeryOpinionated && !l.fp.WithOpinionated {
+			if rule.VeryOpinionated && !l.flags.WithOpinionated {
 				continue
 			}
 			requested[rule.Name()] = true
@@ -224,7 +224,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 
 	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 	for _, f := range pkgInfo.Files {
-		if l.fp.CheckGenerated || !isGenerated(f) {
+		if l.flags.CheckGenerated || !isGenerated(f) {
 			l.ctx.SetFileInfo(l.getFilename(f))
 			l.checkFile(f)
 		}
@@ -243,7 +243,7 @@ func (l *linter) getFilename(f *ast.File) string {
 // ExitCode returns status code that should be used as an argument to os.Exit.
 func (l *linter) ExitCode() int {
 	if l.foundIssues {
-		return l.fp.FailureExitCode
+		return l.flags.FailureExitCode
 	}
 	return 0
 }
@@ -275,7 +275,7 @@ func (l *linter) checkFile(f *ast.File) {
 			for _, warn := range c.Check(f) {
 				l.foundIssues = true
 				loc := l.ctx.FileSet().Position(warn.Node.Pos()).String()
-				if l.fp.ShorterErrLocation {
+				if l.flags.ShorterErrLocation {
 					loc = shortenLocation(loc)
 				}
 				log.Printf("%s: %s: %v\n", loc, c.Rule, warn.Text)

@@ -36,7 +36,7 @@ func dirIsHidden(dir string) bool {
 
 // Main implements gocritic sub-command entry point.
 func Main() {
-	fp := flagparser.NewFlagParser()
+	flags := flagparser.NewFlagParser()
 
 	exclude := flag.String("exclude", `testdata/|vendor/|builtin/`,
 		`regexp used to skip package names`)
@@ -94,7 +94,7 @@ func Main() {
 		log.Fatalf("walk src-root: %v", err)
 	}
 
-	args := append([]string{"check-package"}, fp.Args()...)
+	args := append([]string{"check-package"}, flags.Args()...)
 
 	for p := range packages {
 		args = append(args, p)
