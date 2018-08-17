@@ -47,6 +47,8 @@ func Main() {
 	parseArgv(&l)
 	if l.flags.ConfigFile != "" {
 		l.LoadConfig()
+	} else {
+		parseEnabledCheckers(&l)
 	}
 	l.LoadProgram()
 	l.InitCheckers()
@@ -83,7 +85,10 @@ func parseArgv(l *linter) {
 	if len(l.packages) == 0 {
 		blame("no packages specified\n")
 	}
+}
 
+// parseEnabledCheckers processes enabled checkers, intersect them with disabled, etc.
+func parseEnabledCheckers(l *linter) {
 	switch l.flags.Enable {
 	case flagparser.EnableAll:
 		for _, rule := range lint.RuleList() {
@@ -140,8 +145,10 @@ func (l *linter) LoadConfig() {
 		return
 	}
 
+	l.enabledCheckers = []string{}
 	l.checkerParams = make(map[string]map[string]interface{})
 	for k, v := range params {
+		l.enabledCheckers = append(l.enabledCheckers, k)
 		if v, ok := v.(map[string]interface{}); ok {
 			l.checkerParams[k] = v
 		} else {
