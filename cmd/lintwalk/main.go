@@ -11,7 +11,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/go-critic/go-critic/lint/flagparser"
+	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 )
 
 func packagePath() []string {
