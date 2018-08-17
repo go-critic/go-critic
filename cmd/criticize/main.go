@@ -16,8 +16,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 	"github.com/go-critic/go-critic/lint"
-	"github.com/go-critic/go-critic/lint/flagparser"
 	"golang.org/x/tools/go/loader"
 )
 
