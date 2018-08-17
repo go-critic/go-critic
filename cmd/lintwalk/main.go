@@ -43,7 +43,11 @@ func Main() {
 	checkHidden := flag.Bool("checkHidden", false,
 		`whether to visit dirs those name start with "." or "_"`)
 
-	flag.Parse()
+	err := flags.Parse()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if flag.NArg() != 1 {
 		log.Fatalf("expected exactly one project root argument")
@@ -54,7 +58,7 @@ func Main() {
 	}
 	srcRoot = filepath.Clean(srcRoot)
 
-	srcRoot, err := filepath.Abs(srcRoot)
+	srcRoot, err = filepath.Abs(srcRoot)
 
 	if err != nil {
 		log.Fatal(err)
