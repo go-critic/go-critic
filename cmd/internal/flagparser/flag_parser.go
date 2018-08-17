@@ -1,11 +1,11 @@
 package flagparser
 
 import (
+	"errors"
 	"flag"
 	"fmt"
-	"strings"
-	"errors"
 	"os"
+	"strings"
 )
 
 // EnableAll represent all checkers value for "enable" option
@@ -94,7 +94,11 @@ func (fp *FlagParser) DisabledCheckers() []string {
 
 // Parse and validate command arguments. Return error in case of validation failed.
 func (fp *FlagParser) Parse() error {
-	fp.flagSet.Parse(os.Args[1:])
+	err := fp.flagSet.Parse(os.Args[1:])
+
+	if err != nil {
+		return err
+	}
 
 	if fp.Enable != EnableAll {
 		if fp.WithExperimental {
@@ -112,7 +116,11 @@ func (fp *FlagParser) Parse() error {
 
 		// For define that arguments was not provided by user, we use trick https://stackoverflow.com/a/51903637/4143494
 		defaultInvertedFlagParser := newDefaultInvertedFlagParser()
-		defaultInvertedFlagParser.flagSet.Parse(os.Args[1:])
+		err := defaultInvertedFlagParser.flagSet.Parse(os.Args[1:])
+
+		if err != nil {
+			return err
+		}
 
 		if fp.Enable == defaultInvertedFlagParser.Enable {
 			return errors.New("-enable cannot be used with -config option")
@@ -153,7 +161,7 @@ func (fp *FlagParser) Args() []string {
 				"-disable=" + fp.Disable,
 				"-withExperimental=" + fmt.Sprint(fp.WithExperimental),
 				"-withOpinionated=" + fmt.Sprint(fp.WithOpinionated),
-			}...
+			}...,
 		)
 	}
 
