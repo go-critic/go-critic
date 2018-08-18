@@ -40,23 +40,33 @@ func NewFlagParser(flagSet *flag.FlagSet) *FlagParser {
 	return fp
 }
 
-func newDefaultInvertedFlagParser() *FlagParser {
+func newDefaultInvertedFlagParser() (*FlagParser, error) {
 	fp := NewFlagParser(flag.NewFlagSet("defaultChecker", flag.ContinueOnError))
 
+	var err error
+
 	fp.flagSet.VisitAll(func(f *flag.Flag) {
+		if err != nil {
+			return
+		}
+
 		switch f.DefValue {
 		case "true":
 			f.DefValue = "false"
 		case "false":
 			f.DefValue = "true"
 		default:
-			f.DefValue += "_inverted"
+			f.DefValue += "1"
 		}
 
-		f.Value.Set(f.DefValue)
+		err = f.Value.Set(f.DefValue)
 	})
 
-	return fp
+	if err != nil {
+		return nil, err
+	}
+
+	return fp, nil
 }
 
 // FlagParser help to parse and operate with command flags, share them between commands, etc.
@@ -108,8 +118,12 @@ func (fp *FlagParser) Parse() error {
 		// defaultInvertedFlagParser, with default values different from real ones, used in trick for define that
 		// arguments was provided by user, or just was set up by default
 		// See https://stackoverflow.com/a/51903637/4143494
-		defaultInvertedFlagParser := newDefaultInvertedFlagParser()
-		err := defaultInvertedFlagParser.flagSet.Parse(os.Args[1:])
+		defaultInvertedFlagParser, err := newDefaultInvertedFlagParser()
+		if err != nil {
+			return err
+		}
+
+		err = defaultInvertedFlagParser.flagSet.Parse(os.Args[1:])
 
 		if err != nil {
 			return err

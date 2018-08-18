@@ -41,6 +41,51 @@ type linter struct {
 	checkerParams   map[string]map[string]interface{}
 }
 
+// parseEnabledCheckers processes enabled checkers, intersect them with disabled, etc.
+func (l *linter) parseEnabledCheckers() {
+	switch l.flags.Enable {
+	case flagparser.EnableAll:
+		for _, rule := range lint.RuleList() {
+			if rule.Experimental && !l.flags.WithExperimental {
+				continue
+			}
+			if rule.VeryOpinionated && !l.flags.WithOpinionated {
+				continue
+			}
+			l.enabledCheckers = append(l.enabledCheckers, rule.Name())
+		}
+	case "":
+		// Empty slice. Semantically "disable-all".
+		// Can be used to run all pipelines without actual checkers.
+		l.enabledCheckers = []string{}
+	default:
+		// Comma-separated list of names.
+		l.enabledCheckers = l.flags.EnabledCheckers()
+	}
+
+	switch l.flags.Disable {
+	case flagparser.DisableAll:
+		l.enabledCheckers = l.enabledCheckers[:0]
+	case "":
+	// nothing to disable, skip
+	default:
+		filtred := l.enabledCheckers[:0]
+
+		for _, e := range l.enabledCheckers {
+			found := false
+			for _, d := range l.flags.DisabledCheckers() {
+				if e == d {
+					found = true
+				}
+			}
+			if !found {
+				filtred = append(filtred, e)
+			}
+		}
+		l.enabledCheckers = filtred
+	}
+}
+
 // Main implements gocritic sub-command entry point.
 func Main() {
 	var l linter
@@ -48,7 +93,7 @@ func Main() {
 	if l.flags.ConfigFile != "" {
 		l.LoadConfig()
 	} else {
-		parseEnabledCheckers(&l)
+		l.parseEnabledCheckers()
 	}
 	l.LoadProgram()
 	l.InitCheckers()
@@ -84,51 +129,6 @@ func parseArgv(l *linter) {
 
 	if len(l.packages) == 0 {
 		blame("no packages specified\n")
-	}
-}
-
-// parseEnabledCheckers processes enabled checkers, intersect them with disabled, etc.
-func parseEnabledCheckers(l *linter) {
-	switch l.flags.Enable {
-	case flagparser.EnableAll:
-		for _, rule := range lint.RuleList() {
-			if rule.Experimental && !l.flags.WithExperimental {
-				continue
-			}
-			if rule.VeryOpinionated && !l.flags.WithOpinionated {
-				continue
-			}
-			l.enabledCheckers = append(l.enabledCheckers, rule.Name())
-		}
-	case "":
-		// Empty slice. Semantically "disable-all".
-		// Can be used to run all pipelines without actual checkers.
-		l.enabledCheckers = []string{}
-	default:
-		// Comma-separated list of names.
-		l.enabledCheckers = l.flags.EnabledCheckers()
-	}
-
-	switch l.flags.Disable {
-	case flagparser.DisableAll:
-		l.enabledCheckers = l.enabledCheckers[:0]
-	case "":
-		// nothing to disable, skip
-	default:
-		filtred := l.enabledCheckers[:0]
-
-		for _, e := range l.enabledCheckers {
-			found := false
-			for _, d := range l.flags.DisabledCheckers() {
-				if e == d {
-					found = true
-				}
-			}
-			if !found {
-				filtred = append(filtred, e)
-			}
-		}
-		l.enabledCheckers = filtred
 	}
 }
 
