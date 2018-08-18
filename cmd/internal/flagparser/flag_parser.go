@@ -15,10 +15,10 @@ const EnableAll = "all"
 const DisableAll = "all"
 
 // NewFlagParser create new FlagParser
-func NewFlagParser() *FlagParser {
+func NewFlagParser(flagSet *flag.FlagSet) *FlagParser {
 	fp := &FlagParser{}
 
-	fp.flagSet = flag.CommandLine
+	fp.flagSet = flagSet
 
 	fp.flagSet.StringVar(&fp.Enable, "enable", EnableAll,
 		`comma-separated list of enabled checkers`)
@@ -40,30 +40,21 @@ func NewFlagParser() *FlagParser {
 	return fp
 }
 
-// FlagParser, where default values different from real ones, used in trick for define that
-// arguments was provided by user, or just was set up by default
-// See https://stackoverflow.com/a/51903637/4143494
 func newDefaultInvertedFlagParser() *FlagParser {
-	fp := &FlagParser{}
+	fp := NewFlagParser(flag.NewFlagSet("defaultChecker", flag.ContinueOnError))
 
-	fp.flagSet = flag.NewFlagSet("defaultChecker", flag.ContinueOnError)
+	fp.flagSet.VisitAll(func(f *flag.Flag) {
+		switch f.DefValue {
+		case "true":
+			f.DefValue = "false"
+		case "false":
+			f.DefValue = "true"
+		default:
+			f.DefValue += "_inverted"
+		}
 
-	fp.flagSet.StringVar(&fp.Enable, "enable", "-",
-		`comma-separated list of enabled checkers`)
-	fp.flagSet.StringVar(&fp.ConfigFile, "config", "-",
-		`name of JSON file containing checkers configurations`)
-	fp.flagSet.StringVar(&fp.Disable, "disable", "-",
-		`comma-separated list of disabled checkers`)
-	fp.flagSet.BoolVar(&fp.WithExperimental, `withExperimental`, true,
-		`only for -enable=all, include experimental checks`)
-	fp.flagSet.BoolVar(&fp.WithOpinionated, `withOpinionated`, true,
-		`only for -enable=all, include very opinionated checks`)
-	fp.flagSet.IntVar(&fp.FailureExitCode, "failcode", 0,
-		`exit code to be used when lint issues are found`)
-	fp.flagSet.BoolVar(&fp.CheckGenerated, "checkGenerated", true,
-		`whether to check machine-generated files`)
-	fp.flagSet.BoolVar(&fp.ShorterErrLocation, "shorterErrLocation", false,
-		`whether to replace error location prefix with $GOROOT and $GOPATH`)
+		f.Value.Set(f.DefValue)
+	})
 
 	return fp
 }
@@ -114,7 +105,9 @@ func (fp *FlagParser) Parse() error {
 		// Purpose of this - to avoid complexity with definition which one checkers are enabled where and so on.
 		// It will be easier to use, and easier to support.
 
-		// For define that arguments was not provided by user, we use trick https://stackoverflow.com/a/51903637/4143494
+		// defaultInvertedFlagParser, with default values different from real ones, used in trick for define that
+		// arguments was provided by user, or just was set up by default
+		// See https://stackoverflow.com/a/51903637/4143494
 		defaultInvertedFlagParser := newDefaultInvertedFlagParser()
 		err := defaultInvertedFlagParser.flagSet.Parse(os.Args[1:])
 

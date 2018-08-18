@@ -36,7 +36,7 @@ func dirIsHidden(dir string) bool {
 
 // Main implements gocritic sub-command entry point.
 func Main() {
-	flags := flagparser.NewFlagParser()
+	flags := flagparser.NewFlagParser(flag.CommandLine)
 
 	exclude := flag.String("exclude", `testdata/|vendor/|builtin/`,
 		`regexp used to skip package names`)

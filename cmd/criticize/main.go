@@ -74,7 +74,7 @@ func parseArgv(l *linter) {
 		flag.PrintDefaults()
 	}
 
-	l.flags = flagparser.NewFlagParser()
+	l.flags = flagparser.NewFlagParser(flag.CommandLine)
 
 	if err := l.flags.Parse(); err != nil {
 		blame(err.Error())
