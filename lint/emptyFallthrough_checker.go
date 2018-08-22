@@ -14,7 +14,7 @@ type emptyFallthroughChecker struct {
 }
 
 func (c *emptyFallthroughChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects fallthrough that can be avoided by using multi case values."
+	d.Summary = "Detects fallthrough that can be avoided by using multi case values"
 	d.Before = `switch kind {
 case reflect.Int:
 	fallthrough
@@ -27,27 +27,28 @@ case reflect.Int, reflect.Int32:
 }`
 }
 
-func (c *emptyFallthroughChecker) VisitStmtList(stmts []ast.Stmt) {
-	for _, s := range stmts {
-		if ss, ok := s.(*ast.SwitchStmt); ok {
-			lastCaseDefault := false
-			for i := len(ss.Body.List) - 1; i >= 0; i-- {
-				if cc, ok := ss.Body.List[i].(*ast.CaseClause); ok {
-					warn := false
-					if len(cc.Body) == 1 {
-						if bs, ok := cc.Body[0].(*ast.BranchStmt); ok && bs.Tok == token.FALLTHROUGH {
-							warn = true
-							if lastCaseDefault {
-								c.warnDefault(bs)
-							} else {
-								c.warn(bs)
-							}
-						}
-					}
-					if !warn {
-						lastCaseDefault = cc.List == nil
+func (c *emptyFallthroughChecker) VisitStmt(stmt ast.Stmt) {
+	ss, ok := stmt.(*ast.SwitchStmt)
+	if !ok {
+		return
+	}
+
+	prevCaseDefault := false
+	for i := len(ss.Body.List) - 1; i >= 0; i-- {
+		if cc, ok := ss.Body.List[i].(*ast.CaseClause); ok {
+			warn := false
+			if len(cc.Body) == 1 {
+				if bs, ok := cc.Body[0].(*ast.BranchStmt); ok && bs.Tok == token.FALLTHROUGH {
+					warn = true
+					if prevCaseDefault {
+						c.warnDefault(bs)
+					} else {
+						c.warn(bs)
 					}
 				}
+			}
+			if !warn {
+				prevCaseDefault = cc.List == nil
 			}
 		}
 	}
