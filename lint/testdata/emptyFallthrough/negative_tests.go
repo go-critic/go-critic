@@ -2,26 +2,48 @@ package checker_tests
 
 import "fmt"
 
-func noWarningsNonEmptyFallthrough(i int) int {
+func noWarningsNonEmptyFallthrough(i int) bool {
 	switch i {
 	case 0:
 		fmt.Print("")
 		fallthrough
 	case 1:
-		return 1
+		return true
 	default:
-		return 2
+		return false
 	}
 }
 
-func noWarningsNonEmptyFallthroughToDefault(i int) int {
+func noWarningsNonEmptyFallthroughToDefault(i int) bool {
 	switch i {
 	case 0:
-		return 0
+		return true
 	case 1:
 		fmt.Print("")
 		fallthrough
 	default:
-		return 1
+		return false
+	}
+}
+
+func noWarningsNonEmptyFallthroughInNestedSwitch(i, j int) bool {
+	switch i {
+	case 0:
+		return true
+	case 1:
+		switch j {
+		case 0:
+			fmt.Print("")
+			fallthrough
+		case 1:
+			return true
+		default:
+			return false
+		}
+	case 2:
+		fmt.Print("")
+		fallthrough
+	default:
+		return false
 	}
 }

@@ -1,6 +1,7 @@
 package checker_tests
 
 import (
+	"fmt"
 	"reflect"
 )
 
@@ -59,5 +60,36 @@ func warningsEmptyFallthroughToNonLastDefault(i int) bool {
 		return false
 	case 3:
 		return true
+	}
+}
+
+func warningsNestedSwitchMixedFallthroughs(i, j int) bool {
+	switch i {
+	case 0:
+		/// replace empty case containing only fallthrough with expression list
+		fallthrough
+	case 1:
+		switch j {
+		case 0:
+			/// replace empty case containing only fallthrough with expression list
+			fallthrough
+		case 1:
+			fmt.Println("")
+			fallthrough
+		case 2:
+			return true
+		case 3:
+			/// remove empty case containing only fallthrough to default case
+			fallthrough
+		default:
+			return false
+		}
+	case 2:
+		return true
+	case 3:
+		/// remove empty case containing only fallthrough to default case
+		fallthrough
+	default:
+		return false
 	}
 }
