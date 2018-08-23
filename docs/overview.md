@@ -137,6 +137,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects else with nested if statement that can be replaced with else-if</td>
       </tr>
       <tr>
+        <td><a href="#emptyFallthrough-ref">emptyFallthrough</a></td>
+        <td>Detects fallthrough that can be avoided by using multi case values</td>
+      </tr>
+      <tr>
         <td><a href="#emptyFmt-ref">emptyFmt</a></td>
         <td>Detects usages of formatting functions without formatting arguments</td>
       </tr>
@@ -631,6 +635,32 @@ if cond1 {
 
 
 `elseif` is very opinionated.
+<a name="emptyFallthrough-ref"></a>
+## emptyFallthrough
+Detects fallthrough that can be avoided by using multi case values.
+
+
+
+**Before:**
+```go
+switch kind {
+case reflect.Int:
+	fallthrough
+case reflect.Int32:
+	return Int
+}
+```
+
+**After:**
+```go
+switch kind {
+case reflect.Int, reflect.Int32:
+	return Int
+}
+```
+
+
+
 <a name="emptyFmt-ref"></a>
 ## emptyFmt
 Detects usages of formatting functions without formatting arguments.
