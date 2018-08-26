@@ -5,11 +5,11 @@ func NewConfig() *Config {
 }
 
 type Config struct {
-	Version int
+	Version  int
 	Checkers map[string]*Checker
 }
 
 type Checker struct {
-	Type string
+	Type       string
 	Parameters map[string]interface{}
 }

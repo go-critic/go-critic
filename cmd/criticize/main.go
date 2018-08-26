@@ -16,10 +16,10 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/go-critic/go-critic/cmd/internal/config"
 	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 	"github.com/go-critic/go-critic/lint"
 	"golang.org/x/tools/go/loader"
-	"github.com/go-critic/go-critic/cmd/internal/config"
 )
 
 var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT.")
@@ -37,7 +37,7 @@ type linter struct {
 
 	flags *flagparser.FlagParser
 
-	packages        []string
+	packages []string
 
 	configuration *config.Config
 }
