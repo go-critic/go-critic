@@ -86,6 +86,7 @@ you'll find all answers there in a short time.
    If none seem to match your needs, use `FuncDeclVisitor`.
 
 3. Define checker type and constructor function inside a new file under `lint/${checkerName}_checker.go`.
+   You can run `make new <checker-name>` for that.
 
 4. Add `InitDocumentation(d *Documentation)` method. Fill `Summary`, `Before` and `After` fields.
 

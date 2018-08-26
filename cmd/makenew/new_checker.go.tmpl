@@ -1,0 +1,53 @@
+package lint
+
+import (
+	"go/ast"
+	"go/token"
+
+    "github.com/go-toolsmith/astcopy"
+	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/astfmt"
+	"github.com/go-toolsmith/astp"
+)
+
+func init() {
+	addChecker(&{{.Name}}Checker{})
+}
+
+type {{.Name}}Checker struct {
+	checkerBase
+}
+
+func (c *{{.Name}}Checker) InitDocumentation(d *Documentation) {
+	d.Summary = "Put checker's summary here"
+	d.Before = `code before checker`
+	d.After = `code after checker`
+}
+
+func (c *{{.Name}}Checker) VisitFile(*ast.File) {
+}
+
+func (c *{{.Name}}Checker) VisitFuncDecl(*ast.FuncDecl) {
+}
+
+func (c *{{.Name}}Checker) VisitExpr(ast.Expr) {
+}
+
+func (c *{{.Name}}Checker) VisitLocalExpr(ast.Expr) {
+}
+
+func (c *{{.Name}}Checker) VisitStmtList([]ast.Stmt) {
+}
+
+func (c *{{.Name}}Checker) VisitStmt(ast.Stmt) {
+}
+
+func (c *{{.Name}}Checker) VisitTypeExpr(ast.Expr) {
+}
+
+func (c *{{.Name}}Checker) VisitLocalComment(*ast.CommentGroup) {
+}
+
+func (c *{{.Name}}Checker) warn(cause ast.Node) {
+	c.ctx.Warn(cause, "<define warning message and pass %s param>", cause)
+}

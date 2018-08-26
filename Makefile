@@ -33,3 +33,6 @@ cover:
 
 install:
 	go install ./cmd/gocritic
+
+new:
+	cd ./cmd/makenew && go run main.go -name=$(filter-out $@,$(MAKECMDGOALS))
