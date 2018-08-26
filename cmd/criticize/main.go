@@ -19,6 +19,7 @@ import (
 	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 	"github.com/go-critic/go-critic/lint"
 	"golang.org/x/tools/go/loader"
+	"github.com/go-critic/go-critic/cmd/internal/config"
 )
 
 var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT.")
@@ -37,52 +38,46 @@ type linter struct {
 	flags *flagparser.FlagParser
 
 	packages        []string
-	enabledCheckers []string
-	checkerParams   map[string]map[string]interface{}
+
+	configuration *config.Config
 }
 
 // parseEnabledCheckers processes enabled checkers, intersect them with disabled, etc.
 func (l *linter) parseEnabledCheckers() {
+	l.configuration = config.NewConfig()
+
+	if l.flags.Disable == flagparser.DisableAll {
+		return
+	}
+
+	disabledCheckers := make(map[string]bool)
+
+	for _, d := range l.flags.DisabledCheckers() {
+		disabledCheckers[d] = true
+	}
+
 	switch l.flags.Enable {
 	case flagparser.EnableAll:
 		for _, rule := range lint.RuleList() {
+			if ok := disabledCheckers[rule.Name()]; ok {
+				continue
+			}
 			if rule.Experimental && !l.flags.WithExperimental {
 				continue
 			}
 			if rule.VeryOpinionated && !l.flags.WithOpinionated {
 				continue
 			}
-			l.enabledCheckers = append(l.enabledCheckers, rule.Name())
+			l.configuration.Checkers[rule.Name()] = &config.Checker{Type: rule.Name()}
 		}
-	case "":
-		// Empty slice. Semantically "disable-all".
-		// Can be used to run all pipelines without actual checkers.
-		l.enabledCheckers = []string{}
 	default:
 		// Comma-separated list of names.
-		l.enabledCheckers = l.flags.EnabledCheckers()
-	}
-
-	switch l.flags.Disable {
-	case flagparser.DisableAll:
-		l.enabledCheckers = l.enabledCheckers[:0]
-	case "":
-	// nothing to disable, skip
-	default:
-		filtred := l.enabledCheckers[:0]
-
-		for _, e := range l.enabledCheckers {
-			found := false
-			for _, d := range l.flags.DisabledCheckers() {
-				if e == d {
-					found = true
-				}
+		for _, checkerName := range l.flags.EnabledCheckers() {
+			if ok := disabledCheckers[checkerName]; ok {
+				continue
 			}
-			if !found {
-				filtred = append(filtred, e)
-			}
+			l.configuration.Checkers[checkerName] = &config.Checker{Type: checkerName}
 		}
-		l.enabledCheckers = filtred
 	}
 }
 
@@ -135,25 +130,15 @@ func parseArgv(l *linter) {
 func (l *linter) LoadConfig() {
 	raw, err := ioutil.ReadFile(l.flags.ConfigFile)
 	if err != nil {
-		log.Printf("cannot read config file %s, got error: %s", l.flags.ConfigFile, err)
+		log.Fatalf("cannot read config file %s, got error: %s", l.flags.ConfigFile, err)
 		return
 	}
 
-	var params map[string]interface{}
-	if err := json.Unmarshal(raw, &params); err != nil {
+	l.configuration = config.NewConfig()
+
+	if err := json.Unmarshal(raw, l.configuration); err != nil {
 		log.Fatalf("cannot parse config file, got error: %s", err)
 		return
-	}
-
-	l.enabledCheckers = []string{}
-	l.checkerParams = make(map[string]map[string]interface{})
-	for k, v := range params {
-		l.enabledCheckers = append(l.enabledCheckers, k)
-		if v, ok := v.(map[string]interface{}); ok {
-			l.checkerParams[k] = v
-		} else {
-			log.Printf("cannot parse value for %v", k)
-		}
 	}
 }
 
@@ -183,40 +168,28 @@ func (l *linter) LoadProgram() {
 }
 
 func (l *linter) InitCheckers() {
-	requested := make(map[string]bool)
-	available := lint.RuleList()
+	var notFoundCheckers []string
 
-	if l.enabledCheckers == nil {
-		// Fill default checkers set.
-		for _, rule := range available {
-			if rule.Experimental && !l.flags.WithExperimental {
-				continue
-			}
-			if rule.VeryOpinionated && !l.flags.WithOpinionated {
-				continue
-			}
-			requested[rule.Name()] = true
-		}
-	} else {
-		for _, name := range l.enabledCheckers {
-			requested[name] = true
+	available := make(map[string]*lint.Rule)
+
+	for _, rule := range lint.RuleList() {
+		available[rule.Name()] = rule
+	}
+
+	for checkerName, checkerConfig := range l.configuration.Checkers {
+		if rule, ok := available[checkerConfig.Type]; ok {
+			l.checkers = append(l.checkers, lint.NewChecker(
+				rule,
+				l.ctx,
+				checkerConfig.Parameters,
+			))
+		} else {
+			notFoundCheckers = append(notFoundCheckers, checkerName)
 		}
 	}
 
-	for _, rule := range available {
-		if !requested[rule.Name()] {
-			continue
-		}
-		l.checkers = append(l.checkers, lint.NewChecker(
-			rule,
-			l.ctx,
-			l.checkerParams[rule.Name()],
-		))
-		delete(requested, rule.Name())
-	}
-
-	if len(requested) != 0 {
-		for name := range requested {
+	if len(notFoundCheckers) != 0 {
+		for name := range notFoundCheckers {
 			log.Printf("%s: checker not found", name)
 		}
 		log.Fatalf("exiting due to initialization failure")
