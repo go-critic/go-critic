@@ -189,7 +189,7 @@ func (l *linter) InitCheckers() {
 	}
 
 	if len(notFoundCheckers) != 0 {
-		for name := range notFoundCheckers {
+		for _, name := range notFoundCheckers {
 			log.Printf("%s: checker not found", name)
 		}
 		log.Fatalf("exiting due to initialization failure")
