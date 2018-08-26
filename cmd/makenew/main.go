@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,12 +14,11 @@ const (
 )
 
 func main() {
-	name := flag.String("name", "", "")
+	name := flag.String("name", "", "name of a new checker")
 	flag.Parse()
 
 	if *name == "" {
-		fmt.Println("Please, provide a name for a new checker")
-		os.Exit(2)
+		log.Fatalf("empty checker name")
 	}
 
 	tmpl := template.Must(template.ParseFiles("new_checker.go.tmpl"))
@@ -42,8 +40,14 @@ func main() {
 	}
 
 	testDir := checkersPath + "testdata/" + *name
-	os.MkdirAll(testDir, os.ModePerm)
-	os.OpenFile(testDir+"/positive_tests.go", os.O_RDONLY|os.O_CREATE, os.ModePerm)
-	os.OpenFile(testDir+"/negative_tests.go", os.O_RDONLY|os.O_CREATE, os.ModePerm)
+	if err := os.MkdirAll(testDir, os.ModePerm); err != nil {
+		log.Fatalf("cannot create a test dir: %v", err)
+	}
+	if _, err := os.OpenFile(testDir+"/positive_tests.go", os.O_RDONLY|os.O_CREATE, os.ModePerm); err != nil {
+		log.Fatalf("cannot create a test file: %v", err)
+	}
+	if _, err := os.OpenFile(testDir+"/negative_tests.go", os.O_RDONLY|os.O_CREATE, os.ModePerm); err != nil {
+		log.Fatalf("cannot create a test file: %v", err)
+	}
 
 }
