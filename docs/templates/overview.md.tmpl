@@ -11,11 +11,11 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
     <th>Name</th>
     <th>Short description</th>
   </tr>
-  {{- range .Checkers }}
+  {{- range .Rules }}
     {{- if not .Experimental }}
       <tr>
-        <td><a href="#{{.Name}}-ref">{{.Name}}</a>{{ if .VeryOpinionated }} &#x1f913{{ end }}</td>
-        <td>{{.ShortDescription}}</td>
+        <td><a href="#{{.Name}}-ref">{{.Name}}</a>{{ if .VeryOpinionated }} :nerd_face:{{ end }}</td>
+        <td>{{.Doc.Summary}}</td>
       </tr>
     {{- end }}
   {{- end }}
@@ -28,35 +28,35 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
     <th>Name</th>
     <th>Short description</th>
   </tr>
-  {{- range .Checkers }}
+  {{- range .Rules }}
     {{- if .Experimental }}
       <tr>
-        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a>{{ if .VeryOpinionated }} &#x1f913{{ end }}</td>
-        <td>{{.ShortDescription}}</td>
+        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a>{{ if .VeryOpinionated }} :nerd_face:{{ end }}</td>
+        <td>{{.Doc.Summary}}</td>
       </tr>
     {{- end }}
   {{- end }}
 </table>
 
 
-{{ range .Checkers -}}
+{{ range .Rules }}
 <a name=" {{- .Name -}} -ref"></a>
 ## {{ .Name }}
-{{ .ShortDescription -}}
+{{ .Doc.Summary -}}.
 
-{{ .Description }}
+{{ .Doc.Details }}
 
 **Before:**
 ```go
-{{ .Before -}}
+{{ .Doc.Before }}
 ```
 
 **After:**
 ```go
-{{ .After -}}
+{{ .Doc.After }}
 ```
 
-{{ .Note }}
+{{ .Doc.Note }}
 {{ if .SyntaxOnly -}}
   `{{.Name}}` is syntax-only checker (fast).
 {{- end -}}

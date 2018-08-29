@@ -9,7 +9,7 @@ import (
 	"github.com/go-critic/go-critic/cmd/lintwalk"
 )
 
-var version = "0.3.2"
+var version = "0.3.3"
 
 // subCommand is an implementation of a gocritic sub-command.
 type subCommand struct {
@@ -72,7 +72,7 @@ func printVersion() {
 	log.Println(version)
 }
 
-// findSubCommand looks up subCommand by it's name.
+// findSubCommand looks up subCommand by its name.
 // Returns nil if requested command not found.
 func findSubCommand(name string) *subCommand {
 	for _, cmd := range subCommands {

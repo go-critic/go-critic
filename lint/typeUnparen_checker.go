@@ -1,17 +1,5 @@
 package lint
 
-//! Detects unneded parenthesis inside type expressions and suggests to remove them.
-//
-// @Before:
-// func foo() [](func([](func()))) {
-//      ...
-// }
-//
-// @After:
-// func foo() []func([]func()) {
-//      ...
-// }
-
 import (
 	"go/ast"
 
@@ -28,6 +16,12 @@ type typeUnparenChecker struct {
 	checkerBase
 
 	cause ast.Node // Last warning cause
+}
+
+func (c *typeUnparenChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects unneded parenthesis inside type expressions and suggests to remove them"
+	d.Before = "type foo [](func([](func())))"
+	d.After = "type foo []func([]func())"
 }
 
 func (c *typeUnparenChecker) EnterChilds(x ast.Node) bool { return c.cause != x }

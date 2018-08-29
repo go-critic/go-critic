@@ -16,24 +16,20 @@ docs:
 
 ci:
 	go get -t -v ./...
+	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
+
+ci-tests:
 	go tool vet .
 	go test -v -race -count=1 ./...
-	gometalinter.v2 --skip=testdata --vendor ./...
+
+ci-linter:
 	gocritic check-project `pwd`
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.9.1
+	golangci-lint run -v
 
 cover:
-	@echo "" > coverage.out
-	@for d in ${PKG}; \
-		do echo "" > profile.out; \
-		go test -coverprofile=profile.out -covermode=set $$d; \
-		cat profile.out >> coverage.out; \
-		rm profile.out; \
-	done
-
-tools:
-	go get -u gopkg.in/alecthomas/gometalinter.v2
-	gometalinter.v2 --install
-	go get -u github.com/go-critic/go-critic/...
+	go get -u github.com/mattn/goveralls
+	goveralls -package github.com/go-critic/go-critic/lint -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 install:
 	go install ./cmd/gocritic

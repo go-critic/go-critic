@@ -2,6 +2,7 @@ package lint
 
 import (
 	"go/ast"
+	"go/token"
 	"go/types"
 	"strings"
 
@@ -63,23 +64,62 @@ func findNode(root ast.Node, pred func(ast.Node) bool) ast.Node {
 func identOf(x ast.Node) *ast.Ident {
 	switch x := x.(type) {
 	case *ast.Ident:
-		// Found ident.
 		return x
+	case *ast.SelectorExpr:
+		return identOf(x.Sel)
 	case *ast.TypeAssertExpr:
 		// x.(type) - x may contain ident.
 		return identOf(x.X)
 	case *ast.IndexExpr:
 		// x[i] - x may contain ident.
 		return identOf(x.X)
-	case *ast.SelectorExpr:
-		// x.y - x may contain ident.
-		return identOf(x.X)
 	case *ast.StarExpr:
 		// *x - x may contain ident.
+		return identOf(x.X)
+	case *ast.SliceExpr:
+		// x[:] - x may contain ident.
 		return identOf(x.X)
 
 	default:
 		// Note that this function is not comprehensive.
 		return nil
+	}
+}
+
+// typeIsPointer reports whether typ has type of *types.Pointer.
+func typeIsPointer(typ types.Type) bool {
+	_, ok := typ.(*types.Pointer)
+	return ok
+}
+
+// isSafeExpr reports whether expr is softly safe expression and contains
+// no significant side-effects. As opposed to strictly safe expressions,
+// soft safe expressions permit some forms of side-effects, like
+// panic possibility during indexing or nil pointer dereference.
+func isSafeExpr(expr ast.Expr) bool {
+	// This list switch is not comprehensive and uses
+	// whitelist to be on the conservative side.
+	// Can be extended as needed.
+	//
+	// Note that it is not very strict "safe" as
+	// index expressions are permitted even though they
+	// may cause panics.
+	switch expr := expr.(type) {
+	case *ast.StarExpr:
+		return isSafeExpr(expr.X)
+	case *ast.BinaryExpr:
+		return isSafeExpr(expr.X) && isSafeExpr(expr.Y)
+	case *ast.UnaryExpr:
+		return expr.Op != token.ARROW && isSafeExpr(expr.X)
+	case *ast.BasicLit, *ast.Ident:
+		return true
+	case *ast.IndexExpr:
+		return isSafeExpr(expr.X) && isSafeExpr(expr.Index)
+	case *ast.SelectorExpr:
+		return isSafeExpr(expr.X)
+	case *ast.ParenExpr:
+		return isSafeExpr(expr.X)
+	default:
+		return false
 	}
 }

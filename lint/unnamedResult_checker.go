@@ -1,14 +1,5 @@
 package lint
 
-//! For functions with multiple return values, detects unnamed results
-//  that do not match `(T, error)` or `(T, bool)` pattern.
-//
-// @Before:
-// func f() (float64, float64)
-//
-// @After:
-// func f() (x, y float64)
-
 import (
 	"go/ast"
 	"go/types"
@@ -20,9 +11,24 @@ func init() {
 
 type unnamedResultChecker struct {
 	checkerBase
+
+	checkExported bool
+}
+
+func (c *unnamedResultChecker) Init() {
+	c.checkExported = c.ctx.params.Bool("checkExported", false)
+}
+
+func (c *unnamedResultChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects unnamed results that may benefit from names"
+	d.Before = `func f() (float64, float64)`
+	d.After = `func f() (x, y float64)`
 }
 
 func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {
+	if c.checkExported && !ast.IsExported(decl.Name.Name) {
+		return
+	}
 	results := decl.Type.Results
 	switch {
 	case results == nil:
@@ -82,5 +88,5 @@ func (c *unnamedResultChecker) typeName(typ types.Type) string {
 }
 
 func (c *unnamedResultChecker) warn(n ast.Node) {
-	c.ctx.Warn(n, "consider to give name to results")
+	c.ctx.Warn(n, "consider giving a name to these results")
 }

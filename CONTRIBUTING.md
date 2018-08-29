@@ -1,4 +1,4 @@
-# Contributing to kfulint
+# Contributing to go-critic
 
 Most of the conventions and rules are derived from [Go](https://github.com/golang/go) project.
 
@@ -8,7 +8,7 @@ Some sections are copied from [ZeroMQ C4](https://rfc.zeromq.org/spec:42/C4/) (C
 
 There are three main ways to contribute:
 
-1. Join [issue tracker](https://github.com/PieselBois/kfulint/issues) and help us with
+1. Join [issue tracker](https://github.com/go-critic/go-critic/issues) and help us with
    feature requests, bug reports (including false-positive results), etc.
 
 2. Submit code patches: you can add a new checker, fix or improve already existing checkers
@@ -18,8 +18,8 @@ There are three main ways to contribute:
 
 The simplest and recommended way to make a first contribution is to fix minor style issue
 like typo or missing doc comment. You can also filter issues by using
-[help wanted](https://github.com/PieselBois/kfulint/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) and
-[good first issue](https://github.com/PieselBois/kfulint/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) labels.
+[help wanted](https://github.com/go-critic/go-critic/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) and
+[good first issue](https://github.com/go-critic/go-critic/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) labels.
 
 ## Code review
 
@@ -67,26 +67,42 @@ please add some useful content about issues in our contributing.md
 2. Issue description should contain detailed information about it. If it is bug request, please write steps to reproduce it.
 If it is feature request, please describe problem it could solve. Also you could tell us your solution to that problem.
 
-These rules aslo applies to **pull requests**.
+These rules also applies to **pull requests**.
 
 ## How to add new checker
+
+Always use existing checkers as a reference if in doubdts.
+If you struggle for a long time, consider joining our dev chats,
+you'll find all answers there in a short time.
+
+[English](https://t.me/joinchat/DWka6g9VbCADtJI5J5w8nQ)  
+[Russian](https://t.me/joinchat/DWka6kba5sa_EwTgmd3Vng)  
+([Telegram website](https://telegram.org/))
 
 1. Come up with checker idea. Concentrate on what it checks.
 
 2. Select one of the base checkers kind (example: expr checker, stmt checker, etc.).
+   See [lint/internal/astwalk/visitor.go](/lint/internal/astwalk/visitor.go) for the whole list.
+   If none seem to match your needs, use `FuncDeclVisitor`.
 
-3. Define checker type and constructor function.
+3. Define checker type and constructor function inside a new file under `lint/${checkerName}_checker.go`.
 
-4. Add entry to checkers list in `lint.go`. It could be a good idea to mark recently added checker as `experimental`.
+4. Add `InitDocumentation(d *Documentation)` method. Fill `Summary`, `Before` and `After` fields.
 
-5. Add test directory that is named after the checker in `cmd/kfulint/testdata`.
+5. Register checker with `addChecker` function in `init()`. It could be a good idea to mark recently added checker as `experimental`.
+   To do so, pass `attrExperimental` argument to the `addChecker` call.
 
-6. Add `positive_tests.go` and `negative_tests.go` files in that directory and add some positive and negative tests there.
+6. Add test directory that is named after the checker in `lint/testdata`.
 
-7. Run tests. They must fail as your checker does not check anything yet.  
-Tests can be run with `go test -v github.com/PieselBois/kfulint/cmd/kfulint`.
+7. Add `positive_tests.go` and `negative_tests.go` files in that directory and add some positive and negative tests there.
+   Positive tests catch warnings, negative tests are used to avoid false positives.
+   See existing [positive_tests.go](/lint/testdata/ifElseChain/positive_tests.go) files for inspiration.
 
-8. Implement checker itself. Make tests pass.
+8. Run tests. They must fail as your checker does not check anything yet.  
+   Tests can be run with `go test -v -race -count=1 ./...`.
+
+9. Implement checker itself. Make tests pass.
+   `make ci` can be useful to check whether CI build will be successful.
 
 ## Dependencies
 

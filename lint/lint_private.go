@@ -3,7 +3,9 @@ package lint
 import (
 	"fmt"
 	"go/ast"
+	"log"
 	"reflect"
+	"strings"
 
 	"github.com/go-critic/go-critic/lint/internal/astwalk"
 	"github.com/go-toolsmith/astfmt"
@@ -30,8 +32,13 @@ type checkerProto struct {
 //
 // See checkerBase and its implementation of this interface for more info.
 type abstractChecker interface {
-	BindContext(*context)
-	Init()
+	BindContext(*context) // See checkerBase.BindContext
+	Init()                // See checkerBase.Init
+
+	// InitDocumentation fills Documentation object associated with checker.
+	// Mandatory fields are Summary, Before and After.
+	// See other checkers implementation for examples.
+	InitDocumentation(*Documentation)
 }
 
 type checkerAttribute int
@@ -42,6 +49,38 @@ const (
 	attrVeryOpinionated
 )
 
+type parameters map[string]interface{}
+
+func (p parameters) Int(key string, defaultValue int) int {
+	if value, ok := p[key]; ok {
+		if value, ok := value.(int); ok {
+			return value
+		}
+		log.Printf("incorrect value for `%s`, want int", key)
+	}
+	return defaultValue
+}
+
+func (p parameters) String(key, defaultValue string) string {
+	if value, ok := p[key]; ok {
+		if value, ok := value.(string); ok {
+			return value
+		}
+		log.Printf("incorrect value for `%s`, want int", key)
+	}
+	return defaultValue
+}
+
+func (p parameters) Bool(key string, defaultValue bool) bool {
+	if value, ok := p[key]; ok {
+		if value, ok := value.(bool); ok {
+			return value
+		}
+		log.Printf("incorrect value for `%s`, want bool", key)
+	}
+	return defaultValue
+}
+
 // context is checker-local context copy.
 // Fields that are not from Context itself are writeable.
 type context struct {
@@ -49,6 +88,8 @@ type context struct {
 
 	// printer used to format warning text.
 	printer *astfmt.Printer
+
+	params parameters
 
 	warnings []Warning
 }
@@ -72,9 +113,28 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 		return reflect.New(dynType).Interface().(abstractChecker)
 	}
 
+	trimDocs := func(d *Documentation) {
+		fields := []*string{
+			&d.Summary,
+			&d.Details,
+			&d.Before,
+			&d.After,
+			&d.Note,
+		}
+		for _, f := range fields {
+			*f = strings.TrimSpace(*f)
+		}
+	}
+
+	validateDocs := func(r *Rule) {
+		// TODO(quasilyte): validate documentation.
+	}
+
 	newFileWalker := func(ctx *context, c abstractChecker) astwalk.FileWalker {
 		// Infer proper AST traversing wrapper (walker).
 		switch v := c.(type) {
+		case astwalk.FileVisitor:
+			return astwalk.WalkerForFile(v)
 		case astwalk.FuncDeclVisitor:
 			return astwalk.WalkerForFuncDecl(v)
 		case astwalk.ExprVisitor:
@@ -112,6 +172,10 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 			panic(fmt.Sprintf("unexpected checkerAttribute"))
 		}
 	}
+	// Prepare associated documentation.
+	c.InitDocumentation(&rule.Doc)
+	trimDocs(&rule.Doc)
+	validateDocs(&rule)
 
 	proto := checkerProto{rule: &rule}
 	proto.clone = func(ctx context) *Checker {

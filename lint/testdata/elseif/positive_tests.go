@@ -1,57 +1,16 @@
 package checker_test
 
-func suggestSwitch() {
-	cond1 := true
-	cond2 := true
-	cond3 := true
+func shouldWarn() {
+	var cond1, cond2 bool
 
-	/// should rewrite if-else to switch statement
 	if cond1 {
-	} else if cond2 {
+		/// can replace 'else {if cond {}}' with 'else if cond {}'
 	} else {
-	}
-
-	/// should rewrite if-else to switch statement
-	if cond1 {
-	} else if cond2 {
-	} else if cond3 {
-	}
-
-	/// should rewrite if-else to switch statement
-	if cond1 {
-	} else if cond2 {
-	} else if cond3 {
-	} else {
-	}
-
-	/// should rewrite if-else to switch statement
-	if cond1 {
-	} else if cond2 {
-		if cond3 {
-		}
-
-		/// should rewrite if-else to switch statement
-		if cond1 {
-		} else if cond2 {
-		} else if cond3 {
+		if cond2 {
+			/// can replace 'else {if cond {}}' with 'else if cond {}'
 		} else {
+			if cond1 {
+			}
 		}
-	} else {
-		/// should rewrite if-else to switch statement
-		if cond1 {
-		} else if cond2 {
-		} else {
-		}
-	}
-}
-
-func describeInt(x int) string {
-	/// should rewrite if-else to switch statement
-	if x == 0 {
-		return "zero"
-	} else if x < 0 {
-		return "negative"
-	} else {
-		return "positive"
 	}
 }

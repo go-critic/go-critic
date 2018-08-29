@@ -1,6 +1,26 @@
 package checker_test
 
-import "fmt"
+func alreadyWithValue(files []*string) {
+	f := func(file *string) {}
+
+	for _, file := range files {
+		f(file)
+		f(file)
+	}
+
+	for _, file := range files {
+		f(files[0])
+		f(files[1])
+		f(file)
+	}
+}
+
+func blankIdent(files []*string) {
+	for _ = range files {
+		_ = files[0]
+		_ = files[1]
+	}
+}
 
 func printFilesIndexes(files []*string) {
 	f := func(s int) {}
@@ -14,7 +34,7 @@ func closeNonPtrFiles(files []string) {
 	f := func(s string) {}
 
 	for i := range files {
-		fmt.Println(files[i])
+		println(files[i])
 		f(files[i])
 	}
 }
@@ -52,5 +72,13 @@ func rangeOverString() {
 
 	for _, ch := range "abcdef" {
 		f(ch)
+	}
+}
+
+func shadowed() {
+	var xs []*string
+	for k := range xs {
+		var xs []int
+		println(xs[k] + xs[k])
 	}
 }

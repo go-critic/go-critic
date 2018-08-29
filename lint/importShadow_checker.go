@@ -1,31 +1,5 @@
 package lint
 
-//! Detects when imported package names shadowed in assignments.
-//
-// @Before:
-// import (
-//     "fmt"
-//     "math"
-// )
-// func main() {
-//     fmt.Println(math.Pi)
-//     // shadowing math package
-//     math := 10
-//     fmt.Println(len)
-// }
-//
-// @After:
-// import (
-//     "fmt"
-//     "math"
-// )
-// func main() {
-//     fmt.Println(math.Pi)
-//     // change identificator name
-//     value := 10
-//     fmt.Println(value)
-// }
-
 import (
 	"go/ast"
 	"go/types"
@@ -39,6 +13,17 @@ func init() {
 
 type importShadowChecker struct {
 	checkerBase
+}
+
+func (c *importShadowChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects when imported package names shadowed in assignments"
+	d.Before = `
+// "path/filepath" is imported.
+func myFunc(filepath string) {
+}`
+	d.After = `
+func myFunc(filename string) {
+}`
 }
 
 func (c *importShadowChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {

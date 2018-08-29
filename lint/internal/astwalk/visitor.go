@@ -4,6 +4,12 @@ import "go/ast"
 
 // Visitor interfaces.
 type (
+	// FileVisitor visits every package file.
+	FileVisitor interface {
+		walkerEvents
+		VisitFile(*ast.File)
+	}
+
 	// FuncDeclVisitor visits every top-level function declaration.
 	FuncDeclVisitor interface {
 		walkerEvents
@@ -68,6 +74,9 @@ type (
 type walkerEvents interface {
 	// EnterFunc is called for every function declaration that is about
 	// to be traversed. If false is returned, function is not visited.
+	//
+	// Not applicable to:
+	//	- FileVisitor
 	EnterFunc(*ast.FuncDecl) bool
 
 	// EnterChilds is called for every visited node.
@@ -75,6 +84,7 @@ type walkerEvents interface {
 	// If visitor returns false, that node siblings will not be traversed.
 	//
 	// Not applicable to:
+	//	- FileVisitor
 	//	- FuncDeclVisitor
 	//	- StmtListVisitor
 	//	- LocalDefVisitor

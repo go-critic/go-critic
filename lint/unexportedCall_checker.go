@@ -1,23 +1,5 @@
 package lint
 
-//! Detects calls of unexported method from unexported type outside that type.
-//
-// @Before:
-// type foo struct{}
-// func (f foo) bar() int { return 1 }
-// func baz() {
-// 	var fo foo
-// 	fo.bar()
-// }
-//
-// @After:
-// type foo struct{}
-// func (f foo) Bar() int { return 1 } // now Bar is exported
-// func baz() {
-// 	var fo foo
-// 	fo.Bar()
-// }
-
 import (
 	"go/ast"
 	"go/types"
@@ -31,6 +13,18 @@ type unexportedCallChecker struct {
 	checkerBase
 
 	recvName string
+}
+
+func (c *unexportedCallChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects calls of unexported method from unexported type outside that type"
+	d.Before = `
+func baz(f foo) {
+	fo.bar()
+}`
+	d.After = `
+func baz(f foo) {
+	fo.Bar() // Made method exported
+}`
 }
 
 func (c *unexportedCallChecker) EnterFunc(decl *ast.FuncDecl) bool {

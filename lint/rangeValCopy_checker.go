@@ -1,21 +1,5 @@
 package lint
 
-//! Detects loops that copy big objects during each iteration.
-// Suggests to use index access or take address and make use pointer instead.
-//
-// @Before:
-// xs := make([][1024]byte, length)
-// for _, x := range xs {
-// 	// Loop body.
-// }
-//
-// @After:
-// xs := make([][1024]byte, length)
-// for i := range xs {
-// 	x := &xs[i]
-// 	// Loop body.
-// }
-
 import (
 	"go/ast"
 )
@@ -26,6 +10,28 @@ func init() {
 
 type rangeValCopyChecker struct {
 	checkerBase
+
+	sizeThreshold int64
+}
+
+func (c *rangeValCopyChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects loops that copy big objects during each iteration"
+	d.Details = "Suggests to use index access or take address and make use pointer instead."
+	d.Before = `
+xs := make([][1024]byte, length)
+for _, x := range xs {
+	// Loop body.
+}`
+	d.After = `
+xs := make([][1024]byte, length)
+for i := range xs {
+	x := &xs[i]
+	// Loop body.
+}`
+}
+
+func (c *rangeValCopyChecker) Init() {
+	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 128))
 }
 
 func (c *rangeValCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
@@ -41,8 +47,7 @@ func (c *rangeValCopyChecker) VisitStmt(stmt ast.Stmt) {
 	if typ == nil {
 		return
 	}
-	const sizeThreshold = 48
-	if size := c.ctx.sizesInfo.Sizeof(typ); size >= sizeThreshold {
+	if size := c.ctx.sizesInfo.Sizeof(typ); size >= c.sizeThreshold {
 		c.warn(rng, size)
 	}
 }

@@ -2,7 +2,6 @@ package lintwalk
 
 import (
 	"flag"
-	"fmt"
 	"go/build"
 	"log"
 	"os"
@@ -11,10 +10,13 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+
+	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 )
 
 func packagePath() []string {
-	return []string{runtime.GOROOT(), build.Default.GOPATH}
+	goPath := strings.Split(build.Default.GOPATH, string(os.PathListSeparator))
+	return append([]string{runtime.GOROOT()}, goPath...)
 }
 
 func getPackagePrefix(dir string) string {
@@ -28,16 +30,24 @@ func getPackagePrefix(dir string) string {
 	return ""
 }
 
+func dirIsHidden(dir string) bool {
+	return strings.HasPrefix(dir, ".") || strings.HasPrefix(dir, "_")
+}
+
 // Main implements gocritic sub-command entry point.
 func Main() {
-	enable := flag.String("enable", "all",
-		`forwarded to linter "as is"`)
-	exclude := flag.String("exclude", "testdata/|vendor/|builtin/",
-		`regexp used to skip package names`)
-	checkGenerated := flag.Bool("checkGenerated", false, `forwarded to linter "as is"`)
-	shorterErrLocation := flag.Bool("shorterErrLocation", true, `forwarded to linter "as is"`)
+	flags := flagparser.NewFlagParser(flag.CommandLine)
 
-	flag.Parse()
+	exclude := flag.String("exclude", `testdata/|vendor/|builtin/`,
+		`regexp used to skip package names`)
+	checkHidden := flag.Bool("checkHidden", false,
+		`whether to visit dirs those name start with "." or "_"`)
+
+	err := flags.Parse()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if flag.NArg() != 1 {
 		log.Fatalf("expected exactly one project root argument")
@@ -48,7 +58,7 @@ func Main() {
 	}
 	srcRoot = filepath.Clean(srcRoot)
 
-	srcRoot, err := filepath.Abs(srcRoot)
+	srcRoot, err = filepath.Abs(srcRoot)
 
 	if err != nil {
 		log.Fatal(err)
@@ -69,15 +79,18 @@ func Main() {
 			}
 			log.Printf("walk error: %v", e)
 		}
-		if info.IsDir() || !strings.HasSuffix(path, ".go") || excludeRE.MatchString(path) {
+		if info.IsDir() && dirIsHidden(filepath.Base(path)) {
+			if *checkHidden {
+				return nil // OK, visit anyway
+			}
+			return filepath.SkipDir
+		}
+		if !strings.HasSuffix(path, ".go") || excludeRE.MatchString(path) {
 			return nil
 		}
 
-		path = filepath.Dir(path)
-
-		path = getPackagePrefix(path)
-
-		packages[path] = true
+		importPath := getPackagePrefix(filepath.Dir(path))
+		packages[importPath] = true
 		return nil
 	})
 
@@ -85,12 +98,8 @@ func Main() {
 		log.Fatalf("walk src-root: %v", err)
 	}
 
-	args := []string{
-		"check-package",
-		"-enable", *enable,
-		"-checkGenerated=" + fmt.Sprint(*checkGenerated),
-		"-shorterErrLocation=" + fmt.Sprint(*shorterErrLocation),
-	}
+	args := append([]string{"check-package"}, flags.Args()...)
+
 	for p := range packages {
 		args = append(args, p)
 	}

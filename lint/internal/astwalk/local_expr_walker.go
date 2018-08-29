@@ -12,7 +12,7 @@ func (w *localExprWalker) WalkFile(f *ast.File) {
 		if !ok || !w.visitor.EnterFunc(decl) {
 			continue
 		}
-		ast.Inspect(decl, func(x ast.Node) bool {
+		ast.Inspect(decl.Body, func(x ast.Node) bool {
 			if x, ok := x.(ast.Expr); ok {
 				w.visitor.VisitLocalExpr(x)
 				return w.visitor.EnterChilds(x)

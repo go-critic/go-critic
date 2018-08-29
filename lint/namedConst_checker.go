@@ -1,14 +1,5 @@
 package lint
 
-//! Detects literals that can be replaced with defined named const.
-//
-// @Before:
-// // pos has type of token.Pos.
-// if pos != 0 {}
-//
-// @After:
-// if pos != token.NoPos {}
-
 import (
 	"go/ast"
 	"go/constant"
@@ -24,6 +15,14 @@ func init() {
 
 type namedConstChecker struct {
 	checkerBase
+}
+
+func (c *namedConstChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects literals that can be replaced with defined named const"
+	d.Before = `
+// pos has type of token.Pos.
+return pos != 0`
+	d.After = `return pos != token.NoPos`
 }
 
 func (c *namedConstChecker) EnterChilds(x ast.Node) bool {

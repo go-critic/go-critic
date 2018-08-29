@@ -1,21 +1,5 @@
 package lint
 
-//! Detects expensive copies of `for` loop range expressions.
-//
-// Suggests to use pointer to array to avoid the copy using `&` on range expression.
-//
-// @Before:
-// var xs [256]byte
-// for _, x := range xs {
-// 	// Loop body.
-// }
-//
-// @After:
-// var xs [256]byte
-// for _, x := range &xs {
-// 	// Loop body.
-// }
-
 import (
 	"go/ast"
 	"go/types"
@@ -27,6 +11,28 @@ func init() {
 
 type rangeExprCopyChecker struct {
 	checkerBase
+
+	sizeThreshold int64
+}
+
+func (c *rangeExprCopyChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects expensive copies of `for` loop range expressions"
+	d.Details = "Suggests to use pointer to array to avoid the copy using `&` on range expression."
+	d.Before = `
+var xs [2048]byte
+for _, x := range xs { // Copies 2048 bytes
+	// Loop body.
+}`
+	d.After = `
+var xs [2048]byte
+for _, x := range &xs { // No copy
+	// Loop body.
+}`
+	d.Note = `See Go issue for details: https://github.com/golang/go/issues/15812`
+}
+
+func (c *rangeExprCopyChecker) Init() {
+	c.sizeThreshold = int64(c.ctx.params.Int("sizeThreshold", 512))
 }
 
 func (c *rangeExprCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
@@ -45,8 +51,7 @@ func (c *rangeExprCopyChecker) VisitStmt(stmt ast.Stmt) {
 	if _, ok := tv.Type.(*types.Array); !ok {
 		return
 	}
-	const sizeThreshold = 96 // Not recommended to set value lower than 64
-	if size := c.ctx.sizesInfo.Sizeof(tv.Type); size >= sizeThreshold {
+	if size := c.ctx.sizesInfo.Sizeof(tv.Type); size >= c.sizeThreshold {
 		c.warn(rng, size)
 	}
 }

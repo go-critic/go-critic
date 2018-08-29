@@ -1,0 +1,35 @@
+run:
+  # timeout for analysis, e.g. 30s, 5m, default is 1m
+  deadline: 3m
+
+linters:
+  enable:
+    - deadcode
+    - errcheck
+    - gas
+    - goconst
+    - gofmt
+    - goimports
+    - golint
+    - gosimple
+    - ineffassign
+    - misspell
+    - nakedret
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+  disable:
+    - depguard
+    - dupl
+    - gocyclo
+    - govet
+    - interfacer
+    - lll
+    - maligned
+    - megacheck # https://github.com/golangci/golangci-lint/issues/157
+    - prealloc
+  fast: false

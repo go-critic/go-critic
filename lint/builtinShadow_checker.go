@@ -1,21 +1,5 @@
 package lint
 
-//! Detects when predeclared identifiers shadowed in assignments.
-//
-// @Before:
-// func main() {
-//     // shadowing len function
-//     len := 10
-//     println(len)
-// }
-//
-// @After:
-// func main() {
-//     // change identificator name
-//     length := 10
-//     println(length)
-// }
-
 import (
 	"go/ast"
 
@@ -30,6 +14,16 @@ type builtinShadowChecker struct {
 	checkerBase
 
 	builtins map[string]bool
+}
+
+func (c *builtinShadowChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects when predeclared identifiers shadowed in assignments"
+	d.Before = `
+len := 10
+println(len)`
+	d.After = `
+length := 10 // Changed variable name
+println(length)`
 }
 
 func (c *builtinShadowChecker) Init() {

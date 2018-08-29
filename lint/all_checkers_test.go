@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"testing"
 
@@ -20,6 +21,7 @@ var (
 	testdataPkgPath    = "github.com/go-critic/go-critic/lint/testdata/"
 	sizes              = types.SizesFor("gc", runtime.GOARCH)
 	warningDirectiveRE = regexp.MustCompile(`^\s*/// (.*)`)
+	commentRE          = regexp.MustCompile(`^\s*//`)
 )
 
 var ruleList []*Rule
@@ -53,13 +55,13 @@ func TestSanity(t *testing.T) {
 				defer func() {
 					r := recover()
 					if r != nil {
-						t.Errorf("unexpected panic: `%v`", r)
+						t.Errorf("unexpected panic: `%v`\n%s", r, debug.Stack())
 					} else {
 						saneRules = append(saneRules, rule)
 					}
 				}()
 
-				_ = NewChecker(rule, ctx).Check(f)
+				_ = NewChecker(rule, ctx, nil).Check(f)
 			}
 		})
 	}
@@ -70,7 +72,11 @@ func TestSanity(t *testing.T) {
 func TestCheckers(t *testing.T) {
 	for _, rule := range ruleList {
 		t.Run(rule.Name(), func(t *testing.T) {
-			pkgPath := testdataPkgPath + rule.Name()
+			testRule := rule
+			if testing.CoverMode() == "" {
+				t.Parallel()
+			}
+			pkgPath := testdataPkgPath + testRule.Name()
 
 			prog := newProg(t, pkgPath)
 			pkgInfo := prog.Imported[pkgPath]
@@ -78,7 +84,7 @@ func TestCheckers(t *testing.T) {
 			ctx := NewContext(prog.Fset, sizes)
 			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 
-			checkFiles(t, rule, ctx, prog, pkgPath)
+			checkFiles(t, testRule, ctx, prog, pkgPath)
 		})
 	}
 }
@@ -88,30 +94,40 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 
 	for _, f := range files {
 		filename := getFilename(prog, f)
-		testFilepath := filepath.Join("testdata", rule.Name(), filename)
-		goldenWarns := newGoldenFile(t, testFilepath)
+		testFilename := filepath.Join("testdata", rule.Name(), filename)
+		goldenWarns := newGoldenFile(t, testFilename)
 
-		var unexpectedWarns []string
-
-		warns := NewChecker(rule, ctx).Check(f)
+		stripDirectives(f)
+		warns := NewChecker(rule, ctx, nil).Check(f)
 
 		for _, warn := range warns {
 			line := ctx.FileSet().Position(warn.Node.Pos()).Line
 
 			if w := goldenWarns.find(line, warn.Text); w != nil {
 				if w.matched {
-					t.Errorf("%s:%d: multiple matches for %s", testFilepath, line, w)
+					t.Errorf("%s:%d: multiple matches for %s",
+						testFilename, line, w)
 				}
 				w.matched = true
 			} else {
-				unexpectedWarns = append(unexpectedWarns, warn.Text)
+				t.Errorf("%s:%d: unexpected warn: %s",
+					testFilename, line, warn.Text)
 			}
 		}
 
-		goldenWarns.checkUnmatched(t, testFilepath)
+		goldenWarns.checkUnmatched(t, testFilename)
+	}
+}
 
-		for _, l := range unexpectedWarns {
-			t.Errorf("unexpected warn: `%s`", l)
+// stripDirectives replaces "///" comments with empty single-line
+// comments, so the checkers that inspect comments see ordinary
+// comment groups (with extra newlines, but that's not important).
+func stripDirectives(f *ast.File) {
+	for _, cg := range f.Comments {
+		for _, c := range cg.List {
+			if strings.HasPrefix(c.Text, "/// ") {
+				c.Text = "//"
+			}
 		}
 	}
 }
@@ -127,7 +143,7 @@ func TestIncorrectRule(t *testing.T) {
 				t.Fatalf("expected `nil rule given`, got %v", r)
 			}
 		}()
-		NewChecker(nil, nil)
+		NewChecker(nil, nil, nil)
 	}(t)
 
 	func(t *testing.T) {
@@ -146,7 +162,7 @@ func TestIncorrectRule(t *testing.T) {
 		}()
 
 		r := &Rule{name: name}
-		NewChecker(r, nil)
+		NewChecker(r, nil, nil)
 	}(t)
 }
 
@@ -168,8 +184,8 @@ func (w warning) String() string {
 	return w.text
 }
 
-func newGoldenFile(t *testing.T, filepath string) *goldenFile {
-	testData, err := ioutil.ReadFile(filepath)
+func newGoldenFile(t *testing.T, filename string) *goldenFile {
+	testData, err := ioutil.ReadFile(filename)
 	if err != nil {
 		t.Fatalf("can't find checker tests: %v", err)
 	}
@@ -179,16 +195,17 @@ func newGoldenFile(t *testing.T, filepath string) *goldenFile {
 	var pending []*warning
 
 	for i, l := range lines {
-		if warningDirectiveRE.MatchString(l) {
-			var m warning
-			unpackSubmatches(l, warningDirectiveRE, &m.text)
-			pending = append(pending, &m)
-		} else {
-			if len(pending) != 0 {
-				line := i + 1
-				warnings[line] = append([]*warning{}, pending...)
-				pending = pending[:0]
+		if m := warningDirectiveRE.FindStringSubmatch(l); m != nil {
+			pending = append(pending, &warning{text: m[1]})
+		} else if len(pending) != 0 {
+			line := i + 1
+			if commentRE.MatchString(l) {
+				// Hack to make it possible to attach directives
+				// to a proper single-line comment position.
+				line -= len(pending)
 			}
+			warnings[line] = append([]*warning{}, pending...)
+			pending = pending[:0]
 		}
 	}
 	return &goldenFile{warnings: warnings}
@@ -203,13 +220,13 @@ func (f *goldenFile) find(line int, text string) *warning {
 	return nil
 }
 
-func (f *goldenFile) checkUnmatched(t *testing.T, testFilepath string) {
+func (f *goldenFile) checkUnmatched(t *testing.T, testFilename string) {
 	for line := range f.warnings {
 		for _, w := range f.warnings[line] {
 			if w.matched {
 				continue
 			}
-			t.Errorf("%s:%d: unmatched `%s`", testFilepath, line, w)
+			t.Errorf("%s:%d: unmatched `%s`", testFilename, line, w)
 		}
 	}
 }
@@ -233,14 +250,4 @@ func newProg(t *testing.T, pkgPath string) *loader.Program {
 		t.Fatalf("%s package is not properly loaded", pkgPath)
 	}
 	return prog
-}
-
-func unpackSubmatches(s string, re *regexp.Regexp, dst ...*string) {
-	submatches := re.FindStringSubmatch(s)
-	// Skip [0] which is a "whole match".
-	if len(submatches) > 0 {
-		for i, submatch := range submatches[1:] {
-			*dst[i] = submatch
-		}
-	}
 }

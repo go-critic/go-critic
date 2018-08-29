@@ -115,6 +115,15 @@ func initStatements() {
 	if _ = 0; true {
 	}
 
+	if variadicArg(1, 2, 3); false {
+	}
+
+	switch variadicArg(1, 2, 3); true {
+	}
+
+	for variadicArg(1, 2, 3); false; {
+	}
+
 	// select can't have init statement.
 }
 
@@ -165,6 +174,8 @@ func (*myString) noReceiverName2() (a, b string) { return "", "" }
 
 var noInit1, noInit2 int
 
+func variadicArg(xs ...interface{}) {}
+
 func funcCalls() {
 	f0 := func() {}
 	f1 := func(x int) {}
@@ -179,4 +190,13 @@ func funcCalls() {
 	fVariadic()
 	fVariadic(1, 2)
 	fVariadic([]int{1, 2}...)
+}
+
+func sliceExpressions(xs []int) {
+	_ = xs[:]
+	_ = xs[0:]
+	_ = xs[:0]
+	_ = xs[0:0]
+	_ = xs[:0:0]
+	_ = xs[0:0:0]
 }

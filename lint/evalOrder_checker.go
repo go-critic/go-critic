@@ -1,18 +1,5 @@
 package lint
 
-//! Detects potentially unsafe dependencies on evaluation order.
-//
-// @Before:
-// return mayModifySlice(&xs), xs[0]
-//
-// @After:
-// // A)
-// v := mayModifySlice(&xs)
-// return v, xs[0]
-// // B)
-// v := xs[0]
-// return mayModifySlice(&xs), v
-
 import (
 	"go/ast"
 	"go/types"
@@ -35,6 +22,18 @@ type evalOrderChecker struct {
 	// result if there are any equal active or passive dependency for any of them.
 	active []ast.Expr
 	depSet lintutil.AstSet
+}
+
+func (c *evalOrderChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects potentially unsafe dependencies on evaluation order"
+	d.Before = `return mayModifySlice(&xs), xs[0]`
+	d.After = `
+// A)
+v := mayModifySlice(&xs)
+return v, xs[0]
+// B)
+v := xs[0]
+return mayModifySlice(&xs), v`
 }
 
 func (c *evalOrderChecker) VisitStmt(stmt ast.Stmt) {

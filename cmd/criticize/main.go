@@ -1,11 +1,13 @@
 package criticize
 
 import (
+	"encoding/json"
 	"flag"
 	"go/ast"
 	"go/build"
 	"go/parser"
 	"go/types"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,6 +16,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 	"github.com/go-critic/go-critic/lint"
 	"golang.org/x/tools/go/loader"
 )
@@ -31,20 +34,67 @@ type linter struct {
 
 	// Command line flags:
 
-	withOpinionated    bool
-	withExperimental   bool
-	checkGenerated     bool
-	shorterErrLocation bool
+	flags *flagparser.FlagParser
 
 	packages        []string
 	enabledCheckers []string
-	failureExitCode int
+	checkerParams   map[string]map[string]interface{}
+}
+
+// parseEnabledCheckers processes enabled checkers, intersect them with disabled, etc.
+func (l *linter) parseEnabledCheckers() {
+	switch l.flags.Enable {
+	case flagparser.EnableAll:
+		for _, rule := range lint.RuleList() {
+			if rule.Experimental && !l.flags.WithExperimental {
+				continue
+			}
+			if rule.VeryOpinionated && !l.flags.WithOpinionated {
+				continue
+			}
+			l.enabledCheckers = append(l.enabledCheckers, rule.Name())
+		}
+	case "":
+		// Empty slice. Semantically "disable-all".
+		// Can be used to run all pipelines without actual checkers.
+		l.enabledCheckers = []string{}
+	default:
+		// Comma-separated list of names.
+		l.enabledCheckers = l.flags.EnabledCheckers()
+	}
+
+	switch l.flags.Disable {
+	case flagparser.DisableAll:
+		l.enabledCheckers = l.enabledCheckers[:0]
+	case "":
+	// nothing to disable, skip
+	default:
+		filtred := l.enabledCheckers[:0]
+
+		for _, e := range l.enabledCheckers {
+			found := false
+			for _, d := range l.flags.DisabledCheckers() {
+				if e == d {
+					found = true
+				}
+			}
+			if !found {
+				filtred = append(filtred, e)
+			}
+		}
+		l.enabledCheckers = filtred
+	}
 }
 
 // Main implements gocritic sub-command entry point.
 func Main() {
 	var l linter
 	parseArgv(&l)
+	if l.flags.ConfigFile != "" {
+		l.LoadConfig()
+	} else {
+		l.parseEnabledCheckers()
+	}
 	l.LoadProgram()
 	l.InitCheckers()
 
@@ -64,50 +114,46 @@ func blame(format string, args ...interface{}) {
 // parseArgv processes command-line arguments and fills ctx argument with them.
 // Terminates program on error.
 func parseArgv(l *linter) {
-	const enableAll = "all"
-
 	flag.Usage = func() {
 		log.Printf("usage: [flags] package...")
 		flag.PrintDefaults()
 	}
 
-	enable := flag.String("enable", enableAll,
-		`comma-separated list of enabled checkers`)
-	flag.BoolVar(&l.withExperimental, `withExperimental`, false,
-		`only for -enable=all, include experimental checks`)
-	flag.BoolVar(&l.withOpinionated, `withOpinionated`, false,
-		`only for -enable=all, include very opinionated checks`)
-	flag.IntVar(&l.failureExitCode, "failcode", 1,
-		`exit code to be used when lint issues are found`)
-	flag.BoolVar(&l.checkGenerated, "checkGenerated", false,
-		`whether to check machine-generated files`)
-	flag.BoolVar(&l.shorterErrLocation, "shorterErrLocation", true,
-		`whether to replace error location prefix with $GOROOT and $GOPATH`)
+	l.flags = flagparser.NewFlagParser(flag.CommandLine)
 
-	flag.Parse()
+	if err := l.flags.Parse(); err != nil {
+		blame(err.Error())
+	}
 
-	l.packages = flag.Args()
+	l.packages = l.flags.ParsedArgs()
 
 	if len(l.packages) == 0 {
 		blame("no packages specified\n")
 	}
-	if *enable != enableAll && l.withExperimental {
-		blame("-withExperimental used with -enable=%q", *enable)
-	}
-	if *enable != enableAll && l.withOpinionated {
-		blame("-withOpinionated used with -enable=%q", *enable)
+}
+
+func (l *linter) LoadConfig() {
+	raw, err := ioutil.ReadFile(l.flags.ConfigFile)
+	if err != nil {
+		log.Printf("cannot read config file %s, got error: %s", l.flags.ConfigFile, err)
+		return
 	}
 
-	switch *enable {
-	case enableAll:
-		// Special case. l.enabledCheckers remains nil.
-	case "":
-		// Empty slice. Semantically "disable-all".
-		// Can be used to run all pipelines without actual checkers.
-		l.enabledCheckers = []string{}
-	default:
-		// Comma-separated list of names.
-		l.enabledCheckers = strings.Split(*enable, ",")
+	var params map[string]interface{}
+	if err := json.Unmarshal(raw, &params); err != nil {
+		log.Fatalf("cannot parse config file, got error: %s", err)
+		return
+	}
+
+	l.enabledCheckers = []string{}
+	l.checkerParams = make(map[string]map[string]interface{})
+	for k, v := range params {
+		l.enabledCheckers = append(l.enabledCheckers, k)
+		if v, ok := v.(map[string]interface{}); ok {
+			l.checkerParams[k] = v
+		} else {
+			log.Printf("cannot parse value for %v", k)
+		}
 	}
 }
 
@@ -143,10 +189,10 @@ func (l *linter) InitCheckers() {
 	if l.enabledCheckers == nil {
 		// Fill default checkers set.
 		for _, rule := range available {
-			if rule.Experimental && !l.withExperimental {
+			if rule.Experimental && !l.flags.WithExperimental {
 				continue
 			}
-			if rule.VeryOpinionated && !l.withOpinionated {
+			if rule.VeryOpinionated && !l.flags.WithOpinionated {
 				continue
 			}
 			requested[rule.Name()] = true
@@ -161,7 +207,11 @@ func (l *linter) InitCheckers() {
 		if !requested[rule.Name()] {
 			continue
 		}
-		l.checkers = append(l.checkers, lint.NewChecker(rule, l.ctx))
+		l.checkers = append(l.checkers, lint.NewChecker(
+			rule,
+			l.ctx,
+			l.checkerParams[rule.Name()],
+		))
 		delete(requested, rule.Name())
 	}
 
@@ -181,7 +231,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 
 	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 	for _, f := range pkgInfo.Files {
-		if l.checkGenerated || !isGenerated(f) {
+		if l.flags.CheckGenerated || !isGenerated(f) {
 			l.ctx.SetFileInfo(l.getFilename(f))
 			l.checkFile(f)
 		}
@@ -200,7 +250,7 @@ func (l *linter) getFilename(f *ast.File) string {
 // ExitCode returns status code that should be used as an argument to os.Exit.
 func (l *linter) ExitCode() int {
 	if l.foundIssues {
-		return l.failureExitCode
+		return l.flags.FailureExitCode
 	}
 	return 0
 }
@@ -232,7 +282,7 @@ func (l *linter) checkFile(f *ast.File) {
 			for _, warn := range c.Check(f) {
 				l.foundIssues = true
 				loc := l.ctx.FileSet().Position(warn.Node.Pos()).String()
-				if l.shorterErrLocation {
+				if l.flags.ShorterErrLocation {
 					loc = shortenLocation(loc)
 				}
 				log.Printf("%s: %s: %v\n", loc, c.Rule, warn.Text)
