@@ -40,7 +40,6 @@ func (c *deprecatedCommentChecker) Init() {
 	//
 	// TODO(quasilyte): currently it only handles a single missing letter.
 	// Might want to handle other kinds of common misspell/typo kinds.
-	// For example, TODO can be misspelled as TOOD.
 	c.commonTypos = []string{
 		"Dprecated: ",
 		"Derecated: ",
