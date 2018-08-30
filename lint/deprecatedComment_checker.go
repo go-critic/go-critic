@@ -50,6 +50,8 @@ func (c *deprecatedCommentChecker) Init() {
 		"Deprecaed: ",
 		"Deprecatd: ",
 		"Deprecate: ",
+		"Derpecate: ",
+		"Derpecated: ",
 	}
 }
 
@@ -101,8 +103,10 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 		}
 
 		// Detect some simple typos.
+		lowerL := strings.ToLower(l)
 		for _, prefixWithTypo := range c.commonTypos {
-			if strings.HasPrefix(l, prefixWithTypo) {
+			prefixWithTypo := strings.ToLower(prefixWithTypo)
+			if strings.HasPrefix(lowerL, prefixWithTypo) {
 				c.warnTypo(doc, l)
 				return
 			}

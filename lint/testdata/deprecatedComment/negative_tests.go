@@ -11,3 +11,6 @@ func Deprecated() {}
 
 // deprecated is a type name.
 type deprecated struct{}
+
+// Derpecated is a type name.
+type Derpecated struct{}
