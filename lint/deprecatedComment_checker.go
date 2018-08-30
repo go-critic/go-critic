@@ -53,6 +53,9 @@ func (c *deprecatedCommentChecker) Init() {
 		"Derpecate: ",
 		"Derpecated: ",
 	}
+	for i := range c.commonTypos {
+		c.commonTypos[i] = strings.ToUpper(c.commonTypos[i])
+	}
 }
 
 func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
@@ -103,10 +106,8 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 		}
 
 		// Detect some simple typos.
-		lowerL := strings.ToLower(l)
 		for _, prefixWithTypo := range c.commonTypos {
-			prefixWithTypo := strings.ToLower(prefixWithTypo)
-			if strings.HasPrefix(lowerL, prefixWithTypo) {
+			if strings.HasPrefix(upcase, prefixWithTypo) {
 				c.warnTypo(doc, l)
 				return
 			}
