@@ -12,6 +12,8 @@ func init() {
 
 type deprecatedCommentChecker struct {
 	checkerBase
+
+	commonPatterns []*regexp.Regexp
 }
 
 func (c *deprecatedCommentChecker) InitDocumentation(d *Documentation) {
@@ -24,6 +26,14 @@ func FuncOld() int
 // Deprecated: use FuncNew instead
 func FuncOld() int
 `
+}
+
+func (c *deprecatedCommentChecker) Init() {
+	c.commonPatterns = []*regexp.Regexp{
+		regexp.MustCompile(`(?i)this (?:function|type) is deprecated`),
+		regexp.MustCompile(`(?i)deprecated[.!]? use \S* instead`),
+		// TODO(quasilyte): more of these?
+	}
 }
 
 func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
@@ -47,12 +57,6 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 	//
 	// TODO(quasilyte): there are also multi-line deprecation comments.
 
-	commonPatterns := []*regexp.Regexp{
-		regexp.MustCompile(`(?i)this (?:function|type) is deprecated`),
-		regexp.MustCompile(`(?i)deprecated[.!]? use \S* instead`),
-		// TODO(quasilyte): more of these?
-	}
-
 	for _, l := range strings.Split(doc.Text(), "\n") {
 		if len(l) < len("Deprecated: ") {
 			continue
@@ -72,7 +76,7 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 		}
 
 		// Check for other commonly used patterns.
-		for _, pat := range commonPatterns {
+		for _, pat := range c.commonPatterns {
 			if pat.MatchString(l) {
 				c.warnPattern(doc)
 				return
