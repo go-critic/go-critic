@@ -113,4 +113,12 @@ var (
 	/// typo in `Deprecate`; should be `Deprecated`
 	// Deprecate: ...
 	_ = 0
+
+	/// typo in `Derpecate`; should be `Deprecated`
+	// Derpecate: ...
+	_ = 0
+
+	/// typo in `DERPecate`; should be `Deprecated`
+	// DERPecate: ...
+	_ = 0
 )
