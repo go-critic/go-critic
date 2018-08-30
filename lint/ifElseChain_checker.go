@@ -36,7 +36,8 @@ default:
 }`
 	d.Note = `
 Permits single else or else-if; repeated else-if or else + else-if
-will trigger suggestion to use switch statement.`
+will trigger suggestion to use switch statement.
+See docs: https://golang.org/doc/effective_go.html#switch`
 }
 
 func (c *ifElseChainChecker) EnterFunc(fn *ast.FuncDecl) bool {
