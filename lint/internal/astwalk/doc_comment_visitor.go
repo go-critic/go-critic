@@ -34,9 +34,7 @@ func (w *docCommentVisitor) WalkFile(f *ast.File) {
 						w.visitor.VisitDocComment(spec.Doc)
 					}
 					ast.Inspect(spec.Type, func(n ast.Node) bool {
-						switch n := n.(type) {
-						// TODO: handling of nested type decls?
-						case *ast.Field:
+						if n, ok := n.(*ast.Field); ok {
 							if n.Doc != nil {
 								w.visitor.VisitDocComment(n.Doc)
 							}

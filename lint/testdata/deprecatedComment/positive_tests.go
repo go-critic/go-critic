@@ -54,3 +54,21 @@ const BadFormat7 int = 10
 //
 // Deprecated! USE ANYTHING INSTEAD!
 const BadFormat8 = 10
+
+type badNestedDoc struct {
+	/// use `Deprecated: ` (note the casing) instead of `deprecated: `
+	// deprecated: ha-ha
+	foo struct {
+		/// use `:` instead of `,` in `Deprecated, `
+		// Deprecated, first deprecated field
+		field int
+
+		/// use `Deprecated: ` (note the casing) instead of `deprecated: `
+		// deprecated: another one
+		bar struct {
+			/// use `Deprecated: ` (note the casing) instead of `deprecated: `
+			// deprecated: deprecated field
+			field int
+		}
+	}
+}
