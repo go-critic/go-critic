@@ -14,6 +14,7 @@ type deprecatedCommentChecker struct {
 	checkerBase
 
 	commonPatterns []*regexp.Regexp
+	commonTypos    []string
 }
 
 func (c *deprecatedCommentChecker) InitDocumentation(d *Documentation) {
@@ -33,6 +34,22 @@ func (c *deprecatedCommentChecker) Init() {
 		regexp.MustCompile(`(?i)this (?:function|type) is deprecated`),
 		regexp.MustCompile(`(?i)deprecated[.!]? use \S* instead`),
 		// TODO(quasilyte): more of these?
+	}
+
+	// TODO(quasilyte): may want to generate this list programmatically.
+	//
+	// TODO(quasilyte): currently it only handles a single missing letter.
+	// Might want to handle other kinds of common misspell/typo kinds.
+	c.commonTypos = []string{
+		"Dprecated: ",
+		"Derecated: ",
+		"Depecated: ",
+		"Deprcated: ",
+		"Depreated: ",
+		"Deprected: ",
+		"Deprecaed: ",
+		"Deprecatd: ",
+		"Deprecate: ",
 	}
 }
 
@@ -82,6 +99,14 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 				return
 			}
 		}
+
+		// Detect some simple typos.
+		for _, prefixWithTypo := range c.commonTypos {
+			if strings.HasPrefix(l, prefixWithTypo) {
+				c.warnTypo(doc, l)
+				return
+			}
+		}
 	}
 }
 
@@ -96,4 +121,9 @@ func (c *deprecatedCommentChecker) warnPattern(cause ast.Node) {
 
 func (c *deprecatedCommentChecker) warnComma(cause ast.Node) {
 	c.ctx.Warn(cause, "use `:` instead of `,` in `Deprecated, `")
+}
+
+func (c *deprecatedCommentChecker) warnTypo(cause ast.Node, line string) {
+	word := strings.Split(line, ":")[0]
+	c.ctx.Warn(cause, "typo in `%s`; should be `Deprecated`", word)
 }

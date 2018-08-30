@@ -72,3 +72,45 @@ type badNestedDoc struct {
 		}
 	}
 }
+
+/// typo in `Dprecated`; should be `Deprecated`
+// Dprecated: ...
+func withTypo1() {}
+
+var (
+	/// typo in `Dprecated`; should be `Deprecated`
+	// Dprecated: ...
+	_ = 0
+
+	/// typo in `Derecated`; should be `Deprecated`
+	// Derecated: ...
+	_ = 0
+
+	/// typo in `Depecated`; should be `Deprecated`
+	// Depecated: ...
+	_ = 0
+
+	/// typo in `Deprcated`; should be `Deprecated`
+	// Deprcated: ...
+	_ = 0
+
+	/// typo in `Depreated`; should be `Deprecated`
+	// Depreated: ...
+	_ = 0
+
+	/// typo in `Deprected`; should be `Deprecated`
+	// Deprected: ...
+	_ = 0
+
+	/// typo in `Deprecaed`; should be `Deprecated`
+	// Deprecaed: ...
+	_ = 0
+
+	/// typo in `Deprecatd`; should be `Deprecated`
+	// Deprecatd: ...
+	_ = 0
+
+	/// typo in `Deprecate`; should be `Deprecated`
+	// Deprecate: ...
+	_ = 0
+)
