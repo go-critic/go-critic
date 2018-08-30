@@ -68,6 +68,14 @@ type (
 		walkerEvents
 		VisitLocalComment(*ast.CommentGroup)
 	}
+
+	// DocCommentVisitor visits every doc-comment.
+	// Does not visit doc-comments for function-local definitions (types, etc).
+	// Also does not visit package doc-comment (file-level doc-comments).
+	DocCommentVisitor interface {
+		walkerEvents
+		VisitDocComment(*ast.CommentGroup)
+	}
 )
 
 // walkerEvents describes common hooks available for every visitor.
