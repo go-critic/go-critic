@@ -125,6 +125,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects comments that silence go lint complaints about doc-comment</td>
       </tr>
       <tr>
+        <td><a href="#dupArg-ref">dupArg</a></td>
+        <td>Detects suspicious duplicated arguments</td>
+      </tr>
+      <tr>
         <td><a href="#dupBranchBody-ref">dupBranchBody</a></td>
         <td>Detects duplicated branch bodies inside conditional statements</td>
       </tr>
@@ -573,6 +577,24 @@ func Foo() {
 You can either remove a comment to let go lint find it or change stub to useful comment.
 This checker makes it easier to detect stubs, the action is up to you.
 `docStub` is syntax-only checker (fast).
+<a name="dupArg-ref"></a>
+## dupArg
+Detects suspicious duplicated arguments.
+
+
+
+**Before:**
+```go
+copy(dst, dst)
+```
+
+**After:**
+```go
+copy(dst, src)
+```
+
+
+
 <a name="dupBranchBody-ref"></a>
 ## dupBranchBody
 Detects duplicated branch bodies inside conditional statements.
