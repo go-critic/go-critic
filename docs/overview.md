@@ -181,6 +181,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects repeated expression chains and suggest to refactor them</td>
       </tr>
       <tr>
+        <td><a href="#methodExprCall-ref">methodExprCall</a> :nerd_face:</td>
+        <td>Detects method expression call that can be replaced with a method call</td>
+      </tr>
+      <tr>
         <td><a href="#namedConst-ref">namedConst</a></td>
         <td>Detects literals that can be replaced with defined named const</td>
       </tr>
@@ -935,6 +939,26 @@ v := (a + x) + (b + x) + (c + x)
 
 
 
+<a name="methodExprCall-ref"></a>
+## methodExprCall
+Detects method expression call that can be replaced with a method call.
+
+
+
+**Before:**
+```go
+f := foo{}
+foo.bar(f)
+```
+
+**After:**
+```go
+f := foo{}
+f.bar()
+```
+
+
+`methodExprCall` is very opinionated.
 <a name="namedConst-ref"></a>
 ## namedConst
 Detects literals that can be replaced with defined named const.
