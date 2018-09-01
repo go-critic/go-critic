@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	addChecker(&unusedParamChecker{}, attrExperimental)
+	addChecker(&unusedParamChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
 type unusedParamChecker struct {
