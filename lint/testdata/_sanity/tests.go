@@ -207,7 +207,7 @@ type myStruct struct {
 
 func (m myStruct) method(a string) {}
 
-func inverseMethodCall() {
+func methodExprCall() {
 	m := myStruct{}
 
 	myStruct.method(m, "field")
