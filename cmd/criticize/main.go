@@ -231,14 +231,22 @@ func (l *linter) CheckPackage(pkgPath string) {
 
 	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 	for _, f := range pkgInfo.Files {
-		if l.flags.CheckGenerated || !isGenerated(f) {
-			l.ctx.SetFileInfo(l.getFilename(f))
-			l.checkFile(f)
+		if l.flags.IgnoreTests && l.isTestFile(f) {
+			continue
 		}
+		if !l.flags.CheckGenerated && l.isGenerated(f) {
+			continue
+		}
+		l.ctx.SetFileInfo(l.getFilename(f))
+		l.checkFile(f)
 	}
 }
 
-func isGenerated(f *ast.File) bool {
+func (l *linter) isTestFile(f *ast.File) bool {
+	return strings.HasSuffix(l.getFilename(f), "_test.go")
+}
+
+func (l *linter) isGenerated(f *ast.File) bool {
 	return len(f.Comments) != 0 && generatedFileCommentRE.MatchString(f.Comments[0].Text())
 }
 
