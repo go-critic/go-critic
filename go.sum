@@ -1,0 +1,13 @@
+github.com/go-toolsmith/astcopy v0.0.0-20180622191204-fc497f942afe h1:Uk8yUzZYUhRGqvbVkOr/a85UQReEU7NJo59ppLpor70=
+github.com/go-toolsmith/astcopy v0.0.0-20180622191204-fc497f942afe/go.mod h1:c9CPdq2AzM8oPomdlPniEfPAC6g1s7NqZzODt8y6ib8=
+github.com/go-toolsmith/astequal v0.0.0-20180612175849-e9d316155331 h1:OXL9gPzkGTY84OEJGuT9SIrIZIx7Z8RIYzFBYU9mKPQ=
+github.com/go-toolsmith/astequal v0.0.0-20180612175849-e9d316155331/go.mod h1:H+xSiq0+LtiDC11+h1G32h7Of5O3CYFJ99GVbS5lDKY=
+github.com/go-toolsmith/astfmt v0.0.0-20180616094151-6ea5b99ab174 h1:LGJPatPvLEbn4hbRCYVfrC0Wr0AVP3GOuAF9RKfLGfE=
+github.com/go-toolsmith/astfmt v0.0.0-20180616094151-6ea5b99ab174/go.mod h1:mP93XdblcopXwlyN4X4uodxXQhldPGZbcEJIimQHrkg=
+github.com/go-toolsmith/astp v0.0.0-20180612184503-d378e1e6ba8e h1:3PwGfnYudvxg8iRY093/i9UL44uOr9LiS54F2zQQOXk=
+github.com/go-toolsmith/astp v0.0.0-20180612184503-d378e1e6ba8e/go.mod h1:SV2ur98SGypH1UjcPpCatrV5hPazG6+IfNHbkDXBRrk=
+github.com/go-toolsmith/strparse v0.0.0-20180626175504-71162a977d98 h1:pF4qVDGHxk+Rta8r2DjB5GA1/z2iWXflyecULh5Oqh0=
+github.com/go-toolsmith/strparse v0.0.0-20180626175504-71162a977d98/go.mod h1:YI2nUKP9YGZnL/L1/DLFBfixrcjslWct4wyljWhSRy8=
+golang.org/x/tools v0.0.0-20180626174240-56e9b8e653c8/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+golang.org/x/tools v0.0.0-20180831211245-7ca132754999 h1:mf2VYfMpSMTlp0I/UXrX13w5LejDx34QeUUHH4TrUA8=
+golang.org/x/tools v0.0.0-20180831211245-7ca132754999/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
