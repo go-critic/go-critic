@@ -200,3 +200,15 @@ func sliceExpressions(xs []int) {
 	_ = xs[:0:0]
 	_ = xs[0:0:0]
 }
+
+type myStruct struct {
+	field string
+}
+
+func (m myStruct) method(a string) {}
+
+func inverseMethodCall() {
+	m := myStruct{}
+
+	myStruct.method(m, "field")
+}
