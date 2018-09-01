@@ -11,6 +11,9 @@ test:
 test-checker:
 	go test -v -count=1 -run=/$(filter-out $@,$(MAKECMDGOALS)) ./...
 
+test-goroot:
+	go run cmd/gocritic/main.go check-project -enable=$(filter-out $@,$(MAKECMDGOALS)) ${GOROOT}/src
+
 docs:
 	cd ./cmd/makedocs && go run main.go
 
