@@ -15,6 +15,7 @@ type captLocalChecker struct {
 	checkerBase
 
 	upcaseNames map[string]bool
+	checkLocals bool
 }
 
 func (c *captLocalChecker) InitDocumentation(d *Documentation) {
@@ -31,9 +32,15 @@ func (c *captLocalChecker) Init() {
 
 		// TODO: add common acronyms like HTTP and URL?
 	}
+
+	c.checkLocals = c.ctx.params.Bool("checkLocals", false)
 }
 
 func (c *captLocalChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {
+	if !c.checkLocals && def.Kind != astwalk.NameParam {
+		return
+	}
+
 	switch {
 	case c.upcaseNames[def.ID.Name]:
 		c.warnUpcase(def.ID)

@@ -36,6 +36,13 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// testCfg is a config used to initialize checkers for end2end testing.
+// The options should make checkers as aggressive as possible, making them
+// match 100% of cases they potentially could.
+var testCfg = map[string]map[string]interface{}{
+	"captLocal": {"checkLocals": true},
+}
+
 func TestSanity(t *testing.T) {
 	saneRules := ruleList[:0]
 
@@ -61,7 +68,7 @@ func TestSanity(t *testing.T) {
 					}
 				}()
 
-				_ = NewChecker(rule, ctx, nil).Check(f)
+				_ = NewChecker(rule, ctx, testCfg[rule.Name()]).Check(f)
 			}
 		})
 	}
@@ -84,21 +91,22 @@ func TestCheckers(t *testing.T) {
 			ctx := NewContext(prog.Fset, sizes)
 			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 
-			checkFiles(t, testRule, ctx, prog, pkgPath)
+			checker := NewChecker(rule, ctx, testCfg[rule.Name()])
+			checkFiles(t, checker, ctx, prog, pkgPath)
 		})
 	}
 }
 
-func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pkgPath string) {
+func checkFiles(t *testing.T, c *Checker, ctx *Context, prog *loader.Program, pkgPath string) {
 	files := prog.Imported[pkgPath].Files
 
 	for _, f := range files {
 		filename := getFilename(prog, f)
-		testFilename := filepath.Join("testdata", rule.Name(), filename)
+		testFilename := filepath.Join("testdata", c.Rule.Name(), filename)
 		goldenWarns := newGoldenFile(t, testFilename)
 
 		stripDirectives(f)
-		warns := NewChecker(rule, ctx, nil).Check(f)
+		warns := c.Check(f)
 
 		for _, warn := range warns {
 			line := ctx.FileSet().Position(warn.Node.Pos()).Line
