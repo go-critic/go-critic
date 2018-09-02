@@ -36,41 +36,16 @@ func (c *captLocalChecker) Init() {
 	c.checkLocals = c.ctx.params.Bool("checkLocals", false)
 }
 
-func (c *captLocalChecker) EnterFunc(fn *ast.FuncDecl) bool {
-	// Check func params eagerly.
-	// We do this to avoid wasting clocks when checkLocals is false.
-	if fn.Recv != nil && len(fn.Recv.List[0].Names) != 0 {
-		c.checkDef(fn.Recv.List[0].Names[0])
-	}
-	for _, p := range fn.Type.Params.List {
-		for _, id := range p.Names {
-			c.checkDef(id)
-		}
-	}
-	if fn.Type.Results != nil {
-		for _, p := range fn.Type.Results.List {
-			for _, id := range p.Names {
-				c.checkDef(id)
-			}
-		}
-	}
-
-	return c.checkLocals && fn.Body != nil
-}
-
 func (c *captLocalChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {
-	if def.Kind == astwalk.NameParam {
-		return // Already checked during EnterFunc
+	if !c.checkLocals && def.Kind != astwalk.NameParam {
+		return
 	}
-	c.checkDef(def.ID)
-}
 
-func (c *captLocalChecker) checkDef(id *ast.Ident) {
 	switch {
-	case c.upcaseNames[id.Name]:
-		c.warnUpcase(id)
-	case ast.IsExported(id.Name):
-		c.warnCapitalized(id)
+	case c.upcaseNames[def.ID.Name]:
+		c.warnUpcase(def.ID)
+	case ast.IsExported(def.ID.Name):
+		c.warnCapitalized(def.ID)
 	}
 }
 
