@@ -320,7 +320,7 @@ func output(l *linter, rule, loc, warn string) {
 		b, err := json.MarshalIndent(struct {
 			Rule     string `json:"rule"`
 			Location string `json:"location"`
-			Warning  string `jdon:"warning"`
+			Warning  string `json:"warning"`
 		}{
 			Rule:     rule,
 			Location: loc,
@@ -341,11 +341,7 @@ func output(l *linter, rule, loc, warn string) {
 		)
 
 	default:
-		log.Printf("%s:\n%s: %s\n",
-			rule,
-			loc,
-			warn,
-		)
+		log.Printf("%s:%s: %s\n", rule, loc, warn)
 	}
 
 }
