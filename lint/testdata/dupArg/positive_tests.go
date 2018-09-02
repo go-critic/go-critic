@@ -2,6 +2,10 @@ package checker_test
 
 import (
 	"bytes"
+	"go/types"
+	"image"
+	"image/draw"
+	"reflect"
 	"strings"
 )
 
@@ -9,9 +13,17 @@ func duplicatedArgs() {
 	var dstSlice []int
 	var s string
 	var b []byte
+	var dstRV reflect.Value
+	var typ types.Type
+	var dstImg draw.Image
 
 	/// suspicious duplicated args in `copy(dstSlice, dstSlice)`
 	copy(dstSlice, dstSlice)
+
+	/// suspicious duplicated args in `reflect.Copy(dstRV, dstRV)`
+	_ = reflect.Copy(dstRV, dstRV)
+	/// suspicious duplicated args in `reflect.DeepEqual(s, s)`
+	_ = reflect.DeepEqual(s, s)
 
 	/// suspicious duplicated args in `strings.Contains(s, s)`
 	_ = strings.Contains(s, s)
@@ -58,4 +70,17 @@ func duplicatedArgs() {
 	_ = bytes.SplitAfterN(b, b, 2)
 	/// suspicious duplicated args in `bytes.SplitN(b, b, 2)`
 	_ = bytes.SplitN(b, b, 2)
+
+	/// suspicious duplicated args in `types.Identical(typ, typ)`
+	_ = types.Identical(typ, typ)
+	/// suspicious duplicated args in `types.IdenticalIgnoreTags(typ, typ)`
+	_ = types.IdenticalIgnoreTags(typ, typ)
+
+	{
+		var area image.Rectangle
+		var point image.Point
+		var op draw.Op
+		/// suspicious duplicated args in `draw.Draw(dstImg, area, dstImg, point, op)`
+		draw.Draw(dstImg, area, dstImg, point, op)
+	}
 }

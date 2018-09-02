@@ -2,6 +2,10 @@ package checker_test
 
 import (
 	"bytes"
+	"go/types"
+	"image"
+	"image/draw"
+	"reflect"
 	"strings"
 )
 
@@ -9,8 +13,14 @@ func differentArgs() {
 	var dstSlice, srcSlice []int
 	var s, s2 string
 	var b, b2 []byte
+	var dstRV, srcRV reflect.Value
+	var typ, typ2 types.Type
+	var dstImg, srcImg draw.Image
 
 	copy(dstSlice, srcSlice)
+
+	_ = reflect.Copy(dstRV, srcRV)
+	_ = reflect.DeepEqual(s, s2)
 
 	_ = strings.Contains(s, s2)
 	_ = strings.Compare(s, s2)
@@ -35,4 +45,14 @@ func differentArgs() {
 	_ = bytes.SplitAfter(b, b2)
 	_ = bytes.SplitAfterN(b, b2, 2)
 	_ = bytes.SplitN(b, b2, 2)
+
+	_ = types.Identical(typ, typ2)
+	_ = types.IdenticalIgnoreTags(typ, typ2)
+
+	{
+		var area image.Rectangle
+		var point image.Point
+		var op draw.Op
+		draw.Draw(dstImg, area, srcImg, point, op)
+	}
 }

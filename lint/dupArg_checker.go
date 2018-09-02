@@ -23,50 +23,67 @@ func (c *dupArgChecker) InitDocumentation(d *Documentation) {
 }
 
 func (c *dupArgChecker) Init() {
-	newMatcherFunc := func(pairs [][2]int) func(*ast.CallExpr) bool {
+	// newMatcherFunc returns a function that matches a call if
+	// args[xIndex] and args[yIndex] are equal.
+	newMatcherFunc := func(xIndex, yIndex int) func(*ast.CallExpr) bool {
 		return func(call *ast.CallExpr) bool {
-			for _, pair := range pairs {
-				x := call.Args[pair[0]]
-				y := call.Args[pair[1]]
-				if !astequal.Expr(x, y) {
-					return false
-				}
-			}
-			return true
+			x := call.Args[xIndex]
+			y := call.Args[yIndex]
+			return astequal.Expr(x, y)
 		}
 	}
 
-	xyMatcher := newMatcherFunc([][2]int{
-		{0, 1},
-	})
+	// m maps pattern string to a matching function.
+	// String patterns are used for documentation purposes (readability).
+	m := map[string]func(*ast.CallExpr) bool{
+		"(x, x, ...)":    newMatcherFunc(0, 1),
+		"(x, _, x, ...)": newMatcherFunc(0, 2),
+	}
+
+	// TODO(quasilyte): handle x.Equal(x) cases.
+	// Example: *math/Big.Int.Cmp method.
+
+	// TODO(quasilyte): more perky mode that will also
+	// report things like io.Copy(x, x).
+	// Probably safe thing to do even without that option
+	// if `x` is not interface (requires type checks
+	// that are not incorporated into this checker yet).
 
 	c.matchers = map[string]func(*ast.CallExpr) bool{
-		"copy": xyMatcher,
+		"copy": m["(x, x, ...)"],
 
-		"strings.Contains":    xyMatcher,
-		"strings.Compare":     xyMatcher,
-		"strings.EqualFold":   xyMatcher,
-		"strings.HasPrefix":   xyMatcher,
-		"strings.HasSuffix":   xyMatcher,
-		"strings.Index":       xyMatcher,
-		"strings.LastIndex":   xyMatcher,
-		"strings.Split":       xyMatcher,
-		"strings.SplitAfter":  xyMatcher,
-		"strings.SplitAfterN": xyMatcher,
-		"strings.SplitN":      xyMatcher,
+		"reflect.Copy":      m["(x, x, ...)"],
+		"reflect.DeepEqual": m["(x, x, ...)"],
 
-		"bytes.Contains":    xyMatcher,
-		"bytes.Compare":     xyMatcher,
-		"bytes.Equal":       xyMatcher,
-		"bytes.EqualFold":   xyMatcher,
-		"bytes.HasPrefix":   xyMatcher,
-		"bytes.HasSuffix":   xyMatcher,
-		"bytes.Index":       xyMatcher,
-		"bytes.LastIndex":   xyMatcher,
-		"bytes.Split":       xyMatcher,
-		"bytes.SplitAfter":  xyMatcher,
-		"bytes.SplitAfterN": xyMatcher,
-		"bytes.SplitN":      xyMatcher,
+		"strings.Contains":    m["(x, x, ...)"],
+		"strings.Compare":     m["(x, x, ...)"],
+		"strings.EqualFold":   m["(x, x, ...)"],
+		"strings.HasPrefix":   m["(x, x, ...)"],
+		"strings.HasSuffix":   m["(x, x, ...)"],
+		"strings.Index":       m["(x, x, ...)"],
+		"strings.LastIndex":   m["(x, x, ...)"],
+		"strings.Split":       m["(x, x, ...)"],
+		"strings.SplitAfter":  m["(x, x, ...)"],
+		"strings.SplitAfterN": m["(x, x, ...)"],
+		"strings.SplitN":      m["(x, x, ...)"],
+
+		"bytes.Contains":    m["(x, x, ...)"],
+		"bytes.Compare":     m["(x, x, ...)"],
+		"bytes.Equal":       m["(x, x, ...)"],
+		"bytes.EqualFold":   m["(x, x, ...)"],
+		"bytes.HasPrefix":   m["(x, x, ...)"],
+		"bytes.HasSuffix":   m["(x, x, ...)"],
+		"bytes.Index":       m["(x, x, ...)"],
+		"bytes.LastIndex":   m["(x, x, ...)"],
+		"bytes.Split":       m["(x, x, ...)"],
+		"bytes.SplitAfter":  m["(x, x, ...)"],
+		"bytes.SplitAfterN": m["(x, x, ...)"],
+		"bytes.SplitN":      m["(x, x, ...)"],
+
+		"types.Identical":           m["(x, x, ...)"],
+		"types.IdenticalIgnoreTags": m["(x, x, ...)"],
+
+		"draw.Draw": m["(x, _, x, ...)"],
 
 		// TODO(quasilyte): more of these.
 	}
