@@ -12,7 +12,6 @@ func f2(ch *chan string) {}
 /// consider `m' to be of non-pointer type
 func f3(a int, m *map[int]string, s string) {}
 
-/// consider `slice' to be of non-pointer type
 /// consider `ch' to be of non-pointer type
 func f4(slice *[]string) (ch *chan *int) {
 	return nil
@@ -58,3 +57,8 @@ func f10(a, b *myInterface) {}
 func f11() (a, b *myInterface) {
 	return nil, nil
 }
+
+type iface myInterface
+
+/// consider to make non-pointer type for `*iface`
+func underlyingIface(*iface) {}
