@@ -3,6 +3,7 @@ package criticize
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"go/ast"
 	"go/build"
 	"go/parser"
@@ -294,13 +295,41 @@ func (l *linter) checkFile(f *ast.File) {
 				if l.flags.ShorterErrLocation {
 					loc = shortenLocation(loc)
 				}
-				log.Printf("%v:\n%v: %v\n",
-					aurora.Red(c.Rule),
-					aurora.Magenta(
-						aurora.Bold(loc),
-					),
-					warn.Text,
-				)
+				switch {
+				case l.flags.ColoredOutput:
+					log.Printf("%v:\n%v: %v\n",
+						aurora.Red(c.Rule),
+						aurora.Magenta(
+							aurora.Bold(loc),
+						),
+						warn.Text,
+					)
+
+				case l.flags.JsonOutput:
+
+					// due to sort capabilities,
+					// using struct instead of map
+					b, err := json.MarshalIndent(struct {
+						Rule     string
+						Location string
+						Warn     string
+					}{
+						// Using value to ignore c.Rule.Docs and other unnecessary fields
+						Rule:     fmt.Sprintf("%v", c.Rule),
+						Location: loc,
+						Warn:     warn.Text,
+					}, "", "    ")
+					if err != nil {
+						panic(err)
+					}
+					log.Println(string(b))
+				default:
+					log.Printf("%v:\n%v: %v\n",
+						c.Rule,
+						loc,
+						warn.Text,
+					)
+				}
 			}
 		}(c)
 	}

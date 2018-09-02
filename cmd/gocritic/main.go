@@ -62,7 +62,7 @@ func main() {
 	if cmd == nil {
 		terminate("unknown sub-command: "+sub, printSupportedSubs)
 	}
-	log.SetPrefix("- ")
+	log.SetPrefix("")
 	// The called function may exit with non-zero status.
 	// No code should follow this call.
 	cmd.main()
