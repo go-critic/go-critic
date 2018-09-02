@@ -40,7 +40,7 @@ func NewFlagParser(flagSet *flag.FlagSet) *FlagParser {
 		`whether to replace error location prefix with $GOROOT and $GOPATH`)
 	fp.flagSet.BoolVar(&fp.IgnoreTests, "ignoreTests", false,
 		`whether to check test files`)
-	fp.flagSet.BoolVar(&fp.JsonOutput, "json", false,
+	fp.flagSet.BoolVar(&fp.JSONOutput, "json", false,
 		`whether to output in json format`)
 	fp.flagSet.BoolVar(&fp.ColoredOutput, "color", true,
 		`whether to output with colors`)
@@ -91,7 +91,7 @@ type FlagParser struct {
 	ShorterErrLocation bool
 	IgnoreTests        bool
 	ColoredOutput      bool
-	JsonOutput         bool
+	JSONOutput         bool
 }
 
 // EnabledCheckers return checkers, provided by enable argument
@@ -171,7 +171,7 @@ func (fp *FlagParser) Args() []string {
 		"-shorterErrLocation=" + fmt.Sprint(fp.ShorterErrLocation),
 		"-ignoreTests=" + fmt.Sprint(fp.IgnoreTests),
 		"-color=" + fmt.Sprint(fp.ColoredOutput),
-		"-json=" + fmt.Sprint(fp.JsonOutput),
+		"-json=" + fmt.Sprint(fp.JSONOutput),
 	}
 
 	if fp.ConfigFile == "" {

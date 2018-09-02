@@ -305,7 +305,7 @@ func (l *linter) checkFile(f *ast.File) {
 						warn.Text,
 					)
 
-				case l.flags.JsonOutput:
+				case l.flags.JSONOutput:
 
 					// due to sort capabilities,
 					// using struct instead of map
