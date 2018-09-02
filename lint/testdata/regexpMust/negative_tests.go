@@ -9,3 +9,14 @@ func noWarnings() {
 	_ = regexp.MustCompile(`go-critic linter`)
 	_ = regexp.MustCompilePOSIX(`go-critic linter`)
 }
+
+func nonConstPatterns(pat string) {
+	re, err := regexp.Compile(pat)
+	if err != nil {
+		panic(err)
+	}
+	_ = re
+
+	_, _ = regexp.Compile(pat)
+	_, _ = regexp.CompilePOSIX(pat)
+}
