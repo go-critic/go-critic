@@ -18,6 +18,7 @@ import (
 
 	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 	"github.com/go-critic/go-critic/lint"
+	"github.com/logrusorgru/aurora"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -293,7 +294,13 @@ func (l *linter) checkFile(f *ast.File) {
 				if l.flags.ShorterErrLocation {
 					loc = shortenLocation(loc)
 				}
-				log.Printf("%s: %s: %v\n", loc, c.Rule, warn.Text)
+				log.Printf("%v:\n%v: %v\n",
+					aurora.Red(c.Rule),
+					aurora.Magenta(
+						aurora.Bold(loc),
+					),
+					warn.Text,
+				)
 			}
 		}(c)
 	}
