@@ -3,7 +3,6 @@ package criticize
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"go/ast"
 	"go/build"
 	"go/parser"
@@ -295,41 +294,7 @@ func (l *linter) checkFile(f *ast.File) {
 				if l.flags.ShorterErrLocation {
 					loc = shortenLocation(loc)
 				}
-				switch {
-				case l.flags.ColoredOutput:
-					log.Printf("%v:\n%v: %v\n",
-						aurora.Red(c.Rule),
-						aurora.Magenta(
-							aurora.Bold(loc),
-						),
-						warn.Text,
-					)
-
-				case l.flags.JSONOutput:
-
-					// due to sort capabilities,
-					// using struct instead of map
-					b, err := json.MarshalIndent(struct {
-						Rule     string
-						Location string
-						Warn     string
-					}{
-						// Using value to ignore c.Rule.Docs and other unnecessary fields
-						Rule:     fmt.Sprintf("%v", c.Rule),
-						Location: loc,
-						Warn:     warn.Text,
-					}, "", "    ")
-					if err != nil {
-						panic(err)
-					}
-					log.Println(string(b))
-				default:
-					log.Printf("%v:\n%v: %v\n",
-						c.Rule,
-						loc,
-						warn.Text,
-					)
-				}
+				output(l, c.Rule.Name(), loc, warn.Text)
 			}
 		}(c)
 	}
@@ -345,4 +310,42 @@ func shortenLocation(loc string) string {
 	default:
 		return loc
 	}
+}
+
+func output(l *linter, rule, loc, warn string) {
+	switch {
+	case l.flags.JSONOutput:
+		// due to sort capabilities,
+		// using struct instead of map
+		b, err := json.MarshalIndent(struct {
+			Rule     string `json:"rule"`
+			Location string `json:"location"`
+			Warning  string `jdon:"warning"`
+		}{
+			Rule:     rule,
+			Location: loc,
+			Warning:  warn,
+		}, "", "    ") // TODO:
+		// Should add a prefix to add split capabilities to split the message to every single report
+		if err != nil {
+			panic(err)
+		}
+		log.Println(string(b))
+	case l.flags.ColoredOutput:
+		log.Printf("%v:\n%v: %v\n",
+			aurora.Red(rule),
+			aurora.Magenta(
+				aurora.Bold(loc),
+			),
+			warn,
+		)
+
+	default:
+		log.Printf("%s:\n%s: %s\n",
+			rule,
+			loc,
+			warn,
+		)
+	}
+
 }
