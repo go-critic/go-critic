@@ -196,7 +196,7 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 }
 
 func resolvePkgObjects(ctx *context, f *ast.File) {
-	ctx.pkgObjects = make(map[*types.PkgName]string)
+	ctx.pkgObjects = make(map[*types.PkgName]string, len(f.Imports))
 
 	for _, spec := range f.Imports {
 		if spec.Name != nil {
