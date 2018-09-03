@@ -208,3 +208,15 @@ func resolvePkgObjects(ctx *Context, f *ast.File) {
 		}
 	}
 }
+
+func resolvePkgRenames(ctx *Context, f *ast.File) {
+	ctx.pkgRenames = make(map[string]string)
+
+	for _, spec := range f.Imports {
+		if spec.Name != nil {
+			obj := ctx.typesInfo.ObjectOf(spec.Name)
+			path := obj.(*types.PkgName).Imported().Path()
+			ctx.pkgRenames[path] = spec.Name.Name
+		}
+	}
+}

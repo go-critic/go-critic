@@ -95,6 +95,9 @@ func (c *Checker) Check(f *ast.File) []Warning {
 	if c.ctx.require.pkgObjects {
 		resolvePkgObjects(c.ctx.Context, f)
 	}
+	if c.ctx.require.pkgRenames {
+		resolvePkgRenames(c.ctx.Context, f)
+	}
 	c.walker.WalkFile(f)
 	return c.ctx.warnings
 }
@@ -135,10 +138,16 @@ type Context struct {
 	// For example, Context.require.pkgObjects => Context.pkgObjects.
 	require struct {
 		pkgObjects bool
+		pkgRenames bool
 	}
 
 	// pkgObjects stores all imported packages and their local names.
 	pkgObjects map[*types.PkgName]string
+
+	// pkgRenames maps package path to its local renaming.
+	// Contains no entries for packages that were imported without
+	// explicit local names.
+	pkgRenames map[string]string
 }
 
 // See #614.
