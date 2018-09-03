@@ -1,7 +1,7 @@
 package checker_tests
 
 import (
-	"time"
+	mytime "time"
 )
 
 type color int
@@ -26,8 +26,8 @@ func rawReturn() {
 		return 0
 	}
 
-	_ = func() time.Duration {
-		/// use time.Nanosecond instead of 1
+	_ = func() mytime.Duration {
+		/// use mytime.Nanosecond instead of 1
 		return 1
 	}
 

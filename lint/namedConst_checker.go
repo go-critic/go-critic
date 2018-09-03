@@ -25,6 +25,10 @@ return pos != 0`
 	d.After = `return pos != token.NoPos`
 }
 
+func (c *namedConstChecker) Init() {
+	c.ctx.require.pkgRenames = true
+}
+
 func (c *namedConstChecker) EnterChilds(x ast.Node) bool {
 	switch x := x.(type) {
 	case *ast.BinaryExpr:
@@ -50,6 +54,13 @@ func (c *namedConstChecker) isTimeExpr(x *ast.BinaryExpr) bool {
 		return false
 	}
 	return astp.IsBasicLit(x.X) || astp.IsBasicLit(x.Y)
+}
+
+func (c *namedConstChecker) importedName(obj types.Object) string {
+	if renamed := c.ctx.pkgRenames[obj.Pkg().Path()]; renamed != "" {
+		return renamed
+	}
+	return obj.Pkg().Name()
 }
 
 func (c *namedConstChecker) VisitExpr(x ast.Expr) {
@@ -95,7 +106,7 @@ func (c *namedConstChecker) VisitExpr(x ast.Expr) {
 func (c *namedConstChecker) warn(cause ast.Node, v constant.Value, named *types.Const) {
 	suggestion := named.Name()
 	if named.Pkg() != c.ctx.pkg {
-		suggestion = named.Pkg().Name() + "." + suggestion
+		suggestion = c.importedName(named) + "." + suggestion
 	}
 	c.ctx.Warn(cause, "use %s instead of %s", suggestion, v)
 }
