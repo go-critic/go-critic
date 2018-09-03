@@ -195,7 +195,7 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 	checkerPrototypes[rule.name] = proto
 }
 
-func resolvePkgObjects(ctx *context, f *ast.File) {
+func resolvePkgObjects(ctx *Context, f *ast.File) {
 	ctx.pkgObjects = make(map[*types.PkgName]string, len(f.Imports))
 
 	for _, spec := range f.Imports {

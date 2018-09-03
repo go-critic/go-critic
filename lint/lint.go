@@ -93,7 +93,7 @@ type Checker struct {
 func (c *Checker) Check(f *ast.File) []Warning {
 	c.ctx.warnings = c.ctx.warnings[:0]
 	if c.ctx.require.pkgObjects {
-		resolvePkgObjects(&c.ctx, f)
+		resolvePkgObjects(c.ctx.Context, f)
 	}
 	c.walker.WalkFile(f)
 	return c.ctx.warnings
@@ -140,6 +140,9 @@ type Context struct {
 	// pkgObjects stores all imported packages and their local names.
 	pkgObjects map[*types.PkgName]string
 }
+
+// See #614.
+var _ = Context{}.require
 
 // NewContext returns new shared context to be used by every checker.
 //
