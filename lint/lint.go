@@ -92,6 +92,9 @@ type Checker struct {
 // Check runs rule checker over file f.
 func (c *Checker) Check(f *ast.File) []Warning {
 	c.ctx.warnings = c.ctx.warnings[:0]
+	if c.ctx.require.pkgObjects {
+		resolvePkgObjects(c.ctx.Context, f)
+	}
 	c.walker.WalkFile(f)
 	return c.ctx.warnings
 }
@@ -123,7 +126,23 @@ type Context struct {
 	// sizesInfo carries alignment and type size information.
 	// Arch-dependent.
 	sizesInfo types.Sizes
+
+	// require records what optional resources are required
+	// by the checkers set that use this context.
+	//
+	// Every require fields makes associated context field
+	// to be properly initialized.
+	// For example, Context.require.pkgObjects => Context.pkgObjects.
+	require struct {
+		pkgObjects bool
+	}
+
+	// pkgObjects stores all imported packages and their local names.
+	pkgObjects map[*types.PkgName]string
 }
+
+// See #614.
+var _ = Context{}.require
 
 // NewContext returns new shared context to be used by every checker.
 //

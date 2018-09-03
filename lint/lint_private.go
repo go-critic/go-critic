@@ -3,6 +3,7 @@ package lint
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 	"log"
 	"reflect"
 	"strings"
@@ -192,4 +193,18 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 		return clone
 	}
 	checkerPrototypes[rule.name] = proto
+}
+
+func resolvePkgObjects(ctx *Context, f *ast.File) {
+	ctx.pkgObjects = make(map[*types.PkgName]string, len(f.Imports))
+
+	for _, spec := range f.Imports {
+		if spec.Name != nil {
+			obj := ctx.typesInfo.ObjectOf(spec.Name)
+			ctx.pkgObjects[obj.(*types.PkgName)] = spec.Name.Name
+		} else {
+			obj := ctx.typesInfo.Implicits[spec]
+			ctx.pkgObjects[obj.(*types.PkgName)] = obj.Name()
+		}
+	}
 }
