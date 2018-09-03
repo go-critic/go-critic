@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"math"
 
-	xmath "math"
+	mymath1 "math"
+	mymath2 "math"
 
 	"github.com/go-critic/go-critic/lint"
 )
 
-var _ = xmath.E // Make sure xmath is used
+var _ = mymath1.E
+var _ = mymath2.E
 
 func shadowImportedPackages() {
 	fmt.Printf("Hello PI=%v, Rule=%v", math.Pi, lint.Rule{})
@@ -47,5 +49,8 @@ type shadower struct{}
 /// shadow of imported package 'fmt'
 func (fmt shadower) f() {}
 
-/// shadow of imported package 'xmath'
-func renamedImportShadow(xmath int) {}
+/// shadow of imported package 'mymath1'
+func renamedImportShadow1(mymath1 int) {}
+
+/// shadow of imported package 'mymath2'
+func renamedImportShadow2(mymath2 int) {}
