@@ -36,6 +36,13 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// testCfg is a config used to initialize checkers for end2end testing.
+// The options should make checkers as aggressive as possible, making them
+// match 100% of cases they potentially could.
+var testCfg = map[string]map[string]interface{}{
+	"captLocal": {"checkLocals": true},
+}
+
 func TestSanity(t *testing.T) {
 	saneRules := ruleList[:0]
 
@@ -61,7 +68,7 @@ func TestSanity(t *testing.T) {
 					}
 				}()
 
-				_ = NewChecker(rule, ctx, nil).Check(f)
+				_ = NewChecker(rule, ctx, testCfg[rule.Name()]).Check(f)
 			}
 		})
 	}
@@ -98,7 +105,7 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 		goldenWarns := newGoldenFile(t, testFilename)
 
 		stripDirectives(f)
-		warns := NewChecker(rule, ctx, nil).Check(f)
+		warns := NewChecker(rule, ctx, testCfg[rule.Name()]).Check(f)
 
 		for _, warn := range warns {
 			line := ctx.FileSet().Position(warn.Node.Pos()).Line
