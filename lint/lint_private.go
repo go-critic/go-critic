@@ -6,6 +6,7 @@ import (
 	"go/types"
 	"log"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/go-critic/go-critic/lint/internal/astwalk"
@@ -214,8 +215,10 @@ func resolvePkgRenames(ctx *Context, f *ast.File) {
 
 	for _, spec := range f.Imports {
 		if spec.Name != nil {
-			obj := ctx.typesInfo.ObjectOf(spec.Name)
-			path := obj.(*types.PkgName).Imported().Path()
+			path, err := strconv.Unquote(spec.Path.Value)
+			if err != nil {
+				panic(err)
+			}
 			ctx.pkgRenames[path] = spec.Name.Name
 		}
 	}
