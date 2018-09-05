@@ -101,6 +101,7 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 
 	for _, f := range files {
 		filename := getFilename(prog, f)
+		ctx.SetFileInfo(filename, f)
 		testFilename := filepath.Join("testdata", rule.Name(), filename)
 		goldenWarns := newGoldenFile(t, testFilename)
 
