@@ -237,7 +237,7 @@ func (l *linter) CheckPackage(pkgPath string) {
 		if !l.flags.CheckGenerated && l.isGenerated(f) {
 			continue
 		}
-		l.ctx.SetFileInfo(l.getFilename(f))
+		l.ctx.SetFileInfo(l.getFilename(f), f)
 		l.checkFile(f)
 	}
 }

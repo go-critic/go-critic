@@ -92,12 +92,6 @@ type Checker struct {
 // Check runs rule checker over file f.
 func (c *Checker) Check(f *ast.File) []Warning {
 	c.ctx.warnings = c.ctx.warnings[:0]
-	if c.ctx.require.pkgObjects {
-		resolvePkgObjects(c.ctx.Context, f)
-	}
-	if c.ctx.require.pkgRenames {
-		resolvePkgRenames(c.ctx.Context, f)
-	}
 	c.walker.WalkFile(f)
 	return c.ctx.warnings
 }
@@ -187,8 +181,14 @@ func (c *Context) SetPackageInfo(info *types.Info, pkg *types.Package) {
 // SetFileInfo sets file-related metadata.
 //
 // Must be called for every source code file being checked.
-func (c *Context) SetFileInfo(filename string) {
-	c.filename = filename
+func (c *Context) SetFileInfo(name string, f *ast.File) {
+	c.filename = name
+	if c.require.pkgObjects {
+		resolvePkgObjects(c, f)
+	}
+	if c.require.pkgRenames {
+		resolvePkgRenames(c, f)
+	}
 }
 
 // Documentation holds rule structured documentation.
