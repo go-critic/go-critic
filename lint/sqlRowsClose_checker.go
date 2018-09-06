@@ -80,11 +80,13 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 				}
 
 				for _, s := range f.Body.List {
-					if expr, ok := s.(*ast.ExprStmt); ok {
-						ss := c.getCloseSelectorExpr(expr.X)
-						if ss != nil {
-							closeVars = append(closeVars, c.getType(ss.X))
-						}
+					expr, ok := s.(*ast.ExprStmt)
+					if !ok {
+						continue
+					}
+					ss := c.getCloseSelectorExpr(expr.X)
+					if ss != nil {
+						closeVars = append(closeVars, c.getType(ss.X))
 					}
 				}
 			}
@@ -101,8 +103,7 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 }
 
 func (c *sqlRowsCloseChecker) getType(x ast.Node) types.Object {
-	ident := identOf(x)
-	return c.ctx.typesInfo.ObjectOf(ident)
+	return c.ctx.typesInfo.ObjectOf(identOf(x))
 }
 
 func (c *sqlRowsCloseChecker) getCloseSelectorExpr(x ast.Node) *ast.SelectorExpr {
@@ -112,8 +113,7 @@ func (c *sqlRowsCloseChecker) getCloseSelectorExpr(x ast.Node) *ast.SelectorExpr
 	}
 	if bb, ok := call.Fun.(*ast.SelectorExpr); ok {
 		// Detect call Close for sql.Rows variables
-		funcName := qualifiedName(bb.Sel)
-		if funcName == "Close" {
+		if qualifiedName(bb.Sel) == "Close" {
 			return bb
 		}
 	}
