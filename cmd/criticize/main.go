@@ -33,8 +33,6 @@ type linter struct {
 
 	foundIssues bool // True if there any checker reported an issue
 
-	// Command line flags:
-
 	flags *flagparser.FlagParser
 
 	packages        []string
