@@ -295,7 +295,7 @@ func (l *linter) checkFile(f *ast.File) {
 					loc = shortenLocation(loc)
 				}
 
-				output(l, c.Rule.Name(), loc, warn.Text)
+				printWarning(l, c.Rule.Name(), loc, warn.Text)
 			}
 		}(c)
 	}
@@ -313,7 +313,7 @@ func shortenLocation(loc string) string {
 	}
 }
 
-func output(l *linter, rule, loc, warn string) {
+func printWarning(l *linter, rule, loc, warn string) {
 	switch {
 	case l.flags.JSONOutput:
 		// due to sort capabilities,
@@ -331,17 +331,14 @@ func output(l *linter, rule, loc, warn string) {
 			panic(err)
 		}
 		log.Println(string(b))
+
 	case l.flags.ColoredOutput:
-		log.Printf("%v:\n%v: %v\n",
+		log.Printf("%v: %v: %v\n",
+			aurora.Magenta(aurora.Bold(loc)),
 			aurora.Red(rule),
-			aurora.Magenta(
-				aurora.Bold(loc),
-			),
-			warn,
-		)
+			warn)
 
 	default:
-		log.Printf("%s:%s: %s\n", rule, loc, warn)
+		log.Printf("%s: %s: %s\n", loc, rule, warn)
 	}
-
 }
