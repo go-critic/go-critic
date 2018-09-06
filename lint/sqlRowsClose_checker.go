@@ -5,10 +5,6 @@ import (
 	"go/types"
 )
 
-const (
-	rowsTypePTR = "*database/sql.Rows"
-)
-
 func init() {
 	addChecker(&sqlRowsCloseChecker{}, attrExperimental)
 }
@@ -36,9 +32,12 @@ rows.Close()`
 // 3. Not call Close method for variable;
 
 func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
+	const rowsTypePTR = "*database/sql.Rows"
+
 	localVars := make([]types.Object, 0)
 	returnVars := make([]types.Object, 0)
 	closeVars := make([]types.Object, 0)
+
 	for _, b := range decl.Body.List {
 		switch b := b.(type) {
 		case *ast.AssignStmt:
@@ -46,7 +45,7 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 			if b.Lhs != nil {
 				for _, l := range b.Lhs {
 					if c.typeString(l) == rowsTypePTR {
-						localVars = append(localVars, c.ctx.typesInfo.ObjectOf(identOf(l)))
+						localVars = append(localVars, c.getType(l))
 					}
 				}
 			}
@@ -54,28 +53,39 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 			// Detect return vars with sql.Rows types
 			if b.Results != nil && len(b.Results) > 0 {
 				for _, r := range b.Results {
-					t := c.ctx.typesInfo.TypeOf(r)
-					if t.String() == rowsTypePTR {
-						returnVars = append(returnVars, c.ctx.typesInfo.ObjectOf(identOf(r)))
+					if c.typeString(r) == rowsTypePTR {
+						returnVars = append(returnVars, c.getType(r))
 					}
 				}
 			}
 		case *ast.ExprStmt:
-			if b, ok := b.X.(*ast.CallExpr); ok {
-				if bb, ok := b.Fun.(*ast.SelectorExpr); ok {
-					// Detect call Close for sql.Rows variables
-					funcName := qualifiedName(bb.Sel)
-					if funcName == "Close" {
-						closeVars = append(closeVars, c.ctx.typesInfo.ObjectOf(identOf(bb.X)))
-					}
-				}
+			if sel := c.getCloseSelectorExpr(b.X); sel != nil {
+				closeVars = append(closeVars, c.getType(sel.X))
 			}
 		case *ast.DeferStmt:
 			// Detect call Close for sql.Rows variables over defer declaration
+
+			// is it `defer rowsVar.Close()`
 			if b, ok := b.Call.Fun.(*ast.SelectorExpr); ok {
 				funcName := qualifiedName(b.Sel)
 				if funcName == "Close" {
-					closeVars = append(closeVars, c.ctx.typesInfo.ObjectOf(identOf(b.X)))
+					closeVars = append(closeVars, c.getType(b.X))
+				}
+			}
+
+			// looking for `rowsVar.Close()` inside `defer func() { ... }()`
+			if f, ok := b.Call.Fun.(*ast.FuncLit); ok {
+				if f.Body == nil || f.Body.List == nil {
+					continue
+				}
+
+				for _, s := range f.Body.List {
+					if expr, ok := s.(*ast.ExprStmt); ok {
+						ss := c.getCloseSelectorExpr(expr.X)
+						if ss != nil {
+							closeVars = append(closeVars, c.getType(ss.X))
+						}
+					}
 				}
 			}
 		}
@@ -88,6 +98,26 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 			c.ctx.Warn(l.Parent(), "local variable db.Rows have not Close call")
 		}
 	}
+}
+
+func (c *sqlRowsCloseChecker) getType(x ast.Node) types.Object {
+	ident := identOf(x)
+	return c.ctx.typesInfo.ObjectOf(ident)
+}
+
+func (c *sqlRowsCloseChecker) getCloseSelectorExpr(x ast.Node) *ast.SelectorExpr {
+	call, ok := x.(*ast.CallExpr)
+	if !ok {
+		return nil
+	}
+	if bb, ok := call.Fun.(*ast.SelectorExpr); ok {
+		// Detect call Close for sql.Rows variables
+		funcName := qualifiedName(bb.Sel)
+		if funcName == "Close" {
+			return bb
+		}
+	}
+	return nil
 }
 
 func (c *sqlRowsCloseChecker) typeString(x ast.Expr) string {
