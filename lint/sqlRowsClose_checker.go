@@ -73,7 +73,7 @@ func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 				}
 			}
 
-			// looking for `rowsVar.Close()`` inside `defer func() { ... }()`
+			// looking for `rowsVar.Close()` inside `defer func() { ... }()`
 			if f, ok := b.Call.Fun.(*ast.FuncLit); ok {
 				if f.Body == nil || f.Body.List == nil {
 					continue
