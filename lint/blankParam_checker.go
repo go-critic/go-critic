@@ -5,20 +5,20 @@ import (
 )
 
 func init() {
-	addChecker(&unusedParamChecker{}, attrExperimental, attrVeryOpinionated)
+	addChecker(&blankParamChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
-type unusedParamChecker struct {
+type blankParamChecker struct {
 	checkerBase
 }
 
-func (c *unusedParamChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects unused params and suggests to name them as `_` (underscore)"
+func (c *blankParamChecker) InitDocumentation(d *Documentation) {
+	d.Summary = "Detects blank params and suggests to name them as `_` (underscore)"
 	d.Before = `func f(a int, b float64) // b isn't used inside function body`
 	d.After = `func f(a int, _ float64) // everything is cool`
 }
 
-func (c *unusedParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
+func (c *blankParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	params := decl.Type.Params
 	if decl.Body == nil || params == nil || params.NumFields() == 0 {
 		return
@@ -49,16 +49,16 @@ func (c *unusedParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 		}
 	}
 
-	// all params that are left are unused
+	// all params that are left are blank
 	for _, id := range objToIdent {
 		c.warn(id)
 	}
 }
 
-func (c *unusedParamChecker) warn(param *ast.Ident) {
+func (c *blankParamChecker) warn(param *ast.Ident) {
 	c.ctx.Warn(param, "rename `%s` to `_`", param)
 }
 
-func (c *unusedParamChecker) warnUnnamed(n ast.Node) {
+func (c *blankParamChecker) warnUnnamed(n ast.Node) {
 	c.ctx.Warn(n, "consider to name parameters as `_`")
 }

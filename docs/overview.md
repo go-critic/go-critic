@@ -237,8 +237,8 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects unnecessary braced statement blocks</td>
       </tr>
       <tr>
-        <td><a href="#unusedParam-ref">unusedParam</a></td>
-        <td>Detects unused params and suggests to name them as `_` (underscore)</td>
+        <td><a href="#blankParam-ref">blankParam</a></td>
+        <td>Detects blank params and suggests to name them as `_` (underscore)</td>
       </tr>
       <tr>
         <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
@@ -1437,9 +1437,9 @@ copy(b, values...)
 
 
 
-<a name="unusedParam-ref"></a>
-## unusedParam
-Detects unused params and suggests to name them as `_` (underscore).
+<a name="blankParam-ref"></a>
+## blankParam
+Detects blank params and suggests to name them as `_` (underscore).
 
 
 
