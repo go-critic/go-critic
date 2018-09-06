@@ -8,6 +8,5 @@ github.com/go-toolsmith/astp v0.0.0-20180612184503-d378e1e6ba8e h1:3PwGfnYudvxg8
 github.com/go-toolsmith/astp v0.0.0-20180612184503-d378e1e6ba8e/go.mod h1:SV2ur98SGypH1UjcPpCatrV5hPazG6+IfNHbkDXBRrk=
 github.com/go-toolsmith/strparse v0.0.0-20180626175504-71162a977d98 h1:pF4qVDGHxk+Rta8r2DjB5GA1/z2iWXflyecULh5Oqh0=
 github.com/go-toolsmith/strparse v0.0.0-20180626175504-71162a977d98/go.mod h1:YI2nUKP9YGZnL/L1/DLFBfixrcjslWct4wyljWhSRy8=
-golang.org/x/tools v0.0.0-20180626174240-56e9b8e653c8/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20180831211245-7ca132754999 h1:mf2VYfMpSMTlp0I/UXrX13w5LejDx34QeUUHH4TrUA8=
 golang.org/x/tools v0.0.0-20180831211245-7ca132754999/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
