@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	addChecker(&longChainChecker{}, attrExperimental)
+	addChecker(&longChainChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
 type longChainChecker struct {
