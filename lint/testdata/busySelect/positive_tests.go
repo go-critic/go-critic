@@ -40,7 +40,7 @@ func f5() {
 	for {
 		select {
 		case <-ch:
-		/// default case without a blocking operation or sleep might waste a CPU time
+			/// default case without a blocking operation or sleep might waste a CPU time
 		default:
 			bar()
 		}
