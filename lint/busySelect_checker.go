@@ -49,7 +49,7 @@ func (c *busySelectChecker) VisitStmt(stmt ast.Stmt) {
 	for _, s := range selectStmt.Body.List {
 		s := s.(*ast.CommClause)
 		if s.Comm == nil {
-			if !c.hasBlockingStmt(s.Body) {
+			if !c.hasBlockingStmt(s.Body) && !c.hasBlockingStmt(forStmt.Body.List) {
 				c.warn(s)
 			}
 		}
