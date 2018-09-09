@@ -13,7 +13,7 @@ type blankParamChecker struct {
 }
 
 func (c *blankParamChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects blank params and suggests to name them as `_` (underscore)"
+	d.Summary = "Detects unused params and suggests to name them as `_` (blank)"
 	d.Before = `func f(a int, b float64) // b isn't used inside function body`
 	d.After = `func f(a int, _ float64) // everything is cool`
 }
@@ -49,7 +49,7 @@ func (c *blankParamChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 		}
 	}
 
-	// all params that are left are blank
+	// all params that are left are unused
 	for _, id := range objToIdent {
 		c.warn(id)
 	}
