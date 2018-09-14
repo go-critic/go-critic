@@ -5,6 +5,7 @@
 [![Go Report Card][go-report-image]][go-report-url]
 [![GoDoc][godoc-image]][godoc-url]
 [![coverage][coverage-image]][coverage-url]
+[![PRs Welcome][pr-welcome-image]][pr-welcome-url]
 
 [travis-image]: https://travis-ci.org/go-critic/go-critic.svg?branch=master
 [travis-url]: https://travis-ci.org/go-critic/go-critic
@@ -14,6 +15,8 @@
 [godoc-url]: https://godoc.org/github.com/go-critic/go-critic/lint
 [coverage-image]: https://coveralls.io/repos/github/go-critic/go-critic/badge.svg?branch=master
 [coverage-url]: https://coveralls.io/github/go-critic/go-critic?branch=master
+[pr-welcome-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
+[pr-welcome-url]: https://github.com/go-critic/go-critic/blob/master/CONTRIBUTING.md
 
 Go source code linter providing checks currently missing from other linters.
 
