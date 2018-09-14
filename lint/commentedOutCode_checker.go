@@ -3,6 +3,7 @@ package lint
 import (
 	"go/ast"
 	"go/token"
+	"regexp"
 	"strings"
 
 	"github.com/go-toolsmith/strparse"
@@ -14,6 +15,8 @@ func init() {
 
 type commentedOutCodeChecker struct {
 	checkerBase
+
+	notQuiteFuncCall *regexp.Regexp
 }
 
 func (c *commentedOutCodeChecker) InitDocumentation(d *Documentation) {
@@ -22,6 +25,10 @@ func (c *commentedOutCodeChecker) InitDocumentation(d *Documentation) {
 // fmt.Println("Debugging hard")
 foo(1, 2)`
 	d.After = `foo(1, 2)`
+}
+
+func (c *commentedOutCodeChecker) Init() {
+	c.notQuiteFuncCall = regexp.MustCompile(`\w+\s+\([^)]*\)\s*$`)
 }
 
 func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
@@ -54,6 +61,13 @@ func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
 		!strings.Contains(s, "fmt.") &&
 		!strings.Contains(s, "log.")
 	if cond {
+		return
+	}
+
+	// Almost looks like a commented-out function call,
+	// but there is a whitespace between function name and
+	// parameters list. Skip these to avoid false positives.
+	if c.notQuiteFuncCall.MatchString(s) {
 		return
 	}
 
