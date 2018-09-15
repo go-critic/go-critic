@@ -28,7 +28,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects repeated if-else statements and suggests to replace them with switch statement</td>
       </tr>
       <tr>
-        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
+        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a> :nerd_face:</td>
         <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
       </tr>
       <tr>
@@ -38,6 +38,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
         <td>Detects loops that copy big objects during each iteration</td>
+      </tr>
+      <tr>
+        <td><a href="#regexpMust-ref">regexpMust</a></td>
+        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
       </tr>
       <tr>
         <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
@@ -79,6 +83,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#assignOp-ref">assignOp</a></td>
         <td>Detects assignments that can be simplified by using assignment operators</td>
+      </tr>
+      <tr>
+        <td><a href="#blankParam-ref">blankParam</a> :nerd_face:</td>
+        <td>Detects unused params and suggests to name them as `_` (blank)</td>
       </tr>
       <tr>
         <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
@@ -181,7 +189,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects non-assignment statements inside if/switch init clause</td>
       </tr>
       <tr>
-        <td><a href="#longChain-ref">longChain</a></td>
+        <td><a href="#longChain-ref">longChain</a> :nerd_face:</td>
         <td>Detects repeated expression chains and suggest to refactor them</td>
       </tr>
       <tr>
@@ -205,10 +213,6 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects input and output parameters that have a type of pointer to referential type</td>
       </tr>
       <tr>
-        <td><a href="#regexpMust-ref">regexpMust</a></td>
-        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
-      </tr>
-      <tr>
         <td><a href="#sloppyLen-ref">sloppyLen</a></td>
         <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
       </tr>
@@ -225,6 +229,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects calls of unexported method from unexported type outside that type</td>
       </tr>
       <tr>
+        <td><a href="#unlabelStmt-ref">unlabelStmt</a></td>
+        <td>Detects redundant statement labels</td>
+      </tr>
+      <tr>
         <td><a href="#unlambda-ref">unlambda</a></td>
         <td>Detects function literals that can be simplified</td>
       </tr>
@@ -235,10 +243,6 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#unnecessaryBlock-ref">unnecessaryBlock</a></td>
         <td>Detects unnecessary braced statement blocks</td>
-      </tr>
-      <tr>
-        <td><a href="#blankParam-ref">blankParam</a></td>
-        <td>Detects blank params and suggests to name them as `_` (underscore)</td>
       </tr>
       <tr>
         <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
@@ -305,6 +309,24 @@ x *= 2
 
 
 
+<a name="blankParam-ref"></a>
+## blankParam
+Detects unused params and suggests to name them as `_` (blank).
+
+
+
+**Before:**
+```go
+func f(a int, b float64) // b isn't used inside function body
+```
+
+**After:**
+```go
+func f(a int, _ float64) // everything is cool
+```
+
+
+`blankParam` is very opinionated.
 <a name="boolExprSimplify-ref"></a>
 ## boolExprSimplify
 Detects bool expressions that can be simplified.
@@ -960,7 +982,7 @@ v := (a + x) + (b + x) + (c + x)
 ```
 
 
-
+`longChain` is very opinionated.
 <a name="methodExprCall-ref"></a>
 ## methodExprCall
 Detects method expression call that can be replaced with a method call.
@@ -1071,7 +1093,7 @@ func foo(a, b, c, d, e, f, g int) {}
 ```
 
 
-`paramTypeCombine` is syntax-only checker (fast).
+`paramTypeCombine` is syntax-only checker (fast).`paramTypeCombine` is very opinionated.
 <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
 Detects input and output parameters that have a type of pointer to referential type.
@@ -1080,16 +1102,15 @@ Detects input and output parameters that have a type of pointer to referential t
 
 **Before:**
 ```go
-func f(m *map[string]int) (ch *chan *int)
+func f(m *map[string]int) (*chan *int)
 ```
 
 **After:**
 ```go
-func f(m map[string]int) (ch chan *int)
+func f(m map[string]int) (chan *int)
 ```
 
-Slices are not as referential as maps or channels, but it's usually
-better to return them by value rather than modyfing them by pointer.
+
 
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
@@ -1359,6 +1380,33 @@ func baz(f foo) {
 
 
 `unexportedCall` is very opinionated.
+<a name="unlabelStmt-ref"></a>
+## unlabelStmt
+Detects redundant statement labels.
+
+
+
+**Before:**
+```go
+derp:
+for x := range xs {
+	if x == 0 {
+		break derp
+	}
+}
+```
+
+**After:**
+```go
+for x := range xs {
+	if x == 0 {
+		break
+	}
+}
+```
+
+
+
 <a name="unlambda-ref"></a>
 ## unlambda
 Detects function literals that can be simplified.
@@ -1433,24 +1481,6 @@ copy(b[:], values...) // b is []byte
 ```go
 f(s)
 copy(b, values...)
-```
-
-
-
-<a name="blankParam-ref"></a>
-## blankParam
-Detects blank params and suggests to name them as `_` (underscore).
-
-
-
-**Before:**
-```go
-func f(a int, b float64) // b isn't used inside function body
-```
-
-**After:**
-```go
-func f(a int, _ float64) // everything is cool
 ```
 
 
