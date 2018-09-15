@@ -1,4 +1,4 @@
-package linter_test
+package checker_test
 
 // Deprecated: part of the old API; use API v2
 func ProperDeprecationComment() {}
