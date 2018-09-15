@@ -1,4 +1,4 @@
-package linter_test
+package checker_test
 
 /// use `Deprecated: ` (note the casing) instead of `deprecated: `
 // deprecated: part of the old API; use API v2

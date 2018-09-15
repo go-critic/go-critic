@@ -1,4 +1,4 @@
-package linter_test
+package checker_test
 
 func goodFunctionLiterals() {
 	_ = returnInt
