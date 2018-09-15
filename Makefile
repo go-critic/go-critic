@@ -1,7 +1,5 @@
 .PHONY: test test-checker ci cover tools docs
 
-PKG = github.com/go-critic/go-critic/lint github.com/go-critic/go-critic/lint/internal/astwalk github.com/go-critic/go-critic/lint/internal/lintutil
-
 %:      # stubs to get makefile param for `test-checker` command
 	@:	# see: https://stackoverflow.com/a/6273809/433041
 
@@ -22,7 +20,7 @@ ci:
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
-	go vet $(go list ./... | grep -v /testdata/)
+	go vet $(shell go list ./... | grep -v /vendor/)
 	go test -v -race -count=1 ./...
 
 ci-linter:
