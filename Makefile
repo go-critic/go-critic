@@ -22,7 +22,7 @@ ci:
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
-	go tool vet .
+	go vet $(go list ./... | grep -v /testdata/)
 	go test -v -race -count=1 ./...
 
 ci-linter:
