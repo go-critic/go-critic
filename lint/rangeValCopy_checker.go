@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	addChecker(&rangeValCopyChecker{})
+	addChecker(&rangeValCopyChecker{}, attrPerformance)
 }
 
 type rangeValCopyChecker struct {
