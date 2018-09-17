@@ -44,6 +44,10 @@ type AttributeSet struct {
 	// VeryOpinionated marks rule as controversial for some audience and
 	// that it might be not suitable for everyone.
 	VeryOpinionated bool
+
+	// Performance marks rules that generally should only be
+	// respected for performance-sensitive code paths.
+	Performance bool
 }
 
 // Rule describes a named check that can be performed by the linter.

@@ -49,6 +49,7 @@ const (
 	attrExperimental checkerAttribute = iota
 	attrSyntaxOnly
 	attrVeryOpinionated
+	attrPerformance
 )
 
 type parameters map[string]interface{}
@@ -172,6 +173,8 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 			rule.SyntaxOnly = true
 		case attrVeryOpinionated:
 			rule.VeryOpinionated = true
+		case attrPerformance:
+			rule.Performance = true
 		default:
 			panic(fmt.Sprintf("unexpected checkerAttribute"))
 		}
