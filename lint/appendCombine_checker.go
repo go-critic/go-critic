@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"github.com/go-toolsmith/astequal"
 )
 
@@ -66,15 +67,11 @@ func (c *appendCombineChecker) matchAppend(stmt ast.Stmt, slice ast.Expr) *ast.C
 	// xs are 0-N append arguments, but not variadic argument,
 	// because it makes append combining impossible.
 
-	assign, ok := stmt.(*ast.AssignStmt)
-	{
-		cond := ok &&
-			len(assign.Lhs) == 1 &&
-			len(assign.Rhs) == 1
-		if !cond {
-			return nil
-		}
+	assign := lintutil.AsAssignStmt(stmt)
+	if len(assign.Lhs) != 1 || len(assign.Rhs) != 1 {
+		return nil
 	}
+
 	call, ok := assign.Rhs[0].(*ast.CallExpr)
 	{
 		cond := ok &&
