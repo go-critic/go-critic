@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/types"
 
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"github.com/go-toolsmith/astequal"
 )
 
@@ -32,10 +33,7 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 		return
 	}
 
-	result, ok := ret.Results[0].(*ast.CallExpr)
-	if !ok {
-		return
-	}
+	result := lintutil.AsCallExpr(ret.Results[0])
 	callable := qualifiedName(result.Fun)
 	if callable == "" {
 		return // Skip tricky cases; only handle simple calls

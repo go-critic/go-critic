@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
 	"golang.org/x/tools/go/ast/astutil"
@@ -17,12 +18,6 @@ type boolExprSimplifyChecker struct {
 	checkerBase
 
 	cause ast.Node // Last warning cause
-
-	// nil sentinels are used as a replacements for
-	// bare nil to avoid a need to perform nil checks
-	// when doing type-assertion that may return nil.
-	nilUnaryExpr  *ast.UnaryExpr
-	nilBinaryExpr *ast.BinaryExpr
 }
 
 func (c *boolExprSimplifyChecker) InitDocumentation(d *Documentation) {
@@ -33,11 +28,6 @@ b := !(x) == !(y)`
 	d.After = `
 a := elapsed < expectElapsedMin
 b := (x) == (y)`
-}
-
-func (c *boolExprSimplifyChecker) Init() {
-	c.nilUnaryExpr = &ast.UnaryExpr{}
-	c.nilBinaryExpr = &ast.BinaryExpr{}
 }
 
 func (c *boolExprSimplifyChecker) EnterChilds(x ast.Node) bool { return c.cause != x }
@@ -62,9 +52,9 @@ func (c *boolExprSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 }
 
 func (c *boolExprSimplifyChecker) doubleNegation(cur *astutil.Cursor) bool {
-	neg1 := c.unaryNot(cur.Node())
-	neg2 := c.unaryNot(astutil.Unparen(neg1.X))
-	if neg1 != c.nilUnaryExpr && neg2 != c.nilUnaryExpr {
+	neg1 := lintutil.AsUnaryExprOp(cur.Node(), token.NOT)
+	neg2 := lintutil.AsUnaryExprOp(astutil.Unparen(neg1.X), token.NOT)
+	if !lintutil.IsNil(neg1) && !lintutil.IsNil(neg2) {
 		cur.Replace(astutil.Unparen(neg2.X))
 		return true
 	}
@@ -76,9 +66,9 @@ func (c *boolExprSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
 	if !ok || x.Op != token.EQL {
 		return false
 	}
-	neg1 := c.unaryNot(x.X)
-	neg2 := c.unaryNot(x.Y)
-	if neg1 != c.nilUnaryExpr && neg2 != c.nilUnaryExpr {
+	neg1 := lintutil.AsUnaryExprOp(x.X, token.NOT)
+	neg2 := lintutil.AsUnaryExprOp(x.Y, token.NOT)
+	if !lintutil.IsNil(neg1) && !lintutil.IsNil(neg2) {
 		x.X = neg1.X
 		x.Y = neg2.X
 		return true
@@ -87,9 +77,9 @@ func (c *boolExprSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
 }
 
 func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
-	neg := c.unaryNot(cur.Node())
-	cmp := c.binaryExpr(astutil.Unparen(neg.X))
-	if neg == c.nilUnaryExpr || cmp == c.nilBinaryExpr {
+	neg := lintutil.AsUnaryExprOp(cur.Node(), token.NOT)
+	cmp := lintutil.AsBinaryExpr(astutil.Unparen(neg.X))
+	if lintutil.IsNil(neg) || lintutil.IsNil(cmp) {
 		return false
 	}
 
@@ -116,9 +106,9 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 }
 
 func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
-	or := c.logicalOr(cur.Node())
-	lhs := c.binaryExpr(astutil.Unparen(or.X))
-	rhs := c.binaryExpr(astutil.Unparen(or.Y))
+	or := lintutil.AsBinaryExprOp(cur.Node(), token.LOR)
+	lhs := lintutil.AsBinaryExpr(astutil.Unparen(or.X))
+	rhs := lintutil.AsBinaryExpr(astutil.Unparen(or.Y))
 
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false
@@ -145,34 +135,6 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 		}
 	}
 	return false
-}
-
-// binaryExpr coerces x into binary expr if possible,
-// otherwise returns c.nilBinaryExpr.
-func (c *boolExprSimplifyChecker) binaryExpr(x ast.Node) *ast.BinaryExpr {
-	binexp, ok := x.(*ast.BinaryExpr)
-	if !ok {
-		return c.nilBinaryExpr
-	}
-	return binexp
-}
-
-// unaryNot coerces x into unary not if possible,
-// otherwise returns c.nilUnaryExpr.
-func (c *boolExprSimplifyChecker) unaryNot(x ast.Node) *ast.UnaryExpr {
-	neg, ok := x.(*ast.UnaryExpr)
-	if !ok || neg.Op != token.NOT {
-		return c.nilUnaryExpr
-	}
-	return neg
-}
-
-func (c *boolExprSimplifyChecker) logicalOr(x ast.Node) *ast.BinaryExpr {
-	or, ok := x.(*ast.BinaryExpr)
-	if !ok || or.Op != token.LOR {
-		return c.nilBinaryExpr
-	}
-	return or
 }
 
 func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {

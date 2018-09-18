@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/types"
 
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"github.com/go-toolsmith/astcopy"
 )
 
@@ -24,20 +25,9 @@ f.bar()`
 }
 
 func (c *methodExprCallChecker) VisitExpr(x ast.Expr) {
-	call, ok := x.(*ast.CallExpr)
-	if !ok {
-		return
-	}
-
-	s, ok := call.Fun.(*ast.SelectorExpr)
-	if !ok {
-		return
-	}
-
-	id, ok := s.X.(*ast.Ident)
-	if !ok {
-		return
-	}
+	call := lintutil.AsCallExpr(x)
+	s := lintutil.AsSelectorExpr(call.Fun)
+	id := lintutil.AsIdent(s.X)
 
 	obj := c.ctx.typesInfo.ObjectOf(id)
 	if _, ok := obj.(*types.TypeName); ok {
