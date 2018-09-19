@@ -44,7 +44,7 @@ func (c *nilValReturnChecker) VisitStmt(stmt ast.Stmt) {
 	expr, ok := ifStmt.Cond.(*ast.BinaryExpr)
 	cond := ok &&
 		expr.Op == token.EQL &&
-		isSafeExpr(expr.X) &&
+		isSafeExpr(c.ctx.typesInfo, expr.X) &&
 		qualifiedName(expr.Y) == "nil" &&
 		astequal.Expr(expr.X, ret.Results[0])
 	if cond {

@@ -28,7 +28,7 @@ func (c *assignOpChecker) VisitStmt(stmt ast.Stmt) {
 		assign.Tok == token.ASSIGN &&
 		len(assign.Lhs) == 1 &&
 		len(assign.Rhs) == 1 &&
-		isSafeExpr(assign.Lhs[0])
+		isSafeExpr(c.ctx.typesInfo, assign.Lhs[0])
 	if !cond {
 		return
 	}
