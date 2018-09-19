@@ -129,16 +129,23 @@ func isSafeExpr(info *types.Info, expr ast.Expr) bool {
 	case *ast.ParenExpr:
 		return isSafeExpr(info, expr.X)
 	case *ast.CompositeLit:
-		for _, x := range expr.Elts {
-			if !isSafeExpr(info, x) {
-				return false
-			}
-		}
-		return true
+		return isSafeExprList(info, expr.Elts)
 	case *ast.CallExpr:
-		return lintutil.IsTypeExpr(info, expr.Fun)
+		return lintutil.IsTypeExpr(info, expr.Fun) &&
+			isSafeExprList(info, expr.Args)
 
 	default:
 		return false
 	}
+}
+
+// isSafeExprList reports whether every expr in list is safe.
+// See isSafeExpr.
+func isSafeExprList(info *types.Info, list []ast.Expr) bool {
+	for _, expr := range list {
+		if !isSafeExpr(info, expr) {
+			return false
+		}
+	}
+	return true
 }

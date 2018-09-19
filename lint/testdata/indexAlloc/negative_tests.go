@@ -1,6 +1,9 @@
 package checker_tests
 
-import "bytes"
+import (
+	"bytes"
+	"strings"
+)
 
 func fixedCode(x []byte, y string) {
 	_ = bytes.Index(x, []byte(y))
@@ -20,4 +23,11 @@ func unsafeArgs(x []byte, y string) {
 	_ = bytes.Index([]byte("12"), []byte(getString()))
 	_ = bytes.Index([]byte{'1', '2'}, []byte(getString()))
 	_ = bytes.Index(x, []byte("a"+getString()))
+
+	_ = strings.Index(string(getBytes()), y)
+	_ = strings.Index(string(getBytes()), "a"+y)
+
+	_ = strings.Index(string(x), getString())
+	_ = strings.Index(string([]byte(getString())), getString())
+	_ = strings.Index(string(x), "a"+getString())
 }
