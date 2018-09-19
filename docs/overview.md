@@ -181,6 +181,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects when imported package names shadowed in assignments</td>
       </tr>
       <tr>
+        <td><a href="#indexAlloc-ref">indexAlloc</a></td>
+        <td>Detects strings.Index calls that may cause unwanted allocs</td>
+      </tr>
+      <tr>
         <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
         <td>Detects for loops that can benefit from rewrite to range loop</td>
       </tr>
@@ -906,6 +910,24 @@ func myFunc(filepath string) {
 ```go
 func myFunc(filename string) {
 }
+```
+
+
+
+<a name="indexAlloc-ref"></a>
+## indexAlloc
+Detects strings.Index calls that may cause unwanted allocs.
+
+
+
+**Before:**
+```go
+strings.Index(string(x), y)
+```
+
+**After:**
+```go
+bytes.Index(x, []byte(y))
 ```
 
 

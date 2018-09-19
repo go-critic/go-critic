@@ -80,7 +80,7 @@ func (c *dupSubExprChecker) checkBinaryExpr(expr *ast.BinaryExpr) {
 	if c.resultIsFloat(expr.X) && c.floatOpsSet[expr.Op] {
 		return
 	}
-	if isSafeExpr(expr) && c.opSet[expr.Op] && astequal.Expr(expr.X, expr.Y) {
+	if isSafeExpr(c.ctx.typesInfo, expr) && c.opSet[expr.Op] && astequal.Expr(expr.X, expr.Y) {
 		c.warn(expr)
 	}
 }

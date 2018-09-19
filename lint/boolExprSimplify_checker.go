@@ -113,7 +113,7 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false
 	}
-	if !isSafeExpr(lhs.X) || !isSafeExpr(lhs.Y) {
+	if !isSafeExpr(c.ctx.typesInfo, lhs.X) || !isSafeExpr(c.ctx.typesInfo, lhs.Y) {
 		return false
 	}
 

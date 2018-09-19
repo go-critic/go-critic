@@ -6,6 +6,7 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -101,7 +102,10 @@ func typeIsPointer(typ types.Type) bool {
 // no significant side-effects. As opposed to strictly safe expressions,
 // soft safe expressions permit some forms of side-effects, like
 // panic possibility during indexing or nil pointer dereference.
-func isSafeExpr(expr ast.Expr) bool {
+//
+// Uses types info to determine type conversion expressions that
+// are the only permitted kinds of call expressions.
+func isSafeExpr(info *types.Info, expr ast.Expr) bool {
 	// This list switch is not comprehensive and uses
 	// whitelist to be on the conservative side.
 	// Can be extended as needed.
@@ -111,19 +115,29 @@ func isSafeExpr(expr ast.Expr) bool {
 	// may cause panics.
 	switch expr := expr.(type) {
 	case *ast.StarExpr:
-		return isSafeExpr(expr.X)
+		return isSafeExpr(info, expr.X)
 	case *ast.BinaryExpr:
-		return isSafeExpr(expr.X) && isSafeExpr(expr.Y)
+		return isSafeExpr(info, expr.X) && isSafeExpr(info, expr.Y)
 	case *ast.UnaryExpr:
-		return expr.Op != token.ARROW && isSafeExpr(expr.X)
+		return expr.Op != token.ARROW && isSafeExpr(info, expr.X)
 	case *ast.BasicLit, *ast.Ident:
 		return true
 	case *ast.IndexExpr:
-		return isSafeExpr(expr.X) && isSafeExpr(expr.Index)
+		return isSafeExpr(info, expr.X) && isSafeExpr(info, expr.Index)
 	case *ast.SelectorExpr:
-		return isSafeExpr(expr.X)
+		return isSafeExpr(info, expr.X)
 	case *ast.ParenExpr:
-		return isSafeExpr(expr.X)
+		return isSafeExpr(info, expr.X)
+	case *ast.CompositeLit:
+		for _, x := range expr.Elts {
+			if !isSafeExpr(info, x) {
+				return false
+			}
+		}
+		return true
+	case *ast.CallExpr:
+		return lintutil.IsTypeExpr(info, expr.Fun)
+
 	default:
 		return false
 	}
