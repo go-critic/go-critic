@@ -28,7 +28,7 @@ if err == nil {
 }
 // (B) - typo in "==", change to "!="
 if err != nil {
-	return nil
+	return err
 }`
 }
 
