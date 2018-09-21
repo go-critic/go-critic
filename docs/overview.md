@@ -28,7 +28,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects repeated if-else statements and suggests to replace them with switch statement</td>
       </tr>
       <tr>
-        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
+        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a> :nerd_face:</td>
         <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
       </tr>
       <tr>
@@ -83,6 +83,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#assignOp-ref">assignOp</a></td>
         <td>Detects assignments that can be simplified by using assignment operators</td>
+      </tr>
+      <tr>
+        <td><a href="#blankParam-ref">blankParam</a> :nerd_face:</td>
+        <td>Detects unused params and suggests to name them as `_` (blank)</td>
       </tr>
       <tr>
         <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
@@ -177,6 +181,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects when imported package names shadowed in assignments</td>
       </tr>
       <tr>
+        <td><a href="#indexAlloc-ref">indexAlloc</a></td>
+        <td>Detects strings.Index calls that may cause unwanted allocs</td>
+      </tr>
+      <tr>
         <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
         <td>Detects for loops that can benefit from rewrite to range loop</td>
       </tr>
@@ -225,6 +233,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects calls of unexported method from unexported type outside that type</td>
       </tr>
       <tr>
+        <td><a href="#unlabelStmt-ref">unlabelStmt</a></td>
+        <td>Detects redundant statement labels</td>
+      </tr>
+      <tr>
         <td><a href="#unlambda-ref">unlambda</a></td>
         <td>Detects function literals that can be simplified</td>
       </tr>
@@ -235,10 +247,6 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#unnecessaryBlock-ref">unnecessaryBlock</a></td>
         <td>Detects unnecessary braced statement blocks</td>
-      </tr>
-      <tr>
-        <td><a href="#unusedParam-ref">unusedParam</a> :nerd_face:</td>
-        <td>Detects unused params and suggests to name them as `_` (underscore)</td>
       </tr>
       <tr>
         <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
@@ -305,6 +313,24 @@ x *= 2
 
 
 
+<a name="blankParam-ref"></a>
+## blankParam
+Detects unused params and suggests to name them as `_` (blank).
+
+
+
+**Before:**
+```go
+func f(a int, b float64) // b isn't used inside function body
+```
+
+**After:**
+```go
+func f(a int, _ float64) // everything is cool
+```
+
+
+`blankParam` is very opinionated.
 <a name="boolExprSimplify-ref"></a>
 ## boolExprSimplify
 Detects bool expressions that can be simplified.
@@ -888,6 +914,24 @@ func myFunc(filename string) {
 
 
 
+<a name="indexAlloc-ref"></a>
+## indexAlloc
+Detects strings.Index calls that may cause unwanted allocs.
+
+
+
+**Before:**
+```go
+strings.Index(string(x), y)
+```
+
+**After:**
+```go
+bytes.Index(x, []byte(y))
+```
+
+See Go issue for details: https://github.com/golang/go/issues/25864
+
 <a name="indexOnlyLoop-ref"></a>
 ## indexOnlyLoop
 Detects for loops that can benefit from rewrite to range loop.
@@ -1071,7 +1115,7 @@ func foo(a, b, c, d, e, f, g int) {}
 ```
 
 
-`paramTypeCombine` is syntax-only checker (fast).
+`paramTypeCombine` is syntax-only checker (fast).`paramTypeCombine` is very opinionated.
 <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
 Detects input and output parameters that have a type of pointer to referential type.
@@ -1358,6 +1402,33 @@ func baz(f foo) {
 
 
 `unexportedCall` is very opinionated.
+<a name="unlabelStmt-ref"></a>
+## unlabelStmt
+Detects redundant statement labels.
+
+
+
+**Before:**
+```go
+derp:
+for x := range xs {
+	if x == 0 {
+		break derp
+	}
+}
+```
+
+**After:**
+```go
+for x := range xs {
+	if x == 0 {
+		break
+	}
+}
+```
+
+
+
 <a name="unlambda-ref"></a>
 ## unlambda
 Detects function literals that can be simplified.
@@ -1436,24 +1507,6 @@ copy(b, values...)
 
 
 
-<a name="unusedParam-ref"></a>
-## unusedParam
-Detects unused params and suggests to name them as `_` (underscore).
-
-
-
-**Before:**
-```go
-func f(a int, b float64) // b isn't used inside function body
-```
-
-**After:**
-```go
-func f(a int, _ float64) // everything is cool
-```
-
-
-`unusedParam` is very opinionated.
 <a name="yodaStyleExpr-ref"></a>
 ## yodaStyleExpr
 Detects Yoda style expressions that suggest to replace them.
