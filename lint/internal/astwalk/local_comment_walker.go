@@ -2,11 +2,11 @@ package astwalk
 
 import "go/ast"
 
-type localCommentVisitor struct {
+type localCommentWalker struct {
 	visitor LocalCommentVisitor
 }
 
-func (w *localCommentVisitor) WalkFile(f *ast.File) {
+func (w *localCommentWalker) WalkFile(f *ast.File) {
 	for _, decl := range f.Decls {
 		decl, ok := decl.(*ast.FuncDecl)
 		if !ok || !w.visitor.EnterFunc(decl) {

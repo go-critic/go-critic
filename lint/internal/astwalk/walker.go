@@ -53,10 +53,10 @@ func WalkerForTypeExpr(v TypeExprVisitor, info *types.Info) FileWalker {
 
 // WalkerForLocalComment returns file walker implementation for LocalCommentVisitor.
 func WalkerForLocalComment(v LocalCommentVisitor) FileWalker {
-	return &localCommentVisitor{visitor: v}
+	return &localCommentWalker{visitor: v}
 }
 
 // WalkerForDocComment returns file walker implementation for DocCommentVisitor.
 func WalkerForDocComment(v DocCommentVisitor) FileWalker {
-	return &docCommentVisitor{visitor: v}
+	return &docCommentWalker{visitor: v}
 }
