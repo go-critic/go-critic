@@ -4,11 +4,11 @@ import (
 	"go/ast"
 )
 
-type docCommentVisitor struct {
+type docCommentWalker struct {
 	visitor DocCommentVisitor
 }
 
-func (w *docCommentVisitor) WalkFile(f *ast.File) {
+func (w *docCommentWalker) WalkFile(f *ast.File) {
 	for _, decl := range f.Decls {
 		switch decl := decl.(type) {
 		case *ast.FuncDecl:
