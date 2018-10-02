@@ -250,7 +250,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       </tr>
       <tr>
         <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
-        <td>Detects Yoda style expressions that suggest to replace them</td>
+        <td>Detects Yoda style expressions and suggests to replace them</td>
       </tr>
 </table>
 
@@ -1509,7 +1509,7 @@ copy(b, values...)
 
 <a name="yodaStyleExpr-ref"></a>
 ## yodaStyleExpr
-Detects Yoda style expressions that suggest to replace them.
+Detects Yoda style expressions and suggests to replace them.
 
 
 
