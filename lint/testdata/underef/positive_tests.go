@@ -1,4 +1,4 @@
-package checker_tests
+package checker_test
 
 type sampleStruct struct {
 	field        int
