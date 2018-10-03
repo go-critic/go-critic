@@ -1,4 +1,4 @@
-package checker_tests
+package checker_test
 
 func mayMutateInt1(x *int) int { return 0 }
 

@@ -1,4 +1,4 @@
-package checker_tests
+package checker_test
 
 func idealExpressions() {
 	// No negations:

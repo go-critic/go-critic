@@ -1,4 +1,4 @@
-package checker_tests
+package checker_test
 
 func permittedComments() {
 	// TODO: foo(1+2)
