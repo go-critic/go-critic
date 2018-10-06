@@ -32,7 +32,7 @@ func (c *importShadowChecker) Init() {
 
 func (c *importShadowChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {
 	for pkgObj, name := range c.ctx.pkgObjects {
-		if name == def.ID.Name {
+		if name == def.ID.Name && name != "_" {
 			c.warnImportShadowed(def.ID, name, pkgObj.Imported())
 		}
 	}
