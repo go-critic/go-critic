@@ -23,4 +23,6 @@ var _ = 10
 
 func blankParam(_ int) {
 	_ = 10
+	_, x := 1, 2
+	_ = x
 }

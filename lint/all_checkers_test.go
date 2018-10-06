@@ -101,14 +101,14 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 
 	for _, f := range files {
 		filename := getFilename(prog, f)
-		ctx.SetFileInfo(filename, f)
 		testFilename := filepath.Join("testdata", rule.Name(), filename)
 		goldenWarns := newGoldenFile(t, testFilename)
 
+		c := NewChecker(rule, ctx, testCfg[rule.Name()])
 		stripDirectives(f)
-		warns := NewChecker(rule, ctx, testCfg[rule.Name()]).Check(f)
+		ctx.SetFileInfo(filename, f)
 
-		for _, warn := range warns {
+		for _, warn := range c.Check(f) {
 			line := ctx.FileSet().Position(warn.Node.Pos()).Line
 
 			if w := goldenWarns.find(line, warn.Text); w != nil {
