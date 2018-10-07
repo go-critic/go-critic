@@ -97,8 +97,22 @@ func Main() {
 	l.LoadProgram()
 	l.InitCheckers()
 
+	pkgInfoMap := make(map[string]*loader.PackageInfo)
+	for _, pkgInfo := range l.prog.AllPackages {
+		pkgInfoMap[pkgInfo.Pkg.Path()] = pkgInfo
+	}
 	for _, pkgPath := range l.packages {
-		l.CheckPackage(pkgPath)
+		pkgInfo := pkgInfoMap[pkgPath]
+		if pkgInfo == nil || !pkgInfo.TransitivelyErrorFree {
+			log.Fatalf("%s package is not properly loaded", pkgPath)
+		}
+		// Check the package itself.
+		l.CheckPackage(pkgPath, pkgInfo)
+		// Check package external test (if any).
+		pkgInfo = pkgInfoMap[pkgPath+"_test"]
+		if pkgInfo != nil {
+			l.CheckPackage(pkgPath+"_test", pkgInfo)
+		}
 	}
 
 	os.Exit(l.ExitCode())
@@ -221,12 +235,7 @@ func (l *linter) InitCheckers() {
 	}
 }
 
-func (l *linter) CheckPackage(pkgPath string) {
-	pkgInfo := l.prog.Imported[pkgPath]
-	if pkgInfo == nil || !pkgInfo.TransitivelyErrorFree {
-		log.Fatalf("%s package is not properly loaded", pkgPath)
-	}
-
+func (l *linter) CheckPackage(pkgPath string, pkgInfo *loader.PackageInfo) {
 	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
 	for _, f := range pkgInfo.Files {
 		if l.flags.IgnoreTests && l.isTestFile(f) {
