@@ -165,6 +165,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects potentially unsafe dependencies on evaluation order</td>
       </tr>
       <tr>
+        <td><a href="#flagName-ref">flagName</a></td>
+        <td>Detects flag names with whitespace</td>
+      </tr>
+      <tr>
         <td><a href="#floatCompare-ref">floatCompare</a></td>
         <td>Detects fragile float variables comparisons</td>
       </tr>
@@ -250,7 +254,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       </tr>
       <tr>
         <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
-        <td>Detects Yoda style expressions that suggest to replace them</td>
+        <td>Detects Yoda style expressions and suggests to replace them</td>
       </tr>
 </table>
 
@@ -804,6 +808,24 @@ flag.BoolVar(&b, "b", false, "b docs")
 Dereferencing returned pointers will lead to hard to find errors
 where flag values are not updated after flag.Parse().
 `flagDeref` is syntax-only checker (fast).
+<a name="flagName-ref"></a>
+## flagName
+Detects flag names with whitespace.
+
+
+
+**Before:**
+```go
+b := flag.Bool(" foo ", false, "description")
+```
+
+**After:**
+```go
+b := flag.Bool("foo", false, "description")
+```
+
+
+
 <a name="floatCompare-ref"></a>
 ## floatCompare
 Detects fragile float variables comparisons.
@@ -1509,7 +1531,7 @@ copy(b, values...)
 
 <a name="yodaStyleExpr-ref"></a>
 ## yodaStyleExpr
-Detects Yoda style expressions that suggest to replace them.
+Detects Yoda style expressions and suggests to replace them.
 
 
 
