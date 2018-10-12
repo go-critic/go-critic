@@ -40,7 +40,7 @@ func (c *flagNameChecker) checkFlagName(call *ast.CallExpr, arg ast.Expr) {
 		return // Non-constant name
 	}
 	name := constant.StringVal(cv)
-	if strings.ContainsAny(name, " \t") {
+	if strings.Contains(name, " ") {
 		c.warnWhitespace(call, name)
 	}
 }
