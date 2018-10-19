@@ -42,7 +42,7 @@ func NewFlagParser(flagSet *flag.FlagSet) *FlagParser {
 		`whether to check test files`)
 	fp.flagSet.BoolVar(&fp.JSONOutput, "json", false,
 		`whether to output in json format`)
-	fp.flagSet.BoolVar(&fp.ColoredOutput, "color", true,
+	fp.flagSet.BoolVar(&fp.ColoredOutput, "color", false,
 		`whether to output with colors`)
 
 	return fp
