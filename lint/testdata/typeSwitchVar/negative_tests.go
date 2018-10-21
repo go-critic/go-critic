@@ -81,7 +81,7 @@ func negativeTypeSwitchVarF4(x, y interface{}) int {
 func negativeTypeSwitchVarF5(x, y, z interface{}) int {
 	switch x := x.(type) {
 	case int:
-		switch y:= y.(type) {
+		switch y := y.(type) {
 		case int:
 			switch z := z.(type) {
 			case int:
