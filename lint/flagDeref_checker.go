@@ -15,7 +15,7 @@ type flagDerefChecker struct {
 }
 
 func (c *flagDerefChecker) InitDocumentation(d *Documentation) {
-	d.Summary = "Detects immediate dereferencing of `flag` package pointers."
+	d.Summary = "Detects immediate dereferencing of `flag` package pointers"
 	d.Before = `b := *flag.Bool("b", false, "b docs")`
 	d.After = `
 var b bool
