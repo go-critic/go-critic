@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	addChecker(&appendAssignChecker{}, attrExperimental, attrPerformance)
+	addChecker(&appendAssignChecker{}, attrExperimental)
 }
 
 type appendAssignChecker struct {
