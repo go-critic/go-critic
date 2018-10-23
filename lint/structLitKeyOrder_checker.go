@@ -61,12 +61,11 @@ func (c *structLitKeyOrderChecker) VisitExpr(expr ast.Expr) {
 	for _, elt := range lit.Elts {
 		kv := elt.(*ast.KeyValueExpr)
 		order := fieldsOrder[lintutil.AsIdent(kv.Key).Name]
-		if order > maxOrder {
-			maxOrder = order
-		} else {
+		if order <= maxOrder {
 			c.warn(expr)
 			return
 		}
+		maxOrder = order
 	}
 }
 
