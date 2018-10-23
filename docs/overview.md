@@ -21,7 +21,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       </tr>
       <tr>
         <td><a href="#flagDeref-ref">flagDeref</a></td>
-        <td>Detects immediate dereferencing of `flag` package pointers.</td>
+        <td>Detects immediate dereferencing of `flag` package pointers</td>
       </tr>
       <tr>
         <td><a href="#ifElseChain-ref">ifElseChain</a></td>
@@ -231,6 +231,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#stdExpr-ref">stdExpr</a></td>
         <td>Detects constant expressions that can be replaced by a stdlib const</td>
+      </tr>
+      <tr>
+        <td><a href="#structLitKeyOrder-ref">structLitKeyOrder</a> :nerd_face:</td>
+        <td>Detects struct literal keys order that does not match declaration order</td>
       </tr>
       <tr>
         <td><a href="#unexportedCall-ref">unexportedCall</a> :nerd_face:</td>
@@ -790,7 +794,7 @@ return mayModifySlice(&xs), v
 
 <a name="flagDeref-ref"></a>
 ## flagDeref
-Detects immediate dereferencing of `flag` package pointers..
+Detects immediate dereferencing of `flag` package pointers.
 
 
 
@@ -1310,6 +1314,26 @@ maxVal := math.MaxInt8
 
 
 
+<a name="structLitKeyOrder-ref"></a>
+## structLitKeyOrder
+Detects struct literal keys order that does not match declaration order.
+
+
+
+**Before:**
+```go
+type foo struct{ x, y int }
+v := foo{y: y, x: x}
+```
+
+**After:**
+```go
+type foo struct{ x, y int }
+v := foo{x: x, y: y}
+```
+
+
+`structLitKeyOrder` is very opinionated.
 <a name="switchTrue-ref"></a>
 ## switchTrue
 Detects switch-over-bool statements that use explicit `true` tag value.
