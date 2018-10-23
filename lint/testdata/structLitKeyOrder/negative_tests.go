@@ -1,6 +1,10 @@
 package checker_test
 
 var (
+	_ = foo{pt: point{}, b: 1}
+	_ = foo{bar: bar{}, c: 1}
+	_ = foo{a: 1, pt: point{x: 2, y: 1}}
+
 	_ = point{}
 
 	_ = point{x: 0}
