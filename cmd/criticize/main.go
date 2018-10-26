@@ -25,12 +25,6 @@ import (
 
 var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT.")
 
-type resolvedPath struct {
-	path         string
-	pkg          *packages.Package
-	externalTest *packages.Package
-}
-
 type linter struct {
 	ctx *lint.Context
 
