@@ -164,31 +164,58 @@ func (l *linter) LoadProgram() {
 	}
 
 	l.fset = token.NewFileSet()
-	conf := packages.Config{
+	cfg := packages.Config{
 		Mode:  packages.LoadSyntax,
 		Tests: true,
 		Fset:  l.fset,
 	}
-
-	pkgs, err := packages.Load(&conf, l.packages...)
+	pkgs, err := loadPackages(&cfg, l.packages)
 	if err != nil {
 		log.Fatalf("load packages: %v", err)
 	}
+	sort.SliceStable(pkgs, func(i, j int) bool {
+		return pkgs[i].PkgPath < pkgs[j].PkgPath
+	})
 
+	l.loadedPackages = pkgs
+	l.ctx = lint.NewContext(l.fset, sizes)
+}
+
+func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {
+	pkgs, err := packages.Load(cfg, patterns...)
+	if err != nil {
+		return nil, err
+	}
+
+	result := pkgs[:0]
+
+	// First pkgs traversal selects external tests and
+	// packages built for testing.
+	// If there is no tests for the package,
+	// we're going to check them during the second traversal
+	// which visits normal package if only it was
+	// not checked during the first traversal.
+	withTests := map[string]bool{}
 	for _, pkg := range pkgs {
-		// For some patterns Load returns 4 packages.
-		// We need at most 2 and both of them should
-		// have [$pkg.test] parts in their ID.
 		if !strings.Contains(pkg.ID, ".test]") {
 			continue
 		}
-		l.loadedPackages = append(l.loadedPackages, pkg)
+		result = append(result, pkg)
+		withTests[pkg.PkgPath] = true
 	}
-	sort.SliceStable(l.loadedPackages, func(i, j int) bool {
-		return l.loadedPackages[i].PkgPath < l.loadedPackages[j].PkgPath
-	})
+	for _, pkg := range pkgs {
+		if strings.HasSuffix(pkg.PkgPath, ".test") {
+			continue
+		}
+		if pkg.ID != pkg.PkgPath {
+			continue
+		}
+		if !withTests[pkg.PkgPath] {
+			result = append(result, pkg)
+		}
+	}
 
-	l.ctx = lint.NewContext(conf.Fset, sizes)
+	return result, nil
 }
 
 func (l *linter) InitCheckers() {
