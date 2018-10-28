@@ -67,12 +67,10 @@ func TestSanity(t *testing.T) {
 						saneRules = append(saneRules, rule)
 					}
 				}()
-
 				_ = NewChecker(rule, ctx, testCfg[rule.Name()]).Check(f)
 			}
 		})
 	}
-
 	ruleList = saneRules
 }
 
@@ -122,7 +120,6 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 					testFilename, line, warn.Text)
 			}
 		}
-
 		goldenWarns.checkUnmatched(t, testFilename)
 	}
 }
@@ -153,7 +150,6 @@ func TestIncorrectRule(t *testing.T) {
 		}()
 		NewChecker(nil, nil, nil)
 	}(t)
-
 	func(t *testing.T) {
 		name := "i-don-not-exist"
 
@@ -168,7 +164,6 @@ func TestIncorrectRule(t *testing.T) {
 				t.Fatalf("expected `%v`, got %v", want, r)
 			}
 		}()
-
 		r := &Rule{name: name}
 		NewChecker(r, nil, nil)
 	}(t)
