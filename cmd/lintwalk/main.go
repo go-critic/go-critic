@@ -70,7 +70,7 @@ func Main() {
 		log.Fatalf("bad -exclude pattern: %v", err)
 	}
 
-	packages := map[string]bool{}
+	packages := make(map[string]bool)
 
 	err = filepath.Walk(srcRoot, func(path string, info os.FileInfo, e error) error {
 		if e != nil {
