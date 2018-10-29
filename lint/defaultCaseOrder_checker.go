@@ -1,6 +1,8 @@
 package lint
 
-import "go/ast"
+import (
+	"go/ast"
+)
 
 func init() {
 	addChecker(&defaultCaseOrderChecker{}, attrExperimental, attrSyntaxOnly)
