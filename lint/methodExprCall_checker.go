@@ -5,6 +5,7 @@ import (
 	"go/types"
 
 	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astcopy"
 )
 

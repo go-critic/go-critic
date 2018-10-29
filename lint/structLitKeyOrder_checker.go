@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/types"
 
+	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astp"
 )
 
