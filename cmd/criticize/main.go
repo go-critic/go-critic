@@ -195,7 +195,7 @@ func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package,
 	// we're going to check them during the second traversal
 	// which visits normal package if only it was
 	// not checked during the first traversal.
-	withTests := map[string]bool{}
+	withTests := make(map[string]bool)
 	for _, pkg := range pkgs {
 		if !strings.Contains(pkg.ID, ".test]") {
 			continue
