@@ -246,8 +246,7 @@ func (l *linter) InitCheckers() {
 		l.checkers = append(l.checkers, lint.NewChecker(
 			rule,
 			l.ctx,
-			l.checkerParams[rule.Name()],
-		))
+			l.checkerParams[rule.Name()]))
 		delete(requested, rule.Name())
 	}
 
