@@ -79,6 +79,6 @@ func (c *busySelectChecker) hasBlockingStmt(stmts []ast.Stmt) bool {
 	return false
 }
 
-func (c *busySelectChecker) warn(node ast.Node) {
-	c.ctx.Warn(node, "default case without a blocking operation or sleep might waste a CPU time")
+func (c *busySelectChecker) warn(cause ast.Node) {
+	c.ctx.Warn(cause, "default case without a blocking operation or sleep might waste a CPU time")
 }

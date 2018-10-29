@@ -55,6 +55,6 @@ func (c *nestingReduceChecker) checkLoopBody(body []ast.Stmt) {
 	}
 }
 
-func (c *nestingReduceChecker) warnLoop(node ast.Node) {
-	c.ctx.Warn(node, "invert if cond, replace body with `continue`, move old body after the statement")
+func (c *nestingReduceChecker) warnLoop(cause ast.Node) {
+	c.ctx.Warn(cause, "invert if cond, replace body with `continue`, move old body after the statement")
 }

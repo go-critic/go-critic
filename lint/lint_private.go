@@ -98,10 +98,10 @@ type context struct {
 }
 
 // Warn adds a Warning to checker output.
-func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
+func (ctx *context) Warn(n ast.Node, format string, args ...interface{}) {
 	ctx.warnings = append(ctx.warnings, Warning{
 		Text: ctx.printer.Sprintf(format, args...),
-		Node: node,
+		Node: n,
 	})
 }
 

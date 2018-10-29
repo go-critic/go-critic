@@ -52,6 +52,6 @@ func (c *rangeValCopyChecker) VisitStmt(stmt ast.Stmt) {
 	}
 }
 
-func (c *rangeValCopyChecker) warn(node ast.Node, size int64) {
-	c.ctx.Warn(node, "each iteration copies %d bytes (consider pointers or indexing)", size)
+func (c *rangeValCopyChecker) warn(cause ast.Node, size int64) {
+	c.ctx.Warn(cause, "each iteration copies %d bytes (consider pointers or indexing)", size)
 }
