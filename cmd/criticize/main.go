@@ -5,7 +5,7 @@ import (
 	"flag"
 	"go/ast"
 	"go/build"
-	"go/parser"
+	"go/token"
 	"go/types"
 	"io/ioutil"
 	"log"
@@ -13,13 +13,14 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strings"
 	"sync"
 
 	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 	"github.com/go-critic/go-critic/lint"
 	"github.com/logrusorgru/aurora"
-	"golang.org/x/tools/go/loader"
+	"golang.org/x/tools/go/packages"
 )
 
 var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT.")
@@ -27,12 +28,13 @@ var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT."
 type linter struct {
 	ctx *lint.Context
 
-	prog *loader.Program
+	loadedPackages []*packages.Package
 
 	checkers []*lint.Checker
 
 	foundIssues bool // True if there any checker reported an issue
 
+	fset  *token.FileSet
 	flags *flagparser.FlagParser
 
 	packages        []string
@@ -97,22 +99,8 @@ func Main() {
 	l.LoadProgram()
 	l.InitCheckers()
 
-	pkgInfoMap := make(map[string]*loader.PackageInfo)
-	for _, pkgInfo := range l.prog.AllPackages {
-		pkgInfoMap[pkgInfo.Pkg.Path()] = pkgInfo
-	}
-	for _, pkgPath := range l.packages {
-		pkgInfo := pkgInfoMap[pkgPath]
-		if pkgInfo == nil || !pkgInfo.TransitivelyErrorFree {
-			log.Fatalf("%s package is not properly loaded", pkgPath)
-		}
-		// Check the package itself.
-		l.CheckPackage(pkgPath, pkgInfo)
-		// Check package external test (if any).
-		pkgInfo = pkgInfoMap[pkgPath+"_test"]
-		if pkgInfo != nil {
-			l.CheckPackage(pkgPath+"_test", pkgInfo)
-		}
+	for _, pkg := range l.loadedPackages {
+		l.CheckPackage(pkg)
 	}
 
 	os.Exit(l.ExitCode())
@@ -175,23 +163,59 @@ func (l *linter) LoadProgram() {
 		log.Fatalf("can't find sizes info for %s", runtime.GOARCH)
 	}
 
-	conf := loader.Config{
-		ParserMode: parser.ParseComments,
-		TypeChecker: types.Config{
-			Sizes: sizes,
-		},
+	l.fset = token.NewFileSet()
+	cfg := packages.Config{
+		Mode:  packages.LoadSyntax,
+		Tests: true,
+		Fset:  l.fset,
 	}
-
-	if _, err := conf.FromArgs(l.packages, true); err != nil {
-		log.Fatalf("resolve packages: %v", err)
-	}
-	prog, err := conf.Load()
+	pkgs, err := loadPackages(&cfg, l.packages)
 	if err != nil {
-		log.Fatalf("load program: %v", err)
+		log.Fatalf("load packages: %v", err)
+	}
+	sort.SliceStable(pkgs, func(i, j int) bool {
+		return pkgs[i].PkgPath < pkgs[j].PkgPath
+	})
+
+	l.loadedPackages = pkgs
+	l.ctx = lint.NewContext(l.fset, sizes)
+}
+
+func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {
+	pkgs, err := packages.Load(cfg, patterns...)
+	if err != nil {
+		return nil, err
 	}
 
-	l.prog = prog
-	l.ctx = lint.NewContext(prog.Fset, sizes)
+	result := pkgs[:0]
+
+	// First pkgs traversal selects external tests and
+	// packages built for testing.
+	// If there is no tests for the package,
+	// we're going to check them during the second traversal
+	// which visits normal package if only it was
+	// not checked during the first traversal.
+	withTests := map[string]bool{}
+	for _, pkg := range pkgs {
+		if !strings.Contains(pkg.ID, ".test]") {
+			continue
+		}
+		result = append(result, pkg)
+		withTests[pkg.PkgPath] = true
+	}
+	for _, pkg := range pkgs {
+		if strings.HasSuffix(pkg.PkgPath, ".test") {
+			continue
+		}
+		if pkg.ID != pkg.PkgPath {
+			continue
+		}
+		if !withTests[pkg.PkgPath] {
+			result = append(result, pkg)
+		}
+	}
+
+	return result, nil
 }
 
 func (l *linter) InitCheckers() {
@@ -235,9 +259,9 @@ func (l *linter) InitCheckers() {
 	}
 }
 
-func (l *linter) CheckPackage(pkgPath string, pkgInfo *loader.PackageInfo) {
-	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
-	for _, f := range pkgInfo.Files {
+func (l *linter) CheckPackage(pkg *packages.Package) {
+	l.ctx.SetPackageInfo(pkg.TypesInfo, pkg.Types)
+	for _, f := range pkg.Syntax {
 		if l.flags.IgnoreTests && l.isTestFile(f) {
 			continue
 		}
@@ -258,8 +282,7 @@ func (l *linter) isGenerated(f *ast.File) bool {
 }
 
 func (l *linter) getFilename(f *ast.File) string {
-	// see https://github.com/golang/go/issues/24498
-	return filepath.Base(l.prog.Fset.Position(f.Pos()).Filename)
+	return filepath.Base(l.fset.Position(f.Pos()).Filename)
 }
 
 // ExitCode returns status code that should be used as an argument to os.Exit.
