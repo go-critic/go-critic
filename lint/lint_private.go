@@ -17,7 +17,7 @@ import (
 // used to instantiate new checker instances.
 //
 // Keys are rule names.
-var checkerPrototypes = map[string]checkerProto{}
+var checkerPrototypes = make(map[string]checkerProto)
 
 type checkerProto struct {
 	rule *Rule
