@@ -34,9 +34,9 @@ rows.Close()`
 func (c *sqlRowsCloseChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	const rowsTypePTR = "*database/sql.Rows"
 
-	localVars := make([]types.Object, 0)
-	returnVars := make([]types.Object, 0)
-	closeVars := make([]types.Object, 0)
+	localVars := []types.Object{}
+	returnVars := []types.Object{}
+	closeVars := []types.Object{}
 
 	for _, b := range decl.Body.List {
 		switch b := b.(type) {
