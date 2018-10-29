@@ -4,7 +4,7 @@ import (
 	"go/ast"
 	"go/types"
 
-	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astp"
 )
 
@@ -60,7 +60,7 @@ func (c *structLitKeyOrderChecker) VisitExpr(expr ast.Expr) {
 	maxOrder := -1
 	for _, elt := range lit.Elts {
 		kv := elt.(*ast.KeyValueExpr)
-		order := fieldsOrder[lintutil.AsIdent(kv.Key).Name]
+		order := fieldsOrder[astcast.ToIdent(kv.Key).Name]
 		if order <= maxOrder {
 			c.warn(expr)
 			return
