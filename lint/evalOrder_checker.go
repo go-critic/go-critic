@@ -5,6 +5,7 @@ import (
 	"go/types"
 
 	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/typep"
 )
 
 func init() {
@@ -116,7 +117,7 @@ func (c *evalOrderChecker) isSafeCall(x *ast.CallExpr) bool {
 	// May be possible to visit called function body and tell whether
 	// it really modifies it's arguments or it's not.
 	// Can't mark as stable until these false positives go away.
-	return lintutil.IsTypeExpr(c.ctx.typesInfo, x.Fun) // Type conversion
+	return typep.IsTypeExpr(c.ctx.typesInfo, x.Fun) // Type conversion
 }
 
 func (c *evalOrderChecker) depsCount() int {
