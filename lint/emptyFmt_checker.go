@@ -3,7 +3,7 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
@@ -25,7 +25,7 @@ errors.New("wherever")`
 }
 
 func (c *emptyFmtChecker) VisitExpr(expr ast.Expr) {
-	call := lintutil.AsCallExpr(expr)
+	call := astcast.ToCallExpr(expr)
 	name := qualifiedName(call.Fun)
 
 	switch len(call.Args) {

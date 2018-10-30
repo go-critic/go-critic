@@ -39,24 +39,6 @@ func IsNil(x ast.Node) bool {
 	}
 }
 
-// AsIdent coerces x into non-nil ident.
-func AsIdent(x ast.Node) *ast.Ident {
-	e, ok := x.(*ast.Ident)
-	if !ok {
-		return nilIdent
-	}
-	return e
-}
-
-// AsSelectorExpr coerces x into non-nil selector expr.
-func AsSelectorExpr(x ast.Node) *ast.SelectorExpr {
-	e, ok := x.(*ast.SelectorExpr)
-	if !ok {
-		return nilSelectorExpr
-	}
-	return e
-}
-
 // AsUnaryExpr coerces x into non-nil unary expr.
 func AsUnaryExpr(x ast.Node) *ast.UnaryExpr {
 	e, ok := x.(*ast.UnaryExpr)
@@ -89,15 +71,6 @@ func AsBinaryExprOp(x ast.Node, op token.Token) *ast.BinaryExpr {
 	e, ok := x.(*ast.BinaryExpr)
 	if !ok || e.Op != op {
 		return nilBinaryExpr
-	}
-	return e
-}
-
-// AsCallExpr coerces x into non-nil call expr.
-func AsCallExpr(x ast.Node) *ast.CallExpr {
-	e, ok := x.(*ast.CallExpr)
-	if !ok {
-		return nilCallExpr
 	}
 	return e
 }

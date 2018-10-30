@@ -3,7 +3,7 @@ package lint
 import (
 	"go/ast"
 
-	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
@@ -22,11 +22,11 @@ func (c *indexAllocChecker) InitDocumentation(d *Documentation) {
 }
 
 func (c *indexAllocChecker) VisitExpr(e ast.Expr) {
-	call := lintutil.AsCallExpr(e)
+	call := astcast.ToCallExpr(e)
 	if qualifiedName(call.Fun) != "strings.Index" {
 		return
 	}
-	stringConv := lintutil.AsCallExpr(call.Args[0])
+	stringConv := astcast.ToCallExpr(call.Args[0])
 	if qualifiedName(stringConv.Fun) != "string" {
 		return
 	}
