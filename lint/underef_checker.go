@@ -4,7 +4,8 @@ import (
 	"go/ast"
 	"go/types"
 
-	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
+
 	"github.com/go-toolsmith/astp"
 )
 
@@ -35,7 +36,7 @@ func (c *underefChecker) Init() {
 func (c *underefChecker) VisitExpr(expr ast.Expr) {
 	switch n := expr.(type) {
 	case *ast.SelectorExpr:
-		expr := lintutil.AsParenExpr(n.X)
+		expr := astcast.ToParenExpr(n.X)
 		if c.skipRecvCopy && c.isPtrRecvMethodCall(n.Sel) {
 			return
 		}
@@ -46,7 +47,7 @@ func (c *underefChecker) VisitExpr(expr ast.Expr) {
 			}
 		}
 	case *ast.IndexExpr:
-		expr := lintutil.AsParenExpr(n.X)
+		expr := astcast.ToParenExpr(n.X)
 		if expr, ok := expr.X.(*ast.StarExpr); ok {
 			if !c.checkStarExpr(expr) {
 				return

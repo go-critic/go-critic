@@ -74,12 +74,3 @@ func AsBinaryExprOp(x ast.Node, op token.Token) *ast.BinaryExpr {
 	}
 	return e
 }
-
-// AsParenExpr coerces x into non-nil paren expr.
-func AsParenExpr(x ast.Node) *ast.ParenExpr {
-	e, ok := x.(*ast.ParenExpr)
-	if !ok {
-		return nilParenExpr
-	}
-	return e
-}
