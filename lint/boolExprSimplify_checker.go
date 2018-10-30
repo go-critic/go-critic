@@ -4,11 +4,11 @@ import (
 	"go/ast"
 	"go/token"
 
-	"github.com/go-toolsmith/astcast"
-
 	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/typep"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -115,7 +115,7 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false
 	}
-	if !isSafeExpr(c.ctx.typesInfo, lhs.X) || !isSafeExpr(c.ctx.typesInfo, lhs.Y) {
+	if !typep.SideEffectFree(c.ctx.typesInfo, lhs.X) || !typep.SideEffectFree(c.ctx.typesInfo, lhs.Y) {
 		return false
 	}
 
