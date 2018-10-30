@@ -6,7 +6,7 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/typep"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -131,7 +131,7 @@ func isSafeExpr(info *types.Info, expr ast.Expr) bool {
 	case *ast.CompositeLit:
 		return isSafeExprList(info, expr.Elts)
 	case *ast.CallExpr:
-		return lintutil.IsTypeExpr(info, expr.Fun) &&
+		return typep.IsTypeExpr(info, expr.Fun) &&
 			isSafeExprList(info, expr.Args)
 
 	default:
