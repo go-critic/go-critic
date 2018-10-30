@@ -83,12 +83,3 @@ func AsParenExpr(x ast.Node) *ast.ParenExpr {
 	}
 	return e
 }
-
-// AsAssignStmt coerces x into non-nil assign stmt.
-func AsAssignStmt(x ast.Node) *ast.AssignStmt {
-	stmt, ok := x.(*ast.AssignStmt)
-	if !ok {
-		return nilAssignStmt
-	}
-	return stmt
-}
