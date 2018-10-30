@@ -39,15 +39,6 @@ func IsNil(x ast.Node) bool {
 	}
 }
 
-// AsUnaryExpr coerces x into non-nil unary expr.
-func AsUnaryExpr(x ast.Node) *ast.UnaryExpr {
-	e, ok := x.(*ast.UnaryExpr)
-	if !ok {
-		return nilUnaryExpr
-	}
-	return e
-}
-
 // AsUnaryExprOp is like AsUnaryExpr, but also checks for op token.
 func AsUnaryExprOp(x ast.Node, op token.Token) *ast.UnaryExpr {
 	e, ok := x.(*ast.UnaryExpr)
