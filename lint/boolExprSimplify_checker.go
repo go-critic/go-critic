@@ -9,8 +9,8 @@ import (
 	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
-	"golang.org/x/tools/go/ast/astutil"
 	"github.com/go-toolsmith/typep"
+	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
