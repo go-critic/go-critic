@@ -10,6 +10,7 @@ import (
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
 	"golang.org/x/tools/go/ast/astutil"
+	"github.com/go-toolsmith/typep"
 )
 
 func init() {
@@ -115,7 +116,7 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false
 	}
-	if !isSafeExpr(c.ctx.typesInfo, lhs.X) || !isSafeExpr(c.ctx.typesInfo, lhs.Y) {
+	if !typep.SideEffectFree(c.ctx.typesInfo, lhs.X) || !typep.SideEffectFree(c.ctx.typesInfo, lhs.Y) {
 		return false
 	}
 

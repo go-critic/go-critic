@@ -4,6 +4,7 @@ import (
 	"go/ast"
 
 	"github.com/go-toolsmith/astcast"
+	"github.com/go-toolsmith/typep"
 )
 
 func init() {
@@ -32,7 +33,7 @@ func (c *indexAllocChecker) VisitExpr(e ast.Expr) {
 	}
 	x := stringConv.Args[0]
 	y := call.Args[1]
-	if isSafeExpr(c.ctx.typesInfo, x) && isSafeExpr(c.ctx.typesInfo, y) {
+	if typep.SideEffectFree(c.ctx.typesInfo, x) && typep.SideEffectFree(c.ctx.typesInfo, y) {
 		c.warn(e, x, y)
 	}
 }

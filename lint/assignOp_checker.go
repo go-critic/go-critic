@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/typep"
 )
 
 func init() {
@@ -28,7 +29,7 @@ func (c *assignOpChecker) VisitStmt(stmt ast.Stmt) {
 		assign.Tok == token.ASSIGN &&
 		len(assign.Lhs) == 1 &&
 		len(assign.Rhs) == 1 &&
-		isSafeExpr(c.ctx.typesInfo, assign.Lhs[0])
+		typep.SideEffectFree(c.ctx.typesInfo, assign.Lhs[0])
 	if !cond {
 		return
 	}
