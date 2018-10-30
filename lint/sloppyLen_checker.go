@@ -5,7 +5,6 @@ import (
 	"go/token"
 
 	"github.com/go-toolsmith/astcast"
-
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astfmt"
 )

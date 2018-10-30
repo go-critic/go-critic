@@ -4,9 +4,8 @@ import (
 	"go/ast"
 	"go/token"
 
-	"github.com/go-toolsmith/astcast"
-
 	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
 	"golang.org/x/tools/go/ast/astutil"
