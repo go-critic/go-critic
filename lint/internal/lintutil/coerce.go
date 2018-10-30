@@ -57,15 +57,6 @@ func AsUnaryExprOp(x ast.Node, op token.Token) *ast.UnaryExpr {
 	return e
 }
 
-// AsBinaryExpr coerces x into non-nil binary expr.
-func AsBinaryExpr(x ast.Node) *ast.BinaryExpr {
-	e, ok := x.(*ast.BinaryExpr)
-	if !ok {
-		return nilBinaryExpr
-	}
-	return e
-}
-
 // AsBinaryExprOp is like AsBinaryExpr, but also checks for op token.
 func AsBinaryExprOp(x ast.Node, op token.Token) *ast.BinaryExpr {
 	e, ok := x.(*ast.BinaryExpr)
