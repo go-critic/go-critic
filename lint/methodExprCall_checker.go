@@ -27,7 +27,7 @@ f.bar()`
 
 func (c *methodExprCallChecker) VisitExpr(x ast.Expr) {
 	call := lintutil.AsCallExpr(x)
-	s := lintutil.AsSelectorExpr(call.Fun)
+	s := astcast.ToSelectorExpr(call.Fun)
 	id := astcast.ToIdent(s.X)
 
 	obj := c.ctx.typesInfo.ObjectOf(id)
