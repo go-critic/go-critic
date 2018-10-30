@@ -5,7 +5,7 @@ import (
 	"go/constant"
 	"strings"
 
-	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
@@ -23,7 +23,7 @@ func (c *flagNameChecker) InitDocumentation(d *Documentation) {
 }
 
 func (c *flagNameChecker) VisitExpr(expr ast.Expr) {
-	call := lintutil.AsCallExpr(expr)
+	call := astcast.ToCallExpr(expr)
 	switch qualifiedName(call.Fun) {
 	case "flag.Bool", "flag.Duration", "flag.Float64", "flag.String",
 		"flag.Int", "flag.Int64", "flag.Uint", "flag.Uint64":

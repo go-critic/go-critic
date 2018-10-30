@@ -4,6 +4,8 @@ import (
 	"go/ast"
 	"go/token"
 
+	"github.com/go-toolsmith/astcast"
+
 	"github.com/go-critic/go-critic/lint/internal/lintutil"
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
@@ -78,7 +80,7 @@ func (c *boolExprSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
 
 func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 	neg := lintutil.AsUnaryExprOp(cur.Node(), token.NOT)
-	cmp := lintutil.AsBinaryExpr(astutil.Unparen(neg.X))
+	cmp := astcast.ToBinaryExpr(astutil.Unparen(neg.X))
 	if lintutil.IsNil(neg) || lintutil.IsNil(cmp) {
 		return false
 	}
@@ -107,8 +109,8 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 
 func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 	or := lintutil.AsBinaryExprOp(cur.Node(), token.LOR)
-	lhs := lintutil.AsBinaryExpr(astutil.Unparen(or.X))
-	rhs := lintutil.AsBinaryExpr(astutil.Unparen(or.Y))
+	lhs := astcast.ToBinaryExpr(astutil.Unparen(or.X))
+	rhs := astcast.ToBinaryExpr(astutil.Unparen(or.Y))
 
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false

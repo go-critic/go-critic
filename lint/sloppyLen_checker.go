@@ -4,7 +4,8 @@ import (
 	"go/ast"
 	"go/token"
 
-	"github.com/go-critic/go-critic/lint/internal/lintutil"
+	"github.com/go-toolsmith/astcast"
+
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astfmt"
 )
@@ -29,7 +30,7 @@ len(arr) == 0`
 }
 
 func (c *sloppyLenChecker) VisitExpr(x ast.Expr) {
-	expr := lintutil.AsBinaryExpr(x)
+	expr := astcast.ToBinaryExpr(x)
 	if expr.Op == token.LSS || expr.Op == token.GEQ || expr.Op == token.LEQ {
 		if c.isLenCall(expr.X) && c.isZero(expr.Y) {
 			c.warn(expr)
