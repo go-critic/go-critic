@@ -28,6 +28,12 @@ func empty2() {
 
 func external()
 
+const ()
+
+var ()
+
+type ()
+
 func emptySpecs() {
 	const ()
 	var ()
@@ -39,9 +45,9 @@ func forRange() {
 
 	for range xs {
 	}
-	for range xs {
+	for _ = range xs {
 	}
-	for range xs {
+	for _, _ = range xs {
 	}
 }
 

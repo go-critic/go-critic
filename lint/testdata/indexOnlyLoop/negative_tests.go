@@ -16,7 +16,7 @@ func alreadyWithValue(files []*string) {
 }
 
 func blankIdent(files []*string) {
-	for range files {
+	for _ = range files {
 		_ = files[0]
 		_ = files[1]
 	}
