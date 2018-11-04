@@ -26,20 +26,15 @@ func myFunc(filename string) {
 }`
 }
 
+func (c *importShadowChecker) Init() {
+	c.ctx.require.pkgObjects = true
+}
+
 func (c *importShadowChecker) VisitLocalDef(def astwalk.Name, _ ast.Expr) {
-	for _, v := range c.ctx.Context.typesInfo.Defs {
-		if v == nil || v.Parent() == nil {
-			continue
+	for pkgObj, name := range c.ctx.pkgObjects {
+		if name == def.ID.Name && name != "_" {
+			c.warnImportShadowed(def.ID, name, pkgObj.Imported())
 		}
-		elem := v.Parent().Lookup(def.ID.Name)
-		if elem == nil {
-			continue
-		}
-		pkg, ok := elem.(*types.PkgName)
-		if !ok {
-			continue
-		}
-		c.warnImportShadowed(def.ID, def.ID.Name, pkg.Imported())
 	}
 }
 

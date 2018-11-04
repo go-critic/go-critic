@@ -3,47 +3,82 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:71ce2e3f3b4acb600c5bbcffccd0d11534cec4e29a73f6de5781bae11ec528a3"
   name = "github.com/go-toolsmith/astcopy"
   packages = ["."]
-  revision = "fc497f942afe9ca951d5c91c5c180fd59aebe5d4"
+  pruneopts = "UT"
+  revision = "79b422d080c469383ec3cf020d124b70d073956b"
 
 [[projects]]
   branch = "master"
+  digest = "1:db8123e0896cf805cb30c7bacad0b1a1d562edbbcd2a765ceda1af926c9a99a4"
   name = "github.com/go-toolsmith/astequal"
   packages = ["."]
-  revision = "e9d31615533153b6a0f02f491c5432b227094163"
+  pruneopts = "UT"
+  revision = "dcb477bfacd6e00a13c6d63bfc73db28dd343160"
 
 [[projects]]
   branch = "master"
+  digest = "1:f4fcc4dafc60c8612e7b8855310f0f7f5b7b6947011e60f26fb9c10a690b0b6f"
   name = "github.com/go-toolsmith/astfmt"
   packages = ["."]
-  revision = "6ea5b99ab1746954c14cc74d79d94913a53c8ff3"
+  pruneopts = "UT"
+  revision = "8f8ee99c30864ae6d51ec6c8454d72a5072fe703"
 
 [[projects]]
   branch = "master"
+  digest = "1:04989378ee2deb38e1f82fb5ec962a789f675e394c42c9df79fcc8f4e47d9005"
   name = "github.com/go-toolsmith/astp"
   packages = ["."]
-  revision = "d378e1e6ba8e7084e724d9aa4ce0b41b719d5257"
+  pruneopts = "UT"
+  revision = "0af7e3c24f3087820a2e96679d064e6a56c624e2"
 
 [[projects]]
   branch = "master"
+  digest = "1:aba9fa7c6dacad505e95d984ec0b07f6b5a4691ed2f4ff36c7b732b3704627a3"
   name = "github.com/go-toolsmith/strparse"
   packages = ["."]
-  revision = "71162a977d98e0f84f53e3b1424e54a9a3b615ef"
+  pruneopts = "UT"
+  revision = "830b6daa1241714c12a9b9a4a56849fe2f93aedc"
 
 [[projects]]
   branch = "master"
+  digest = "1:be40f095cd741773905744f16c1f7a21fd9226ccd0529f019deb7da6d667f71c"
+  name = "github.com/logrusorgru/aurora"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a7b3b318ed4e1ae5b80602b08627267303c68572"
+
+[[projects]]
+  branch = "master"
+  digest = "1:27e7fb3f0e273bb9b88b6f76d056f76f6a57401f43bd2bf2eabd24a61cefe558"
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
-    "go/buildutil",
-    "go/loader"
+    "go/gcexportdata",
+    "go/internal/cgo",
+    "go/internal/gcimporter",
+    "go/packages",
+    "go/types/typeutil",
+    "internal/fastwalk",
+    "internal/gopathwalk",
+    "internal/semver",
   ]
-  revision = "56e9b8e653c818f46a96eb4828aba7be54271a69"
+  pruneopts = "UT"
+  revision = "f60e5f99f0816fc2d9ecb338008ea420248d2943"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "09adb9af9c3491ef5fc14d91628f9f7c0ad6894f09bf93ea24db0c5e287e61f9"
+  input-imports = [
+    "github.com/go-toolsmith/astcopy",
+    "github.com/go-toolsmith/astequal",
+    "github.com/go-toolsmith/astfmt",
+    "github.com/go-toolsmith/astp",
+    "github.com/go-toolsmith/strparse",
+    "github.com/logrusorgru/aurora",
+    "golang.org/x/tools/go/ast/astutil",
+    "golang.org/x/tools/go/packages",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

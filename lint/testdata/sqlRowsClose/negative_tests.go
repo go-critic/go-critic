@@ -1,171 +1,168 @@
-package checker_tests
+package checker_test
 
 import "database/sql"
 
 func normalLocalUseWithDefer() {
-    db, err := sql.Open("postgres", "")
-    if err != nil {
-        return
-    }
+	db, err := sql.Open("postgres", "")
+	if err != nil {
+		return
+	}
 
-    rows, err := db.Query("SELECT * FROM testtable")
-    if err != nil {
-        return
-    }
-    defer rows.Close()
+	rows, err := db.Query("SELECT * FROM testtable")
+	if err != nil {
+		return
+	}
+	defer rows.Close()
 
-    for rows.Next() {
-        var testdata string
-        rows.Scan(&testdata)
-    }
+	for rows.Next() {
+		var testdata string
+		rows.Scan(&testdata)
+	}
 
-    return
+	return
 }
 
-/*
 func normalLocalUseWithAnonDefer() {
-    db, err := sql.Open("postgres", "")
-    if err != nil {
-        return
-    }
+	db, err := sql.Open("postgres", "")
+	if err != nil {
+		return
+	}
 
-    rows, err := db.Query("SELECT * FROM testtable")
-    if err != nil {
-        return
-    }
-    defer func() {
-        rows.Close()
-    }()
+	rows, err := db.Query("SELECT * FROM testtable")
+	if err != nil {
+		return
+	}
+	defer func() {
+		rows.Close()
+	}()
 
-    for rows.Next() {
-        var testdata string
-        rows.Scan(&testdata)
-    }
+	for rows.Next() {
+		var testdata string
+		rows.Scan(&testdata)
+	}
 
-    return
+	return
 }
-*/
 
 func normalLocalUseWithoutDefer() {
-    db, err := sql.Open("postgres", "")
-    if err != nil {
-        return
-    }
+	db, err := sql.Open("postgres", "")
+	if err != nil {
+		return
+	}
 
-    rows, err := db.Query("SELECT * FROM testtable")
-    if err != nil {
-        return
-    }
+	rows, err := db.Query("SELECT * FROM testtable")
+	if err != nil {
+		return
+	}
 
-    for rows.Next() {
-        var testdata string
-        rows.Scan(&testdata)
-    }
-    rows.Close()
+	for rows.Next() {
+		var testdata string
+		rows.Scan(&testdata)
+	}
+	rows.Close()
 
-    return
+	return
 }
 
 func normalUseWhereRowsFromOtherMethodWithDefer() {
-    db, err := sql.Open("postgres", "")
-    if err != nil {
-        return
-    }
+	db, err := sql.Open("postgres", "")
+	if err != nil {
+		return
+	}
 
-    rows, err := testMethodReturningRows(db)
-    if err != nil {
-        return
-    }
-    defer rows.Close()
+	rows, err := testMethodReturningRows(db)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
 
-    for rows.Next() {
-        var testdata string
-        rows.Scan(&testdata)
-    }
+	for rows.Next() {
+		var testdata string
+		rows.Scan(&testdata)
+	}
 
-    return
+	return
 }
 
 func normalUseWhereRowsFromOtherMethodWithoutDefer() {
-    db, err := sql.Open("postgres", "")
-    if err != nil {
-        return
-    }
+	db, err := sql.Open("postgres", "")
+	if err != nil {
+		return
+	}
 
-    rows, err := testMethodReturningRows(db)
-    if err != nil {
-        return
-    }
+	rows, err := testMethodReturningRows(db)
+	if err != nil {
+		return
+	}
 
-    for rows.Next() {
-        var testdata string
-        rows.Scan(&testdata)
-    }
-    rows.Close()
+	for rows.Next() {
+		var testdata string
+		rows.Scan(&testdata)
+	}
+	rows.Close()
 
-    return
+	return
 }
 
-
 func normalUseWhereRowsFromOtherMethodToOtherMethodWithDefer() {
-    db, err := sql.Open("postgres", "")
-    if err != nil {
-        return
-    }
+	db, err := sql.Open("postgres", "")
+	if err != nil {
+		return
+	}
 
-    rows, err := testMethodReturningRows(db)
-    if err != nil {
-        return
-    }
-    defer rows.Close()
+	rows, err := testMethodReturningRows(db)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
 
-    for rows.Next() {
-        testMethodWithRows(rows)
-    }
+	for rows.Next() {
+		testMethodWithRows(rows)
+	}
 
-    return
+	return
 }
 
 func normalUseWhereRowsFromOtherMethodToOtherMethodWithoutDefer() {
-    db, err := sql.Open("postgres", "")
-    if err != nil {
-        return
-    }
+	db, err := sql.Open("postgres", "")
+	if err != nil {
+		return
+	}
 
-    rows, err := testMethodReturningRows(db)
-    if err != nil {
-        return
-    }
+	rows, err := testMethodReturningRows(db)
+	if err != nil {
+		return
+	}
 
-    for rows.Next() {
-        testMethodWithRows(rows)
-    }
-    rows.Close()
+	for rows.Next() {
+		testMethodWithRows(rows)
+	}
+	rows.Close()
 
-    return
+	return
 }
 
 // Internal methods
 
 func testMethodReturningRows(db *sql.DB) (*sql.Rows, error) {
-    rows, err := db.Query("SELECT * FROM testtable")
-    if err != nil {
-        return nil, err
-    }
+	rows, err := db.Query("SELECT * FROM testtable")
+	if err != nil {
+		return nil, err
+	}
 
-    return rows, nil
+	return rows, nil
 }
 
 func testMethodWithRows(rows *sql.Rows) {
-    var testdata string
-    rows.Scan(&testdata)
+	var testdata string
+	rows.Scan(&testdata)
 }
 
 func testPosMethodReturningRows(db *sql.DB) (*sql.Rows, error) {
-    rows, err := db.Query("SELECT * FROM testtable")
-    if err != nil {
-        return nil, err
-    }
+	rows, err := db.Query("SELECT * FROM testtable")
+	if err != nil {
+		return nil, err
+	}
 
-    return rows, nil
+	return rows, nil
 }

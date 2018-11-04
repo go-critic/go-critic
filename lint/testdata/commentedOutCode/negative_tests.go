@@ -1,4 +1,4 @@
-package checker_tests
+package checker_test
 
 func permittedComments() {
 	// TODO: foo(1+2)
@@ -31,4 +31,16 @@ func permittedComments() {
 	// type myInt int
 
 	// <-ch
+
+	// functionCall (1, 2)
+
+	// fooooooooooo (())
+
+	// funcfuncfunc0_1 ()
+
+	// FcallIntString  (1, "123")
+
+	// notAfunccall (this is not a function call)
+
+	// funccall () with period .
 }

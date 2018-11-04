@@ -1,4 +1,4 @@
-package checker_tests
+package checker_test
 
 func boolSwitch(x, y int, v []int) {
 	switch {

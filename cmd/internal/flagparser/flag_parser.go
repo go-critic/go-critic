@@ -8,11 +8,13 @@ import (
 	"strings"
 )
 
-// EnableAll represent all checkers value for "enable" option
-const EnableAll = "all"
+const (
+	// EnableAll represent all checkers value for "enable" option
+	EnableAll = "all"
 
-// DisableAll represent all checkers value for "disable" option
-const DisableAll = "all"
+	// DisableAll represent all checkers value for "disable" option
+	DisableAll = "all"
+)
 
 // NewFlagParser create new FlagParser
 func NewFlagParser(flagSet *flag.FlagSet) *FlagParser {
@@ -36,6 +38,12 @@ func NewFlagParser(flagSet *flag.FlagSet) *FlagParser {
 		`whether to check machine-generated files`)
 	fp.flagSet.BoolVar(&fp.ShorterErrLocation, "shorterErrLocation", true,
 		`whether to replace error location prefix with $GOROOT and $GOPATH`)
+	fp.flagSet.BoolVar(&fp.IgnoreTests, "ignoreTests", false,
+		`whether to check test files`)
+	fp.flagSet.BoolVar(&fp.JSONOutput, "json", false,
+		`whether to output in json format`)
+	fp.flagSet.BoolVar(&fp.ColoredOutput, "color", false,
+		`whether to output with colors`)
 
 	return fp
 }
@@ -81,6 +89,9 @@ type FlagParser struct {
 	FailureExitCode    int
 	CheckGenerated     bool
 	ShorterErrLocation bool
+	IgnoreTests        bool
+	ColoredOutput      bool
+	JSONOutput         bool
 }
 
 // EnabledCheckers return checkers, provided by enable argument
@@ -158,6 +169,9 @@ func (fp *FlagParser) Args() []string {
 		"-failcode=" + fmt.Sprint(fp.FailureExitCode),
 		"-checkGenerated=" + fmt.Sprint(fp.CheckGenerated),
 		"-shorterErrLocation=" + fmt.Sprint(fp.ShorterErrLocation),
+		"-ignoreTests=" + fmt.Sprint(fp.IgnoreTests),
+		"-color=" + fmt.Sprint(fp.ColoredOutput),
+		"-json=" + fmt.Sprint(fp.JSONOutput),
 	}
 
 	if fp.ConfigFile == "" {

@@ -3,7 +3,6 @@ package lint
 import (
 	"fmt"
 	"go/ast"
-	"go/parser"
 	"go/types"
 	"io/ioutil"
 	"os"
@@ -14,7 +13,7 @@ import (
 	"strings"
 	"testing"
 
-	"golang.org/x/tools/go/loader"
+	"golang.org/x/tools/go/packages"
 )
 
 var (
@@ -36,6 +35,13 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// testCfg is a config used to initialize checkers for end2end testing.
+// The options should make checkers as aggressive as possible, making them
+// match 100% of cases they potentially could.
+var testCfg = map[string]map[string]interface{}{
+	"captLocal": {"checkLocals": true},
+}
+
 func TestSanity(t *testing.T) {
 	saneRules := ruleList[:0]
 
@@ -43,13 +49,11 @@ func TestSanity(t *testing.T) {
 		t.Run(rule.Name(), func(t *testing.T) {
 			pkgPath := testdataPkgPath + "/_sanity"
 
-			prog := newProg(t, pkgPath)
-			pkgInfo := prog.Imported[pkgPath]
+			pkg := newPackage(t, pkgPath)
 
-			ctx := NewContext(prog.Fset, sizes)
-			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
-
-			files := prog.Imported[pkgPath].Files
+			ctx := NewContext(pkg.Fset, sizes)
+			ctx.SetPackageInfo(pkg.TypesInfo, pkg.Types)
+			files := pkg.Syntax
 
 			for _, f := range files {
 				defer func() {
@@ -60,12 +64,10 @@ func TestSanity(t *testing.T) {
 						saneRules = append(saneRules, rule)
 					}
 				}()
-
-				_ = NewChecker(rule, ctx, nil).Check(f)
+				_ = NewChecker(rule, ctx, testCfg[rule.Name()]).Check(f)
 			}
 		})
 	}
-
 	ruleList = saneRules
 }
 
@@ -78,29 +80,28 @@ func TestCheckers(t *testing.T) {
 			}
 			pkgPath := testdataPkgPath + testRule.Name()
 
-			prog := newProg(t, pkgPath)
-			pkgInfo := prog.Imported[pkgPath]
+			pkg := newPackage(t, pkgPath)
+			ctx := NewContext(pkg.Fset, sizes)
+			ctx.SetPackageInfo(pkg.TypesInfo, pkg.Types)
 
-			ctx := NewContext(prog.Fset, sizes)
-			ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
-
-			checkFiles(t, testRule, ctx, prog, pkgPath)
+			checkFiles(t, testRule, ctx, pkg, pkgPath)
 		})
 	}
 }
 
-func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pkgPath string) {
-	files := prog.Imported[pkgPath].Files
+func checkFiles(t *testing.T, rule *Rule, ctx *Context, pkg *packages.Package, pkgPath string) {
+	files := pkg.Syntax
 
 	for _, f := range files {
-		filename := getFilename(prog, f)
+		filename := getFilename(pkg, f)
 		testFilename := filepath.Join("testdata", rule.Name(), filename)
 		goldenWarns := newGoldenFile(t, testFilename)
 
+		c := NewChecker(rule, ctx, testCfg[rule.Name()])
 		stripDirectives(f)
-		warns := NewChecker(rule, ctx, nil).Check(f)
+		ctx.SetFileInfo(filename, f)
 
-		for _, warn := range warns {
+		for _, warn := range c.Check(f) {
 			line := ctx.FileSet().Position(warn.Node.Pos()).Line
 
 			if w := goldenWarns.find(line, warn.Text); w != nil {
@@ -114,7 +115,6 @@ func checkFiles(t *testing.T, rule *Rule, ctx *Context, prog *loader.Program, pk
 					testFilename, line, warn.Text)
 			}
 		}
-
 		goldenWarns.checkUnmatched(t, testFilename)
 	}
 }
@@ -145,7 +145,6 @@ func TestIncorrectRule(t *testing.T) {
 		}()
 		NewChecker(nil, nil, nil)
 	}(t)
-
 	func(t *testing.T) {
 		name := "i-don-not-exist"
 
@@ -160,15 +159,14 @@ func TestIncorrectRule(t *testing.T) {
 				t.Fatalf("expected `%v`, got %v", want, r)
 			}
 		}()
-
 		r := &Rule{name: name}
 		NewChecker(r, nil, nil)
 	}(t)
 }
 
-func getFilename(prog *loader.Program, f *ast.File) string {
+func getFilename(pkg *packages.Package, f *ast.File) string {
 	// see https://github.com/golang/go/issues/24498
-	return filepath.Base(prog.Fset.Position(f.Pos()).Filename)
+	return filepath.Base(pkg.Fset.Position(f.Pos()).Filename)
 }
 
 type goldenFile struct {
@@ -231,23 +229,16 @@ func (f *goldenFile) checkUnmatched(t *testing.T, testFilename string) {
 	}
 }
 
-func newProg(t *testing.T, pkgPath string) *loader.Program {
-	conf := loader.Config{
-		ParserMode: parser.ParseComments,
-		TypeChecker: types.Config{
-			Sizes: sizes,
-		},
-	}
-	if _, err := conf.FromArgs([]string{pkgPath}, true); err != nil {
-		t.Fatalf("resolve packages: %v", err)
-	}
-	prog, err := conf.Load()
+func newPackage(t *testing.T, pkgPath string) *packages.Package {
+	conf := &packages.Config{Mode: packages.LoadSyntax}
+	pkgs, err := packages.Load(conf, pkgPath)
+
 	if err != nil {
 		t.Fatal(err)
 	}
-	pkgInfo := prog.Imported[pkgPath]
-	if pkgInfo == nil || !pkgInfo.TransitivelyErrorFree {
-		t.Fatalf("%s package is not properly loaded", pkgPath)
+	if len(pkgs) != 1 {
+		t.Fatalf("more than 1 packages loaded for %s", pkgPath)
 	}
-	return prog
+
+	return pkgs[0]
 }

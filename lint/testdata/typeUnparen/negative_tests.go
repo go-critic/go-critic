@@ -38,7 +38,6 @@ func f() {
 		localC1 = (1 + (2 + 3))
 		localC2 = (1 << 2 << 3)
 	)
-
 }
 
 type ifaceToEmbed interface{}

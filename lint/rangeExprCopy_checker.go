@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	addChecker(&rangeExprCopyChecker{})
+	addChecker(&rangeExprCopyChecker{}, attrPerformance)
 }
 
 type rangeExprCopyChecker struct {

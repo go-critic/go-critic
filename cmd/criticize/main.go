@@ -5,7 +5,7 @@ import (
 	"flag"
 	"go/ast"
 	"go/build"
-	"go/parser"
+	"go/token"
 	"go/types"
 	"io/ioutil"
 	"log"
@@ -13,12 +13,14 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strings"
 	"sync"
 
 	"github.com/go-critic/go-critic/cmd/internal/flagparser"
 	"github.com/go-critic/go-critic/lint"
-	"golang.org/x/tools/go/loader"
+	"github.com/logrusorgru/aurora"
+	"golang.org/x/tools/go/packages"
 )
 
 var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT.")
@@ -26,14 +28,13 @@ var generatedFileCommentRE = regexp.MustCompile("Code generated .* DO NOT EDIT."
 type linter struct {
 	ctx *lint.Context
 
-	prog *loader.Program
+	loadedPackages []*packages.Package
 
 	checkers []*lint.Checker
 
 	foundIssues bool // True if there any checker reported an issue
 
-	// Command line flags:
-
+	fset  *token.FileSet
 	flags *flagparser.FlagParser
 
 	packages        []string
@@ -98,8 +99,8 @@ func Main() {
 	l.LoadProgram()
 	l.InitCheckers()
 
-	for _, pkgPath := range l.packages {
-		l.CheckPackage(pkgPath)
+	for _, pkg := range l.loadedPackages {
+		l.CheckPackage(pkg)
 	}
 
 	os.Exit(l.ExitCode())
@@ -142,7 +143,6 @@ func (l *linter) LoadConfig() {
 	var params map[string]interface{}
 	if err := json.Unmarshal(raw, &params); err != nil {
 		log.Fatalf("cannot parse config file, got error: %s", err)
-		return
 	}
 
 	l.enabledCheckers = []string{}
@@ -163,23 +163,59 @@ func (l *linter) LoadProgram() {
 		log.Fatalf("can't find sizes info for %s", runtime.GOARCH)
 	}
 
-	conf := loader.Config{
-		ParserMode: parser.ParseComments,
-		TypeChecker: types.Config{
-			Sizes: sizes,
-		},
+	l.fset = token.NewFileSet()
+	cfg := packages.Config{
+		Mode:  packages.LoadSyntax,
+		Tests: true,
+		Fset:  l.fset,
 	}
-
-	if _, err := conf.FromArgs(l.packages, true); err != nil {
-		log.Fatalf("resolve packages: %v", err)
-	}
-	prog, err := conf.Load()
+	pkgs, err := loadPackages(&cfg, l.packages)
 	if err != nil {
-		log.Fatalf("load program: %v", err)
+		log.Fatalf("load packages: %v", err)
+	}
+	sort.SliceStable(pkgs, func(i, j int) bool {
+		return pkgs[i].PkgPath < pkgs[j].PkgPath
+	})
+
+	l.loadedPackages = pkgs
+	l.ctx = lint.NewContext(l.fset, sizes)
+}
+
+func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {
+	pkgs, err := packages.Load(cfg, patterns...)
+	if err != nil {
+		return nil, err
 	}
 
-	l.prog = prog
-	l.ctx = lint.NewContext(prog.Fset, sizes)
+	result := pkgs[:0]
+
+	// First pkgs traversal selects external tests and
+	// packages built for testing.
+	// If there is no tests for the package,
+	// we're going to check them during the second traversal
+	// which visits normal package if only it was
+	// not checked during the first traversal.
+	withTests := make(map[string]bool)
+	for _, pkg := range pkgs {
+		if !strings.Contains(pkg.ID, ".test]") {
+			continue
+		}
+		result = append(result, pkg)
+		withTests[pkg.PkgPath] = true
+	}
+	for _, pkg := range pkgs {
+		if strings.HasSuffix(pkg.PkgPath, ".test") {
+			continue
+		}
+		if pkg.ID != pkg.PkgPath {
+			continue
+		}
+		if !withTests[pkg.PkgPath] {
+			result = append(result, pkg)
+		}
+	}
+
+	return result, nil
 }
 
 func (l *linter) InitCheckers() {
@@ -210,8 +246,7 @@ func (l *linter) InitCheckers() {
 		l.checkers = append(l.checkers, lint.NewChecker(
 			rule,
 			l.ctx,
-			l.checkerParams[rule.Name()],
-		))
+			l.checkerParams[rule.Name()]))
 		delete(requested, rule.Name())
 	}
 
@@ -223,28 +258,30 @@ func (l *linter) InitCheckers() {
 	}
 }
 
-func (l *linter) CheckPackage(pkgPath string) {
-	pkgInfo := l.prog.Imported[pkgPath]
-	if pkgInfo == nil || !pkgInfo.TransitivelyErrorFree {
-		log.Fatalf("%s package is not properly loaded", pkgPath)
-	}
-
-	l.ctx.SetPackageInfo(&pkgInfo.Info, pkgInfo.Pkg)
-	for _, f := range pkgInfo.Files {
-		if l.flags.CheckGenerated || !isGenerated(f) {
-			l.ctx.SetFileInfo(l.getFilename(f))
-			l.checkFile(f)
+func (l *linter) CheckPackage(pkg *packages.Package) {
+	l.ctx.SetPackageInfo(pkg.TypesInfo, pkg.Types)
+	for _, f := range pkg.Syntax {
+		if l.flags.IgnoreTests && l.isTestFile(f) {
+			continue
 		}
+		if !l.flags.CheckGenerated && l.isGenerated(f) {
+			continue
+		}
+		l.ctx.SetFileInfo(l.getFilename(f), f)
+		l.checkFile(f)
 	}
 }
 
-func isGenerated(f *ast.File) bool {
+func (l *linter) isTestFile(f *ast.File) bool {
+	return strings.HasSuffix(l.getFilename(f), "_test.go")
+}
+
+func (l *linter) isGenerated(f *ast.File) bool {
 	return len(f.Comments) != 0 && generatedFileCommentRE.MatchString(f.Comments[0].Text())
 }
 
 func (l *linter) getFilename(f *ast.File) string {
-	// see https://github.com/golang/go/issues/24498
-	return filepath.Base(l.prog.Fset.Position(f.Pos()).Filename)
+	return filepath.Base(l.fset.Position(f.Pos()).Filename)
 }
 
 // ExitCode returns status code that should be used as an argument to os.Exit.
@@ -285,7 +322,8 @@ func (l *linter) checkFile(f *ast.File) {
 				if l.flags.ShorterErrLocation {
 					loc = shortenLocation(loc)
 				}
-				log.Printf("%s: %s: %v\n", loc, c.Rule, warn.Text)
+
+				printWarning(l, c.Rule.Name(), loc, warn.Text)
 			}
 		}(c)
 	}
@@ -300,5 +338,35 @@ func shortenLocation(loc string) string {
 		return strings.Replace(loc, build.Default.GOROOT, "$GOROOT", 1)
 	default:
 		return loc
+	}
+}
+
+func printWarning(l *linter, rule, loc, warn string) {
+	switch {
+	case l.flags.JSONOutput:
+		// due to sort capabilities,
+		// using struct instead of map
+		b, err := json.MarshalIndent(struct {
+			Rule     string `json:"rule"`
+			Location string `json:"location"`
+			Warning  string `json:"warning"`
+		}{
+			Rule:     rule,
+			Location: loc,
+			Warning:  warn,
+		}, "", "    ")
+		if err != nil {
+			panic(err)
+		}
+		log.Println(string(b))
+
+	case l.flags.ColoredOutput:
+		log.Printf("%v: %v: %v\n",
+			aurora.Magenta(aurora.Bold(loc)),
+			aurora.Red(rule),
+			warn)
+
+	default:
+		log.Printf("%s: %s: %s\n", loc, rule, warn)
 	}
 }

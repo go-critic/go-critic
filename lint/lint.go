@@ -44,6 +44,10 @@ type AttributeSet struct {
 	// VeryOpinionated marks rule as controversial for some audience and
 	// that it might be not suitable for everyone.
 	VeryOpinionated bool
+
+	// Performance marks rules that generally should only be
+	// respected for performance-sensitive code paths.
+	Performance bool
 }
 
 // Rule describes a named check that can be performed by the linter.
@@ -123,7 +127,29 @@ type Context struct {
 	// sizesInfo carries alignment and type size information.
 	// Arch-dependent.
 	sizesInfo types.Sizes
+
+	// require records what optional resources are required
+	// by the checkers set that use this context.
+	//
+	// Every require fields makes associated context field
+	// to be properly initialized.
+	// For example, Context.require.pkgObjects => Context.pkgObjects.
+	require struct {
+		pkgObjects bool
+		pkgRenames bool
+	}
+
+	// pkgObjects stores all imported packages and their local names.
+	pkgObjects map[*types.PkgName]string
+
+	// pkgRenames maps package path to its local renaming.
+	// Contains no entries for packages that were imported without
+	// explicit local names.
+	pkgRenames map[string]string
 }
+
+// See #614.
+var _ = Context{}.require
 
 // NewContext returns new shared context to be used by every checker.
 //
@@ -159,8 +185,14 @@ func (c *Context) SetPackageInfo(info *types.Info, pkg *types.Package) {
 // SetFileInfo sets file-related metadata.
 //
 // Must be called for every source code file being checked.
-func (c *Context) SetFileInfo(filename string) {
-	c.filename = filename
+func (c *Context) SetFileInfo(name string, f *ast.File) {
+	c.filename = name
+	if c.require.pkgObjects {
+		resolvePkgObjects(c, f)
+	}
+	if c.require.pkgRenames {
+		resolvePkgRenames(c, f)
+	}
 }
 
 // Documentation holds rule structured documentation.

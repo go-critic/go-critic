@@ -49,7 +49,7 @@ func (c *busySelectChecker) VisitStmt(stmt ast.Stmt) {
 	for _, s := range selectStmt.Body.List {
 		s := s.(*ast.CommClause)
 		if s.Comm == nil {
-			if !c.hasBlockingStmt(s.Body) {
+			if !c.hasBlockingStmt(s.Body) && !c.hasBlockingStmt(forStmt.Body.List) {
 				c.warn(s)
 			}
 		}
@@ -79,6 +79,6 @@ func (c *busySelectChecker) hasBlockingStmt(stmts []ast.Stmt) bool {
 	return false
 }
 
-func (c *busySelectChecker) warn(node ast.Node) {
-	c.ctx.Warn(node, "default case without a blocking operation or sleep might waste a CPU time")
+func (c *busySelectChecker) warn(cause ast.Node) {
+	c.ctx.Warn(cause, "default case without a blocking operation or sleep might waste a CPU time")
 }

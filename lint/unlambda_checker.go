@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/types"
 
+	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astequal"
 )
 
@@ -32,10 +33,7 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 		return
 	}
 
-	result, ok := ret.Results[0].(*ast.CallExpr)
-	if !ok {
-		return
-	}
+	result := astcast.ToCallExpr(ret.Results[0])
 	callable := qualifiedName(result.Fun)
 	if callable == "" {
 		return // Skip tricky cases; only handle simple calls
@@ -57,7 +55,6 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 	}
 
 	c.warn(fn, callable)
-
 }
 
 func (c *unlambdaChecker) warn(cause ast.Node, suggestion string) {

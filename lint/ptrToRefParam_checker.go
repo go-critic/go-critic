@@ -15,11 +15,8 @@ type ptrToRefParamChecker struct {
 
 func (c *ptrToRefParamChecker) InitDocumentation(d *Documentation) {
 	d.Summary = "Detects input and output parameters that have a type of pointer to referential type"
-	d.Before = `func f(m *map[string]int) (ch *chan *int)`
-	d.After = `func f(m map[string]int) (ch chan *int)`
-	d.Note = `
-Slices are not as referential as maps or channels, but it's usually
-better to return them by value rather than modyfing them by pointer.`
+	d.Before = `func f(m *map[string]int) (*chan *int)`
+	d.After = `func f(m map[string]int) (chan *int)`
 }
 
 func (c *ptrToRefParamChecker) VisitFuncDecl(fn *ast.FuncDecl) {
@@ -38,7 +35,7 @@ func (c *ptrToRefParamChecker) checkParams(params []*ast.Field) {
 
 		if c.isRefType(ptr.Elem()) {
 			if len(param.Names) == 0 {
-				c.ctx.Warn(param, "consider to make non-pointer type for `%s`", ptr.String())
+				c.ctx.Warn(param, "consider to make non-pointer type for `%s`", param.Type)
 			} else {
 				for i := range param.Names {
 					c.warn(param.Names[i])
@@ -50,9 +47,10 @@ func (c *ptrToRefParamChecker) checkParams(params []*ast.Field) {
 
 func (c *ptrToRefParamChecker) isRefType(x types.Type) bool {
 	switch typ := x.(type) {
-	case *types.Map, *types.Chan, *types.Slice, *types.Interface:
+	case *types.Map, *types.Chan, *types.Interface:
 		return true
 	case *types.Named:
+		// Handle underlying type only for interfaces.
 		if _, ok := typ.Underlying().(*types.Interface); ok {
 			return true
 		}

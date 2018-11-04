@@ -1,7 +1,5 @@
 .PHONY: test test-checker ci cover tools docs
 
-PKG = github.com/go-critic/go-critic/lint github.com/go-critic/go-critic/lint/internal/astwalk github.com/go-critic/go-critic/lint/internal/lintutil
-
 %:      # stubs to get makefile param for `test-checker` command
 	@:	# see: https://stackoverflow.com/a/6273809/433041
 
@@ -11,6 +9,9 @@ test:
 test-checker:
 	go test -v -count=1 -run=/$(filter-out $@,$(MAKECMDGOALS)) ./...
 
+test-goroot:
+	go run cmd/gocritic/main.go check-project -enable=$(filter-out $@,$(MAKECMDGOALS)) ${GOROOT}/src
+
 docs:
 	cd ./cmd/makedocs && go run main.go
 
@@ -19,7 +20,7 @@ ci:
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
-	go tool vet .
+	go vet $(shell go list ./... | grep -v /vendor/)
 	go test -v -race -count=1 ./...
 
 ci-linter:

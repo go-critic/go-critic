@@ -3,8 +3,10 @@ package lint
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 	"log"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/go-critic/go-critic/lint/internal/astwalk"
@@ -15,7 +17,7 @@ import (
 // used to instantiate new checker instances.
 //
 // Keys are rule names.
-var checkerPrototypes = map[string]checkerProto{}
+var checkerPrototypes = make(map[string]checkerProto)
 
 type checkerProto struct {
 	rule *Rule
@@ -47,6 +49,7 @@ const (
 	attrExperimental checkerAttribute = iota
 	attrSyntaxOnly
 	attrVeryOpinionated
+	attrPerformance
 )
 
 type parameters map[string]interface{}
@@ -95,10 +98,10 @@ type context struct {
 }
 
 // Warn adds a Warning to checker output.
-func (ctx *context) Warn(node ast.Node, format string, args ...interface{}) {
+func (ctx *context) Warn(n ast.Node, format string, args ...interface{}) {
 	ctx.warnings = append(ctx.warnings, Warning{
 		Text: ctx.printer.Sprintf(format, args...),
-		Node: node,
+		Node: n,
 	})
 }
 
@@ -151,6 +154,8 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 			return astwalk.WalkerForTypeExpr(v, ctx.typesInfo)
 		case astwalk.LocalCommentVisitor:
 			return astwalk.WalkerForLocalComment(v)
+		case astwalk.DocCommentVisitor:
+			return astwalk.WalkerForDocComment(v)
 		default:
 			panic(fmt.Sprintf("%T does not implement known visitor interface", c))
 		}
@@ -168,6 +173,8 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 			rule.SyntaxOnly = true
 		case attrVeryOpinionated:
 			rule.VeryOpinionated = true
+		case attrPerformance:
+			rule.Performance = true
 		default:
 			panic(fmt.Sprintf("unexpected checkerAttribute"))
 		}
@@ -190,4 +197,32 @@ func addChecker(c abstractChecker, attrs ...checkerAttribute) {
 		return clone
 	}
 	checkerPrototypes[rule.name] = proto
+}
+
+func resolvePkgObjects(ctx *Context, f *ast.File) {
+	ctx.pkgObjects = make(map[*types.PkgName]string, len(f.Imports))
+
+	for _, spec := range f.Imports {
+		if spec.Name != nil {
+			obj := ctx.typesInfo.ObjectOf(spec.Name)
+			ctx.pkgObjects[obj.(*types.PkgName)] = spec.Name.Name
+		} else {
+			obj := ctx.typesInfo.Implicits[spec]
+			ctx.pkgObjects[obj.(*types.PkgName)] = obj.Name()
+		}
+	}
+}
+
+func resolvePkgRenames(ctx *Context, f *ast.File) {
+	ctx.pkgRenames = make(map[string]string)
+
+	for _, spec := range f.Imports {
+		if spec.Name != nil {
+			path, err := strconv.Unquote(spec.Path.Value)
+			if err != nil {
+				panic(err)
+			}
+			ctx.pkgRenames[path] = spec.Name.Name
+		}
+	}
 }

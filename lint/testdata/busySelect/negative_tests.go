@@ -67,3 +67,17 @@ func g6() {
 		}
 	}
 }
+
+func g7() {
+	done := make(chan int)
+	msgs := make(chan int)
+	m := 10
+	for {
+		msgs <- m
+		select {
+		case <-done:
+			return
+		default:
+		}
+	}
+}

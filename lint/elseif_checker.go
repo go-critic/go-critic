@@ -42,13 +42,17 @@ func (c *elseifChecker) VisitStmt(stmt ast.Stmt) {
 		if !ok || len(elseBody.List) != 1 {
 			return
 		}
-		if !astp.IsIfStmt(elseBody.List[0]) {
+		innerIfStmt, ok := elseBody.List[0].(*ast.IfStmt)
+		if !ok {
 			return
 		}
 		balanced := len(stmt.Body.List) == 1 &&
 			astp.IsIfStmt(stmt.Body.List[0])
 		if balanced && c.skipBalanced {
 			return // Configured to skip balanced statements
+		}
+		if innerIfStmt.Else != nil {
+			return
 		}
 		c.warn(stmt.Else)
 	}

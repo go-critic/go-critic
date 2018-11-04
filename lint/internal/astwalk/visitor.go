@@ -1,6 +1,8 @@
 package astwalk
 
-import "go/ast"
+import (
+	"go/ast"
+)
 
 // Visitor interfaces.
 type (
@@ -67,6 +69,14 @@ type (
 	LocalCommentVisitor interface {
 		walkerEvents
 		VisitLocalComment(*ast.CommentGroup)
+	}
+
+	// DocCommentVisitor visits every doc-comment.
+	// Does not visit doc-comments for function-local definitions (types, etc).
+	// Also does not visit package doc-comment (file-level doc-comments).
+	DocCommentVisitor interface {
+		walkerEvents
+		VisitDocComment(*ast.CommentGroup)
 	}
 )
 

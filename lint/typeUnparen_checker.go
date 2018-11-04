@@ -43,7 +43,6 @@ func (c *typeUnparenChecker) checkTypeExpr(x ast.Expr) {
 		if !c.hasParens(x) {
 			return
 		}
-		// fmt.Printf("=> %#v\n", x)
 		c.warn(x, c.unparenExpr(astcopy.Expr(x)))
 	}
 }

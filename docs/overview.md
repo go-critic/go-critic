@@ -21,14 +21,14 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       </tr>
       <tr>
         <td><a href="#flagDeref-ref">flagDeref</a></td>
-        <td>Detects immediate dereferencing of `flag` package pointers.</td>
+        <td>Detects immediate dereferencing of `flag` package pointers</td>
       </tr>
       <tr>
         <td><a href="#ifElseChain-ref">ifElseChain</a></td>
         <td>Detects repeated if-else statements and suggests to replace them with switch statement</td>
       </tr>
       <tr>
-        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
+        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a> :nerd_face:</td>
         <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
       </tr>
       <tr>
@@ -38,6 +38,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
       <tr>
         <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
         <td>Detects loops that copy big objects during each iteration</td>
+      </tr>
+      <tr>
+        <td><a href="#regexpMust-ref">regexpMust</a></td>
+        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
       </tr>
       <tr>
         <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
@@ -81,6 +85,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects assignments that can be simplified by using assignment operators</td>
       </tr>
       <tr>
+        <td><a href="#blankParam-ref">blankParam</a> :nerd_face:</td>
+        <td>Detects unused params and suggests to name them as `_` (blank)</td>
+      </tr>
+      <tr>
         <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
         <td>Detects bool expressions that can be simplified</td>
       </tr>
@@ -117,8 +125,16 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects defer in loop and warns that it will not be executed till the end of function's scope</td>
       </tr>
       <tr>
+        <td><a href="#deprecatedComment-ref">deprecatedComment</a></td>
+        <td>Detects malformed "deprecated" doc-comments</td>
+      </tr>
+      <tr>
         <td><a href="#docStub-ref">docStub</a></td>
         <td>Detects comments that silence go lint complaints about doc-comment</td>
+      </tr>
+      <tr>
+        <td><a href="#dupArg-ref">dupArg</a></td>
+        <td>Detects suspicious duplicated arguments</td>
       </tr>
       <tr>
         <td><a href="#dupBranchBody-ref">dupBranchBody</a></td>
@@ -149,6 +165,10 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects potentially unsafe dependencies on evaluation order</td>
       </tr>
       <tr>
+        <td><a href="#flagName-ref">flagName</a></td>
+        <td>Detects flag names with whitespace</td>
+      </tr>
+      <tr>
         <td><a href="#floatCompare-ref">floatCompare</a></td>
         <td>Detects fragile float variables comparisons</td>
       </tr>
@@ -157,8 +177,16 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects params that incur excessive amount of copying</td>
       </tr>
       <tr>
+        <td><a href="#importPackageName-ref">importPackageName</a></td>
+        <td>Detects when imported package names are unnecessary renamed</td>
+      </tr>
+      <tr>
         <td><a href="#importShadow-ref">importShadow</a></td>
         <td>Detects when imported package names shadowed in assignments</td>
+      </tr>
+      <tr>
+        <td><a href="#indexAlloc-ref">indexAlloc</a></td>
+        <td>Detects strings.Index calls that may cause unwanted allocs</td>
       </tr>
       <tr>
         <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
@@ -169,8 +197,12 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects non-assignment statements inside if/switch init clause</td>
       </tr>
       <tr>
-        <td><a href="#longChain-ref">longChain</a></td>
+        <td><a href="#longChain-ref">longChain</a> :nerd_face:</td>
         <td>Detects repeated expression chains and suggest to refactor them</td>
+      </tr>
+      <tr>
+        <td><a href="#methodExprCall-ref">methodExprCall</a> :nerd_face:</td>
+        <td>Detects method expression call that can be replaced with a method call</td>
       </tr>
       <tr>
         <td><a href="#namedConst-ref">namedConst</a></td>
@@ -189,10 +221,6 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects input and output parameters that have a type of pointer to referential type</td>
       </tr>
       <tr>
-        <td><a href="#regexpMust-ref">regexpMust</a></td>
-        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
-      </tr>
-      <tr>
         <td><a href="#sloppyLen-ref">sloppyLen</a></td>
         <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
       </tr>
@@ -205,8 +233,16 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects constant expressions that can be replaced by a stdlib const</td>
       </tr>
       <tr>
+        <td><a href="#structLitKeyOrder-ref">structLitKeyOrder</a> :nerd_face:</td>
+        <td>Detects struct literal keys order that does not match declaration order</td>
+      </tr>
+      <tr>
         <td><a href="#unexportedCall-ref">unexportedCall</a> :nerd_face:</td>
         <td>Detects calls of unexported method from unexported type outside that type</td>
+      </tr>
+      <tr>
+        <td><a href="#unlabelStmt-ref">unlabelStmt</a></td>
+        <td>Detects redundant statement labels</td>
       </tr>
       <tr>
         <td><a href="#unlambda-ref">unlambda</a></td>
@@ -221,12 +257,8 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
         <td>Detects unnecessary braced statement blocks</td>
       </tr>
       <tr>
-        <td><a href="#unusedParam-ref">unusedParam</a></td>
-        <td>Detects unused params and suggests to name them as `_` (underscore)</td>
-      </tr>
-      <tr>
         <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
-        <td>Detects Yoda style expressions that suggest to replace them</td>
+        <td>Detects Yoda style expressions and suggests to replace them</td>
       </tr>
 </table>
 
@@ -289,6 +321,24 @@ x *= 2
 
 
 
+<a name="blankParam-ref"></a>
+## blankParam
+Detects unused params and suggests to name them as `_` (blank).
+
+
+
+**Before:**
+```go
+func f(a int, b float64) // b isn't used inside function body
+```
+
+**After:**
+```go
+func f(a int, _ float64) // everything is cool
+```
+
+
+`blankParam` is very opinionated.
 <a name="boolExprSimplify-ref"></a>
 ## boolExprSimplify
 Detects bool expressions that can be simplified.
@@ -519,6 +569,26 @@ for i := range [10]int{} {
 
 
 
+<a name="deprecatedComment-ref"></a>
+## deprecatedComment
+Detects malformed "deprecated" doc-comments.
+
+
+
+**Before:**
+```go
+// deprecated, use FuncNew instead
+func FuncOld() int
+```
+
+**After:**
+```go
+// Deprecated: use FuncNew instead
+func FuncOld() int
+```
+
+
+`deprecatedComment` is syntax-only checker (fast).
 <a name="docStub-ref"></a>
 ## docStub
 Detects comments that silence go lint complaints about doc-comment.
@@ -541,6 +611,24 @@ func Foo() {
 You can either remove a comment to let go lint find it or change stub to useful comment.
 This checker makes it easier to detect stubs, the action is up to you.
 `docStub` is syntax-only checker (fast).
+<a name="dupArg-ref"></a>
+## dupArg
+Detects suspicious duplicated arguments.
+
+
+
+**Before:**
+```go
+copy(dst, dst)
+```
+
+**After:**
+```go
+copy(dst, src)
+```
+
+
+
 <a name="dupBranchBody-ref"></a>
 ## dupBranchBody
 Detects duplicated branch bodies inside conditional statements.
@@ -706,7 +794,7 @@ return mayModifySlice(&xs), v
 
 <a name="flagDeref-ref"></a>
 ## flagDeref
-Detects immediate dereferencing of `flag` package pointers..
+Detects immediate dereferencing of `flag` package pointers.
 
 
 
@@ -724,6 +812,24 @@ flag.BoolVar(&b, "b", false, "b docs")
 Dereferencing returned pointers will lead to hard to find errors
 where flag values are not updated after flag.Parse().
 `flagDeref` is syntax-only checker (fast).
+<a name="flagName-ref"></a>
+## flagName
+Detects flag names with whitespace.
+
+
+
+**Before:**
+```go
+b := flag.Bool(" foo ", false, "description")
+```
+
+**After:**
+```go
+b := flag.Bool("foo", false, "description")
+```
+
+
+
 <a name="floatCompare-ref"></a>
 ## floatCompare
 Detects fragile float variables comparisons.
@@ -793,7 +899,26 @@ default:
 
 Permits single else or else-if; repeated else-if or else + else-if
 will trigger suggestion to use switch statement.
+See [EffectiveGo#switch](https://golang.org/doc/effective_go.html#switch).
 `ifElseChain` is syntax-only checker (fast).
+<a name="importPackageName-ref"></a>
+## importPackageName
+Detects when imported package names are unnecessary renamed.
+
+
+
+**Before:**
+```go
+import lint "github.com/go-critic/go-critic/lint"
+```
+
+**After:**
+```go
+import "github.com/go-critic/go-critic/lint"
+```
+
+
+
 <a name="importShadow-ref"></a>
 ## importShadow
 Detects when imported package names shadowed in assignments.
@@ -814,6 +939,24 @@ func myFunc(filename string) {
 ```
 
 
+
+<a name="indexAlloc-ref"></a>
+## indexAlloc
+Detects strings.Index calls that may cause unwanted allocs.
+
+
+
+**Before:**
+```go
+strings.Index(string(x), y)
+```
+
+**After:**
+```go
+bytes.Index(x, []byte(y))
+```
+
+See Go issue for details: https://github.com/golang/go/issues/25864
 
 <a name="indexOnlyLoop-ref"></a>
 ## indexOnlyLoop
@@ -887,7 +1030,27 @@ v := (a + x) + (b + x) + (c + x)
 ```
 
 
+`longChain` is very opinionated.
+<a name="methodExprCall-ref"></a>
+## methodExprCall
+Detects method expression call that can be replaced with a method call.
 
+
+
+**Before:**
+```go
+f := foo{}
+foo.bar(f)
+```
+
+**After:**
+```go
+f := foo{}
+f.bar()
+```
+
+
+`methodExprCall` is very opinionated.
 <a name="namedConst-ref"></a>
 ## namedConst
 Detects literals that can be replaced with defined named const.
@@ -955,7 +1118,7 @@ if err == nil {
 }
 // (B) - typo in "==", change to "!="
 if err != nil {
-	return nil
+	return err
 }
 ```
 
@@ -978,7 +1141,7 @@ func foo(a, b, c, d, e, f, g int) {}
 ```
 
 
-`paramTypeCombine` is syntax-only checker (fast).
+`paramTypeCombine` is syntax-only checker (fast).`paramTypeCombine` is very opinionated.
 <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
 Detects input and output parameters that have a type of pointer to referential type.
@@ -987,16 +1150,15 @@ Detects input and output parameters that have a type of pointer to referential t
 
 **Before:**
 ```go
-func f(m *map[string]int) (ch *chan *int)
+func f(m *map[string]int) (*chan *int)
 ```
 
 **After:**
 ```go
-func f(m map[string]int) (ch chan *int)
+func f(m map[string]int) (chan *int)
 ```
 
-Slices are not as referential as maps or channels, but it's usually
-better to return them by value rather than modyfing them by pointer.
+
 
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
@@ -1152,6 +1314,26 @@ maxVal := math.MaxInt8
 
 
 
+<a name="structLitKeyOrder-ref"></a>
+## structLitKeyOrder
+Detects struct literal keys order that does not match declaration order.
+
+
+
+**Before:**
+```go
+type foo struct{ x, y int }
+v := foo{y: y, x: x}
+```
+
+**After:**
+```go
+type foo struct{ x, y int }
+v := foo{x: x, y: y}
+```
+
+
+`structLitKeyOrder` is very opinionated.
 <a name="switchTrue-ref"></a>
 ## switchTrue
 Detects switch-over-bool statements that use explicit `true` tag value.
@@ -1266,6 +1448,33 @@ func baz(f foo) {
 
 
 `unexportedCall` is very opinionated.
+<a name="unlabelStmt-ref"></a>
+## unlabelStmt
+Detects redundant statement labels.
+
+
+
+**Before:**
+```go
+derp:
+for x := range xs {
+	if x == 0 {
+		break derp
+	}
+}
+```
+
+**After:**
+```go
+for x := range xs {
+	if x == 0 {
+		break
+	}
+}
+```
+
+
+
 <a name="unlambda-ref"></a>
 ## unlambda
 Detects function literals that can be simplified.
@@ -1344,27 +1553,9 @@ copy(b, values...)
 
 
 
-<a name="unusedParam-ref"></a>
-## unusedParam
-Detects unused params and suggests to name them as `_` (underscore).
-
-
-
-**Before:**
-```go
-func f(a int, b float64) // b isn't used inside function body
-```
-
-**After:**
-```go
-func f(a int, _ float64) // everything is cool
-```
-
-
-
 <a name="yodaStyleExpr-ref"></a>
 ## yodaStyleExpr
-Detects Yoda style expressions that suggest to replace them.
+Detects Yoda style expressions and suggests to replace them.
 
 
 

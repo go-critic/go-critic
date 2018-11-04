@@ -5,6 +5,7 @@ import (
 	"go/token"
 
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/typep"
 )
 
 func init() {
@@ -28,7 +29,7 @@ if err == nil {
 }
 // (B) - typo in "==", change to "!="
 if err != nil {
-	return nil
+	return err
 }`
 }
 
@@ -44,7 +45,7 @@ func (c *nilValReturnChecker) VisitStmt(stmt ast.Stmt) {
 	expr, ok := ifStmt.Cond.(*ast.BinaryExpr)
 	cond := ok &&
 		expr.Op == token.EQL &&
-		isSafeExpr(expr.X) &&
+		typep.SideEffectFree(c.ctx.typesInfo, expr.X) &&
 		qualifiedName(expr.Y) == "nil" &&
 		astequal.Expr(expr.X, ret.Results[0])
 	if cond {

@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	addChecker(&longChainChecker{}, attrExperimental)
+	addChecker(&longChainChecker{}, attrExperimental, attrVeryOpinionated)
 }
 
 type longChainChecker struct {
@@ -145,6 +145,6 @@ func (c *longChainChecker) isTypeConversion(call *ast.CallExpr) bool {
 	}
 }
 
-func (c *longChainChecker) warn(node ast.Node, s string) {
-	c.ctx.Warn(node, "%s repeated multiple times, consider assigning it to local variable", s)
+func (c *longChainChecker) warn(cause ast.Node, s string) {
+	c.ctx.Warn(cause, "%s repeated multiple times, consider assigning it to local variable", s)
 }

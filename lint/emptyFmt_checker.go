@@ -2,6 +2,8 @@ package lint
 
 import (
 	"go/ast"
+
+	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
@@ -23,11 +25,7 @@ errors.New("wherever")`
 }
 
 func (c *emptyFmtChecker) VisitExpr(expr ast.Expr) {
-	call, ok := expr.(*ast.CallExpr)
-	if !ok {
-		return
-	}
-
+	call := astcast.ToCallExpr(expr)
 	name := qualifiedName(call.Fun)
 
 	switch len(call.Args) {

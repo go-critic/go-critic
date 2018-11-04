@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	addChecker(&regexpMustChecker{}, attrExperimental)
+	addChecker(&regexpMustChecker{})
 }
 
 type regexpMustChecker struct {

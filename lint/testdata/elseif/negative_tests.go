@@ -43,3 +43,12 @@ func complexElseBody() {
 		}
 	}
 }
+
+func elseElse() {
+	if true {
+	} else {
+		if true {
+		} else {
+		}
+	}
+}
