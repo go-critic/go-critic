@@ -27,6 +27,9 @@ func FuncOld() int
 // Deprecated: use FuncNew instead
 func FuncOld() int
 `
+	d.Note = `To signal that an identifier
+should not be used, add a paragraph to its doc comment that begins with
+"Deprecated:" followed by some information about the deprecation.`
 }
 
 func (c *deprecatedCommentChecker) Init() {
