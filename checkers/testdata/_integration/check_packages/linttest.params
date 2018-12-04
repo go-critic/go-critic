@@ -1,0 +1,2 @@
+check -enableAll foo bar | linttest.golden
+check -enableAll bar foo | linttest.golden
