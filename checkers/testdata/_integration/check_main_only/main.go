@@ -237,5 +237,9 @@ func flagName() {
 	_ = flag.String(" foo ", "1", "")
 }
 
+func commentFormatting() {
+	//"123"
+}
+
 func main() {
 }
