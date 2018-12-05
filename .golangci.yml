@@ -7,7 +7,7 @@ linters:
     - deadcode
     - errcheck
     - gas
-    - goconst
+    - gocritic
     - gofmt
     - goimports
     - golint

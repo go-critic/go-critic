@@ -24,7 +24,6 @@ ci-tests:
 	go test -v -race -count=1 ./...
 
 ci-linter:
-	gocritic check-project `pwd`
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.9.1
 	golangci-lint run -v
 
