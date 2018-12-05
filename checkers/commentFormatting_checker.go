@@ -49,16 +49,20 @@ func (c *commentFormattingChecker) VisitComment(cg *ast.CommentGroup) {
 
 		// Make a decision based on a first comment text rune.
 		r, _ := utf8.DecodeRuneInString(comment.Text[len("//"):])
-		switch r {
-		case '+', '-', '#', '!':
-			// Permitted list to avoid false-positives.
-			continue
-		default:
-			if !unicode.IsSpace(r) {
-				c.warn(cg)
-				return
-			}
+		if !c.specialChar(r) && !unicode.IsSpace(r) {
+			c.warn(cg)
+			return
 		}
+	}
+}
+
+func (c *commentFormattingChecker) specialChar(r rune) bool {
+	// Permitted list to avoid false-positives.
+	switch r {
+	case '+', '-', '#', '!':
+		return true
+	default:
+		return false
 	}
 }
 
