@@ -3,7 +3,6 @@
 [![Build Status][travis-image]][travis-url]
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#code-analysis)
 [![Go Report Card][go-report-image]][go-report-url]
-[![GoDoc][godoc-image]][godoc-url]
 [![coverage][coverage-image]][coverage-url]
 [![PRs Welcome][pr-welcome-image]][pr-welcome-url]
 
@@ -11,8 +10,6 @@
 [travis-url]: https://travis-ci.org/go-critic/go-critic
 [go-report-image]: https://goreportcard.com/badge/github.com/go-critic/go-critic
 [go-report-url]: https://goreportcard.com/report/github.com/go-critic/go-critic
-[godoc-image]: https://godoc.org/github.com/go-critic/go-critic/lint?status.svg
-[godoc-url]: https://godoc.org/github.com/go-critic/go-critic/lint
 [coverage-image]: https://coveralls.io/repos/github/go-critic/go-critic/badge.svg?branch=master
 [coverage-url]: https://coveralls.io/github/go-critic/go-critic?branch=master
 [pr-welcome-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg

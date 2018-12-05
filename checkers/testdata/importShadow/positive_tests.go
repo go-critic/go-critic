@@ -7,19 +7,19 @@ import (
 	mymath1 "math"
 	mymath2 "math"
 
-	"github.com/go-critic/go-critic/lint"
+	"github.com/go-lintpack/lintpack"
 )
 
 var _ = mymath1.E
 var _ = mymath2.E
 
 func shadowImportedPackages() {
-	fmt.Printf("Hello PI=%v, Rule=%v", math.Pi, lint.Rule{})
+	fmt.Printf("Hello PI=%v, Info=%v", math.Pi, lintpack.CheckerInfo{})
 
 	/*! shadow of imported package 'math' */
 	math := "some math"
-	/*! shadow of imported from 'github.com/go-critic/go-critic/lint' package 'lint' */
-	lint := "some lint"
+	/*! shadow of imported from 'github.com/go-lintpack/lintpack' package 'lintpack' */
+	lintpack := "some lint"
 
 	fmt.Printf("Hello math=%v, lint=%v", math, lint)
 }
@@ -30,10 +30,10 @@ func genDeclShadow() {
 	var (
 		/*! shadow of imported package 'fmt' */
 		fmt = 2
-		/*! shadow of imported from 'github.com/go-critic/go-critic/lint' package 'lint' */
-		lint = 3
+		/*! shadow of imported from 'github.com/go-lintpack/lintpack' package 'lintpack' */
+		lintpack = 3
 	)
-	_, _ = fmt, lint
+	_, _ = fmt, lintpack
 }
 
 /*! shadow of imported package 'math' */

@@ -30,7 +30,7 @@ ci-linter:
 
 cover:
 	go get -u github.com/mattn/goveralls
-	goveralls -package github.com/go-critic/go-critic/lint -service travis-ci -repotoken ${COVERALLS_TOKEN}
+	goveralls -package github.com/go-critic/go-critic/checkers -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 install:
 	go install ./cmd/gocritic

@@ -6,11 +6,11 @@ import (
 
 	_ "github.com/go-toolsmith/astfmt" // To reproduce #665
 
-	"github.com/go-critic/go-critic/lint"
+	"github.com/go-lintpack/lintpack"
 )
 
 func noWarnings() {
-	fmt.Printf("Hello PI=%v, Rule=%v", math.Pi, lint.Rule{})
+	fmt.Printf("Hello PI=%v, Info=%v", math.Pi, lintpack.CheckerInfo{})
 }
 
 func noShadowByParams(x string, y int) (a string, b int) { return }
