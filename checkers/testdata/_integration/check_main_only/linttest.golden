@@ -1,0 +1,44 @@
+exit status 1
+./main.go:13:7: appendAssign: append result not assigned to the same slice
+./main.go:18:2: appendCombine: can combine chain of 2 appends into one
+./main.go:23:2: assignOp: replace `x = x + 2` with `x += 2`
+./main.go:27:9: boolExprSimplify: can simplify `!(x == y+1)` to `x != y+1`
+./main.go:30:20: builtinShadow: shadowing of predeclared identifier: new
+./main.go:32:16: captLocal: `THIS' should not be capitalized
+./main.go:37:2: caseOrder: case int must go before the interface{} case
+./main.go:42:2: commentedOutCode: may want to remove commented-out code
+./main.go:49:2: defaultCaseOrder: consider to make `default` case as first or as last case
+./main.go:58:1: deprecatedComment: the proper format is `Deprecated: <text>`
+./main.go:62:1: docStub: silencing go lint doc-comment warnings is unadvised
+./main.go:65:2: dupArg: suspicious duplicated args in `copy(xs, xs)`
+./main.go:69:2: dupBranchBody: both branches in if statement has same body
+./main.go:80:7: dupCase: 'case x == 0' is duplicated
+./main.go:85:9: dupSubExpr: suspicious identical LHS and RHS for `<` operator
+./main.go:90:9: elseif: can replace 'else {if cond {}}' with 'else if cond {}'
+./main.go:101:3: emptyFallthrough: replace empty case containing only fallthrough with expression list
+./main.go:99:3: emptyFallthrough: replace empty case containing only fallthrough with expression list
+./main.go:110:6: flagDeref: immediate deref in *flag.String("str", "", "usage") is most likely an error; consider using flag.StringVar
+./main.go:237:6: flagName: flag name " foo " contains whitespace
+./main.go:113:16: hugeParam: x is heavy (80000 bytes); consider passing it by pointer
+./main.go:141:20: hugeParam: xs is heavy (8000 bytes); consider passing it by pointer
+./main.go:116:2: ifElseChain: rewrite if-else to switch statement
+./main.go:122:19: importShadow: shadow of imported package 'flag'
+./main.go:125:6: indexAlloc: consider replacing strings.Index(string(s), sub) with bytes.Index(s, []byte(sub))
+./main.go:129:6: methodExprCall: consider to change `point.String` to `p.String`
+./main.go:134:3: nilValReturn: returned expr is always nil; replace x with nil
+./main.go:233:9: offBy1: index expr always panics; maybe you wanted xs[len(xs)-1]?
+./main.go:139:1: paramTypeCombine: func(x int, y int) could be replaced with func(x, y int)
+./main.go:142:2: rangeExprCopy: copy of xs (8000 bytes) can be avoided with &xs
+./main.go:148:2: rangeValCopy: each iteration copies 8000 bytes (consider pointers or indexing)
+./main.go:154:11: regexpMust: for const patterns like `this`, use regexp.MustCompile
+./main.go:159:2: singleCaseSwitch: should rewrite switch statement to if statement
+./main.go:167:9: sloppyLen: len(xs) < 0 is always false
+./main.go:172:5: sloppyReassign: re-assignment to `err` can be replaced with `err := (point{})`
+./main.go:179:2: switchTrue: replace 'switch true {}' with 'switch {}'
+./main.go:188:2: typeSwitchVar: case 0 can benefit from type switch with assignment
+./main.go:188:2: typeSwitchVar: case 1 can benefit from type switch with assignment
+./main.go:199:8: typeUnparen: could simplify (func()) to func()
+./main.go:203:9: underef: could simplify (*xs)[2] to xs[2]
+./main.go:207:1: unlabelStmt: label loop is redundant
+./main.go:215:11: unlambda: replace `func(x int) int { return add1(x) }` with `add1`
+./main.go:218:39: unslice: could simplify xs[:] to xs
