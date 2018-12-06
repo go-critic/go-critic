@@ -24,13 +24,12 @@ ci-tests:
 	go test -v -race -count=1 ./...
 
 ci-linter:
-	gocritic check-project `pwd`
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.9.1
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.12.3
 	golangci-lint run -v
 
 cover:
 	go get -u github.com/mattn/goveralls
-	goveralls -package github.com/go-critic/go-critic/lint -service travis-ci -repotoken ${COVERALLS_TOKEN}
+	goveralls -package github.com/go-critic/go-critic/checkers -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 install:
 	go install ./cmd/gocritic

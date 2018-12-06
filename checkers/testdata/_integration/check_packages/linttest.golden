@@ -1,0 +1,5 @@
+exit status 1
+./src/bar/bar.go:4:1: docStub: silencing go lint doc-comment warnings is unadvised
+./src/bar/bar_test.go:6:6: dupSubExpr: suspicious identical LHS and RHS for `<` operator
+./src/bar/bar_ext_test.go:7:6: underef: could simplify (*object).x to object.x
+./src/foo/foo.go:4:9: unslice: could simplify xs[:] to xs
