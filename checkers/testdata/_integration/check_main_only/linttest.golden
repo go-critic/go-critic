@@ -6,6 +6,7 @@ exit status 1
 ./main.go:30:20: builtinShadow: shadowing of predeclared identifier: new
 ./main.go:32:16: captLocal: `THIS' should not be capitalized
 ./main.go:37:2: caseOrder: case int must go before the interface{} case
+./main.go:241:2: commentFormatting: put a space between `//` and comment text
 ./main.go:42:2: commentedOutCode: may want to remove commented-out code
 ./main.go:49:2: defaultCaseOrder: consider to make `default` case as first or as last case
 ./main.go:58:1: deprecatedComment: the proper format is `Deprecated: <text>`
