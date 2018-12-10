@@ -2,6 +2,7 @@ exit status 1
 ./main.go:13:7: appendAssign: append result not assigned to the same slice
 ./main.go:18:2: appendCombine: can combine chain of 2 appends into one
 ./main.go:23:2: assignOp: replace `x = x + 2` with `x += 2`
+./main.go:245:6: badCond: `x < 100 && x > 200` is always false; probably meant `x < 100 || x > 200`?
 ./main.go:27:9: boolExprSimplify: can simplify `!(x == y+1)` to `x != y+1`
 ./main.go:30:20: builtinShadow: shadowing of predeclared identifier: new
 ./main.go:32:16: captLocal: `THIS' should not be capitalized
