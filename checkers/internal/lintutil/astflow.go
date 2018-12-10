@@ -24,7 +24,7 @@ func IsImmutable(info *types.Info, n ast.Expr) bool {
 		return true
 	}
 	tv, ok := info.Types[n]
-	return ok && !tv.Assignable() && !tv.Assignable()
+	return ok && !tv.Assignable() && !tv.Addressable()
 }
 
 // CouldBeMutated reports whether dst can be modified inside body.
