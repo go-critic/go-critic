@@ -48,7 +48,7 @@ func (c *methodExprCallChecker) warn(cause *ast.CallExpr, s *ast.SelectorExpr) {
 	selector := astcopy.SelectorExpr(s)
 	selector.X = cause.Args[0]
 
-	// Remove "&" from the reciever (if any).
+	// Remove "&" from the receiver (if any).
 	if u, ok := selector.X.(*ast.UnaryExpr); ok && u.Op == token.AND {
 		selector.X = u.X
 	}
