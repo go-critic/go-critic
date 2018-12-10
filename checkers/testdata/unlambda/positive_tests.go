@@ -14,6 +14,12 @@ func functionLiterals() {
 
 	/*! replace `func(x int) (int, error) { return returnIntError(x) }` with `returnIntError` */
 	_ = func(x int) (int, error) { return returnIntError(x) }
+
+	/*! replace `func(x, y int) int { return add(x, y) }` with `add` */
+	_ = func(x, y int) int { return add(x, y) }
+
+	/*! replace `func(x int, y int) int { return add(x, y) }` with `add` */
+	_ = func(x int, y int) int { return add(x, y) }
 }
 
 type object struct{}
