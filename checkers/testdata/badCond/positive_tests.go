@@ -13,11 +13,24 @@ func bad2(x int) {
 	/*! `x < -10 && x > 10` condition is always false */
 	if x < -10 && x > 10 {
 	}
+
+	/*! `(x < -10) && x > 10` condition is always false */
+	_ = (x < -10) && x > 10
+	/*! `x < -10 && (x > 10)` condition is always false */
+	_ = x < -10 && (x > 10)
+	/*! `(x < -10) && (x > 10)` condition is always false */
+	_ = (x < -10) && (x > 10)
 }
 
 func bad3(x int) {
 	/*! `x == 10 && x == 20` condition is suspicious */
 	_ = x == 10 && x == 20
+	/*! `(x == 10) && x == 20` condition is suspicious */
+	_ = (x == 10) && x == 20
+	/*! `x == 10 && (x == 20)` condition is suspicious */
+	_ = x == 10 && (x == 20)
+	/*! `(x == 10) && (x == 20)` condition is suspicious */
+	_ = (x == 10) && (x == 20)
 
 	var err error
 	/*! `err == nil && err == newError()` condition is suspicious */
