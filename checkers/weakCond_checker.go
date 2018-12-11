@@ -40,7 +40,7 @@ func (c *weakCondChecker) VisitExpr(expr ast.Expr) {
 	rhs := astutil.Unparen(cond.Y)
 
 	// Pattern 1.
-	// `x != nil && usafeOf(x[i])`
+	// `x != nil && usageOf(x[i])`
 	// Pattern 2.
 	// `x == nil || usafeOf(x[i])`
 
