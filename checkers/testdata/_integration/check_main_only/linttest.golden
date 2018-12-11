@@ -2,7 +2,7 @@ exit status 1
 ./main.go:13:7: appendAssign: append result not assigned to the same slice
 ./main.go:18:2: appendCombine: can combine chain of 2 appends into one
 ./main.go:23:2: assignOp: replace `x = x + 2` with `x += 2`
-./main.go:245:6: badCond: `x < 100 && x > 200` is always false; probably meant `x < 100 || x > 200`?
+./main.go:245:6: badCond: `x < 100 && x > 200` condition is always false
 ./main.go:27:9: boolExprSimplify: can simplify `!(x == y+1)` to `x != y+1`
 ./main.go:30:20: builtinShadow: shadowing of predeclared identifier: new
 ./main.go:32:16: captLocal: `THIS' should not be capitalized
@@ -44,3 +44,4 @@ exit status 1
 ./main.go:207:1: unlabelStmt: label loop is redundant
 ./main.go:215:11: unlambda: replace `func(x int) int { return add1(x) }` with `add1`
 ./main.go:218:39: unslice: could simplify xs[:] to xs
+./main.go:249:6: weakCond: suspicious `xs == nil || xs[0] == 0`; nil check may not be enough, check for len
