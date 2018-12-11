@@ -42,7 +42,7 @@ func (c *weakCondChecker) VisitExpr(expr ast.Expr) {
 	// Pattern 1.
 	// `x != nil && usageOf(x[i])`
 	// Pattern 2.
-	// `x == nil || usafeOf(x[i])`
+	// `x == nil || usageOf(x[i])`
 
 	// lhs is `x <op> nil`
 	x := lhs.X
