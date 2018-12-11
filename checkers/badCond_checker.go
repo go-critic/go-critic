@@ -51,25 +51,53 @@ func (c *badCondChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 }
 
 func (c *badCondChecker) checkExpr(expr ast.Expr) {
-	// x < a && x > b; Where `a` less than `b`.
 	// TODO(Quasilyte): recognize more patterns.
 
 	cond := astcast.ToBinaryExpr(expr)
-	lt := astcast.ToBinaryExpr(cond.X)
-	gt := astcast.ToBinaryExpr(cond.Y)
-	if cond.Op != token.LAND || lt.Op != token.LSS || gt.Op != token.GTR {
-		return
-	}
-	if !astequal.Expr(lt.X, gt.X) {
-		return
-	}
-	a := c.ctx.TypesInfo.Types[lt.Y].Value
-	b := c.ctx.TypesInfo.Types[gt.Y].Value
-	if a == nil || b == nil || !constant.Compare(a, token.LSS, b) {
+	lhs := astcast.ToBinaryExpr(cond.X)
+	rhs := astcast.ToBinaryExpr(cond.Y)
+
+	if cond.Op != token.LAND {
 		return
 	}
 
-	c.warnComparison(expr, cond)
+	// Notes:
+	// `x != a || x != b` handled by go vet.
+
+	// Pattern 1.
+	// `x < a && x > b`; Where `a` is less than `b`.
+	if c.lessAndGreater(lhs, rhs) {
+		c.warnCond(cond, "always false")
+		return
+	}
+
+	// Pattern 2.
+	// `x == a && x == b`
+	//
+	// Valid when `b == a` is intended, but still reported.
+	// We can disable "just suspicious" warnings by default
+	// is users are upset with the current behavior.
+	if c.equalToBoth(lhs, rhs) {
+		c.warnCond(cond, "suspicious")
+		return
+	}
+}
+
+func (c *badCondChecker) equalToBoth(lhs, rhs *ast.BinaryExpr) bool {
+	return lhs.Op == token.EQL && rhs.Op == token.EQL &&
+		astequal.Expr(lhs.X, rhs.X)
+}
+
+func (c *badCondChecker) lessAndGreater(lhs, rhs *ast.BinaryExpr) bool {
+	if lhs.Op != token.LSS || rhs.Op != token.GTR {
+		return false
+	}
+	if !astequal.Expr(lhs.X, rhs.X) {
+		return false
+	}
+	a := c.ctx.TypesInfo.Types[lhs.Y].Value
+	b := c.ctx.TypesInfo.Types[rhs.Y].Value
+	return a != nil && b != nil && constant.Compare(a, token.LSS, b)
 }
 
 func (c *badCondChecker) checkForStmt(stmt *ast.ForStmt) {
@@ -113,9 +141,6 @@ func (c *badCondChecker) warnForStmt(cause ast.Node, cond *ast.BinaryExpr) {
 		cond, suggest)
 }
 
-func (c *badCondChecker) warnComparison(cause ast.Node, cond *ast.BinaryExpr) {
-	suggest := astcopy.BinaryExpr(cond)
-	suggest.Op = token.LOR
-	c.ctx.Warn(cause, "`%s` is always false; probably meant `%s`?",
-		cond, suggest)
+func (c *badCondChecker) warnCond(cond *ast.BinaryExpr, tag string) {
+	c.ctx.Warn(cond, "`%s` condition is %s", cond, tag)
 }

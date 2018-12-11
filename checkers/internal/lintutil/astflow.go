@@ -56,10 +56,8 @@ func CouldBeMutated(info *types.Info, body ast.Node, dst ast.Expr) bool {
 			return true // Being conservative
 		}
 		isDst = func(x ast.Expr) bool {
-			if x, ok := x.(*ast.Ident); ok {
-				return x.Name == dst.Name && info.ObjectOf(x) == obj
-			}
-			return false
+			id, ok := x.(*ast.Ident)
+			return ok && id.Name == dst.Name && info.ObjectOf(id) == obj
 		}
 	} else {
 		isDst = func(x ast.Expr) bool {

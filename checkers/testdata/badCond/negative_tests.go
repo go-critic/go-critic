@@ -50,3 +50,16 @@ func unknownCmp2(x, y int) {
 	if x < -10 && y > 10 {
 	}
 }
+
+func fixed3(x int) {
+	_ = x == 10 || x == 20
+
+	var err error
+	var err2 error
+	_ = err2 != nil && err == nil
+
+	// This one is (probably) not an error, but can be written
+	// in another way, like `x == 10 && y == 10`.
+	var y int
+	_ = x == 10 && y == 10
+}
