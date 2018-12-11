@@ -241,5 +241,9 @@ func commentFormatting() {
 	//"123"
 }
 
+func badCond(x int) {
+	_ = x < 100 && x > 200
+}
+
 func main() {
 }
