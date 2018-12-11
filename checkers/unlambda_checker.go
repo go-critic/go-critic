@@ -60,8 +60,9 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 		}
 	}
 
-	c.warn(fn, callable)
-
+	if len(result.Args) == n {
+		c.warn(fn, callable)
+	}
 }
 
 func (c *unlambdaChecker) warn(cause ast.Node, suggestion string) {
