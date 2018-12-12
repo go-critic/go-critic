@@ -65,7 +65,7 @@ func (c *weakCondChecker) VisitExpr(expr ast.Expr) {
 }
 
 // isIndexed reports whether x is indexed inside given expr tree.
-func (c *weakCondChecker) isIndexed(tree ast.Expr, x ast.Expr) bool {
+func (c *weakCondChecker) isIndexed(tree, x ast.Expr) bool {
 	return lintutil.ContainsNode(tree, func(n ast.Node) bool {
 		indexing := astcast.ToIndexExpr(n)
 		return astequal.Expr(x, indexing.X)
