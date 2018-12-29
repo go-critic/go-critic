@@ -32,15 +32,26 @@ b := (x) == (y)`
 
 type boolExprSimplifyChecker struct {
 	astwalk.WalkHandler
-	ctx *lintpack.CheckerContext
+	ctx       *lintpack.CheckerContext
+	hasFloats bool
 }
 
 func (c *boolExprSimplifyChecker) VisitExpr(x ast.Expr) {
-	// Throw away non-bool expressions and awoid redundant
+	// Throw away non-bool expressions and avoid redundant
 	// AST copying below.
-	if !typep.HasBoolKind(c.ctx.TypesInfo.TypeOf(x)) {
+	if typ := c.ctx.TypesInfo.TypeOf(x); typ == nil || !typep.HasBoolKind(typ.Underlying()) {
 		return
 	}
+
+	// We'll loose all types info after a copy,
+	// this is why we record valuable info before doing it.
+	c.hasFloats = lintutil.ContainsNode(x, func(n ast.Node) bool {
+		if x, ok := n.(*ast.BinaryExpr); ok {
+			return typep.HasFloatProp(c.ctx.TypesInfo.TypeOf(x.X).Underlying()) ||
+				typep.HasFloatProp(c.ctx.TypesInfo.TypeOf(x.Y).Underlying())
+		}
+		return false
+	})
 
 	y := c.simplifyBool(astcopy.Expr(x))
 	if !astequal.Expr(x, y) {
@@ -84,6 +95,10 @@ func (c *boolExprSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
 }
 
 func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
+	if c.hasFloats { // See #673
+		return false
+	}
+
 	neg := lintutil.AsUnaryExprOp(cur.Node(), token.NOT)
 	cmp := lintutil.AsBinaryExpr(astutil.Unparen(neg.X))
 	if lintutil.IsNil(neg) || lintutil.IsNil(cmp) {
