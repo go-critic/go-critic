@@ -40,3 +40,10 @@ func cantCombine() {
 	_ = x < y || x > z
 	_ = x > z || x < y
 }
+
+func floatCompare() {
+	var f1, f2 float32
+
+	// Can't be simplified to `f1 != f2`.
+	_ = !(f1 == f2)
+}
