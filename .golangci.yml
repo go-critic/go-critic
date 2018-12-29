@@ -13,6 +13,7 @@ linters:
     - golint
     - gosimple
     - ineffassign
+    - megacheck
     - misspell
     - nakedret
     - staticcheck
@@ -30,6 +31,5 @@ linters:
     - interfacer
     - lll
     - maligned
-    - megacheck # https://github.com/golangci/golangci-lint/issues/157
     - prealloc
   fast: false
