@@ -13,7 +13,7 @@ func init() {
 	var info lintpack.CheckerInfo
 	info.Name = "equalFold"
 	info.Tags = []string{"performance", "experimental"}
-	info.Summary = "Detects unoptimal string equal."
+	info.Summary = "Detects unoptimal string equal"
 	info.Before = `strings.ToLower(x) == y`
 	info.After = `strings.EqualFold(x, y)`
 
@@ -28,11 +28,7 @@ type equalFoldChecker struct {
 }
 
 func (c *equalFoldChecker) VisitExpr(e ast.Expr) {
-	expr, ok := e.(*ast.BinaryExpr)
-	if !ok {
-		return
-	}
-
+	expr := astcast.ToBinaryExpr(e)
 	if expr.Op != token.EQL && expr.Op != token.NEQ {
 		return
 	}
@@ -50,10 +46,10 @@ func (c *equalFoldChecker) VisitExpr(e ast.Expr) {
 	x := expr.X
 	y := expr.Y
 
-	if callX != astcast.NilCallExpr {
+	if len(callX.Args) != 0 {
 		x = callX.Args[0]
 	}
-	if callY != astcast.NilCallExpr {
+	if len(callY.Args) != 0 {
 		y = callY.Args[0]
 	}
 	c.warn(e, x, y)
