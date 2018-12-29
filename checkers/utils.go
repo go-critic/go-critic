@@ -8,6 +8,11 @@ import (
 	"github.com/go-lintpack/lintpack"
 )
 
+// isStdlibPkg reports whether pkg is a package from the Go standard library.
+func isStdlibPkg(pkg *types.Package) bool {
+	return pkg.Path() == pkg.Name()
+}
+
 // isUnitTestFunc reports whether FuncDecl declares testing function.
 func isUnitTestFunc(ctx *lintpack.CheckerContext, fn *ast.FuncDecl) bool {
 	if !strings.HasPrefix(fn.Name.Name, "Test") {
