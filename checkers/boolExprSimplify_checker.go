@@ -36,8 +36,12 @@ type boolExprSimplifyChecker struct {
 }
 
 func (c *boolExprSimplifyChecker) VisitExpr(x ast.Expr) {
-	// TODO: avoid eager copy?
-	// Can't be stable until wasted copying is fixed.
+	// Throw away non-bool expressions and awoid redundant
+	// AST copying below.
+	if !typep.HasBoolKind(c.ctx.TypesInfo.TypeOf(x)) {
+		return
+	}
+
 	y := c.simplifyBool(astcopy.Expr(x))
 	if !astequal.Expr(x, y) {
 		c.warn(x, y)
