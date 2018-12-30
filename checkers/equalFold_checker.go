@@ -13,8 +13,8 @@ func init() {
 	var info lintpack.CheckerInfo
 	info.Name = "equalFold"
 	info.Tags = []string{"performance", "experimental"}
-	info.Summary = "Detects unoptimal string equal"
-	info.Before = `strings.ToLower(x) == y`
+	info.Summary = "Detects unoptimal strings/bytes case-insensitive comparison"
+	info.Before = `strings.ToLower(x) == strings.ToLower(y)`
 	info.After = `strings.EqualFold(x, y)`
 
 	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
@@ -28,33 +28,55 @@ type equalFoldChecker struct {
 }
 
 func (c *equalFoldChecker) VisitExpr(e ast.Expr) {
-	expr := astcast.ToBinaryExpr(e)
+	switch e := e.(type) {
+	case *ast.CallExpr:
+		c.checkBytes(e)
+	case *ast.BinaryExpr:
+		c.checkStrings(e)
+	}
+}
+
+// uncaseCall simplifies lower(x) or upper(x) to x.
+// If no simplification is applied, second return value is false.
+func (c *equalFoldChecker) uncaseCall(x ast.Expr, lower, upper string) (ast.Expr, bool) {
+	call := astcast.ToCallExpr(x)
+	name := qualifiedName(call.Fun)
+	if name != lower && name != upper {
+		return x, false
+	}
+	return call.Args[0], true
+}
+
+func (c *equalFoldChecker) checkBytes(expr *ast.CallExpr) {
+	if qualifiedName(expr.Fun) != "bytes.Equal" {
+		return
+	}
+
+	x, ok1 := c.uncaseCall(expr.Args[0], "bytes.ToLower", "bytes.ToUpper")
+	y, ok2 := c.uncaseCall(expr.Args[1], "bytes.ToLower", "bytes.ToUpper")
+	if !ok1 && !ok2 {
+		return
+	}
+	c.warnBytes(expr, x, y)
+}
+
+func (c *equalFoldChecker) checkStrings(expr *ast.BinaryExpr) {
 	if expr.Op != token.EQL && expr.Op != token.NEQ {
 		return
 	}
 
-	callX := astcast.ToCallExpr(expr.X)
-	callY := astcast.ToCallExpr(expr.Y)
-
-	if qualifiedName(callX.Fun) != "strings.ToLower" &&
-		qualifiedName(callX.Fun) != "strings.ToUpper" &&
-		qualifiedName(callY.Fun) != "strings.ToLower" &&
-		qualifiedName(callY.Fun) != "strings.ToUpper" {
+	x, ok1 := c.uncaseCall(expr.X, "strings.ToLower", "strings.ToUpper")
+	y, ok2 := c.uncaseCall(expr.Y, "strings.ToLower", "strings.ToUpper")
+	if !ok1 && !ok2 {
 		return
 	}
-
-	x := expr.X
-	y := expr.Y
-
-	if len(callX.Args) != 0 {
-		x = callX.Args[0]
-	}
-	if len(callY.Args) != 0 {
-		y = callY.Args[0]
-	}
-	c.warn(e, x, y)
+	c.warnStrings(expr, x, y)
 }
 
-func (c *equalFoldChecker) warn(cause ast.Node, x, y ast.Expr) {
+func (c *equalFoldChecker) warnStrings(cause ast.Node, x, y ast.Expr) {
 	c.ctx.Warn(cause, "consider replacing with strings.EqualFold(%s, %s)", x, y)
+}
+
+func (c *equalFoldChecker) warnBytes(cause ast.Node, x, y ast.Expr) {
+	c.ctx.Warn(cause, "consider replacing with bytes.EqualFold(%s, %s)", x, y)
 }
