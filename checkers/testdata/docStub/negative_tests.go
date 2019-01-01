@@ -4,3 +4,7 @@ package checker_test
 func Bar() {}
 
 func foo() {}
+
+// Issue 24791.
+func MyFunc() {
+}
