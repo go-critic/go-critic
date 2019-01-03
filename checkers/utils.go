@@ -10,7 +10,7 @@ import (
 
 // isStdlibPkg reports whether pkg is a package from the Go standard library.
 func isStdlibPkg(pkg *types.Package) bool {
-	return pkg.Path() == pkg.Name()
+	return pkg != nil && pkg.Path() == pkg.Name()
 }
 
 // isUnitTestFunc reports whether FuncDecl declares testing function.
