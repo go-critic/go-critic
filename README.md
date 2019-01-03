@@ -82,7 +82,7 @@ gocritic check pkg1 pkg2
 # Runs specified checkers on `fmt` package:
 gocritic check -enable elseif,paramName fmt
 
-# Run all stable checkers on current dir and all its childs recursively:
+# Run all stable checkers on current dir and all its children recursively:
 gocritic check ./...
 
 # Like above, but without `appendAssign` check:
