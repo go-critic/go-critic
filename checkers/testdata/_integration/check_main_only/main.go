@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 	"sync"
@@ -247,6 +248,11 @@ func badCond(x int) {
 
 func weakCond(xs []int) {
 	_ = xs == nil || xs[0] == 0
+}
+
+func exitAfterDefer() {
+	defer func() {}()
+	log.Fatal(123)
 }
 
 func main() {
