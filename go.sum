@@ -1,5 +1,5 @@
-github.com/go-lintpack/lintpack v0.5.1 h1:v5D/csM90cu5PANqkj1JcNZGX/mrr3Z2Wu7Q8KuFd9M=
-github.com/go-lintpack/lintpack v0.5.1/go.mod h1:NwZuYi2nUHho8XEIZ6SIxihrnPoqBTDqfpXvXAN0sXM=
+github.com/go-lintpack/lintpack v0.5.2 h1:DI5mA3+eKdWeJ40nU4d6Wc26qmdG8RCi/btYq0TuRN0=
+github.com/go-lintpack/lintpack v0.5.2/go.mod h1:NwZuYi2nUHho8XEIZ6SIxihrnPoqBTDqfpXvXAN0sXM=
 github.com/go-toolsmith/astcast v0.0.0-20181028201508-b7a89ed70af1 h1:h+1eMw+tZAlgTVclcVN0/rdPaBI/RUzG0peblT6df+Q=
 github.com/go-toolsmith/astcast v0.0.0-20181028201508-b7a89ed70af1/go.mod h1:TEo3Ghaj7PsZawQHxT/oBvo4HK/sl1RcuUHDKTTju+o=
 github.com/go-toolsmith/astcopy v0.0.0-20180903214859-79b422d080c4 h1:wVs9OMjICHbAryp9hcIuWqUOi+NqEbUSZy9zMe3W//I=
