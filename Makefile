@@ -27,6 +27,7 @@ ci-linter:
 	golangci-lint run -v
 
 cover:
+	GO111MODULE=on go mod vendor
 	go get -u github.com/mattn/goveralls
 	goveralls -package github.com/go-critic/go-critic/checkers -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
