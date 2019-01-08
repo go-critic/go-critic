@@ -16,7 +16,7 @@ docs:
 	cd ./cmd/makedocs && go run main.go
 
 ci:
-	go get -t -v ./...
+	GO111MODULE=on go get -t -v ./...
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
