@@ -20,8 +20,7 @@ ci:
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
-	go vet $(shell go list ./... | grep -v /vendor/)
-	go test -v -race -count=1 ./...
+	GO111MODULE=on go test -v -race -count=1 ./...
 
 ci-linter:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.12.3
