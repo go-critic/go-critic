@@ -16,11 +16,10 @@ docs:
 	cd ./cmd/makedocs && go run main.go
 
 ci:
-	go get -t -v ./...
+	GO111MODULE=on go mod vendor
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
-	go vet $(shell go list ./... | grep -v /vendor/)
 	go test -v -race -count=1 ./...
 
 ci-linter:
