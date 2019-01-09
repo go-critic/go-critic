@@ -55,6 +55,13 @@ const BadFormat7 int = 10
 // Deprecated! USE ANYTHING INSTEAD!
 const BadFormat8 = 10
 
+//
+// (This is why we're using case-insensitive patterns.)
+//
+/*! the proper format is `Deprecated: <text>` */
+// [[deprecated]]
+const BadFormat9 = 10
+
 type badNestedDoc struct {
 	/*! use `Deprecated: ` (note the casing) instead of `deprecated: ` */
 	// deprecated: ha-ha

@@ -27,6 +27,7 @@ func FuncOld() int`
 		c.commonPatterns = []*regexp.Regexp{
 			regexp.MustCompile(`(?i)this (?:function|type) is deprecated`),
 			regexp.MustCompile(`(?i)deprecated[.!]? use \S* instead`),
+			regexp.MustCompile(`(?i)\[\[deprecated\]\].*`),
 			// TODO(quasilyte): more of these?
 		}
 
