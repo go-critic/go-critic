@@ -18,8 +18,17 @@ are ignored
 
 //!something
 
+//nolint
+
+//line /foo/bar.go:10
+
+//line /foo/bar/f-ad/a_d.go:13
+//line /bar.go:14
+
 //go:noinline
 func f1() {
+	//nolint
+
 	//	code
 	//	example
 	//	leading tabs
