@@ -7,6 +7,7 @@ import (
 	"github.com/go-critic/go-critic/checkers/internal/lintutil"
 	"github.com/go-lintpack/lintpack"
 	"github.com/go-lintpack/lintpack/astwalk"
+	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
 	"github.com/go-toolsmith/typep"
@@ -70,9 +71,9 @@ func (c *boolExprSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 }
 
 func (c *boolExprSimplifyChecker) doubleNegation(cur *astutil.Cursor) bool {
-	neg1 := lintutil.AsUnaryExprOp(cur.Node(), token.NOT)
-	neg2 := lintutil.AsUnaryExprOp(astutil.Unparen(neg1.X), token.NOT)
-	if !lintutil.IsNil(neg1) && !lintutil.IsNil(neg2) {
+	neg1 := astcast.ToUnaryExpr(cur.Node())
+	neg2 := astcast.ToUnaryExpr(astutil.Unparen(neg1.X))
+	if neg1.Op == token.NOT && neg2.Op == token.NOT {
 		cur.Replace(astutil.Unparen(neg2.X))
 		return true
 	}
@@ -84,9 +85,9 @@ func (c *boolExprSimplifyChecker) negatedEquals(cur *astutil.Cursor) bool {
 	if !ok || x.Op != token.EQL {
 		return false
 	}
-	neg1 := lintutil.AsUnaryExprOp(x.X, token.NOT)
-	neg2 := lintutil.AsUnaryExprOp(x.Y, token.NOT)
-	if !lintutil.IsNil(neg1) && !lintutil.IsNil(neg2) {
+	neg1 := astcast.ToUnaryExpr(x.X)
+	neg2 := astcast.ToUnaryExpr(x.Y)
+	if neg1.Op == token.NOT && neg2.Op == token.NOT {
 		x.X = neg1.X
 		x.Y = neg2.X
 		return true
@@ -99,9 +100,9 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 		return false
 	}
 
-	neg := lintutil.AsUnaryExprOp(cur.Node(), token.NOT)
-	cmp := lintutil.AsBinaryExpr(astutil.Unparen(neg.X))
-	if lintutil.IsNil(neg) || lintutil.IsNil(cmp) {
+	neg := astcast.ToUnaryExpr(cur.Node())
+	cmp := astcast.ToBinaryExpr(astutil.Unparen(neg.X))
+	if neg.Op != token.NOT {
 		return false
 	}
 
@@ -128,9 +129,9 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 }
 
 func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
-	or := lintutil.AsBinaryExprOp(cur.Node(), token.LOR)
-	lhs := lintutil.AsBinaryExpr(astutil.Unparen(or.X))
-	rhs := lintutil.AsBinaryExpr(astutil.Unparen(or.Y))
+	or := c.ToBinaryExprOp(cur.Node(), token.LOR)
+	lhs := astcast.ToBinaryExpr(astutil.Unparen(or.X))
+	rhs := astcast.ToBinaryExpr(astutil.Unparen(or.Y))
 
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false
@@ -159,6 +160,14 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 		}
 	}
 	return false
+}
+
+func (c *boolExprSimplifyChecker) ToBinaryExprOp(x ast.Node, op token.Token) *ast.BinaryExpr {
+	e, ok := x.(*ast.BinaryExpr)
+	if !ok || e.Op != op {
+		return astcast.NilBinaryExpr
+	}
+	return e
 }
 
 func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {
