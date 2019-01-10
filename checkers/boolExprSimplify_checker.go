@@ -129,7 +129,11 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 }
 
 func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
-	or := c.ToBinaryExprOp(cur.Node(), token.LOR)
+	or, ok := cur.Node().(*ast.BinaryExpr)
+	if !ok || or.Op != token.LOR {
+		return false
+	}
+
 	lhs := astcast.ToBinaryExpr(astutil.Unparen(or.X))
 	rhs := astcast.ToBinaryExpr(astutil.Unparen(or.Y))
 
@@ -160,14 +164,6 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 		}
 	}
 	return false
-}
-
-func (c *boolExprSimplifyChecker) ToBinaryExprOp(x ast.Node, op token.Token) *ast.BinaryExpr {
-	e, ok := x.(*ast.BinaryExpr)
-	if !ok || e.Op != op {
-		return astcast.NilBinaryExpr
-	}
-	return e
 }
 
 func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {
