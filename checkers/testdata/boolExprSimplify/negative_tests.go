@@ -47,3 +47,16 @@ func floatCompare() {
 	// Can't be simplified to `f1 != f2`.
 	_ = !(f1 == f2)
 }
+
+func balancedIncDec(x, y, z int) {
+	// This is usually done on purpose.
+
+	_ = x+0 < y+0
+	_ = x+1 < y+1
+
+	_ = x-0 <= y-0
+	_ = x-1 <= y-1
+
+	_ = x-0 < y-0
+	_ = x-1 < y-1
+}

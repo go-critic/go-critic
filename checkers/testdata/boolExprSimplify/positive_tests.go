@@ -71,6 +71,9 @@ func combined() {
 
 		/*! can simplify `!(x > y) == !!!(y < z)` to `x <= y == (y >= z)` */
 		_ = !(x > y) == !!!(y < z)
+
+		/*! can simplify `!(x >= y+1)` to `x <= y` */
+		_ = !(x >= y+1)
 	}
 }
 
@@ -141,4 +144,34 @@ func insideLambda() {
 		/*! can simplify `!(!((x + y) >= (z - x)))` to `(x + y) >= (z - x)` */
 		_ = !(!((x + y) >= (z - x)))
 	})
+}
+
+func removeIncDec(x, y, z int) {
+	// `token.LSS`
+	/*! can simplify `x < y+1` to `x <= y` */
+	_ = x < y+1
+	/*! can simplify `x+z < x+y+1` to `x+z <= x+y` */
+	_ = x+z < x+y+1
+	/*! can simplify `x-1 < y` to `x <= y` */
+	_ = x-1 < y
+
+	// `token.LEQ`
+	/*! can simplify `x+2 <= z-1` to `x+2 < z` */
+	_ = x+2 <= z-1
+	/*! can simplify `x+z*2 <= x+y-1` to `x+z*2 < x+y` */
+	_ = x+z*2 <= x+y-1
+	/*! can simplify `x+1 <= y` to `x < y` */
+	_ = x+1 <= y
+
+	// `token.GTR`
+	/*! can simplify `x+1 > y` to `x >= y` */
+	_ = x+1 > y
+	/*! can simplify `x > y-1` to `x >= y` */
+	_ = x > y-1
+
+	// `token.GEQ`
+	/*! can simplify `x-1 >= y` to `x > y` */
+	_ = x-1 >= y
+	/*! can simplify `x >= y+1` to `x > y` */
+	_ = x >= y+1
 }
