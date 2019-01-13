@@ -10,6 +10,7 @@ import (
 	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astcopy"
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/astp"
 	"github.com/go-toolsmith/typep"
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -38,6 +39,10 @@ type boolExprSimplifyChecker struct {
 }
 
 func (c *boolExprSimplifyChecker) VisitExpr(x ast.Expr) {
+	if !astp.IsBinaryExpr(x) && !astp.IsUnaryExpr(x) {
+		return
+	}
+
 	// Throw away non-bool expressions and avoid redundant
 	// AST copying below.
 	if typ := c.ctx.TypesInfo.TypeOf(x); typ == nil || !typep.HasBoolKind(typ.Underlying()) {
