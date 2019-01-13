@@ -44,6 +44,9 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 	if callable == "" {
 		return // Skip tricky cases; only handle simple calls
 	}
+	if isBuiltin(callable) {
+		return // See #762
+	}
 	fnType := c.ctx.TypesInfo.TypeOf(fn)
 	resultType := c.ctx.TypesInfo.TypeOf(result.Fun)
 	if !types.Identical(fnType, resultType) {
