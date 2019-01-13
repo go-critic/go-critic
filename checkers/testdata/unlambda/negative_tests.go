@@ -94,3 +94,13 @@ func complexCalls() {
 		return returnInt(x)
 	}
 }
+
+func builtins() {
+	_ = func(s []int) int { return len(s) }
+	_ = func(s []int) int { return cap(s) }
+}
+
+func typeConvert() {
+	_ = func(x int) int32 { return int32(x) }
+	_ = func(x int) int { return int(x) }
+}
