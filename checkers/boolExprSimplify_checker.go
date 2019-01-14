@@ -1,8 +1,10 @@
 package checkers
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
+	"strconv"
 
 	"github.com/go-critic/go-critic/checkers/internal/lintutil"
 	"github.com/go-lintpack/lintpack"
@@ -72,6 +74,7 @@ func (c *boolExprSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 			c.invertComparison(cur) ||
 			c.combineChecks(cur) ||
 			c.removeIncDec(cur) ||
+			c.foldRanges(cur) ||
 			true
 	}).(ast.Expr)
 }
@@ -134,6 +137,10 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 	return true
 }
 
+func (c *boolExprSimplifyChecker) isSafe(x ast.Expr) bool {
+	return typep.SideEffectFree(c.ctx.TypesInfo, x)
+}
+
 func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 	or, ok := cur.Node().(*ast.BinaryExpr)
 	if !ok || or.Op != token.LOR {
@@ -146,9 +153,7 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false
 	}
-	safe := typep.SideEffectFree(c.ctx.TypesInfo, lhs.X) &&
-		typep.SideEffectFree(c.ctx.TypesInfo, lhs.Y)
-	if !safe {
+	if !c.isSafe(lhs.X) || !c.isSafe(lhs.Y) {
 		return false
 	}
 
@@ -227,6 +232,106 @@ func (c *boolExprSimplifyChecker) removeIncDec(cur *astutil.Cursor) bool {
 	default:
 		return false
 	}
+}
+
+func (c *boolExprSimplifyChecker) foldRanges(cur *astutil.Cursor) bool {
+	e, ok := cur.Node().(*ast.BinaryExpr)
+	if !ok {
+		return false
+	}
+	lhs := astcast.ToBinaryExpr(e.X)
+	rhs := astcast.ToBinaryExpr(e.Y)
+	if !c.isSafe(lhs.X) || !c.isSafe(rhs.X) {
+		return false
+	}
+	if !astequal.Expr(lhs.X, rhs.X) {
+		return false
+	}
+
+	c1, ok := c.int64val(lhs.Y)
+	if !ok {
+		return false
+	}
+	c2, ok := c.int64val(rhs.Y)
+	if !ok {
+		return false
+	}
+
+	type combination struct {
+		lhsOp    token.Token
+		rhsOp    token.Token
+		rhsDiff  int64
+		resDelta int64
+	}
+	match := func(comb *combination) bool {
+		if lhs.Op != comb.lhsOp || rhs.Op != comb.rhsOp {
+			return false
+		}
+		if c2-c1 != comb.rhsDiff {
+			return false
+		}
+		return true
+	}
+
+	switch e.Op {
+	case token.LAND:
+		combTable := [...]combination{
+			// `x > c && x < c+2` => `x == c+1`
+			{token.GTR, token.LSS, 2, 1},
+			// `x >= c && x < c+1` => `x == c`
+			{token.GEQ, token.LSS, 1, 0},
+			// `x > c && x <= c+1` => `x == c+1`
+			{token.GTR, token.LEQ, 1, 1},
+			// `x >= c && x <= c` => `x == c`
+			{token.GEQ, token.LEQ, 0, 0},
+		}
+		for _, comb := range combTable {
+			if match(&comb) {
+				lhs.Op = token.EQL
+				v := c1 + comb.resDelta
+				lhs.Y.(*ast.BasicLit).Value = fmt.Sprint(v)
+				cur.Replace(lhs)
+				return true
+			}
+		}
+
+	case token.LOR:
+		combTable := [...]combination{
+			// `x < c || x > c` => `x != c`
+			{token.LSS, token.GTR, 0, 0},
+			// `x <= c || x > c+1` => `x != c+1`
+			{token.LEQ, token.GTR, 1, 1},
+			// `x < c || x >= c+1` => `x != c`
+			{token.LSS, token.GEQ, 1, 0},
+			// `x <= c || x >= c+2` => `x != c+1`
+			{token.LEQ, token.GEQ, 2, 1},
+		}
+		for _, comb := range combTable {
+			if match(&comb) {
+				lhs.Op = token.NEQ
+				v := c1 + comb.resDelta
+				lhs.Y.(*ast.BasicLit).Value = fmt.Sprint(v)
+				cur.Replace(lhs)
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (c *boolExprSimplifyChecker) int64val(x ast.Expr) (int64, bool) {
+	// TODO(Quasilyte): if we had types info, we could use TypesInfo.Types[x].Value,
+	// but since copying erases leaves us without it, only basic literals are handled.
+	lit, ok := x.(*ast.BasicLit)
+	if !ok {
+		return 0, false
+	}
+	v, err := strconv.ParseInt(lit.Value, 10, 0)
+	if err != nil {
+		return 0, false
+	}
+	return v, true
 }
 
 func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {
