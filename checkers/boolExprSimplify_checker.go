@@ -71,6 +71,7 @@ func (c *boolExprSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 			c.negatedEquals(cur) ||
 			c.invertComparison(cur) ||
 			c.combineChecks(cur) ||
+			c.removeIncDec(cur) ||
 			true
 	}).(ast.Expr)
 }
@@ -169,6 +170,63 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 		}
 	}
 	return false
+}
+
+func (c *boolExprSimplifyChecker) removeIncDec(cur *astutil.Cursor) bool {
+	cmp := astcast.ToBinaryExpr(cur.Node())
+
+	matchOneWay := func(op token.Token, x, y *ast.BinaryExpr) bool {
+		if x.Op != op || astcast.ToBasicLit(x.Y).Value != "1" {
+			return false
+		}
+		if y.Op == op && astcast.ToBasicLit(y.Y).Value == "1" {
+			return false
+		}
+		return true
+	}
+	replace := func(lhsOp, rhsOp, replacement token.Token) bool {
+		lhs := astcast.ToBinaryExpr(cmp.X)
+		rhs := astcast.ToBinaryExpr(cmp.Y)
+		switch {
+		case matchOneWay(lhsOp, lhs, rhs):
+			cmp.X = lhs.X
+			cmp.Op = replacement
+			cur.Replace(cmp)
+			return true
+		case matchOneWay(rhsOp, rhs, lhs):
+			cmp.Y = rhs.X
+			cmp.Op = replacement
+			cur.Replace(cmp)
+			return true
+		default:
+			return false
+		}
+	}
+
+	switch cmp.Op {
+	case token.GTR:
+		// `x > y-1` => `x >= y`
+		// `x+1 > y` => `x >= y`
+		return replace(token.ADD, token.SUB, token.GEQ)
+
+	case token.GEQ:
+		// `x >= y+1` => `x > y`
+		// `x-1 >= y` => `x > y`
+		return replace(token.SUB, token.ADD, token.GTR)
+
+	case token.LSS:
+		// `x < y+1` => `x <= y`
+		// `x-1 < y` => `x <= y`
+		return replace(token.SUB, token.ADD, token.LEQ)
+
+	case token.LEQ:
+		// `x <= y-1` => `x < y`
+		// `x+1 <= y` => `x < y`
+		return replace(token.ADD, token.SUB, token.LSS)
+
+	default:
+		return false
+	}
 }
 
 func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {
