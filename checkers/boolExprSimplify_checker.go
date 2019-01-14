@@ -198,8 +198,9 @@ func (c *boolExprSimplifyChecker) removeIncDec(cur *astutil.Cursor) bool {
 			cmp.Op = replacement
 			cur.Replace(cmp)
 			return true
+		default:
+			return false
 		}
-		return false
 	}
 
 	switch cmp.Op {
@@ -222,9 +223,10 @@ func (c *boolExprSimplifyChecker) removeIncDec(cur *astutil.Cursor) bool {
 		// `x <= y-1` => `x < y`
 		// `x+1 <= y` => `x < y`
 		return replace(token.ADD, token.SUB, token.LSS)
-	}
 
-	return false
+	default:
+		return false
+	}
 }
 
 func (c *boolExprSimplifyChecker) warn(cause, suggestion ast.Expr) {
