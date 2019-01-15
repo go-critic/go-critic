@@ -327,7 +327,7 @@ func (c *boolExprSimplifyChecker) int64val(x ast.Expr) (int64, bool) {
 	if !ok {
 		return 0, false
 	}
-	v, err := strconv.ParseInt(lit.Value, 10, 0)
+	v, err := strconv.ParseInt(lit.Value, 10, 64)
 	if err != nil {
 		return 0, false
 	}
