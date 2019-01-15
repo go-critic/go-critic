@@ -175,3 +175,23 @@ func removeIncDec(x, y, z int) {
 	/*! can simplify `x >= y+1` to `x > y` */
 	_ = x >= y+1
 }
+
+func foldRanges(x, y int) {
+	/*! can simplify `x > 10 && x < 12` to `x == 11` */
+	_ = x > 10 && x < 12
+	/*! can simplify `x >= 11 && x < 12` to `x == 11` */
+	_ = x >= 11 && x < 12
+	/*! can simplify `x > 10 && x <= 11` to `x == 11` */
+	_ = x > 10 && x <= 11
+	/*! can simplify `x >= 11 && x <= 11` to `x == 11` */
+	_ = x >= 11 && x <= 11
+
+	/*! can simplify `x < 11 || x > 11` to `x != 11` */
+	_ = x < 11 || x > 11
+	/*! can simplify `x <= 10 || x > 11` to `x != 11` */
+	_ = x <= 10 || x > 11
+	/*! can simplify `x < 11 || x >= 12` to `x != 11` */
+	_ = x < 11 || x >= 12
+	/*! can simplify `x <= 10 || x >= 12` to `x != 11` */
+	_ = x <= 10 || x >= 12
+}
