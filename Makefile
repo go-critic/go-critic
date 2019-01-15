@@ -16,7 +16,7 @@ docs:
 	cd ./cmd/makedocs && go run main.go
 
 ci:
-	GO111MODULE=on go mod vendor
+	export GO111MODULE=on
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
