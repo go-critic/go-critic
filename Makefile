@@ -20,7 +20,7 @@ ci:
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
-	go test -v -race -count=1 ./...
+	go test -v -race -count=1 -coverprofile=coverage.out ./...
 
 ci-linter:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.12.3
@@ -30,7 +30,7 @@ ci-linter:
 
 cover:
 	go get -u github.com/mattn/goveralls
-	goveralls -package github.com/go-critic/go-critic/checkers -service travis-ci -repotoken ${COVERALLS_TOKEN}
+	goveralls -package github.com/go-critic/go-critic/checkers -coverprofile=coverage.out -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 install:
 	go install ./cmd/gocritic
