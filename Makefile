@@ -1,5 +1,7 @@
 .PHONY: test test-checker ci cover tools docs
 
+export GO111MODULE := on
+
 %:      # stubs to get makefile param for `test-checker` command
 	@:	# see: https://stackoverflow.com/a/6273809/433041
 
@@ -16,7 +18,6 @@ docs:
 	cd ./cmd/makedocs && go run main.go
 
 ci:
-	export GO111MODULE=on
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
