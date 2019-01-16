@@ -129,3 +129,13 @@ var (
 	// DERPecate: ...
 	_ = 0
 )
+
+/*! the proper format is `Deprecated: <text>` */
+// NOTE: Deprecated. Use bar instead.
+func foo1() {
+}
+
+/*! the proper format is `Deprecated: <text>` */
+// NOTE: Deprecated.
+func foo2() {
+}

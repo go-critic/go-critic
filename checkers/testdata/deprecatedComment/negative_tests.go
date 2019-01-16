@@ -14,3 +14,6 @@ type deprecated struct{}
 
 // Derpecated is a type name.
 type Derpecated struct{}
+
+// Note that this one is not deprecated.
+func f() {}
