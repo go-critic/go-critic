@@ -29,17 +29,14 @@ type stringXbytes struct {
 }
 
 func (c *stringXbytes) VisitExpr(expr ast.Expr) {
-	if x, ok := expr.(*ast.CallExpr); ok {
-		switch name := qualifiedName(x.Fun); name {
-		case "copy":
-			src := x.Args[1]
+	if x, ok := expr.(*ast.CallExpr); ok && qualifiedName(x.Fun) == "copy" {
+		src := x.Args[1]
 
-			if byteCast, ok := src.(*ast.CallExpr); ok &&
-				typep.IsTypeExpr(c.ctx.TypesInfo, byteCast.Fun) &&
-				typep.HasStringProp(c.ctx.TypesInfo.TypeOf(byteCast.Args[0])) {
+		if byteCast, ok := src.(*ast.CallExpr); ok &&
+			typep.IsTypeExpr(c.ctx.TypesInfo, byteCast.Fun) &&
+			typep.HasStringProp(c.ctx.TypesInfo.TypeOf(byteCast.Args[0])) {
 
-				c.warn(byteCast, strings.TrimSuffix(strings.TrimPrefix(astfmt.Sprint(byteCast), "[]byte("), ")"))
-			}
+			c.warn(byteCast, strings.TrimSuffix(strings.TrimPrefix(astfmt.Sprint(byteCast), "[]byte("), ")"))
 		}
 	}
 }
