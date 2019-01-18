@@ -2,18 +2,16 @@ package checkers
 
 import (
 	"go/ast"
-	"strings"
 
 	"github.com/go-lintpack/lintpack"
 	"github.com/go-lintpack/lintpack/astwalk"
-	"github.com/go-toolsmith/astfmt"
 	"github.com/go-toolsmith/typep"
 )
 
 func init() {
 	var info lintpack.CheckerInfo
 	info.Name = "stringXbytes"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"style", "experimental"}
 	info.Summary = "Detects redundant conversions between string and []byte"
 	info.Before = `copy(b, []byte(s))`
 	info.After = `copy(b, s)`
@@ -36,12 +34,12 @@ func (c *stringXbytes) VisitExpr(expr ast.Expr) {
 			typep.IsTypeExpr(c.ctx.TypesInfo, byteCast.Fun) &&
 			typep.HasStringProp(c.ctx.TypesInfo.TypeOf(byteCast.Args[0])) {
 
-			c.warn(byteCast, strings.TrimSuffix(strings.TrimPrefix(astfmt.Sprint(byteCast), "[]byte("), ")"))
+			c.warn(byteCast, byteCast.Args[0])
 		}
 	}
 }
 
-func (c *stringXbytes) warn(cause *ast.CallExpr, suggestion string) {
+func (c *stringXbytes) warn(cause *ast.CallExpr, suggestion ast.Expr) {
 	c.ctx.Warn(cause, "can simplify `%s` to `%s`",
 		cause, suggestion)
 }
