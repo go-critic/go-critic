@@ -27,19 +27,21 @@ type stringXbytes struct {
 }
 
 func (c *stringXbytes) VisitExpr(expr ast.Expr) {
-	if x, ok := expr.(*ast.CallExpr); ok && qualifiedName(x.Fun) == "copy" {
-		src := x.Args[1]
+	x, ok := expr.(*ast.CallExpr)
+	if !ok || qualifiedName(x.Fun) != "copy" {
+		return
+	}
 
-		if byteCast, ok := src.(*ast.CallExpr); ok &&
-			typep.IsTypeExpr(c.ctx.TypesInfo, byteCast.Fun) &&
-			typep.HasStringProp(c.ctx.TypesInfo.TypeOf(byteCast.Args[0])) {
+	src := x.Args[1]
 
-			c.warn(byteCast, byteCast.Args[0])
-		}
+	byteCast, ok := src.(*ast.CallExpr)
+	if ok && typep.IsTypeExpr(c.ctx.TypesInfo, byteCast.Fun) &&
+		typep.HasStringProp(c.ctx.TypesInfo.TypeOf(byteCast.Args[0])) {
+
+		c.warn(byteCast, byteCast.Args[0])
 	}
 }
 
 func (c *stringXbytes) warn(cause *ast.CallExpr, suggestion ast.Expr) {
-	c.ctx.Warn(cause, "can simplify `%s` to `%s`",
-		cause, suggestion)
+	c.ctx.Warn(cause, "can simplify `%s` to `%s`", cause, suggestion)
 }
