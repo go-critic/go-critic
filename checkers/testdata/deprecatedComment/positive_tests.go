@@ -128,6 +128,10 @@ var (
 	/*! typo in `DERPecate`; should be `Deprecated` */
 	// DERPecate: ...
 	_ = 0
+
+	/*! typo in `Depreacted`; should be `Deprecated` */
+	// Depreacted: ...
+	_ = 0
 )
 
 /*! the proper format is `Deprecated: <text>` */
