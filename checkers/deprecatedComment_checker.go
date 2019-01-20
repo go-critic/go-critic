@@ -48,6 +48,7 @@ func FuncOld() int`
 			"Deprecate: ",
 			"Derpecate: ",
 			"Derpecated: ",
+			"Depreacted: ",
 		}
 		for i := range c.commonTypos {
 			c.commonTypos[i] = strings.ToUpper(c.commonTypos[i])
