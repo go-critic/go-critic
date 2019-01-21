@@ -5,12 +5,10 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/go-toolsmith/astcast"
-
-	"github.com/go-toolsmith/astp"
-
 	"github.com/go-lintpack/lintpack"
 	"github.com/go-lintpack/lintpack/astwalk"
+	"github.com/go-toolsmith/astcast"
+	"github.com/go-toolsmith/astp"
 )
 
 func init() {
@@ -38,29 +36,48 @@ type hexLiteralChecker struct {
 	ctx *lintpack.CheckerContext
 }
 
-func (c *hexLiteralChecker) VisitExpr(x ast.Expr) {
-	if !astp.IsBasicLit(x) {
+func (c *hexLiteralChecker) VisitExpr(expr ast.Expr) {
+	if !astp.IsBasicLit(expr) {
 		return
 	}
-	v := astcast.ToBasicLit(x)
+	v := astcast.ToBasicLit(expr)
 
-	if !strings.Contains(v.Value, "0X") && !strings.Contains(v.Value, "0x") {
+	if !strings.HasPrefix(v.Value, "0X") && !strings.HasPrefix(v.Value, "0x") {
 		return
 	}
 
+	prefix := v.Value[:2]
 	value := v.Value[2:]
 
-	if isAnyLetter(value) {
-		c.ctx.Warn(x,
-			"Should be 0x%s or 0x%s",
-			strings.ToLower(v.Value[2:]),
-			strings.ToUpper(v.Value[2:]))
-		return
-	}
+	switch prefix {
+	case "0X":
+		if isAnyLetter(value) {
+			if isGoodHex(value) {
+				c.ctx.Warn(expr, "Should be 0x%s", value)
+				return
+			}
+			c.ctx.Warn(expr,
+				"Should be 0x%s or 0x%s",
+				strings.ToLower(value),
+				strings.ToUpper(value))
+			return
+		}
 
-	c.ctx.Warn(x,
-		"Should be 0x%s",
-		strings.ToLower(v.Value[2:]))
+		c.ctx.Warn(expr, "Should be 0x%s", value)
+	case "0x":
+		if isAnyLetter(value) {
+			if isGoodHex(value) {
+				return
+			}
+			c.ctx.Warn(expr,
+				"Should be 0x%s or 0x%s",
+				strings.ToLower(value),
+				strings.ToUpper(value))
+			return
+		}
+
+		c.ctx.Warn(expr, "Should be 0x%s", value)
+	}
 }
 
 func isAnyLetter(s string) bool {
@@ -70,4 +87,8 @@ func isAnyLetter(s string) bool {
 		}
 	}
 	return false
+}
+
+func isGoodHex(value string) bool {
+	return value == strings.ToLower(value) || value == strings.ToUpper(value)
 }
