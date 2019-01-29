@@ -37,6 +37,19 @@ func negativeTests() {
 		_ = v
 	}
 
+	// Non-matching condition.
+	if v, ok := x.(int8); ok {
+		_ = v
+	} else if v, ok := x.(int8); true {
+		_ = v
+		_ = ok
+	}
+	if v, ok := x.(int8); ok {
+		_ = v
+	} else if v, ok := x.(int8); !ok {
+		_ = v
+	}
+
 	var y interface{}
 	// Mixed type-asserted values.
 	if v1, ok := x.(int8); ok {
