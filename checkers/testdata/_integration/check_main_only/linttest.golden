@@ -38,6 +38,7 @@ exit status 1
 ./main.go:168:9: sloppyLen: len(xs) < 0 is always false
 ./main.go:173:5: sloppyReassign: re-assignment to `err` can be replaced with `err := (point{})`
 ./main.go:180:2: switchTrue: replace 'switch true {}' with 'switch {}'
+./main.go:260:2: typeAssertChain: rewrite if-else to type switch statement
 ./main.go:189:2: typeSwitchVar: case 0 can benefit from type switch with assignment
 ./main.go:189:2: typeSwitchVar: case 1 can benefit from type switch with assignment
 ./main.go:200:8: typeUnparen: could simplify (func()) to func()
