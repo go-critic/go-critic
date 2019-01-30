@@ -255,5 +255,14 @@ func exitAfterDefer() {
 	log.Fatal(123)
 }
 
+func typeAssertChain() {
+	var x interface{}
+	if v, ok := x.(int8); ok {
+		_ = v
+	} else if v, ok := x.(int16); ok {
+		_ = v
+	}
+}
+
 func main() {
 }
