@@ -1,4 +1,7 @@
 exit status 1
+./autogen1.go:1:1: codegenComment: comment should match `Code generated .* DO NOT EDIT.` regexp
+./autogen2.go:1:1: codegenComment: comment should match `Code generated .* DO NOT EDIT.` regexp
+./autogen3.go:1:1: codegenComment: comment should match `Code generated .* DO NOT EDIT.` regexp
 ./foo.go:5:2: commentedOutImport: remove commented-out "os" import
 ./foo.go:6:2: commentedOutImport: remove commented-out "fmt" import
 ./foo.go:6:2: commentedOutImport: remove commented-out "strconv" import
