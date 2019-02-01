@@ -4,6 +4,12 @@ import (
 	"flag"
 )
 
+func methodCall() {
+	// See #784.
+	var getter flag.Getter
+	_ = getter.String()
+}
+
 func noWhitespace() {
 	_ = flag.Bool("name", false, "")
 	_ = flag.Duration("name", 0, "")
