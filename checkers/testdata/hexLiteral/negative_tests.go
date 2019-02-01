@@ -15,3 +15,9 @@ func digitsAndLetters() {
 	_ = 0x1aa
 	_ = 0x1AA
 }
+
+func decimals() {
+	_ = 1
+	_ = 10
+	_ = 12345
+}
