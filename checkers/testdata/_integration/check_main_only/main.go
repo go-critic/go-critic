@@ -264,5 +264,9 @@ func typeAssertChain() {
 	}
 }
 
+func argOrder(s string) {
+	_ = strings.HasPrefix("$", s)
+}
+
 func main() {
 }
