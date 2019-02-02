@@ -1,5 +1,3 @@
-//+build ignore
-
 package main
 
 import (
@@ -8,7 +6,8 @@ import (
 	"log"
 	"text/template"
 
-	"github.com/go-critic/go-critic/lint"
+	_ "github.com/go-critic/go-critic/checkers"
+	"github.com/go-lintpack/lintpack"
 )
 
 const (
@@ -20,9 +19,9 @@ func main() {
 	tmpl := template.Must(template.ParseFiles(templatesPath + "overview.md.tmpl"))
 	buf := bytes.Buffer{}
 	err := tmpl.Execute(&buf, struct {
-		Rules []*lint.Rule
+		Checkers []*lintpack.CheckerInfo
 	}{
-		Rules: lint.RuleList(),
+		Checkers: lintpack.GetCheckersInfo(),
 	})
 	if err != nil {
 		log.Fatalf("render template: %v", err)
