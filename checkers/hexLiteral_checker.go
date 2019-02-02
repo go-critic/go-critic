@@ -14,7 +14,7 @@ func init() {
 	var info lintpack.CheckerInfo
 	info.Name = "hexLiteral"
 	info.Tags = []string{"style", "experimental"}
-	info.Summary = ""
+	info.Summary = "Detects hex literals that have mixed case letter digits"
 	info.Before = `
 x := 0X12
 y := 0xfF`
