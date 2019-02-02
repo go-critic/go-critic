@@ -5,6 +5,7 @@ import (
 	"go/types"
 	"image"
 	"image/draw"
+	"math"
 	"reflect"
 	"strings"
 )
@@ -91,4 +92,10 @@ func duplicatedArgs() {
 		/*! suspicious duplicated args in `draw.Draw(dstImg, area, dstImg, point, op)` */
 		draw.Draw(dstImg, area, dstImg, point, op)
 	}
+
+	var x float64
+	/*! suspicious duplicated args in `math.Max(x, x)` */
+	_ = math.Max(x, x)
+	/*! suspicious duplicated args in `math.Min(x, x)` */
+	_ = math.Min(x, x)
 }
