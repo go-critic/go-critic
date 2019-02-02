@@ -30,6 +30,34 @@ type argOrderChecker struct {
 	ctx *lintpack.CheckerContext
 }
 
+func (c *argOrderChecker) VisitExpr(expr ast.Expr) {
+	call := astcast.ToCallExpr(expr)
+
+	// For now only handle functions of 2 args.
+	// TODO(Quasilyte): generalize the algorithm and add more patterns.
+	if len(call.Args) != 2 {
+		return
+	}
+
+	calledExpr := astcast.ToSelectorExpr(call.Fun)
+	obj, ok := c.ctx.TypesInfo.ObjectOf(astcast.ToIdent(calledExpr.X)).(*types.PkgName)
+	if !ok || !isStdlibPkg(obj.Imported()) {
+		return
+	}
+
+	x := call.Args[0]
+	y := call.Args[1]
+	switch calledExpr.Sel.Name {
+	case "HasPrefix", "HasSuffix", "Contains", "TrimPrefix", "TrimSuffix":
+		if obj.Name() != "bytes" && obj.Name() != "strings" {
+			return
+		}
+		if c.isConstLiteral(x) && !c.isConstLiteral(y) {
+			c.warn(call)
+		}
+	}
+}
+
 func (c *argOrderChecker) isConstLiteral(x ast.Expr) bool {
 	if c.ctx.TypesInfo.Types[x].Value != nil {
 		return true
@@ -60,34 +88,6 @@ func (c *argOrderChecker) isConstLiteral(x ast.Expr) bool {
 
 	default:
 		return false
-	}
-}
-
-func (c *argOrderChecker) VisitExpr(expr ast.Expr) {
-	call := astcast.ToCallExpr(expr)
-
-	// For now only handle functions of 2 args.
-	// TODO(Quasilyte): generalize the algorithm and add more patterns.
-	if len(call.Args) != 2 {
-		return
-	}
-
-	calledExpr := astcast.ToSelectorExpr(call.Fun)
-	obj, ok := c.ctx.TypesInfo.ObjectOf(astcast.ToIdent(calledExpr.X)).(*types.PkgName)
-	if !ok || !isStdlibPkg(obj.Imported()) {
-		return
-	}
-
-	x := call.Args[0]
-	y := call.Args[1]
-	switch calledExpr.Sel.Name {
-	case "HasPrefix", "HasSuffix", "Contains", "TrimPrefix", "TrimSuffix":
-		if obj.Name() != "bytes" && obj.Name() != "strings" {
-			return
-		}
-		if c.isConstLiteral(x) && !c.isConstLiteral(y) {
-			c.warn(call)
-		}
 	}
 }
 
