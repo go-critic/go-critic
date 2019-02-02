@@ -48,7 +48,7 @@ func (c *argOrderChecker) VisitExpr(expr ast.Expr) {
 	x := call.Args[0]
 	y := call.Args[1]
 	switch calledExpr.Sel.Name {
-	case "HasPrefix", "HasSuffix", "Contains", "TrimPrefix", "TrimSuffix":
+	case "HasPrefix", "HasSuffix", "Contains", "TrimPrefix", "TrimSuffix", "Split":
 		if obj.Name() != "bytes" && obj.Name() != "strings" {
 			return
 		}

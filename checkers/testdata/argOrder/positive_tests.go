@@ -28,6 +28,11 @@ func badArgOrder(s string, b []byte) {
 	_ = strings.TrimSuffix(":", s)
 	/*! probably meant `bytes.TrimSuffix(b, []byte(":"))` */
 	_ = bytes.TrimSuffix([]byte(":"), b)
+
+	/*! probably meant `strings.Split(s, "/")` */
+	_ = strings.Split("/", s)
+	/*! probably meant `bytes.Split(b, []byte("/"))` */
+	_ = bytes.Split([]byte("/"), b)
 }
 
 func argubleCases(s string) {
