@@ -11,262 +11,257 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
     <th>Name</th>
     <th>Short description</th>
   </tr>
-      <tr>
-        <td><a href="#appendCombine-ref">appendCombine</a></td>
-        <td>Detects `append` chains to the same slice that can be done in a single `append` call</td>
-      </tr>
-      <tr>
-        <td><a href="#builtinShadow-ref">builtinShadow</a></td>
-        <td>Detects when predeclared identifiers shadowed in assignments</td>
-      </tr>
-      <tr>
-        <td><a href="#flagDeref-ref">flagDeref</a></td>
-        <td>Detects immediate dereferencing of `flag` package pointers</td>
-      </tr>
-      <tr>
-        <td><a href="#ifElseChain-ref">ifElseChain</a></td>
-        <td>Detects repeated if-else statements and suggests to replace them with switch statement</td>
-      </tr>
-      <tr>
-        <td><a href="#paramTypeCombine-ref">paramTypeCombine</a> :nerd_face:</td>
-        <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
-      </tr>
-      <tr>
-        <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
-        <td>Detects expensive copies of `for` loop range expressions</td>
-      </tr>
-      <tr>
-        <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
-        <td>Detects loops that copy big objects during each iteration</td>
-      </tr>
-      <tr>
-        <td><a href="#regexpMust-ref">regexpMust</a></td>
-        <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
-      </tr>
-      <tr>
-        <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
-        <td>Detects switch statements that could be better written as if statements</td>
-      </tr>
-      <tr>
-        <td><a href="#switchTrue-ref">switchTrue</a></td>
-        <td>Detects switch-over-bool statements that use explicit `true` tag value</td>
-      </tr>
-      <tr>
-        <td><a href="#typeSwitchVar-ref">typeSwitchVar</a></td>
-        <td>Detects type switches that can benefit from type guard clause with variable</td>
-      </tr>
-      <tr>
-        <td><a href="#typeUnparen-ref">typeUnparen</a></td>
-        <td>Detects unneded parenthesis inside type expressions and suggests to remove them</td>
-      </tr>
-      <tr>
-        <td><a href="#underef-ref">underef</a></td>
-        <td>Detects dereference expressions that can be omitted</td>
-      </tr>
-      <tr>
-        <td><a href="#unslice-ref">unslice</a></td>
-        <td>Detects slice expressions that can be simplified to sliced expression itself</td>
-      </tr>
+    <tr>
+      <td><a href="#appendAssign-ref">appendAssign</a></td>
+      <td>Detects suspicious append result assignments</td>
+    </tr>
+    <tr>
+      <td><a href="#appendCombine-ref">appendCombine</a></td>
+      <td>Detects `append` chains to the same slice that can be done in a single `append` call</td>
+    </tr>
+    <tr>
+      <td><a href="#argOrder-ref">argOrder</a></td>
+      <td>Detects suspicious arguments order</td>
+    </tr>
+    <tr>
+      <td><a href="#assignOp-ref">assignOp</a></td>
+      <td>Detects assignments that can be simplified by using assignment operators</td>
+    </tr>
+    <tr>
+      <td><a href="#badCond-ref">badCond</a></td>
+      <td>Detects suspicious condition expressions</td>
+    </tr>
+    <tr>
+      <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
+      <td>Detects bool expressions that can be simplified</td>
+    </tr>
+    <tr>
+      <td><a href="#builtinShadow-ref">builtinShadow</a></td>
+      <td>Detects when predeclared identifiers shadowed in assignments</td>
+    </tr>
+    <tr>
+      <td><a href="#captLocal-ref">captLocal</a></td>
+      <td>Detects capitalized names for local variables</td>
+    </tr>
+    <tr>
+      <td><a href="#caseOrder-ref">caseOrder</a></td>
+      <td>Detects erroneous case order inside switch statements</td>
+    </tr>
+    <tr>
+      <td><a href="#codegenComment-ref">codegenComment</a></td>
+      <td>Detects malformed 'code generated' file comments</td>
+    </tr>
+    <tr>
+      <td><a href="#commentFormatting-ref">commentFormatting</a></td>
+      <td>Detects comments with non-idiomatic formatting</td>
+    </tr>
+    <tr>
+      <td><a href="#commentedOutCode-ref">commentedOutCode</a></td>
+      <td>Detects commented-out code inside function bodies</td>
+    </tr>
+    <tr>
+      <td><a href="#commentedOutImport-ref">commentedOutImport</a></td>
+      <td>Detects commented-out imports</td>
+    </tr>
+    <tr>
+      <td><a href="#defaultCaseOrder-ref">defaultCaseOrder</a></td>
+      <td>Detects when default case in switch isn't on 1st or last position</td>
+    </tr>
+    <tr>
+      <td><a href="#deprecatedComment-ref">deprecatedComment</a></td>
+      <td>Detects malformed 'deprecated' doc-comments</td>
+    </tr>
+    <tr>
+      <td><a href="#docStub-ref">docStub</a></td>
+      <td>Detects comments that silence go lint complaints about doc-comment</td>
+    </tr>
+    <tr>
+      <td><a href="#dupArg-ref">dupArg</a></td>
+      <td>Detects suspicious duplicated arguments</td>
+    </tr>
+    <tr>
+      <td><a href="#dupBranchBody-ref">dupBranchBody</a></td>
+      <td>Detects duplicated branch bodies inside conditional statements</td>
+    </tr>
+    <tr>
+      <td><a href="#dupCase-ref">dupCase</a></td>
+      <td>Detects duplicated case clauses inside switch statements</td>
+    </tr>
+    <tr>
+      <td><a href="#dupSubExpr-ref">dupSubExpr</a></td>
+      <td>Detects suspicious duplicated sub-expressions</td>
+    </tr>
+    <tr>
+      <td><a href="#elseif-ref">elseif</a></td>
+      <td>Detects else with nested if statement that can be replaced with else-if</td>
+    </tr>
+    <tr>
+      <td><a href="#emptyFallthrough-ref">emptyFallthrough</a></td>
+      <td>Detects fallthrough that can be avoided by using multi case values</td>
+    </tr>
+    <tr>
+      <td><a href="#emptyStringTest-ref">emptyStringTest</a></td>
+      <td>Detects empty string checks that can be written more idiomatically</td>
+    </tr>
+    <tr>
+      <td><a href="#equalFold-ref">equalFold</a></td>
+      <td>Detects unoptimal strings/bytes case-insensitive comparison</td>
+    </tr>
+    <tr>
+      <td><a href="#exitAfterDefer-ref">exitAfterDefer</a></td>
+      <td>Detects calls to exit/fatal inside functions that use defer</td>
+    </tr>
+    <tr>
+      <td><a href="#flagDeref-ref">flagDeref</a></td>
+      <td>Detects immediate dereferencing of `flag` package pointers</td>
+    </tr>
+    <tr>
+      <td><a href="#flagName-ref">flagName</a></td>
+      <td>Detects flag names with whitespace</td>
+    </tr>
+    <tr>
+      <td><a href="#hexLiteral-ref">hexLiteral</a></td>
+      <td>Detects hex literals that have mixed case letter digits</td>
+    </tr>
+    <tr>
+      <td><a href="#hugeParam-ref">hugeParam</a></td>
+      <td>Detects params that incur excessive amount of copying</td>
+    </tr>
+    <tr>
+      <td><a href="#ifElseChain-ref">ifElseChain</a></td>
+      <td>Detects repeated if-else statements and suggests to replace them with switch statement</td>
+    </tr>
+    <tr>
+      <td><a href="#importShadow-ref">importShadow</a></td>
+      <td>Detects when imported package names shadowed in the assignments</td>
+    </tr>
+    <tr>
+      <td><a href="#indexAlloc-ref">indexAlloc</a></td>
+      <td>Detects strings.Index calls that may cause unwanted allocs</td>
+    </tr>
+    <tr>
+      <td><a href="#initClause-ref">initClause</a></td>
+      <td>Detects non-assignment statements inside if/switch init clause</td>
+    </tr>
+    <tr>
+      <td><a href="#methodExprCall-ref">methodExprCall</a></td>
+      <td>Detects method expression call that can be replaced with a method call</td>
+    </tr>
+    <tr>
+      <td><a href="#nestingReduce-ref">nestingReduce</a></td>
+      <td>Finds where nesting level could be reduced</td>
+    </tr>
+    <tr>
+      <td><a href="#nilValReturn-ref">nilValReturn</a></td>
+      <td>Detects return statements those results evaluate to nil</td>
+    </tr>
+    <tr>
+      <td><a href="#offBy1-ref">offBy1</a></td>
+      <td>Detects various off-by-one kind of errors</td>
+    </tr>
+    <tr>
+      <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
+      <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
+    </tr>
+    <tr>
+      <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
+      <td>Detects input and output parameters that have a type of pointer to referential type</td>
+    </tr>
+    <tr>
+      <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
+      <td>Detects expensive copies of `for` loop range expressions</td>
+    </tr>
+    <tr>
+      <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
+      <td>Detects loops that copy big objects during each iteration</td>
+    </tr>
+    <tr>
+      <td><a href="#regexpMust-ref">regexpMust</a></td>
+      <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
+    </tr>
+    <tr>
+      <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
+      <td>Detects switch statements that could be better written as if statement</td>
+    </tr>
+    <tr>
+      <td><a href="#sloppyLen-ref">sloppyLen</a></td>
+      <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
+    </tr>
+    <tr>
+      <td><a href="#sloppyReassign-ref">sloppyReassign</a></td>
+      <td>Detects suspicious/confusing re-assignments</td>
+    </tr>
+    <tr>
+      <td><a href="#stringXbytes-ref">stringXbytes</a></td>
+      <td>Detects redundant conversions between string and []byte</td>
+    </tr>
+    <tr>
+      <td><a href="#switchTrue-ref">switchTrue</a></td>
+      <td>Detects switch-over-bool statements that use explicit `true` tag value</td>
+    </tr>
+    <tr>
+      <td><a href="#typeAssertChain-ref">typeAssertChain</a></td>
+      <td>Detects repeated type assertions and suggests to replace them with type switch statement</td>
+    </tr>
+    <tr>
+      <td><a href="#typeSwitchVar-ref">typeSwitchVar</a></td>
+      <td>Detects type switches that can benefit from type guard clause with variable</td>
+    </tr>
+    <tr>
+      <td><a href="#typeUnparen-ref">typeUnparen</a></td>
+      <td>Detects unneded parenthesis inside type expressions and suggests to remove them</td>
+    </tr>
+    <tr>
+      <td><a href="#underef-ref">underef</a></td>
+      <td>Detects dereference expressions that can be omitted</td>
+    </tr>
+    <tr>
+      <td><a href="#unlabelStmt-ref">unlabelStmt</a></td>
+      <td>Detects redundant statement labels</td>
+    </tr>
+    <tr>
+      <td><a href="#unlambda-ref">unlambda</a></td>
+      <td>Detects function literals that can be simplified</td>
+    </tr>
+    <tr>
+      <td><a href="#unnamedResult-ref">unnamedResult</a></td>
+      <td>Detects unnamed results that may benefit from names</td>
+    </tr>
+    <tr>
+      <td><a href="#unnecessaryBlock-ref">unnecessaryBlock</a></td>
+      <td>Detects unnecessary braced statement blocks</td>
+    </tr>
+    <tr>
+      <td><a href="#unslice-ref">unslice</a></td>
+      <td>Detects slice expressions that can be simplified to sliced expression itself</td>
+    </tr>
+    <tr>
+      <td><a href="#valSwap-ref">valSwap</a></td>
+      <td>Detects value swapping code that are not using parallel assignment</td>
+    </tr>
+    <tr>
+      <td><a href="#weakCond-ref">weakCond</a></td>
+      <td>Detects conditions that are unsafe due to not being exhaustive</td>
+    </tr>
+    <tr>
+      <td><a href="#wrapperFunc-ref">wrapperFunc</a></td>
+      <td>Detects function calls that can be replaced with convenience wrappers</td>
+    </tr>
+    <tr>
+      <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
+      <td>Detects Yoda style expressions and suggests to replace them</td>
+    </tr>
 </table>
-
-**Experimental:**
-
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Short description</th>
-  </tr>
-      <tr>
-        <td><a href="#appendAssign-ref">appendAssign</a></td>
-        <td>Detects suspicious append result assignments</td>
-      </tr>
-      <tr>
-        <td><a href="#assignOp-ref">assignOp</a></td>
-        <td>Detects assignments that can be simplified by using assignment operators</td>
-      </tr>
-      <tr>
-        <td><a href="#blankParam-ref">blankParam</a> :nerd_face:</td>
-        <td>Detects unused params and suggests to name them as `_` (blank)</td>
-      </tr>
-      <tr>
-        <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
-        <td>Detects bool expressions that can be simplified</td>
-      </tr>
-      <tr>
-        <td><a href="#boolFuncPrefix-ref">boolFuncPrefix</a> :nerd_face:</td>
-        <td>Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name</td>
-      </tr>
-      <tr>
-        <td><a href="#busySelect-ref">busySelect</a></td>
-        <td>Detects default statement inside a select without a sleep that might waste a CPU time</td>
-      </tr>
-      <tr>
-        <td><a href="#captLocal-ref">captLocal</a></td>
-        <td>Detects capitalized names for local variables</td>
-      </tr>
-      <tr>
-        <td><a href="#caseOrder-ref">caseOrder</a></td>
-        <td>Detects erroneous case order inside switch statements</td>
-      </tr>
-      <tr>
-        <td><a href="#commentedOutCode-ref">commentedOutCode</a></td>
-        <td>Detects commented-out code inside function bodies</td>
-      </tr>
-      <tr>
-        <td><a href="#deadCodeAfterLogFatal-ref">deadCodeAfterLogFatal</a></td>
-        <td>Detects dead code that follow panic/fatal logging</td>
-      </tr>
-      <tr>
-        <td><a href="#defaultCaseOrder-ref">defaultCaseOrder</a></td>
-        <td>Detects when default case in switch isn't on 1st or last position</td>
-      </tr>
-      <tr>
-        <td><a href="#deferInLoop-ref">deferInLoop</a></td>
-        <td>Detects defer in loop and warns that it will not be executed till the end of function's scope</td>
-      </tr>
-      <tr>
-        <td><a href="#deprecatedComment-ref">deprecatedComment</a></td>
-        <td>Detects malformed "deprecated" doc-comments</td>
-      </tr>
-      <tr>
-        <td><a href="#docStub-ref">docStub</a></td>
-        <td>Detects comments that silence go lint complaints about doc-comment</td>
-      </tr>
-      <tr>
-        <td><a href="#dupArg-ref">dupArg</a></td>
-        <td>Detects suspicious duplicated arguments</td>
-      </tr>
-      <tr>
-        <td><a href="#dupBranchBody-ref">dupBranchBody</a></td>
-        <td>Detects duplicated branch bodies inside conditional statements</td>
-      </tr>
-      <tr>
-        <td><a href="#dupCase-ref">dupCase</a></td>
-        <td>Detects duplicated case clauses inside switch statements</td>
-      </tr>
-      <tr>
-        <td><a href="#dupSubExpr-ref">dupSubExpr</a></td>
-        <td>Detects suspicious duplicated sub-expressions</td>
-      </tr>
-      <tr>
-        <td><a href="#elseif-ref">elseif</a> :nerd_face:</td>
-        <td>Detects else with nested if statement that can be replaced with else-if</td>
-      </tr>
-      <tr>
-        <td><a href="#emptyFallthrough-ref">emptyFallthrough</a></td>
-        <td>Detects fallthrough that can be avoided by using multi case values</td>
-      </tr>
-      <tr>
-        <td><a href="#emptyFmt-ref">emptyFmt</a></td>
-        <td>Detects usages of formatting functions without formatting arguments</td>
-      </tr>
-      <tr>
-        <td><a href="#evalOrder-ref">evalOrder</a></td>
-        <td>Detects potentially unsafe dependencies on evaluation order</td>
-      </tr>
-      <tr>
-        <td><a href="#flagName-ref">flagName</a></td>
-        <td>Detects flag names with whitespace</td>
-      </tr>
-      <tr>
-        <td><a href="#floatCompare-ref">floatCompare</a></td>
-        <td>Detects fragile float variables comparisons</td>
-      </tr>
-      <tr>
-        <td><a href="#hugeParam-ref">hugeParam</a></td>
-        <td>Detects params that incur excessive amount of copying</td>
-      </tr>
-      <tr>
-        <td><a href="#importPackageName-ref">importPackageName</a></td>
-        <td>Detects when imported package names are unnecessary renamed</td>
-      </tr>
-      <tr>
-        <td><a href="#importShadow-ref">importShadow</a></td>
-        <td>Detects when imported package names shadowed in assignments</td>
-      </tr>
-      <tr>
-        <td><a href="#indexAlloc-ref">indexAlloc</a></td>
-        <td>Detects strings.Index calls that may cause unwanted allocs</td>
-      </tr>
-      <tr>
-        <td><a href="#indexOnlyLoop-ref">indexOnlyLoop</a></td>
-        <td>Detects for loops that can benefit from rewrite to range loop</td>
-      </tr>
-      <tr>
-        <td><a href="#initClause-ref">initClause</a></td>
-        <td>Detects non-assignment statements inside if/switch init clause</td>
-      </tr>
-      <tr>
-        <td><a href="#longChain-ref">longChain</a> :nerd_face:</td>
-        <td>Detects repeated expression chains and suggest to refactor them</td>
-      </tr>
-      <tr>
-        <td><a href="#methodExprCall-ref">methodExprCall</a> :nerd_face:</td>
-        <td>Detects method expression call that can be replaced with a method call</td>
-      </tr>
-      <tr>
-        <td><a href="#namedConst-ref">namedConst</a></td>
-        <td>Detects literals that can be replaced with defined named const</td>
-      </tr>
-      <tr>
-        <td><a href="#nestingReduce-ref">nestingReduce</a></td>
-        <td>Finds where nesting level could be reduced</td>
-      </tr>
-      <tr>
-        <td><a href="#nilValReturn-ref">nilValReturn</a></td>
-        <td>Detects return statements those results evaluate to nil</td>
-      </tr>
-      <tr>
-        <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
-        <td>Detects input and output parameters that have a type of pointer to referential type</td>
-      </tr>
-      <tr>
-        <td><a href="#sloppyLen-ref">sloppyLen</a></td>
-        <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
-      </tr>
-      <tr>
-        <td><a href="#sqlRowsClose-ref">sqlRowsClose</a></td>
-        <td>Detects uses of *sql.Rows without call Close method</td>
-      </tr>
-      <tr>
-        <td><a href="#stdExpr-ref">stdExpr</a></td>
-        <td>Detects constant expressions that can be replaced by a stdlib const</td>
-      </tr>
-      <tr>
-        <td><a href="#structLitKeyOrder-ref">structLitKeyOrder</a> :nerd_face:</td>
-        <td>Detects struct literal keys order that does not match declaration order</td>
-      </tr>
-      <tr>
-        <td><a href="#unexportedCall-ref">unexportedCall</a> :nerd_face:</td>
-        <td>Detects calls of unexported method from unexported type outside that type</td>
-      </tr>
-      <tr>
-        <td><a href="#unlabelStmt-ref">unlabelStmt</a></td>
-        <td>Detects redundant statement labels</td>
-      </tr>
-      <tr>
-        <td><a href="#unlambda-ref">unlambda</a></td>
-        <td>Detects function literals that can be simplified</td>
-      </tr>
-      <tr>
-        <td><a href="#unnamedResult-ref">unnamedResult</a></td>
-        <td>Detects unnamed results that may benefit from names</td>
-      </tr>
-      <tr>
-        <td><a href="#unnecessaryBlock-ref">unnecessaryBlock</a></td>
-        <td>Detects unnecessary braced statement blocks</td>
-      </tr>
-      <tr>
-        <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a> :nerd_face:</td>
-        <td>Detects Yoda style expressions and suggests to replace them</td>
-      </tr>
-</table>
-
 
 
 <a name="appendAssign-ref"></a>
 ## appendAssign
+
+[
+  **diagnostic** ]
+
 Detects suspicious append result assignments.
+
 
 
 
@@ -283,10 +278,14 @@ p.negatives = append(p.negatives, y)
 ```
 
 
-
 <a name="appendCombine-ref"></a>
 ## appendCombine
+
+[
+  **performance** ]
+
 Detects `append` chains to the same slice that can be done in a single `append` call.
+
 
 
 
@@ -302,10 +301,37 @@ xs = append(xs, 1, 2)
 ```
 
 
+<a name="argOrder-ref"></a>
+## argOrder
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious arguments order.
+
+
+
+
+**Before:**
+```go
+strings.HasPrefix("#", userpass)
+```
+
+**After:**
+```go
+strings.HasPrefix(userpass, "#")
+```
+
 
 <a name="assignOp-ref"></a>
 ## assignOp
+
+[
+  **style** ]
+
 Detects assignments that can be simplified by using assignment operators.
+
 
 
 
@@ -320,28 +346,42 @@ x *= 2
 ```
 
 
+<a name="badCond-ref"></a>
+## badCond
 
-<a name="blankParam-ref"></a>
-## blankParam
-Detects unused params and suggests to name them as `_` (blank).
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious condition expressions.
+
 
 
 
 **Before:**
 ```go
-func f(a int, b float64) // b isn't used inside function body
+for i := 0; i > n; i++ {
+	xs[i] = 0
+}
 ```
 
 **After:**
 ```go
-func f(a int, _ float64) // everything is cool
+for i := 0; i < n; i++ {
+	xs[i] = 0
+}
 ```
 
 
-`blankParam` is very opinionated.
 <a name="boolExprSimplify-ref"></a>
 ## boolExprSimplify
+
+[
+  **style**
+  **experimental** ]
+
 Detects bool expressions that can be simplified.
+
 
 
 
@@ -358,80 +398,37 @@ b := (x) == (y)
 ```
 
 
-
-<a name="boolFuncPrefix-ref"></a>
-## boolFuncPrefix
-Detects function returning only bool and suggests to add Is/Has/Contains prefix to it's name.
-
-
-
-**Before:**
-```go
-func Enabled() bool
-```
-
-**After:**
-```go
-func IsEnabled() bool
-```
-
-
-`boolFuncPrefix` is very opinionated.
 <a name="builtinShadow-ref"></a>
 ## builtinShadow
+
+[
+  **style**
+  **opinionated** ]
+
 Detects when predeclared identifiers shadowed in assignments.
+
 
 
 
 **Before:**
 ```go
 len := 10
-println(len)
 ```
 
 **After:**
 ```go
-length := 10 // Changed variable name
-println(length)
+length := 10
 ```
-
-
-`builtinShadow` is syntax-only checker (fast).
-<a name="busySelect-ref"></a>
-## busySelect
-Detects default statement inside a select without a sleep that might waste a CPU time.
-
-
-
-**Before:**
-```go
-for {
-	select {
-	case <-ch:
-		// ...
-	default:
-		// will waste CPU time
-	}
-}
-```
-
-**After:**
-```go
-for {
-	select {
-	case <-ch:
-		// ...
-	default:
-		time.Sleep(100 * time.Millisecond)
-	}
-}
-```
-
 
 
 <a name="captLocal-ref"></a>
 ## captLocal
+
+[
+  **style** ]
+
 Detects capitalized names for local variables.
+
 
 
 
@@ -446,10 +443,14 @@ func f(in int, out *int) (err error) {}
 ```
 
 
-`captLocal` is syntax-only checker (fast).
 <a name="caseOrder-ref"></a>
 ## caseOrder
+
+[
+  **diagnostic** ]
+
 Detects erroneous case order inside switch statements.
+
 
 
 
@@ -474,10 +475,61 @@ case ast.Expr:
 ```
 
 
+<a name="codegenComment-ref"></a>
+## codegenComment
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects malformed 'code generated' file comments.
+
+
+
+
+**Before:**
+```go
+// This file was automatically generated by foogen
+```
+
+**After:**
+```go
+// Code generated by foogen. DO NOT EDIT.
+```
+
+
+<a name="commentFormatting-ref"></a>
+## commentFormatting
+
+[
+  **style**
+  **experimental** ]
+
+Detects comments with non-idiomatic formatting.
+
+
+
+
+**Before:**
+```go
+//This is a comment
+```
+
+**After:**
+```go
+// This is a comment
+```
+
 
 <a name="commentedOutCode-ref"></a>
 ## commentedOutCode
+
+[
+  **diagnostic**
+  **experimental** ]
+
 Detects commented-out code inside function bodies.
+
 
 
 
@@ -493,29 +545,42 @@ foo(1, 2)
 ```
 
 
+<a name="commentedOutImport-ref"></a>
+## commentedOutImport
 
-<a name="deadCodeAfterLogFatal-ref"></a>
-## deadCodeAfterLogFatal
-Detects dead code that follow panic/fatal logging.
+[
+  **style**
+  **experimental** ]
+
+Detects commented-out imports.
+
 
 
 
 **Before:**
 ```go
-log.Fatal("exits function")
-return
+import (
+	"fmt"
+	//"os"
+)
 ```
 
 **After:**
 ```go
-log.Fatal("exits function")
+import (
+	"fmt"
+)
 ```
-
 
 
 <a name="defaultCaseOrder-ref"></a>
 ## defaultCaseOrder
+
+[
+  **style** ]
+
 Detects when default case in switch isn't on 1st or last position.
+
 
 
 
@@ -544,34 +609,15 @@ default: // <- last case (could also be the first one)
 ```
 
 
-`defaultCaseOrder` is syntax-only checker (fast).
-<a name="deferInLoop-ref"></a>
-## deferInLoop
-Detects defer in loop and warns that it will not be executed till the end of function's scope.
-
-
-
-**Before:**
-```go
-for i := range [10]int{} {
-	defer f(i) // will be executed only at the end of func
-}
-```
-
-**After:**
-```go
-for i := range [10]int{} {
-	func(i int) {
-		defer f(i)
-	}(i)
-}
-```
-
-
-
 <a name="deprecatedComment-ref"></a>
 ## deprecatedComment
-Detects malformed "deprecated" doc-comments.
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects malformed 'deprecated' doc-comments.
+
 
 
 
@@ -588,10 +634,15 @@ func FuncOld() int
 ```
 
 
-`deprecatedComment` is syntax-only checker (fast).
 <a name="docStub-ref"></a>
 ## docStub
+
+[
+  **style**
+  **experimental** ]
+
 Detects comments that silence go lint complaints about doc-comment.
+
 
 
 
@@ -604,16 +655,22 @@ func Foo() {
 
 **After:**
 ```go
-func Foo() {
-}
+// (A) - remove the doc-comment stub
+func Foo() {}
+// (B) - replace it with meaningful comment
+// Foo is a demonstration-only function.
+func Foo() {}
 ```
 
-You can either remove a comment to let go lint find it or change stub to useful comment.
-This checker makes it easier to detect stubs, the action is up to you.
-`docStub` is syntax-only checker (fast).
+
 <a name="dupArg-ref"></a>
 ## dupArg
+
+[
+  **diagnostic** ]
+
 Detects suspicious duplicated arguments.
+
 
 
 
@@ -628,10 +685,14 @@ copy(dst, src)
 ```
 
 
-
 <a name="dupBranchBody-ref"></a>
 ## dupBranchBody
+
+[
+  **diagnostic** ]
+
 Detects duplicated branch bodies inside conditional statements.
+
 
 
 
@@ -654,10 +715,14 @@ if cond {
 ```
 
 
-
 <a name="dupCase-ref"></a>
 ## dupCase
+
+[
+  **diagnostic** ]
+
 Detects duplicated case clauses inside switch statements.
+
 
 
 
@@ -676,10 +741,14 @@ case ys[0], ys[1], ys[2], ys[3], ys[4]:
 ```
 
 
-
 <a name="dupSubExpr-ref"></a>
 ## dupSubExpr
+
+[
+  **diagnostic** ]
+
 Detects suspicious duplicated sub-expressions.
+
 
 
 
@@ -698,10 +767,14 @@ sort.Slice(xs, func(i, j int) bool {
 ```
 
 
-
 <a name="elseif-ref"></a>
 ## elseif
+
+[
+  **style** ]
+
 Detects else with nested if statement that can be replaced with else-if.
+
 
 
 
@@ -722,10 +795,15 @@ if cond1 {
 ```
 
 
-`elseif` is very opinionated.
 <a name="emptyFallthrough-ref"></a>
 ## emptyFallthrough
+
+[
+  **style**
+  **experimental** ]
+
 Detects fallthrough that can be avoided by using multi case values.
+
 
 
 
@@ -748,54 +826,93 @@ case reflect.Int, reflect.Int32:
 ```
 
 
+<a name="emptyStringTest-ref"></a>
+## emptyStringTest
 
-<a name="emptyFmt-ref"></a>
-## emptyFmt
-Detects usages of formatting functions without formatting arguments.
+[
+  **style**
+  **experimental** ]
 
+Detects empty string checks that can be written more idiomatically.
 
-
-**Before:**
-```go
-fmt.Sprintf("whatever")
-fmt.Errorf("wherever")
-```
-
-**After:**
-```go
-fmt.Sprint("whatever")
-errors.New("wherever")
-```
-
-
-
-<a name="evalOrder-ref"></a>
-## evalOrder
-Detects potentially unsafe dependencies on evaluation order.
 
 
 
 **Before:**
 ```go
-return mayModifySlice(&xs), xs[0]
+len(s) == 0
 ```
 
 **After:**
 ```go
-// A)
-v := mayModifySlice(&xs)
-return v, xs[0]
-// B)
-v := xs[0]
-return mayModifySlice(&xs), v
+s == ""
 ```
 
+
+**Note:**
+See https://dmitri.shuralyov.com/idiomatic-go#empty-string-check.
+<a name="equalFold-ref"></a>
+## equalFold
+
+[
+  **performance**
+  **experimental** ]
+
+Detects unoptimal strings/bytes case-insensitive comparison.
+
+
+
+
+**Before:**
+```go
+strings.ToLower(x) == strings.ToLower(y)
+```
+
+**After:**
+```go
+strings.EqualFold(x, y)
+```
+
+
+<a name="exitAfterDefer-ref"></a>
+## exitAfterDefer
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects calls to exit/fatal inside functions that use defer.
+
+
+
+
+**Before:**
+```go
+defer os.Remove(filename)
+if bad {
+	log.Fatalf("something bad happened")
+}
+```
+
+**After:**
+```go
+defer os.Remove(filename)
+if bad {
+	log.Printf("something bad happened")
+	return
+}
+```
 
 
 <a name="flagDeref-ref"></a>
 ## flagDeref
+
+[
+  **diagnostic** ]
+
 Detects immediate dereferencing of `flag` package pointers.
 
+Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
 
 **Before:**
@@ -809,12 +926,19 @@ var b bool
 flag.BoolVar(&b, "b", false, "b docs")
 ```
 
+
+**Note:**
 Dereferencing returned pointers will lead to hard to find errors
 where flag values are not updated after flag.Parse().
-`flagDeref` is syntax-only checker (fast).
 <a name="flagName-ref"></a>
 ## flagName
+
+[
+  **diagnostic**
+  **experimental** ]
+
 Detects flag names with whitespace.
+
 
 
 
@@ -829,30 +953,42 @@ b := flag.Bool("foo", false, "description")
 ```
 
 
+<a name="hexLiteral-ref"></a>
+## hexLiteral
 
-<a name="floatCompare-ref"></a>
-## floatCompare
-Detects fragile float variables comparisons.
+[
+  **style**
+  **experimental** ]
+
+Detects hex literals that have mixed case letter digits.
+
 
 
 
 **Before:**
 ```go
-// x and y are floats
-return x == y
+x := 0X12
+y := 0xfF
 ```
 
 **After:**
 ```go
-// x and y are floats
-return math.Abs(x - y) < eps
+x := 0x12
+// (A)
+y := 0xff
+// (B)
+y := 0xFF
 ```
-
 
 
 <a name="hugeParam-ref"></a>
 ## hugeParam
+
+[
+  **performance** ]
+
 Detects params that incur excessive amount of copying.
+
 
 
 
@@ -867,10 +1003,14 @@ func f(x *[1024]int) {}
 ```
 
 
-
 <a name="ifElseChain-ref"></a>
 ## ifElseChain
+
+[
+  **style** ]
+
 Detects repeated if-else statements and suggests to replace them with switch statement.
+
 
 
 
@@ -897,52 +1037,43 @@ default:
 }
 ```
 
+
+**Note:**
 Permits single else or else-if; repeated else-if or else + else-if
 will trigger suggestion to use switch statement.
 See [EffectiveGo#switch](https://golang.org/doc/effective_go.html#switch).
-`ifElseChain` is syntax-only checker (fast).
-<a name="importPackageName-ref"></a>
-## importPackageName
-Detects when imported package names are unnecessary renamed.
-
-
-
-**Before:**
-```go
-import lint "github.com/go-critic/go-critic/lint"
-```
-
-**After:**
-```go
-import "github.com/go-critic/go-critic/lint"
-```
-
-
-
 <a name="importShadow-ref"></a>
 ## importShadow
-Detects when imported package names shadowed in assignments.
+
+[
+  **style**
+  **opinionated** ]
+
+Detects when imported package names shadowed in the assignments.
+
 
 
 
 **Before:**
 ```go
 // "path/filepath" is imported.
-func myFunc(filepath string) {
-}
+filepath := "foo.txt"
 ```
 
 **After:**
 ```go
-func myFunc(filename string) {
-}
+filename := "foo.txt"
 ```
-
 
 
 <a name="indexAlloc-ref"></a>
 ## indexAlloc
+
+[
+  **performance** ]
+
 Detects strings.Index calls that may cause unwanted allocs.
+
 
 
 
@@ -956,37 +1087,19 @@ strings.Index(string(x), y)
 bytes.Index(x, []byte(y))
 ```
 
+
+**Note:**
 See Go issue for details: https://github.com/golang/go/issues/25864
-
-<a name="indexOnlyLoop-ref"></a>
-## indexOnlyLoop
-Detects for loops that can benefit from rewrite to range loop.
-
-Suggests to use for key, v := range container form.
-
-**Before:**
-```go
-for i := range files {
-	if files[i] != nil {
-		files[i].Close()
-	}
-}
-```
-
-**After:**
-```go
-for _, f := range files {
-	if f != nil {
-		f.Close()
-	}
-}
-```
-
-
-
 <a name="initClause-ref"></a>
 ## initClause
+
+[
+  **style**
+  **opinionated**
+  **experimental** ]
+
 Detects non-assignment statements inside if/switch init clause.
+
 
 
 
@@ -1004,36 +1117,15 @@ if cond {
 ```
 
 
-`initClause` is syntax-only checker (fast).
-<a name="longChain-ref"></a>
-## longChain
-Detects repeated expression chains and suggest to refactor them.
-
-
-
-**Before:**
-```go
-a := q.w.e.r.t + 1
-b := q.w.e.r.t + 2
-c := q.w.e.r.t + 3
-v := (a + xs[i+1]) + (b + xs[i+1]) + (c + xs[i+1])
-```
-
-**After:**
-```go
-x := xs[i+1]
-qwert := q.w.e.r.t
-a := qwert + 1
-b := qwert + 2
-c := qwert + 3
-v := (a + x) + (b + x) + (c + x)
-```
-
-
-`longChain` is very opinionated.
 <a name="methodExprCall-ref"></a>
 ## methodExprCall
+
+[
+  **style**
+  **experimental** ]
+
 Detects method expression call that can be replaced with a method call.
+
 
 
 
@@ -1050,29 +1142,16 @@ f.bar()
 ```
 
 
-`methodExprCall` is very opinionated.
-<a name="namedConst-ref"></a>
-## namedConst
-Detects literals that can be replaced with defined named const.
-
-
-
-**Before:**
-```go
-// pos has type of token.Pos.
-return pos != 0
-```
-
-**After:**
-```go
-return pos != token.NoPos
-```
-
-
-
 <a name="nestingReduce-ref"></a>
 ## nestingReduce
+
+[
+  **style**
+  **opinionated**
+  **experimental** ]
+
 Finds where nesting level could be reduced.
+
 
 
 
@@ -1096,10 +1175,15 @@ for _, v := range a {
 ```
 
 
-
 <a name="nilValReturn-ref"></a>
 ## nilValReturn
+
+[
+  **diagnostic**
+  **experimental** ]
+
 Detects return statements those results evaluate to nil.
+
 
 
 
@@ -1123,10 +1207,38 @@ if err != nil {
 ```
 
 
+<a name="offBy1-ref"></a>
+## offBy1
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects various off-by-one kind of errors.
+
+
+
+
+**Before:**
+```go
+xs[len(xs)]
+```
+
+**After:**
+```go
+xs[len(xs)-1]
+```
+
 
 <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
+
+[
+  **style**
+  **opinionated** ]
+
 Detects if function parameters could be combined by type and suggest the way to do it.
+
 
 
 
@@ -1141,10 +1253,16 @@ func foo(a, b, c, d, e, f, g int) {}
 ```
 
 
-`paramTypeCombine` is syntax-only checker (fast).`paramTypeCombine` is very opinionated.
 <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
+
+[
+  **style**
+  **opinionated**
+  **experimental** ]
+
 Detects input and output parameters that have a type of pointer to referential type.
+
 
 
 
@@ -1159,12 +1277,16 @@ func f(m map[string]int) (chan *int)
 ```
 
 
-
 <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
+
+[
+  **performance** ]
+
 Detects expensive copies of `for` loop range expressions.
 
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
+
 
 **Before:**
 ```go
@@ -1182,13 +1304,19 @@ for _, x := range &xs { // No copy
 }
 ```
 
-See Go issue for details: https://github.com/golang/go/issues/15812
 
+**Note:**
+See Go issue for details: https://github.com/golang/go/issues/15812.
 <a name="rangeValCopy-ref"></a>
 ## rangeValCopy
+
+[
+  **performance** ]
+
 Detects loops that copy big objects during each iteration.
 
 Suggests to use index access or take address and make use pointer instead.
+
 
 **Before:**
 ```go
@@ -1208,10 +1336,14 @@ for i := range xs {
 ```
 
 
-
 <a name="regexpMust-ref"></a>
 ## regexpMust
+
+[
+  **style** ]
+
 Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
+
 
 
 
@@ -1226,10 +1358,14 @@ re := regexp.MustCompile("const pattern")
 ```
 
 
-
 <a name="singleCaseSwitch-ref"></a>
 ## singleCaseSwitch
-Detects switch statements that could be better written as if statements.
+
+[
+  **style** ]
+
+Detects switch statements that could be better written as if statement.
+
 
 
 
@@ -1249,10 +1385,14 @@ if x, ok := x.(int); ok {
 ```
 
 
-`singleCaseSwitch` is syntax-only checker (fast).
 <a name="sloppyLen-ref"></a>
 ## sloppyLen
+
+[
+  **style** ]
+
 Detects usage of `len` when result is obvious or doesn't make sense.
+
 
 
 
@@ -1270,73 +1410,60 @@ len(arr) == 0
 ```
 
 
-`sloppyLen` is syntax-only checker (fast).
-<a name="sqlRowsClose-ref"></a>
-## sqlRowsClose
-Detects uses of *sql.Rows without call Close method.
+<a name="sloppyReassign-ref"></a>
+## sloppyReassign
 
+[
+  **diagnostic**
+  **experimental** ]
 
+Detects suspicious/confusing re-assignments.
 
-**Before:**
-```go
-rows, _ := db.Query( /**/ )
-for rows.Next {
-}
-```
-
-**After:**
-```go
-rows, _ := db.Query( /**/ )
-for rows.Next {
-}
-rows.Close()
-```
-
-
-
-<a name="stdExpr-ref"></a>
-## stdExpr
-Detects constant expressions that can be replaced by a stdlib const.
 
 
 
 **Before:**
 ```go
-intBytes := make([]byte, unsafe.Sizeof(0))
-maxVal := 1<<7 - 1
+if err = f(); err != nil { return err }
 ```
 
 **After:**
 ```go
-intBytes := make([]byte, bits.IntSize)
-maxVal := math.MaxInt8
+if err := f(); err != nil { return err }
 ```
 
 
+<a name="stringXbytes-ref"></a>
+## stringXbytes
 
-<a name="structLitKeyOrder-ref"></a>
-## structLitKeyOrder
-Detects struct literal keys order that does not match declaration order.
+[
+  **style**
+  **experimental** ]
+
+Detects redundant conversions between string and []byte.
+
 
 
 
 **Before:**
 ```go
-type foo struct{ x, y int }
-v := foo{y: y, x: x}
+copy(b, []byte(s))
 ```
 
 **After:**
 ```go
-type foo struct{ x, y int }
-v := foo{x: x, y: y}
+copy(b, s)
 ```
 
 
-`structLitKeyOrder` is very opinionated.
 <a name="switchTrue-ref"></a>
 ## switchTrue
+
+[
+  **style** ]
+
 Detects switch-over-bool statements that use explicit `true` tag value.
+
 
 
 
@@ -1355,10 +1482,50 @@ case x > y:
 ```
 
 
-`switchTrue` is syntax-only checker (fast).
+<a name="typeAssertChain-ref"></a>
+## typeAssertChain
+
+[
+  **style**
+  **experimental** ]
+
+Detects repeated type assertions and suggests to replace them with type switch statement.
+
+
+
+
+**Before:**
+```go
+if x, ok := v.(T1); ok {
+	// Code A, uses x.
+} else if x, ok := v.(T2); ok {
+	// Code B, uses x.
+} else if x, ok := v.(T3); ok {
+	// Code C, uses x.
+}
+```
+
+**After:**
+```go
+switch x := v.(T1) {
+case cond1:
+	// Code A, uses x.
+case cond2:
+	// Code B, uses x.
+default:
+	// Code C, uses x.
+}
+```
+
+
 <a name="typeSwitchVar-ref"></a>
 ## typeSwitchVar
+
+[
+  **style** ]
+
 Detects type switches that can benefit from type guard clause with variable.
+
 
 
 
@@ -1387,10 +1554,15 @@ default:
 ```
 
 
-
 <a name="typeUnparen-ref"></a>
 ## typeUnparen
+
+[
+  **style**
+  **opinionated** ]
+
 Detects unneded parenthesis inside type expressions and suggests to remove them.
+
 
 
 
@@ -1405,10 +1577,14 @@ type foo []func([]func())
 ```
 
 
-`typeUnparen` is syntax-only checker (fast).
 <a name="underef-ref"></a>
 ## underef
+
+[
+  **style** ]
+
 Detects dereference expressions that can be omitted.
+
 
 
 
@@ -1425,32 +1601,15 @@ v := a[5]
 ```
 
 
-
-<a name="unexportedCall-ref"></a>
-## unexportedCall
-Detects calls of unexported method from unexported type outside that type.
-
-
-
-**Before:**
-```go
-func baz(f foo) {
-	fo.bar()
-}
-```
-
-**After:**
-```go
-func baz(f foo) {
-	fo.Bar() // Made method exported
-}
-```
-
-
-`unexportedCall` is very opinionated.
 <a name="unlabelStmt-ref"></a>
 ## unlabelStmt
+
+[
+  **style**
+  **experimental** ]
+
 Detects redundant statement labels.
+
 
 
 
@@ -1474,10 +1633,14 @@ for x := range xs {
 ```
 
 
-
 <a name="unlambda-ref"></a>
 ## unlambda
+
+[
+  **style** ]
+
 Detects function literals that can be simplified.
+
 
 
 
@@ -1492,10 +1655,16 @@ fn
 ```
 
 
-
 <a name="unnamedResult-ref"></a>
 ## unnamedResult
+
+[
+  **style**
+  **opinionated**
+  **experimental** ]
+
 Detects unnamed results that may benefit from names.
+
 
 
 
@@ -1510,10 +1679,16 @@ func f() (x, y float64)
 ```
 
 
-
 <a name="unnecessaryBlock-ref"></a>
 ## unnecessaryBlock
+
+[
+  **style**
+  **opinionated**
+  **experimental** ]
+
 Detects unnecessary braced statement blocks.
+
 
 
 
@@ -1532,10 +1707,14 @@ print(x)
 ```
 
 
-`unnecessaryBlock` is syntax-only checker (fast).
 <a name="unslice-ref"></a>
 ## unslice
+
+[
+  **style** ]
+
 Detects slice expressions that can be simplified to sliced expression itself.
+
 
 
 
@@ -1552,10 +1731,86 @@ copy(b, values...)
 ```
 
 
+<a name="valSwap-ref"></a>
+## valSwap
+
+[
+  **style**
+  **experimental** ]
+
+Detects value swapping code that are not using parallel assignment.
+
+
+
+
+**Before:**
+```go
+tmp := *x
+*x = *y
+*y = tmp
+```
+
+**After:**
+```go
+*x, *y = *y, *x
+```
+
+
+<a name="weakCond-ref"></a>
+## weakCond
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects conditions that are unsafe due to not being exhaustive.
+
+
+
+
+**Before:**
+```go
+xs != nil && xs[0] != nil
+```
+
+**After:**
+```go
+len(xs) != 0 && xs[0] != nil
+```
+
+
+<a name="wrapperFunc-ref"></a>
+## wrapperFunc
+
+[
+  **style**
+  **experimental** ]
+
+Detects function calls that can be replaced with convenience wrappers.
+
+
+
+
+**Before:**
+```go
+wg.Add(-1)
+```
+
+**After:**
+```go
+wg.Done()
+```
+
 
 <a name="yodaStyleExpr-ref"></a>
 ## yodaStyleExpr
+
+[
+  **style**
+  **experimental** ]
+
 Detects Yoda style expressions and suggests to replace them.
+
 
 
 
@@ -1570,4 +1825,3 @@ return ptr != nil
 ```
 
 
-`yodaStyleExpr` is very opinionated.

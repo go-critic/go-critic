@@ -2,8 +2,6 @@
 
 This page describes checks supported by [go-critic](https://github.com/go-critic/go-critic) linter.
 
-Checkers marked with a :nerd_face: are opinionated. They may be not suitable for everyone.
-
 [//]: # (This is generated file, please don't edit it yourself.)
 
 ## Checkers:
@@ -13,56 +11,39 @@ Checkers marked with a :nerd_face: are opinionated. They may be not suitable for
     <th>Name</th>
     <th>Short description</th>
   </tr>
-  {{- range .Rules }}
-    {{- if not .Experimental }}
-      <tr>
-        <td><a href="#{{.Name}}-ref">{{.Name}}</a>{{ if .VeryOpinionated }} :nerd_face:{{ end }}</td>
-        <td>{{.Doc.Summary}}</td>
-      </tr>
-    {{- end }}
+  {{- range .Checkers }}
+    <tr>
+      <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
+      <td>{{.Summary}}</td>
+    </tr>
   {{- end }}
 </table>
 
-**Experimental:**
-
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Short description</th>
-  </tr>
-  {{- range .Rules }}
-    {{- if .Experimental }}
-      <tr>
-        <td><a href="#{{ .Name }}-ref">{{ .Name }}</a>{{ if .VeryOpinionated }} :nerd_face:{{ end }}</td>
-        <td>{{.Doc.Summary}}</td>
-      </tr>
-    {{- end }}
-  {{- end }}
-</table>
-
-
-{{ range .Rules }}
+{{ range .Checkers }}
 <a name=" {{- .Name -}} -ref"></a>
 ## {{ .Name }}
-{{ .Doc.Summary -}}.
 
-{{ .Doc.Details }}
+[{{ range $tag := .Tags }}
+  **{{ $tag }}**     
+{{- end }} ]
+
+{{ .Summary -}}.
+
+{{ .Details }}
+
 
 **Before:**
 ```go
-{{ .Doc.Before }}
+{{ .Before }}
 ```
 
 **After:**
 ```go
-{{ .Doc.After }}
+{{ .After }}
 ```
 
-{{ .Doc.Note }}
-{{ if .SyntaxOnly -}}
-  `{{.Name}}` is syntax-only checker (fast).
-{{- end -}}
-{{ if .VeryOpinionated -}}
-  `{{.Name}}` is very opinionated.
-{{- end -}}
-{{ end -}}
+{{ if .Note }}
+**Note:**
+{{ .Note }}
+{{- end }}
+{{- end }}
