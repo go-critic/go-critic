@@ -54,6 +54,20 @@ func TestTags(t *testing.T) {
 	}
 }
 
+func TestDocs(t *testing.T) {
+	for _, info := range lintpack.GetCheckersInfo() {
+		if info.Summary == "" {
+			t.Errorf("%q checker lacks summary", info.Name)
+		}
+		for key, p := range info.Params {
+			if p.Usage == "" {
+				t.Errorf("%q checker %q param lacks usage docs",
+					info.Name, key)
+			}
+		}
+	}
+}
+
 func TestStableList(t *testing.T) {
 	// Verify that new checker is not added without "experimental"
 	// tag by accident. When stable checker is about to be added,

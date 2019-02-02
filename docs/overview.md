@@ -2,8 +2,6 @@
 
 This page describes checks supported by [go-critic](https://github.com/go-critic/go-critic) linter.
 
-Checkers marked with a :nerd_face: are opinionated. They may be not suitable for everyone.
-
 [//]: # (This is generated file, please don't edit it yourself.)
 
 ## Checkers:
@@ -123,7 +121,7 @@ Checkers marked with a :nerd_face: are opinionated. They may be not suitable for
     </tr>
     <tr>
       <td><a href="#hexLiteral-ref">hexLiteral</a></td>
-      <td></td>
+      <td>Detects hex literals that have mixed case letter digits</td>
     </tr>
     <tr>
       <td><a href="#hugeParam-ref">hugeParam</a></td>
@@ -260,7 +258,7 @@ Checkers marked with a :nerd_face: are opinionated. They may be not suitable for
 ## appendAssign
 
 [
-  **diagnostic**]
+  **diagnostic** ]
 
 Detects suspicious append result assignments.
 
@@ -284,7 +282,7 @@ p.negatives = append(p.negatives, y)
 ## appendCombine
 
 [
-  **performance**]
+  **performance** ]
 
 Detects `append` chains to the same slice that can be done in a single `append` call.
 
@@ -308,7 +306,7 @@ xs = append(xs, 1, 2)
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects suspicious arguments order.
 
@@ -330,7 +328,7 @@ strings.HasPrefix(userpass, "#")
 ## assignOp
 
 [
-  **style**]
+  **style** ]
 
 Detects assignments that can be simplified by using assignment operators.
 
@@ -353,7 +351,7 @@ x *= 2
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects suspicious condition expressions.
 
@@ -380,7 +378,7 @@ for i := 0; i < n; i++ {
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects bool expressions that can be simplified.
 
@@ -405,7 +403,7 @@ b := (x) == (y)
 
 [
   **style**
-  **opinionated**]
+  **opinionated** ]
 
 Detects when predeclared identifiers shadowed in assignments.
 
@@ -427,7 +425,7 @@ length := 10
 ## captLocal
 
 [
-  **style**]
+  **style** ]
 
 Detects capitalized names for local variables.
 
@@ -449,7 +447,7 @@ func f(in int, out *int) (err error) {}
 ## caseOrder
 
 [
-  **diagnostic**]
+  **diagnostic** ]
 
 Detects erroneous case order inside switch statements.
 
@@ -482,7 +480,7 @@ case ast.Expr:
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects malformed 'code generated' file comments.
 
@@ -505,7 +503,7 @@ Detects malformed 'code generated' file comments.
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects comments with non-idiomatic formatting.
 
@@ -528,7 +526,7 @@ Detects comments with non-idiomatic formatting.
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects commented-out code inside function bodies.
 
@@ -552,7 +550,7 @@ foo(1, 2)
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects commented-out imports.
 
@@ -579,7 +577,7 @@ import (
 ## defaultCaseOrder
 
 [
-  **style**]
+  **style** ]
 
 Detects when default case in switch isn't on 1st or last position.
 
@@ -616,7 +614,7 @@ default: // <- last case (could also be the first one)
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects malformed 'deprecated' doc-comments.
 
@@ -641,7 +639,7 @@ func FuncOld() int
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects comments that silence go lint complaints about doc-comment.
 
@@ -669,7 +667,7 @@ func Foo() {}
 ## dupArg
 
 [
-  **diagnostic**]
+  **diagnostic** ]
 
 Detects suspicious duplicated arguments.
 
@@ -691,7 +689,7 @@ copy(dst, src)
 ## dupBranchBody
 
 [
-  **diagnostic**]
+  **diagnostic** ]
 
 Detects duplicated branch bodies inside conditional statements.
 
@@ -721,7 +719,7 @@ if cond {
 ## dupCase
 
 [
-  **diagnostic**]
+  **diagnostic** ]
 
 Detects duplicated case clauses inside switch statements.
 
@@ -747,7 +745,7 @@ case ys[0], ys[1], ys[2], ys[3], ys[4]:
 ## dupSubExpr
 
 [
-  **diagnostic**]
+  **diagnostic** ]
 
 Detects suspicious duplicated sub-expressions.
 
@@ -773,7 +771,7 @@ sort.Slice(xs, func(i, j int) bool {
 ## elseif
 
 [
-  **style**]
+  **style** ]
 
 Detects else with nested if statement that can be replaced with else-if.
 
@@ -802,7 +800,7 @@ if cond1 {
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects fallthrough that can be avoided by using multi case values.
 
@@ -833,7 +831,7 @@ case reflect.Int, reflect.Int32:
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects empty string checks that can be written more idiomatically.
 
@@ -858,7 +856,7 @@ See https://dmitri.shuralyov.com/idiomatic-go#empty-string-check.
 
 [
   **performance**
-  **experimental**]
+  **experimental** ]
 
 Detects unoptimal strings/bytes case-insensitive comparison.
 
@@ -881,7 +879,7 @@ strings.EqualFold(x, y)
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects calls to exit/fatal inside functions that use defer.
 
@@ -910,7 +908,7 @@ if bad {
 ## flagDeref
 
 [
-  **diagnostic**]
+  **diagnostic** ]
 
 Detects immediate dereferencing of `flag` package pointers.
 
@@ -937,7 +935,7 @@ where flag values are not updated after flag.Parse().
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects flag names with whitespace.
 
@@ -960,9 +958,9 @@ b := flag.Bool("foo", false, "description")
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
-.
+Detects hex literals that have mixed case letter digits.
 
 
 
@@ -987,7 +985,7 @@ y := 0xFF
 ## hugeParam
 
 [
-  **performance**]
+  **performance** ]
 
 Detects params that incur excessive amount of copying.
 
@@ -1009,7 +1007,7 @@ func f(x *[1024]int) {}
 ## ifElseChain
 
 [
-  **style**]
+  **style** ]
 
 Detects repeated if-else statements and suggests to replace them with switch statement.
 
@@ -1049,7 +1047,7 @@ See [EffectiveGo#switch](https://golang.org/doc/effective_go.html#switch).
 
 [
   **style**
-  **opinionated**]
+  **opinionated** ]
 
 Detects when imported package names shadowed in the assignments.
 
@@ -1072,7 +1070,7 @@ filename := "foo.txt"
 ## indexAlloc
 
 [
-  **performance**]
+  **performance** ]
 
 Detects strings.Index calls that may cause unwanted allocs.
 
@@ -1098,7 +1096,7 @@ See Go issue for details: https://github.com/golang/go/issues/25864
 [
   **style**
   **opinionated**
-  **experimental**]
+  **experimental** ]
 
 Detects non-assignment statements inside if/switch init clause.
 
@@ -1124,7 +1122,7 @@ if cond {
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects method expression call that can be replaced with a method call.
 
@@ -1150,7 +1148,7 @@ f.bar()
 [
   **style**
   **opinionated**
-  **experimental**]
+  **experimental** ]
 
 Finds where nesting level could be reduced.
 
@@ -1182,7 +1180,7 @@ for _, v := range a {
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects return statements those results evaluate to nil.
 
@@ -1214,7 +1212,7 @@ if err != nil {
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects various off-by-one kind of errors.
 
@@ -1237,7 +1235,7 @@ xs[len(xs)-1]
 
 [
   **style**
-  **opinionated**]
+  **opinionated** ]
 
 Detects if function parameters could be combined by type and suggest the way to do it.
 
@@ -1261,7 +1259,7 @@ func foo(a, b, c, d, e, f, g int) {}
 [
   **style**
   **opinionated**
-  **experimental**]
+  **experimental** ]
 
 Detects input and output parameters that have a type of pointer to referential type.
 
@@ -1283,7 +1281,7 @@ func f(m map[string]int) (chan *int)
 ## rangeExprCopy
 
 [
-  **performance**]
+  **performance** ]
 
 Detects expensive copies of `for` loop range expressions.
 
@@ -1313,7 +1311,7 @@ See Go issue for details: https://github.com/golang/go/issues/15812.
 ## rangeValCopy
 
 [
-  **performance**]
+  **performance** ]
 
 Detects loops that copy big objects during each iteration.
 
@@ -1342,7 +1340,7 @@ for i := range xs {
 ## regexpMust
 
 [
-  **style**]
+  **style** ]
 
 Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
 
@@ -1364,7 +1362,7 @@ re := regexp.MustCompile("const pattern")
 ## singleCaseSwitch
 
 [
-  **style**]
+  **style** ]
 
 Detects switch statements that could be better written as if statement.
 
@@ -1391,7 +1389,7 @@ if x, ok := x.(int); ok {
 ## sloppyLen
 
 [
-  **style**]
+  **style** ]
 
 Detects usage of `len` when result is obvious or doesn't make sense.
 
@@ -1417,7 +1415,7 @@ len(arr) == 0
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects suspicious/confusing re-assignments.
 
@@ -1440,7 +1438,7 @@ if err := f(); err != nil { return err }
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects redundant conversions between string and []byte.
 
@@ -1462,7 +1460,7 @@ copy(b, s)
 ## switchTrue
 
 [
-  **style**]
+  **style** ]
 
 Detects switch-over-bool statements that use explicit `true` tag value.
 
@@ -1489,7 +1487,7 @@ case x > y:
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects repeated type assertions and suggests to replace them with type switch statement.
 
@@ -1524,7 +1522,7 @@ default:
 ## typeSwitchVar
 
 [
-  **style**]
+  **style** ]
 
 Detects type switches that can benefit from type guard clause with variable.
 
@@ -1561,7 +1559,7 @@ default:
 
 [
   **style**
-  **opinionated**]
+  **opinionated** ]
 
 Detects unneded parenthesis inside type expressions and suggests to remove them.
 
@@ -1583,7 +1581,7 @@ type foo []func([]func())
 ## underef
 
 [
-  **style**]
+  **style** ]
 
 Detects dereference expressions that can be omitted.
 
@@ -1608,7 +1606,7 @@ v := a[5]
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects redundant statement labels.
 
@@ -1639,7 +1637,7 @@ for x := range xs {
 ## unlambda
 
 [
-  **style**]
+  **style** ]
 
 Detects function literals that can be simplified.
 
@@ -1663,7 +1661,7 @@ fn
 [
   **style**
   **opinionated**
-  **experimental**]
+  **experimental** ]
 
 Detects unnamed results that may benefit from names.
 
@@ -1687,7 +1685,7 @@ func f() (x, y float64)
 [
   **style**
   **opinionated**
-  **experimental**]
+  **experimental** ]
 
 Detects unnecessary braced statement blocks.
 
@@ -1713,7 +1711,7 @@ print(x)
 ## unslice
 
 [
-  **style**]
+  **style** ]
 
 Detects slice expressions that can be simplified to sliced expression itself.
 
@@ -1738,7 +1736,7 @@ copy(b, values...)
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects value swapping code that are not using parallel assignment.
 
@@ -1763,7 +1761,7 @@ tmp := *x
 
 [
   **diagnostic**
-  **experimental**]
+  **experimental** ]
 
 Detects conditions that are unsafe due to not being exhaustive.
 
@@ -1786,7 +1784,7 @@ len(xs) != 0 && xs[0] != nil
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects function calls that can be replaced with convenience wrappers.
 
@@ -1809,7 +1807,7 @@ wg.Done()
 
 [
   **style**
-  **experimental**]
+  **experimental** ]
 
 Detects Yoda style expressions and suggests to replace them.
 
