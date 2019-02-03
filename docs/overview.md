@@ -61,11 +61,6 @@ They also detect code that may be correct, but looks suspicious.
   </td>
   <td>Detects suspicious duplicated arguments</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
-    <a href="#dupAssign-ref">dupAssign</a>
-  </td>
-  <td>Detects suspicious re-assignments</td>
-</tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#dupBranchBody-ref">dupBranchBody</a>
   </td>
@@ -357,13 +352,14 @@ can make your code run slower than it could be.
 </table>
 
 
-<a name="appendAssign-ref"></a>
+  <a name="appendAssign-ref"></a>
 ## appendAssign
 
 [
   **diagnostic** ]
 
 Detects suspicious append result assignments.
+
 
 
 
@@ -381,13 +377,15 @@ p.negatives = append(p.negatives, y)
 ```
 
 
-<a name="appendCombine-ref"></a>
+
+  <a name="appendCombine-ref"></a>
 ## appendCombine
 
 [
   **performance** ]
 
 Detects `append` chains to the same slice that can be done in a single `append` call.
+
 
 
 
@@ -404,7 +402,8 @@ xs = append(xs, 1, 2)
 ```
 
 
-<a name="argOrder-ref"></a>
+
+  <a name="argOrder-ref"></a>
 ## argOrder
 
 [
@@ -412,6 +411,7 @@ xs = append(xs, 1, 2)
   **experimental** ]
 
 Detects suspicious arguments order.
+
 
 
 
@@ -427,13 +427,15 @@ strings.HasPrefix(userpass, "#")
 ```
 
 
-<a name="assignOp-ref"></a>
+
+  <a name="assignOp-ref"></a>
 ## assignOp
 
 [
   **style** ]
 
 Detects assignments that can be simplified by using assignment operators.
+
 
 
 
@@ -449,7 +451,8 @@ x *= 2
 ```
 
 
-<a name="badCond-ref"></a>
+
+  <a name="badCond-ref"></a>
 ## badCond
 
 [
@@ -457,6 +460,7 @@ x *= 2
   **experimental** ]
 
 Detects suspicious condition expressions.
+
 
 
 
@@ -476,7 +480,8 @@ for i := 0; i < n; i++ {
 ```
 
 
-<a name="boolExprSimplify-ref"></a>
+
+  <a name="boolExprSimplify-ref"></a>
 ## boolExprSimplify
 
 [
@@ -484,6 +489,7 @@ for i := 0; i < n; i++ {
   **experimental** ]
 
 Detects bool expressions that can be simplified.
+
 
 
 
@@ -501,7 +507,8 @@ b := (x) == (y)
 ```
 
 
-<a name="builtinShadow-ref"></a>
+
+  <a name="builtinShadow-ref"></a>
 ## builtinShadow
 
 [
@@ -509,6 +516,7 @@ b := (x) == (y)
   **opinionated** ]
 
 Detects when predeclared identifiers shadowed in assignments.
+
 
 
 
@@ -524,13 +532,15 @@ length := 10
 ```
 
 
-<a name="captLocal-ref"></a>
+
+  <a name="captLocal-ref"></a>
 ## captLocal
 
 [
   **style** ]
 
 Detects capitalized names for local variables.
+
 
 
 
@@ -546,13 +556,17 @@ func f(in int, out *int) (err error) {}
 ```
 
 
-<a name="caseOrder-ref"></a>
+Checker parameters:
+* `@captLocal.paramsOnly` whether to restrict checker to params only (default true)
+
+  <a name="caseOrder-ref"></a>
 ## caseOrder
 
 [
   **diagnostic** ]
 
 Detects erroneous case order inside switch statements.
+
 
 
 
@@ -578,7 +592,8 @@ case ast.Expr:
 ```
 
 
-<a name="codegenComment-ref"></a>
+
+  <a name="codegenComment-ref"></a>
 ## codegenComment
 
 [
@@ -586,6 +601,7 @@ case ast.Expr:
   **experimental** ]
 
 Detects malformed 'code generated' file comments.
+
 
 
 
@@ -601,7 +617,8 @@ Detects malformed 'code generated' file comments.
 ```
 
 
-<a name="commentFormatting-ref"></a>
+
+  <a name="commentFormatting-ref"></a>
 ## commentFormatting
 
 [
@@ -609,6 +626,7 @@ Detects malformed 'code generated' file comments.
   **experimental** ]
 
 Detects comments with non-idiomatic formatting.
+
 
 
 
@@ -624,7 +642,8 @@ Detects comments with non-idiomatic formatting.
 ```
 
 
-<a name="commentedOutCode-ref"></a>
+
+  <a name="commentedOutCode-ref"></a>
 ## commentedOutCode
 
 [
@@ -632,6 +651,7 @@ Detects comments with non-idiomatic formatting.
   **experimental** ]
 
 Detects commented-out code inside function bodies.
+
 
 
 
@@ -648,7 +668,8 @@ foo(1, 2)
 ```
 
 
-<a name="commentedOutImport-ref"></a>
+
+  <a name="commentedOutImport-ref"></a>
 ## commentedOutImport
 
 [
@@ -656,6 +677,7 @@ foo(1, 2)
   **experimental** ]
 
 Detects commented-out imports.
+
 
 
 
@@ -676,13 +698,15 @@ import (
 ```
 
 
-<a name="defaultCaseOrder-ref"></a>
+
+  <a name="defaultCaseOrder-ref"></a>
 ## defaultCaseOrder
 
 [
   **style** ]
 
 Detects when default case in switch isn't on 1st or last position.
+
 
 
 
@@ -712,7 +736,8 @@ default: // <- last case (could also be the first one)
 ```
 
 
-<a name="deprecatedComment-ref"></a>
+
+  <a name="deprecatedComment-ref"></a>
 ## deprecatedComment
 
 [
@@ -720,6 +745,7 @@ default: // <- last case (could also be the first one)
   **experimental** ]
 
 Detects malformed 'deprecated' doc-comments.
+
 
 
 
@@ -737,7 +763,8 @@ func FuncOld() int
 ```
 
 
-<a name="docStub-ref"></a>
+
+  <a name="docStub-ref"></a>
 ## docStub
 
 [
@@ -745,6 +772,7 @@ func FuncOld() int
   **experimental** ]
 
 Detects comments that silence go lint complaints about doc-comment.
+
 
 
 
@@ -766,13 +794,15 @@ func Foo() {}
 ```
 
 
-<a name="dupArg-ref"></a>
+
+  <a name="dupArg-ref"></a>
 ## dupArg
 
 [
   **diagnostic** ]
 
 Detects suspicious duplicated arguments.
+
 
 
 
@@ -788,40 +818,15 @@ copy(dst, src)
 ```
 
 
-<a name="dupAssign-ref"></a>
-## dupAssign
 
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects suspicious re-assignments.
-
-
-
-
-**Before:**
-```go
-xs[0] = i+0
-xs[1] = i+1
-xs[0] = i+2
-```
-
-**After:**
-```go
-xs[0] = i+0
-xs[1] = i+1
-xs[2] = i+2
-```
-
-
-<a name="dupBranchBody-ref"></a>
+  <a name="dupBranchBody-ref"></a>
 ## dupBranchBody
 
 [
   **diagnostic** ]
 
 Detects duplicated branch bodies inside conditional statements.
+
 
 
 
@@ -845,13 +850,15 @@ if cond {
 ```
 
 
-<a name="dupCase-ref"></a>
+
+  <a name="dupCase-ref"></a>
 ## dupCase
 
 [
   **diagnostic** ]
 
 Detects duplicated case clauses inside switch statements.
+
 
 
 
@@ -871,13 +878,15 @@ case ys[0], ys[1], ys[2], ys[3], ys[4]:
 ```
 
 
-<a name="dupSubExpr-ref"></a>
+
+  <a name="dupSubExpr-ref"></a>
 ## dupSubExpr
 
 [
   **diagnostic** ]
 
 Detects suspicious duplicated sub-expressions.
+
 
 
 
@@ -897,13 +906,15 @@ sort.Slice(xs, func(i, j int) bool {
 ```
 
 
-<a name="elseif-ref"></a>
+
+  <a name="elseif-ref"></a>
 ## elseif
 
 [
   **style** ]
 
 Detects else with nested if statement that can be replaced with else-if.
+
 
 
 
@@ -925,7 +936,10 @@ if cond1 {
 ```
 
 
-<a name="emptyFallthrough-ref"></a>
+Checker parameters:
+* `@elseif.skipBalanced` whether to skip balanced if-else pairs (default true)
+
+  <a name="emptyFallthrough-ref"></a>
 ## emptyFallthrough
 
 [
@@ -933,6 +947,7 @@ if cond1 {
   **experimental** ]
 
 Detects fallthrough that can be avoided by using multi case values.
+
 
 
 
@@ -956,7 +971,8 @@ case reflect.Int, reflect.Int32:
 ```
 
 
-<a name="emptyStringTest-ref"></a>
+
+  <a name="emptyStringTest-ref"></a>
 ## emptyStringTest
 
 [
@@ -967,6 +983,8 @@ Detects empty string checks that can be written more idiomatically.
 
 
 
+
+> See https://dmitri.shuralyov.com/idiomatic-go#empty-string-check.
 
 **Before:**
 ```go
@@ -979,9 +997,8 @@ s == ""
 ```
 
 
-**Note:**
-See https://dmitri.shuralyov.com/idiomatic-go#empty-string-check.
-<a name="equalFold-ref"></a>
+
+  <a name="equalFold-ref"></a>
 ## equalFold
 
 [
@@ -989,6 +1006,7 @@ See https://dmitri.shuralyov.com/idiomatic-go#empty-string-check.
   **experimental** ]
 
 Detects unoptimal strings/bytes case-insensitive comparison.
+
 
 
 
@@ -1004,7 +1022,8 @@ strings.EqualFold(x, y)
 ```
 
 
-<a name="exitAfterDefer-ref"></a>
+
+  <a name="exitAfterDefer-ref"></a>
 ## exitAfterDefer
 
 [
@@ -1012,6 +1031,7 @@ strings.EqualFold(x, y)
   **experimental** ]
 
 Detects calls to exit/fatal inside functions that use defer.
+
 
 
 
@@ -1034,7 +1054,8 @@ if bad {
 ```
 
 
-<a name="flagDeref-ref"></a>
+
+  <a name="flagDeref-ref"></a>
 ## flagDeref
 
 [
@@ -1044,6 +1065,9 @@ Detects immediate dereferencing of `flag` package pointers.
 
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
+
+> Dereferencing returned pointers will lead to hard to find errors
+where flag values are not updated after flag.Parse().
 
 **Before:**
 ```go
@@ -1057,10 +1081,8 @@ flag.BoolVar(&b, "b", false, "b docs")
 ```
 
 
-**Note:**
-Dereferencing returned pointers will lead to hard to find errors
-where flag values are not updated after flag.Parse().
-<a name="flagName-ref"></a>
+
+  <a name="flagName-ref"></a>
 ## flagName
 
 [
@@ -1068,6 +1090,7 @@ where flag values are not updated after flag.Parse().
   **experimental** ]
 
 Detects flag names with whitespace.
+
 
 
 
@@ -1083,7 +1106,8 @@ b := flag.Bool("foo", false, "description")
 ```
 
 
-<a name="hexLiteral-ref"></a>
+
+  <a name="hexLiteral-ref"></a>
 ## hexLiteral
 
 [
@@ -1091,6 +1115,7 @@ b := flag.Bool("foo", false, "description")
   **experimental** ]
 
 Detects hex literals that have mixed case letter digits.
+
 
 
 
@@ -1111,13 +1136,15 @@ y := 0xFF
 ```
 
 
-<a name="hugeParam-ref"></a>
+
+  <a name="hugeParam-ref"></a>
 ## hugeParam
 
 [
   **performance** ]
 
 Detects params that incur excessive amount of copying.
+
 
 
 
@@ -1133,7 +1160,10 @@ func f(x *[1024]int) {}
 ```
 
 
-<a name="ifElseChain-ref"></a>
+Checker parameters:
+* `@hugeParam.sizeThreshold` size in bytes that makes the warning trigger (default 80)
+
+  <a name="ifElseChain-ref"></a>
 ## ifElseChain
 
 [
@@ -1143,6 +1173,10 @@ Detects repeated if-else statements and suggests to replace them with switch sta
 
 
 
+
+> Permits single else or else-if; repeated else-if or else + else-if
+will trigger suggestion to use switch statement.
+See [EffectiveGo#switch](https://golang.org/doc/effective_go.html#switch).
 
 **Before:**
 ```go
@@ -1168,11 +1202,8 @@ default:
 ```
 
 
-**Note:**
-Permits single else or else-if; repeated else-if or else + else-if
-will trigger suggestion to use switch statement.
-See [EffectiveGo#switch](https://golang.org/doc/effective_go.html#switch).
-<a name="importShadow-ref"></a>
+
+  <a name="importShadow-ref"></a>
 ## importShadow
 
 [
@@ -1180,6 +1211,7 @@ See [EffectiveGo#switch](https://golang.org/doc/effective_go.html#switch).
   **opinionated** ]
 
 Detects when imported package names shadowed in the assignments.
+
 
 
 
@@ -1196,7 +1228,8 @@ filename := "foo.txt"
 ```
 
 
-<a name="indexAlloc-ref"></a>
+
+  <a name="indexAlloc-ref"></a>
 ## indexAlloc
 
 [
@@ -1206,6 +1239,8 @@ Detects strings.Index calls that may cause unwanted allocs.
 
 
 
+
+> See Go issue for details: https://github.com/golang/go/issues/25864
 
 **Before:**
 ```go
@@ -1218,9 +1253,8 @@ bytes.Index(x, []byte(y))
 ```
 
 
-**Note:**
-See Go issue for details: https://github.com/golang/go/issues/25864
-<a name="initClause-ref"></a>
+
+  <a name="initClause-ref"></a>
 ## initClause
 
 [
@@ -1229,6 +1263,7 @@ See Go issue for details: https://github.com/golang/go/issues/25864
   **experimental** ]
 
 Detects non-assignment statements inside if/switch init clause.
+
 
 
 
@@ -1247,7 +1282,8 @@ if cond {
 ```
 
 
-<a name="methodExprCall-ref"></a>
+
+  <a name="methodExprCall-ref"></a>
 ## methodExprCall
 
 [
@@ -1255,6 +1291,7 @@ if cond {
   **experimental** ]
 
 Detects method expression call that can be replaced with a method call.
+
 
 
 
@@ -1272,7 +1309,8 @@ f.bar()
 ```
 
 
-<a name="nestingReduce-ref"></a>
+
+  <a name="nestingReduce-ref"></a>
 ## nestingReduce
 
 [
@@ -1281,6 +1319,7 @@ f.bar()
   **experimental** ]
 
 Finds where nesting level could be reduced.
+
 
 
 
@@ -1305,7 +1344,10 @@ for _, v := range a {
 ```
 
 
-<a name="nilValReturn-ref"></a>
+Checker parameters:
+* `@nestingReduce.bodyWidth` min number of statements inside a branch to trigger a warning (default 5)
+
+  <a name="nilValReturn-ref"></a>
 ## nilValReturn
 
 [
@@ -1313,6 +1355,7 @@ for _, v := range a {
   **experimental** ]
 
 Detects return statements those results evaluate to nil.
+
 
 
 
@@ -1337,7 +1380,8 @@ if err != nil {
 ```
 
 
-<a name="offBy1-ref"></a>
+
+  <a name="offBy1-ref"></a>
 ## offBy1
 
 [
@@ -1345,6 +1389,7 @@ if err != nil {
   **experimental** ]
 
 Detects various off-by-one kind of errors.
+
 
 
 
@@ -1360,7 +1405,8 @@ xs[len(xs)-1]
 ```
 
 
-<a name="paramTypeCombine-ref"></a>
+
+  <a name="paramTypeCombine-ref"></a>
 ## paramTypeCombine
 
 [
@@ -1368,6 +1414,7 @@ xs[len(xs)-1]
   **opinionated** ]
 
 Detects if function parameters could be combined by type and suggest the way to do it.
+
 
 
 
@@ -1383,7 +1430,8 @@ func foo(a, b, c, d, e, f, g int) {}
 ```
 
 
-<a name="ptrToRefParam-ref"></a>
+
+  <a name="ptrToRefParam-ref"></a>
 ## ptrToRefParam
 
 [
@@ -1392,6 +1440,7 @@ func foo(a, b, c, d, e, f, g int) {}
   **experimental** ]
 
 Detects input and output parameters that have a type of pointer to referential type.
+
 
 
 
@@ -1407,7 +1456,8 @@ func f(m map[string]int) (chan *int)
 ```
 
 
-<a name="rangeExprCopy-ref"></a>
+
+  <a name="rangeExprCopy-ref"></a>
 ## rangeExprCopy
 
 [
@@ -1417,6 +1467,8 @@ Detects expensive copies of `for` loop range expressions.
 
 Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
+
+> See Go issue for details: https://github.com/golang/go/issues/15812.
 
 **Before:**
 ```go
@@ -1435,9 +1487,11 @@ for _, x := range &xs { // No copy
 ```
 
 
-**Note:**
-See Go issue for details: https://github.com/golang/go/issues/15812.
-<a name="rangeValCopy-ref"></a>
+Checker parameters:
+* `@rangeExprCopy.sizeThreshold` size in bytes that makes the warning trigger (default 512)
+* `@rangeExprCopy.skipTestFuncs` whether to check test functions (default true)
+
+  <a name="rangeValCopy-ref"></a>
 ## rangeValCopy
 
 [
@@ -1446,6 +1500,7 @@ See Go issue for details: https://github.com/golang/go/issues/15812.
 Detects loops that copy big objects during each iteration.
 
 Suggests to use index access or take address and make use pointer instead.
+
 
 
 **Before:**
@@ -1466,13 +1521,18 @@ for i := range xs {
 ```
 
 
-<a name="regexpMust-ref"></a>
+Checker parameters:
+* `@rangeValCopy.sizeThreshold` size in bytes that makes the warning trigger (default 128)
+* `@rangeValCopy.skipTestFuncs` whether to check test functions (default true)
+
+  <a name="regexpMust-ref"></a>
 ## regexpMust
 
 [
   **style** ]
 
 Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
+
 
 
 
@@ -1488,13 +1548,15 @@ re := regexp.MustCompile("const pattern")
 ```
 
 
-<a name="singleCaseSwitch-ref"></a>
+
+  <a name="singleCaseSwitch-ref"></a>
 ## singleCaseSwitch
 
 [
   **style** ]
 
 Detects switch statements that could be better written as if statement.
+
 
 
 
@@ -1515,13 +1577,15 @@ if x, ok := x.(int); ok {
 ```
 
 
-<a name="sloppyLen-ref"></a>
+
+  <a name="sloppyLen-ref"></a>
 ## sloppyLen
 
 [
   **style** ]
 
 Detects usage of `len` when result is obvious or doesn't make sense.
+
 
 
 
@@ -1540,7 +1604,8 @@ len(arr) == 0
 ```
 
 
-<a name="sloppyReassign-ref"></a>
+
+  <a name="sloppyReassign-ref"></a>
 ## sloppyReassign
 
 [
@@ -1548,6 +1613,7 @@ len(arr) == 0
   **experimental** ]
 
 Detects suspicious/confusing re-assignments.
+
 
 
 
@@ -1563,7 +1629,8 @@ if err := f(); err != nil { return err }
 ```
 
 
-<a name="stringXbytes-ref"></a>
+
+  <a name="stringXbytes-ref"></a>
 ## stringXbytes
 
 [
@@ -1571,6 +1638,7 @@ if err := f(); err != nil { return err }
   **experimental** ]
 
 Detects redundant conversions between string and []byte.
+
 
 
 
@@ -1586,13 +1654,15 @@ copy(b, s)
 ```
 
 
-<a name="switchTrue-ref"></a>
+
+  <a name="switchTrue-ref"></a>
 ## switchTrue
 
 [
   **style** ]
 
 Detects switch-over-bool statements that use explicit `true` tag value.
+
 
 
 
@@ -1612,7 +1682,8 @@ case x > y:
 ```
 
 
-<a name="typeAssertChain-ref"></a>
+
+  <a name="typeAssertChain-ref"></a>
 ## typeAssertChain
 
 [
@@ -1620,6 +1691,7 @@ case x > y:
   **experimental** ]
 
 Detects repeated type assertions and suggests to replace them with type switch statement.
+
 
 
 
@@ -1648,13 +1720,15 @@ default:
 ```
 
 
-<a name="typeSwitchVar-ref"></a>
+
+  <a name="typeSwitchVar-ref"></a>
 ## typeSwitchVar
 
 [
   **style** ]
 
 Detects type switches that can benefit from type guard clause with variable.
+
 
 
 
@@ -1684,7 +1758,8 @@ default:
 ```
 
 
-<a name="typeUnparen-ref"></a>
+
+  <a name="typeUnparen-ref"></a>
 ## typeUnparen
 
 [
@@ -1692,6 +1767,7 @@ default:
   **opinionated** ]
 
 Detects unneded parenthesis inside type expressions and suggests to remove them.
+
 
 
 
@@ -1707,13 +1783,15 @@ type foo []func([]func())
 ```
 
 
-<a name="underef-ref"></a>
+
+  <a name="underef-ref"></a>
 ## underef
 
 [
   **style** ]
 
 Detects dereference expressions that can be omitted.
+
 
 
 
@@ -1731,7 +1809,10 @@ v := a[5]
 ```
 
 
-<a name="unlabelStmt-ref"></a>
+Checker parameters:
+* `@underef.skipRecvDeref` whether to skip (*x).method() calls where x is a pointer receiver (default true)
+
+  <a name="unlabelStmt-ref"></a>
 ## unlabelStmt
 
 [
@@ -1739,6 +1820,7 @@ v := a[5]
   **experimental** ]
 
 Detects redundant statement labels.
+
 
 
 
@@ -1763,13 +1845,15 @@ for x := range xs {
 ```
 
 
-<a name="unlambda-ref"></a>
+
+  <a name="unlambda-ref"></a>
 ## unlambda
 
 [
   **style** ]
 
 Detects function literals that can be simplified.
+
 
 
 
@@ -1785,7 +1869,8 @@ fn
 ```
 
 
-<a name="unnamedResult-ref"></a>
+
+  <a name="unnamedResult-ref"></a>
 ## unnamedResult
 
 [
@@ -1794,6 +1879,7 @@ fn
   **experimental** ]
 
 Detects unnamed results that may benefit from names.
+
 
 
 
@@ -1809,7 +1895,10 @@ func f() (x, y float64)
 ```
 
 
-<a name="unnecessaryBlock-ref"></a>
+Checker parameters:
+* `@unnamedResult.checkExported` whether to check exported functions (default false)
+
+  <a name="unnecessaryBlock-ref"></a>
 ## unnecessaryBlock
 
 [
@@ -1818,6 +1907,7 @@ func f() (x, y float64)
   **experimental** ]
 
 Detects unnecessary braced statement blocks.
+
 
 
 
@@ -1837,13 +1927,15 @@ print(x)
 ```
 
 
-<a name="unslice-ref"></a>
+
+  <a name="unslice-ref"></a>
 ## unslice
 
 [
   **style** ]
 
 Detects slice expressions that can be simplified to sliced expression itself.
+
 
 
 
@@ -1861,7 +1953,8 @@ copy(b, values...)
 ```
 
 
-<a name="valSwap-ref"></a>
+
+  <a name="valSwap-ref"></a>
 ## valSwap
 
 [
@@ -1869,6 +1962,7 @@ copy(b, values...)
   **experimental** ]
 
 Detects value swapping code that are not using parallel assignment.
+
 
 
 
@@ -1886,7 +1980,8 @@ tmp := *x
 ```
 
 
-<a name="weakCond-ref"></a>
+
+  <a name="weakCond-ref"></a>
 ## weakCond
 
 [
@@ -1894,6 +1989,7 @@ tmp := *x
   **experimental** ]
 
 Detects conditions that are unsafe due to not being exhaustive.
+
 
 
 
@@ -1909,7 +2005,8 @@ len(xs) != 0 && xs[0] != nil
 ```
 
 
-<a name="wrapperFunc-ref"></a>
+
+  <a name="wrapperFunc-ref"></a>
 ## wrapperFunc
 
 [
@@ -1917,6 +2014,7 @@ len(xs) != 0 && xs[0] != nil
   **experimental** ]
 
 Detects function calls that can be replaced with convenience wrappers.
+
 
 
 
@@ -1932,7 +2030,8 @@ wg.Done()
 ```
 
 
-<a name="yodaStyleExpr-ref"></a>
+
+  <a name="yodaStyleExpr-ref"></a>
 ## yodaStyleExpr
 
 [
@@ -1940,6 +2039,7 @@ wg.Done()
   **experimental** ]
 
 Detects Yoda style expressions and suggests to replace them.
+
 
 
 
@@ -1953,4 +2053,5 @@ return nil != ptr
 ```go
 return ptr != nil
 ```
+
 

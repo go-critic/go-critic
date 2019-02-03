@@ -1,0 +1,35 @@
+{{ define "checker" -}}
+
+<a name=" {{- .Name -}} -ref"></a>
+## {{ .Name }}
+
+[{{ range $tag := .Tags }}
+  **{{ $tag }}**
+{{- end }} ]
+
+{{ .Summary -}}.
+
+{{ .Details }}
+
+{{ if .Note }}
+> {{ .Note }}
+{{- end }}
+
+**Before:**
+```go
+{{ .Before }}
+```
+
+**After:**
+```go
+{{ .After }}
+```
+
+{{ if .Params }}
+Checker parameters:
+{{- range $key, $_ := .Params }}
+* `@{{$.Name}}.{{$key}}` {{.Usage}} (default {{.Value}})
+{{- end }}
+{{- end }}
+
+{{- end }}

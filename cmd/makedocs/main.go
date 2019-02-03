@@ -18,6 +18,7 @@ const (
 func main() {
 	tmpl := parseTemplate(
 		"overview.md.tmpl",
+		"checker.partial.tmpl",
 		"checker_tr.partial.tmpl")
 
 	buf := bytes.Buffer{}
