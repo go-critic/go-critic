@@ -16,9 +16,12 @@ const (
 )
 
 func main() {
-	tmpl := template.Must(template.ParseFiles(templatesPath + "overview.md.tmpl"))
+	tmpl := parseTemplate(
+		"overview.md.tmpl",
+		"checker_tr.partial.tmpl")
+
 	buf := bytes.Buffer{}
-	err := tmpl.Execute(&buf, struct {
+	err := tmpl.ExecuteTemplate(&buf, "overview", struct {
 		Checkers []*lintpack.CheckerInfo
 	}{
 		Checkers: lintpack.GetCheckersInfo(),
@@ -29,4 +32,12 @@ func main() {
 	if err := ioutil.WriteFile(docsPath+"overview.md", buf.Bytes(), 0600); err != nil {
 		log.Fatalf("write output file: %v", err)
 	}
+}
+
+func parseTemplate(names ...string) *template.Template {
+	paths := make([]string, len(names))
+	for i := range names {
+		paths[i] = templatesPath + names[i]
+	}
+	return template.Must(template.ParseFiles(paths...))
 }
