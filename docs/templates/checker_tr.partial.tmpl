@@ -1,0 +1,15 @@
+{{ define "checker_tr" -}}
+
+<tr>
+  <td nowrap>
+    {{- if not (or (.HasTag "experimental") (.HasTag "opinionated") (.HasTag "performance")) -}}
+      :heavy_check_mark:
+    {{- else -}}
+      :white_check_mark:
+    {{- end }}
+    <a href="#{{.Name}}-ref">{{.Name}}</a>
+  </td>
+  <td>{{.Summary}}</td>
+</tr>
+
+{{- end }}

@@ -4,253 +4,356 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 [//]: # (This is generated file, please don't edit it yourself.)
 
-## Checkers:
+## Checkers
+
+* :heavy_check_mark: checker is enabled by default.
+* :white_check_mark: checker is disabled by default.
+
+### Checkers from the "diagnostic" group
+
+Diagnostics try to find programming errors in the code.
+They also detect code that may be correct, but looks suspicious.
+
+> All diagnostics are enabled by default (unless it has "experimental" tag).
 
 <table>
   <tr>
     <th>Name</th>
     <th>Short description</th>
-  </tr>
-    <tr>
-      <td><a href="#appendAssign-ref">appendAssign</a></td>
-      <td>Detects suspicious append result assignments</td>
-    </tr>
-    <tr>
-      <td><a href="#appendCombine-ref">appendCombine</a></td>
-      <td>Detects `append` chains to the same slice that can be done in a single `append` call</td>
-    </tr>
-    <tr>
-      <td><a href="#argOrder-ref">argOrder</a></td>
-      <td>Detects suspicious arguments order</td>
-    </tr>
-    <tr>
-      <td><a href="#assignOp-ref">assignOp</a></td>
-      <td>Detects assignments that can be simplified by using assignment operators</td>
-    </tr>
-    <tr>
-      <td><a href="#badCond-ref">badCond</a></td>
-      <td>Detects suspicious condition expressions</td>
-    </tr>
-    <tr>
-      <td><a href="#boolExprSimplify-ref">boolExprSimplify</a></td>
-      <td>Detects bool expressions that can be simplified</td>
-    </tr>
-    <tr>
-      <td><a href="#builtinShadow-ref">builtinShadow</a></td>
-      <td>Detects when predeclared identifiers shadowed in assignments</td>
-    </tr>
-    <tr>
-      <td><a href="#captLocal-ref">captLocal</a></td>
-      <td>Detects capitalized names for local variables</td>
-    </tr>
-    <tr>
-      <td><a href="#caseOrder-ref">caseOrder</a></td>
-      <td>Detects erroneous case order inside switch statements</td>
-    </tr>
-    <tr>
-      <td><a href="#codegenComment-ref">codegenComment</a></td>
-      <td>Detects malformed 'code generated' file comments</td>
-    </tr>
-    <tr>
-      <td><a href="#commentFormatting-ref">commentFormatting</a></td>
-      <td>Detects comments with non-idiomatic formatting</td>
-    </tr>
-    <tr>
-      <td><a href="#commentedOutCode-ref">commentedOutCode</a></td>
-      <td>Detects commented-out code inside function bodies</td>
-    </tr>
-    <tr>
-      <td><a href="#commentedOutImport-ref">commentedOutImport</a></td>
-      <td>Detects commented-out imports</td>
-    </tr>
-    <tr>
-      <td><a href="#defaultCaseOrder-ref">defaultCaseOrder</a></td>
-      <td>Detects when default case in switch isn't on 1st or last position</td>
-    </tr>
-    <tr>
-      <td><a href="#deprecatedComment-ref">deprecatedComment</a></td>
-      <td>Detects malformed 'deprecated' doc-comments</td>
-    </tr>
-    <tr>
-      <td><a href="#docStub-ref">docStub</a></td>
-      <td>Detects comments that silence go lint complaints about doc-comment</td>
-    </tr>
-    <tr>
-      <td><a href="#dupArg-ref">dupArg</a></td>
-      <td>Detects suspicious duplicated arguments</td>
-    </tr>
-    <tr>
-      <td><a href="#dupBranchBody-ref">dupBranchBody</a></td>
-      <td>Detects duplicated branch bodies inside conditional statements</td>
-    </tr>
-    <tr>
-      <td><a href="#dupCase-ref">dupCase</a></td>
-      <td>Detects duplicated case clauses inside switch statements</td>
-    </tr>
-    <tr>
-      <td><a href="#dupSubExpr-ref">dupSubExpr</a></td>
-      <td>Detects suspicious duplicated sub-expressions</td>
-    </tr>
-    <tr>
-      <td><a href="#elseif-ref">elseif</a></td>
-      <td>Detects else with nested if statement that can be replaced with else-if</td>
-    </tr>
-    <tr>
-      <td><a href="#emptyFallthrough-ref">emptyFallthrough</a></td>
-      <td>Detects fallthrough that can be avoided by using multi case values</td>
-    </tr>
-    <tr>
-      <td><a href="#emptyStringTest-ref">emptyStringTest</a></td>
-      <td>Detects empty string checks that can be written more idiomatically</td>
-    </tr>
-    <tr>
-      <td><a href="#equalFold-ref">equalFold</a></td>
-      <td>Detects unoptimal strings/bytes case-insensitive comparison</td>
-    </tr>
-    <tr>
-      <td><a href="#exitAfterDefer-ref">exitAfterDefer</a></td>
-      <td>Detects calls to exit/fatal inside functions that use defer</td>
-    </tr>
-    <tr>
-      <td><a href="#flagDeref-ref">flagDeref</a></td>
-      <td>Detects immediate dereferencing of `flag` package pointers</td>
-    </tr>
-    <tr>
-      <td><a href="#flagName-ref">flagName</a></td>
-      <td>Detects flag names with whitespace</td>
-    </tr>
-    <tr>
-      <td><a href="#hexLiteral-ref">hexLiteral</a></td>
-      <td>Detects hex literals that have mixed case letter digits</td>
-    </tr>
-    <tr>
-      <td><a href="#hugeParam-ref">hugeParam</a></td>
-      <td>Detects params that incur excessive amount of copying</td>
-    </tr>
-    <tr>
-      <td><a href="#ifElseChain-ref">ifElseChain</a></td>
-      <td>Detects repeated if-else statements and suggests to replace them with switch statement</td>
-    </tr>
-    <tr>
-      <td><a href="#importShadow-ref">importShadow</a></td>
-      <td>Detects when imported package names shadowed in the assignments</td>
-    </tr>
-    <tr>
-      <td><a href="#indexAlloc-ref">indexAlloc</a></td>
-      <td>Detects strings.Index calls that may cause unwanted allocs</td>
-    </tr>
-    <tr>
-      <td><a href="#initClause-ref">initClause</a></td>
-      <td>Detects non-assignment statements inside if/switch init clause</td>
-    </tr>
-    <tr>
-      <td><a href="#methodExprCall-ref">methodExprCall</a></td>
-      <td>Detects method expression call that can be replaced with a method call</td>
-    </tr>
-    <tr>
-      <td><a href="#nestingReduce-ref">nestingReduce</a></td>
-      <td>Finds where nesting level could be reduced</td>
-    </tr>
-    <tr>
-      <td><a href="#nilValReturn-ref">nilValReturn</a></td>
-      <td>Detects return statements those results evaluate to nil</td>
-    </tr>
-    <tr>
-      <td><a href="#offBy1-ref">offBy1</a></td>
-      <td>Detects various off-by-one kind of errors</td>
-    </tr>
-    <tr>
-      <td><a href="#paramTypeCombine-ref">paramTypeCombine</a></td>
-      <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
-    </tr>
-    <tr>
-      <td><a href="#ptrToRefParam-ref">ptrToRefParam</a></td>
-      <td>Detects input and output parameters that have a type of pointer to referential type</td>
-    </tr>
-    <tr>
-      <td><a href="#rangeExprCopy-ref">rangeExprCopy</a></td>
-      <td>Detects expensive copies of `for` loop range expressions</td>
-    </tr>
-    <tr>
-      <td><a href="#rangeValCopy-ref">rangeValCopy</a></td>
-      <td>Detects loops that copy big objects during each iteration</td>
-    </tr>
-    <tr>
-      <td><a href="#regexpMust-ref">regexpMust</a></td>
-      <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
-    </tr>
-    <tr>
-      <td><a href="#singleCaseSwitch-ref">singleCaseSwitch</a></td>
-      <td>Detects switch statements that could be better written as if statement</td>
-    </tr>
-    <tr>
-      <td><a href="#sloppyLen-ref">sloppyLen</a></td>
-      <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
-    </tr>
-    <tr>
-      <td><a href="#sloppyReassign-ref">sloppyReassign</a></td>
-      <td>Detects suspicious/confusing re-assignments</td>
-    </tr>
-    <tr>
-      <td><a href="#stringXbytes-ref">stringXbytes</a></td>
-      <td>Detects redundant conversions between string and []byte</td>
-    </tr>
-    <tr>
-      <td><a href="#switchTrue-ref">switchTrue</a></td>
-      <td>Detects switch-over-bool statements that use explicit `true` tag value</td>
-    </tr>
-    <tr>
-      <td><a href="#typeAssertChain-ref">typeAssertChain</a></td>
-      <td>Detects repeated type assertions and suggests to replace them with type switch statement</td>
-    </tr>
-    <tr>
-      <td><a href="#typeSwitchVar-ref">typeSwitchVar</a></td>
-      <td>Detects type switches that can benefit from type guard clause with variable</td>
-    </tr>
-    <tr>
-      <td><a href="#typeUnparen-ref">typeUnparen</a></td>
-      <td>Detects unneded parenthesis inside type expressions and suggests to remove them</td>
-    </tr>
-    <tr>
-      <td><a href="#underef-ref">underef</a></td>
-      <td>Detects dereference expressions that can be omitted</td>
-    </tr>
-    <tr>
-      <td><a href="#unlabelStmt-ref">unlabelStmt</a></td>
-      <td>Detects redundant statement labels</td>
-    </tr>
-    <tr>
-      <td><a href="#unlambda-ref">unlambda</a></td>
-      <td>Detects function literals that can be simplified</td>
-    </tr>
-    <tr>
-      <td><a href="#unnamedResult-ref">unnamedResult</a></td>
-      <td>Detects unnamed results that may benefit from names</td>
-    </tr>
-    <tr>
-      <td><a href="#unnecessaryBlock-ref">unnecessaryBlock</a></td>
-      <td>Detects unnecessary braced statement blocks</td>
-    </tr>
-    <tr>
-      <td><a href="#unslice-ref">unslice</a></td>
-      <td>Detects slice expressions that can be simplified to sliced expression itself</td>
-    </tr>
-    <tr>
-      <td><a href="#valSwap-ref">valSwap</a></td>
-      <td>Detects value swapping code that are not using parallel assignment</td>
-    </tr>
-    <tr>
-      <td><a href="#weakCond-ref">weakCond</a></td>
-      <td>Detects conditions that are unsafe due to not being exhaustive</td>
-    </tr>
-    <tr>
-      <td><a href="#wrapperFunc-ref">wrapperFunc</a></td>
-      <td>Detects function calls that can be replaced with convenience wrappers</td>
-    </tr>
-    <tr>
-      <td><a href="#yodaStyleExpr-ref">yodaStyleExpr</a></td>
-      <td>Detects Yoda style expressions and suggests to replace them</td>
-    </tr>
+  </tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#appendAssign-ref">appendAssign</a>
+  </td>
+  <td>Detects suspicious append result assignments</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#argOrder-ref">argOrder</a>
+  </td>
+  <td>Detects suspicious arguments order</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#badCond-ref">badCond</a>
+  </td>
+  <td>Detects suspicious condition expressions</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#caseOrder-ref">caseOrder</a>
+  </td>
+  <td>Detects erroneous case order inside switch statements</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#codegenComment-ref">codegenComment</a>
+  </td>
+  <td>Detects malformed 'code generated' file comments</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#commentedOutCode-ref">commentedOutCode</a>
+  </td>
+  <td>Detects commented-out code inside function bodies</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#deprecatedComment-ref">deprecatedComment</a>
+  </td>
+  <td>Detects malformed 'deprecated' doc-comments</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#dupArg-ref">dupArg</a>
+  </td>
+  <td>Detects suspicious duplicated arguments</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#dupAssign-ref">dupAssign</a>
+  </td>
+  <td>Detects suspicious re-assignments</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#dupBranchBody-ref">dupBranchBody</a>
+  </td>
+  <td>Detects duplicated branch bodies inside conditional statements</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#dupCase-ref">dupCase</a>
+  </td>
+  <td>Detects duplicated case clauses inside switch statements</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#dupSubExpr-ref">dupSubExpr</a>
+  </td>
+  <td>Detects suspicious duplicated sub-expressions</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#exitAfterDefer-ref">exitAfterDefer</a>
+  </td>
+  <td>Detects calls to exit/fatal inside functions that use defer</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#flagDeref-ref">flagDeref</a>
+  </td>
+  <td>Detects immediate dereferencing of `flag` package pointers</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#flagName-ref">flagName</a>
+  </td>
+  <td>Detects flag names with whitespace</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#nilValReturn-ref">nilValReturn</a>
+  </td>
+  <td>Detects return statements those results evaluate to nil</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#offBy1-ref">offBy1</a>
+  </td>
+  <td>Detects various off-by-one kind of errors</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#sloppyReassign-ref">sloppyReassign</a>
+  </td>
+  <td>Detects suspicious/confusing re-assignments</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#weakCond-ref">weakCond</a>
+  </td>
+  <td>Detects conditions that are unsafe due to not being exhaustive</td>
+</tr>
+</table>
+
+### Checkers from the "style" group
+
+Style checks suggest replacing some form of expression/statement
+with another one that is considered more idiomatic or simple.
+
+> Only non-opinionated style checks are enabled by default.
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Short description</th>
+  </tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#assignOp-ref">assignOp</a>
+  </td>
+  <td>Detects assignments that can be simplified by using assignment operators</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#boolExprSimplify-ref">boolExprSimplify</a>
+  </td>
+  <td>Detects bool expressions that can be simplified</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#builtinShadow-ref">builtinShadow</a>
+  </td>
+  <td>Detects when predeclared identifiers shadowed in assignments</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#captLocal-ref">captLocal</a>
+  </td>
+  <td>Detects capitalized names for local variables</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#commentFormatting-ref">commentFormatting</a>
+  </td>
+  <td>Detects comments with non-idiomatic formatting</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#commentedOutImport-ref">commentedOutImport</a>
+  </td>
+  <td>Detects commented-out imports</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#defaultCaseOrder-ref">defaultCaseOrder</a>
+  </td>
+  <td>Detects when default case in switch isn't on 1st or last position</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#docStub-ref">docStub</a>
+  </td>
+  <td>Detects comments that silence go lint complaints about doc-comment</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#elseif-ref">elseif</a>
+  </td>
+  <td>Detects else with nested if statement that can be replaced with else-if</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#emptyFallthrough-ref">emptyFallthrough</a>
+  </td>
+  <td>Detects fallthrough that can be avoided by using multi case values</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#emptyStringTest-ref">emptyStringTest</a>
+  </td>
+  <td>Detects empty string checks that can be written more idiomatically</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#hexLiteral-ref">hexLiteral</a>
+  </td>
+  <td>Detects hex literals that have mixed case letter digits</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#ifElseChain-ref">ifElseChain</a>
+  </td>
+  <td>Detects repeated if-else statements and suggests to replace them with switch statement</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#importShadow-ref">importShadow</a>
+  </td>
+  <td>Detects when imported package names shadowed in the assignments</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#initClause-ref">initClause</a>
+  </td>
+  <td>Detects non-assignment statements inside if/switch init clause</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#methodExprCall-ref">methodExprCall</a>
+  </td>
+  <td>Detects method expression call that can be replaced with a method call</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#nestingReduce-ref">nestingReduce</a>
+  </td>
+  <td>Finds where nesting level could be reduced</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#paramTypeCombine-ref">paramTypeCombine</a>
+  </td>
+  <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#ptrToRefParam-ref">ptrToRefParam</a>
+  </td>
+  <td>Detects input and output parameters that have a type of pointer to referential type</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#regexpMust-ref">regexpMust</a>
+  </td>
+  <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#singleCaseSwitch-ref">singleCaseSwitch</a>
+  </td>
+  <td>Detects switch statements that could be better written as if statement</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#sloppyLen-ref">sloppyLen</a>
+  </td>
+  <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#stringXbytes-ref">stringXbytes</a>
+  </td>
+  <td>Detects redundant conversions between string and []byte</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#switchTrue-ref">switchTrue</a>
+  </td>
+  <td>Detects switch-over-bool statements that use explicit `true` tag value</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#typeAssertChain-ref">typeAssertChain</a>
+  </td>
+  <td>Detects repeated type assertions and suggests to replace them with type switch statement</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#typeSwitchVar-ref">typeSwitchVar</a>
+  </td>
+  <td>Detects type switches that can benefit from type guard clause with variable</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#typeUnparen-ref">typeUnparen</a>
+  </td>
+  <td>Detects unneded parenthesis inside type expressions and suggests to remove them</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#underef-ref">underef</a>
+  </td>
+  <td>Detects dereference expressions that can be omitted</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#unlabelStmt-ref">unlabelStmt</a>
+  </td>
+  <td>Detects redundant statement labels</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#unlambda-ref">unlambda</a>
+  </td>
+  <td>Detects function literals that can be simplified</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#unnamedResult-ref">unnamedResult</a>
+  </td>
+  <td>Detects unnamed results that may benefit from names</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#unnecessaryBlock-ref">unnecessaryBlock</a>
+  </td>
+  <td>Detects unnecessary braced statement blocks</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#unslice-ref">unslice</a>
+  </td>
+  <td>Detects slice expressions that can be simplified to sliced expression itself</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#valSwap-ref">valSwap</a>
+  </td>
+  <td>Detects value swapping code that are not using parallel assignment</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#wrapperFunc-ref">wrapperFunc</a>
+  </td>
+  <td>Detects function calls that can be replaced with convenience wrappers</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#yodaStyleExpr-ref">yodaStyleExpr</a>
+  </td>
+  <td>Detects Yoda style expressions and suggests to replace them</td>
+</tr>
+</table>
+
+### Checkers from the "performance" group
+
+Performance checks tell you about potential issues that
+can make your code run slower than it could be.
+
+> All performance checks are disabled by default.
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Short description</th>
+  </tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#appendCombine-ref">appendCombine</a>
+  </td>
+  <td>Detects `append` chains to the same slice that can be done in a single `append` call</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#equalFold-ref">equalFold</a>
+  </td>
+  <td>Detects unoptimal strings/bytes case-insensitive comparison</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#hugeParam-ref">hugeParam</a>
+  </td>
+  <td>Detects params that incur excessive amount of copying</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#indexAlloc-ref">indexAlloc</a>
+  </td>
+  <td>Detects strings.Index calls that may cause unwanted allocs</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#rangeExprCopy-ref">rangeExprCopy</a>
+  </td>
+  <td>Detects expensive copies of `for` loop range expressions</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#rangeValCopy-ref">rangeValCopy</a>
+  </td>
+  <td>Detects loops that copy big objects during each iteration</td>
+</tr>
 </table>
 
 
@@ -682,6 +785,33 @@ copy(dst, dst)
 **After:**
 ```go
 copy(dst, src)
+```
+
+
+<a name="dupAssign-ref"></a>
+## dupAssign
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious re-assignments.
+
+
+
+
+**Before:**
+```go
+xs[0] = i+0
+xs[1] = i+1
+xs[0] = i+2
+```
+
+**After:**
+```go
+xs[0] = i+0
+xs[1] = i+1
+xs[2] = i+2
 ```
 
 
@@ -1823,5 +1953,4 @@ return nil != ptr
 ```go
 return ptr != nil
 ```
-
 

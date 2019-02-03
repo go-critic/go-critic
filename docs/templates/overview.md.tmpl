@@ -1,10 +1,22 @@
+{{ define "overview" -}}
+
 ## Checks overview
 
 This page describes checks supported by [go-critic](https://github.com/go-critic/go-critic) linter.
 
 [//]: # (This is generated file, please don't edit it yourself.)
 
-## Checkers:
+## Checkers
+
+* :heavy_check_mark: checker is enabled by default.
+* :white_check_mark: checker is disabled by default.
+
+### Checkers from the "diagnostic" group
+
+Diagnostics try to find programming errors in the code.
+They also detect code that may be correct, but looks suspicious.
+
+> All diagnostics are enabled by default (unless it has "experimental" tag).
 
 <table>
   <tr>
@@ -12,10 +24,47 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
     <th>Short description</th>
   </tr>
   {{- range .Checkers }}
-    <tr>
-      <td><a href="#{{.Name}}-ref">{{.Name}}</a></td>
-      <td>{{.Summary}}</td>
-    </tr>
+    {{- if .HasTag "diagnostic" -}}
+      {{ template "checker_tr" . }}
+    {{- end -}}
+  {{- end }}
+</table>
+
+### Checkers from the "style" group
+
+Style checks suggest replacing some form of expression/statement
+with another one that is considered more idiomatic or simple.
+
+> Only non-opinionated style checks are enabled by default.
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Short description</th>
+  </tr>
+  {{- range .Checkers }}
+    {{- if .HasTag "style" -}}
+      {{ template "checker_tr" . }}
+    {{- end -}}
+  {{- end }}
+</table>
+
+### Checkers from the "performance" group
+
+Performance checks tell you about potential issues that
+can make your code run slower than it could be.
+
+> All performance checks are disabled by default.
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Short description</th>
+  </tr>
+  {{- range .Checkers }}
+    {{- if .HasTag "performance" -}}
+      {{ template "checker_tr" . }}
+    {{- end -}}
   {{- end }}
 </table>
 
@@ -24,7 +73,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 ## {{ .Name }}
 
 [{{ range $tag := .Tags }}
-  **{{ $tag }}**     
+  **{{ $tag }}**
 {{- end }} ]
 
 {{ .Summary -}}.
@@ -46,4 +95,6 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 **Note:**
 {{ .Note }}
 {{- end }}
+{{- end }}
+
 {{- end }}
