@@ -73,8 +73,8 @@ func (c *octalLiteralChecker) isIntLiteral(lit *ast.BasicLit) bool {
 
 func (c *octalLiteralChecker) isOctalLiteral(lit *ast.BasicLit) bool {
 	return lit.Value[0] == '0' &&
-		!(lit.Value[1] == 'x') &&
-		!(lit.Value[1] == 'X')
+		lit.Value[1] != 'x' &&
+		lit.Value[1] != 'X'
 }
 
 func (c *octalLiteralChecker) warn(expr ast.Expr) {
