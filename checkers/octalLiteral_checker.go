@@ -54,7 +54,7 @@ func (c *octalLiteralChecker) VisitExpr(expr ast.Expr) {
 			c.isIntLiteral(lit) &&
 			c.isOctalLiteral(lit) {
 			c.warn(call)
-			break
+			return
 		}
 	}
 }
