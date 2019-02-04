@@ -38,7 +38,7 @@ func (c *flagNameChecker) VisitExpr(expr ast.Expr) {
 	}
 	sym := calledExpr.Sel
 	pkg := obj.Imported()
-	if !isStdlibPkg(pkg) || obj.Name() != "flag" {
+	if pkg.Path() != "flag" {
 		return
 	}
 
