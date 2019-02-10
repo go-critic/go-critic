@@ -69,32 +69,7 @@ can make your code run slower than it could be.
 </table>
 
 {{ range .Checkers }}
-<a name=" {{- .Name -}} -ref"></a>
-## {{ .Name }}
-
-[{{ range $tag := .Tags }}
-  **{{ $tag }}**
-{{- end }} ]
-
-{{ .Summary -}}.
-
-{{ .Details }}
-
-
-**Before:**
-```go
-{{ .Before }}
-```
-
-**After:**
-```go
-{{ .After }}
-```
-
-{{ if .Note }}
-**Note:**
-{{ .Note }}
-{{- end }}
-{{- end }}
+  {{ template "checker" . }}
+{{ end }}
 
 {{- end }}
