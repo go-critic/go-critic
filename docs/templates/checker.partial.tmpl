@@ -27,9 +27,17 @@
 
 {{ if .Params }}
 Checker parameters:
+<ul>
+
 {{- range $key, $_ := .Params }}
-* `@{{$.Name}}.{{$key}}` {{.Usage}} (default {{.Value}})
+<li>
+
+  `@{{$.Name}}.{{$key}}` {{.Usage}} (default {{.Value}})
+
+</li>
 {{- end }}
-{{- end }}
+
+</ul>
+{{ end }}
 
 {{- end }}
