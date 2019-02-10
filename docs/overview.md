@@ -97,6 +97,11 @@ They also detect code that may be correct, but looks suspicious.
   <td>Detects return statements those results evaluate to nil</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#octalLiteral-ref">octalLiteral</a>
+  </td>
+  <td>Detects octal literals passed to functions</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#offBy1-ref">offBy1</a>
   </td>
   <td>Detects various off-by-one kind of errors</td>
@@ -557,7 +562,15 @@ func f(in int, out *int) (err error) {}
 
 
 Checker parameters:
-* `@captLocal.paramsOnly` whether to restrict checker to params only (default true)
+<ul>
+<li>
+
+  `@captLocal.paramsOnly` whether to restrict checker to params only (default true)
+
+</li>
+
+</ul>
+
 
   <a name="caseOrder-ref"></a>
 ## caseOrder
@@ -937,7 +950,15 @@ if cond1 {
 
 
 Checker parameters:
-* `@elseif.skipBalanced` whether to skip balanced if-else pairs (default true)
+<ul>
+<li>
+
+  `@elseif.skipBalanced` whether to skip balanced if-else pairs (default true)
+
+</li>
+
+</ul>
+
 
   <a name="emptyFallthrough-ref"></a>
 ## emptyFallthrough
@@ -1161,7 +1182,15 @@ func f(x *[1024]int) {}
 
 
 Checker parameters:
-* `@hugeParam.sizeThreshold` size in bytes that makes the warning trigger (default 80)
+<ul>
+<li>
+
+  `@hugeParam.sizeThreshold` size in bytes that makes the warning trigger (default 80)
+
+</li>
+
+</ul>
+
 
   <a name="ifElseChain-ref"></a>
 ## ifElseChain
@@ -1345,7 +1374,15 @@ for _, v := range a {
 
 
 Checker parameters:
-* `@nestingReduce.bodyWidth` min number of statements inside a branch to trigger a warning (default 5)
+<ul>
+<li>
+
+  `@nestingReduce.bodyWidth` min number of statements inside a branch to trigger a warning (default 5)
+
+</li>
+
+</ul>
+
 
   <a name="nilValReturn-ref"></a>
 ## nilValReturn
@@ -1377,6 +1414,31 @@ if err == nil {
 if err != nil {
 	return err
 }
+```
+
+
+
+  <a name="octalLiteral-ref"></a>
+## octalLiteral
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects octal literals passed to functions.
+
+
+
+
+
+**Before:**
+```go
+foo(02)
+```
+
+**After:**
+```go
+foo(2)
 ```
 
 
@@ -1488,8 +1550,20 @@ for _, x := range &xs { // No copy
 
 
 Checker parameters:
-* `@rangeExprCopy.sizeThreshold` size in bytes that makes the warning trigger (default 512)
-* `@rangeExprCopy.skipTestFuncs` whether to check test functions (default true)
+<ul>
+<li>
+
+  `@rangeExprCopy.sizeThreshold` size in bytes that makes the warning trigger (default 512)
+
+</li>
+<li>
+
+  `@rangeExprCopy.skipTestFuncs` whether to check test functions (default true)
+
+</li>
+
+</ul>
+
 
   <a name="rangeValCopy-ref"></a>
 ## rangeValCopy
@@ -1522,8 +1596,20 @@ for i := range xs {
 
 
 Checker parameters:
-* `@rangeValCopy.sizeThreshold` size in bytes that makes the warning trigger (default 128)
-* `@rangeValCopy.skipTestFuncs` whether to check test functions (default true)
+<ul>
+<li>
+
+  `@rangeValCopy.sizeThreshold` size in bytes that makes the warning trigger (default 128)
+
+</li>
+<li>
+
+  `@rangeValCopy.skipTestFuncs` whether to check test functions (default true)
+
+</li>
+
+</ul>
+
 
   <a name="regexpMust-ref"></a>
 ## regexpMust
@@ -1810,7 +1896,15 @@ v := a[5]
 
 
 Checker parameters:
-* `@underef.skipRecvDeref` whether to skip (*x).method() calls where x is a pointer receiver (default true)
+<ul>
+<li>
+
+  `@underef.skipRecvDeref` whether to skip (*x).method() calls where x is a pointer receiver (default true)
+
+</li>
+
+</ul>
+
 
   <a name="unlabelStmt-ref"></a>
 ## unlabelStmt
@@ -1896,7 +1990,15 @@ func f() (x, y float64)
 
 
 Checker parameters:
-* `@unnamedResult.checkExported` whether to check exported functions (default false)
+<ul>
+<li>
+
+  `@unnamedResult.checkExported` whether to check exported functions (default false)
+
+</li>
+
+</ul>
+
 
   <a name="unnecessaryBlock-ref"></a>
 ## unnecessaryBlock
