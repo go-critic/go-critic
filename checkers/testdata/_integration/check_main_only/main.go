@@ -268,5 +268,9 @@ func argOrder(s string) {
 	_ = strings.HasPrefix("$", s)
 }
 
+func newDeref() {
+	_ = *new(string)
+}
+
 func main() {
 }

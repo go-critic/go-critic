@@ -29,6 +29,7 @@ exit status 1
 ./main.go:123:19: importShadow: shadow of imported package 'flag'
 ./main.go:126:6: indexAlloc: consider replacing strings.Index(string(s), sub) with bytes.Index(s, []byte(sub))
 ./main.go:130:6: methodExprCall: consider to change `point.String` to `p.String`
+./main.go:272:6: newDeref: replace `*new(string)` with `""`
 ./main.go:135:3: nilValReturn: returned expr is always nil; replace x with nil
 ./main.go:234:9: offBy1: index expr always panics; maybe you wanted xs[len(xs)-1]?
 ./main.go:140:1: paramTypeCombine: func(x int, y int) could be replaced with func(x, y int)
