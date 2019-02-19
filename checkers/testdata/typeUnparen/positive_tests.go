@@ -145,6 +145,11 @@ func newCall() {
 	_ = new(*(*(*(int))))
 }
 
+func makeCall() {
+	/*! could simplify (map[int]int) to map[int]int */
+	_ = make((map[int]int))
+}
+
 func conversions() {
 	/*! could simplify (int) to int */
 	/*! could simplify (int32) to int32 */
