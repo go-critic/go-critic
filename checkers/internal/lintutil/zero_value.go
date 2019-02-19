@@ -74,9 +74,10 @@ func ZeroValueOf(typeExpr ast.Expr, typ types.Type) ast.Expr {
 
 	case *types.Array, *types.Struct:
 		return &ast.CompositeLit{Type: typeExpr}
-	}
 
-	return nil
+	default:
+		return nil
+	}
 }
 
 func isDefaultLiteralType(typ types.Type) bool {
