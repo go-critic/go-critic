@@ -49,6 +49,8 @@ After that, you can create `go-critic` binary by running:
 lintpack build -o gocritic -linter.name='gocritic' github.com/go-critic/go-critic/checkers
 ```
 
+> Windows note: `lintpack build` might emit a warning. See https://github.com/go-critic/go-critic/issues/760.
+
 ## Usage
 
 Be sure `gocritic` executable is under your `$PATH`.
