@@ -46,4 +46,9 @@ func typeSwitches(x interface{}) {
 	case *myReader:
 	default:
 	}
+
+	switch x.(type) {
+	/*! type is not defined myType */
+	case myType:
+	}
 }
