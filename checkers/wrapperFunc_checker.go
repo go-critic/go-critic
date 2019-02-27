@@ -39,6 +39,10 @@ func init() {
 			"sync.WaitGroup.Add => WaitGroup.Done": {
 				{0, "-1"},
 			},
+
+			"bytes.Buffer.Truncate => Buffer.Reset": {
+				{0, "0"},
+			},
 		}
 
 		pkgPatterns := map[string][]arg{

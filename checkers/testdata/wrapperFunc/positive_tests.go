@@ -13,6 +13,10 @@ func f(s string, b []byte) {
 	/*! use WaitGroup.Done method in `wg.Add(-1)` */
 	wg.Add(-1)
 
+	var buf bytes.Buffer
+	/*! use Buffer.Reset method in `buf.Truncate(0)` */
+	buf.Truncate(0)
+
 	/*! use strings.ToTitle method in `strings.Map(unicode.ToTitle, s)` */
 	strings.Map(unicode.ToTitle, s)
 
