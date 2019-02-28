@@ -11,5 +11,6 @@ require (
 	github.com/go-toolsmith/strparse v0.0.0-20180903215201-830b6daa1241
 	github.com/go-toolsmith/typep v0.0.0-20181030061450-d63dc7650676
 	github.com/mattn/goveralls v0.0.2
+	github.com/pborman/uuid v1.2.0 // indirect
 	golang.org/x/tools v0.0.0-20181205014116-22934f0fdb62
 )
