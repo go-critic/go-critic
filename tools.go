@@ -1,8 +1,8 @@
 // +build tools
 
-// See https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module.
-
 package critic
+
+// See https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module.
 
 import (
 	// Used for CI linting.
