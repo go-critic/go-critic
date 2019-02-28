@@ -26,7 +26,7 @@ ci-tests:
 ci-linter:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.15.0
 	golangci-lint run -v
-	go get -u github.com/Quasilyte/go-consistent
+	go get github.com/Quasilyte/go-consistent
 	go-consistent ./...
 
 cover:
