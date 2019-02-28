@@ -21,7 +21,6 @@ ci:
 	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
 
 ci-tests:
-	go get -u github.com/go-lintpack/lintpack/...
 	go test -v -race -count=1 -coverprofile=coverage.out ./...
 
 ci-linter:
