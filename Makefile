@@ -26,11 +26,11 @@ ci-tests:
 ci-linter:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.15.0
 	golangci-lint run -v
-	go get github.com/Quasilyte/go-consistent
+	go install github.com/Quasilyte/go-consistent
 	go-consistent ./...
 
 cover:
-	go get -u github.com/mattn/goveralls
+	go install github.com/mattn/goveralls
 	goveralls -package github.com/go-critic/go-critic/checkers -coverprofile=coverage.out -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 install:
