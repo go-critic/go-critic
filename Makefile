@@ -1,4 +1,4 @@
-.PHONY: test test-checker ci cover tools docs
+.PHONY: test test-checker test-goroot docs ci ci-tidy ci-tests ci-linter cover install
 
 export GO111MODULE := on
 
@@ -18,7 +18,13 @@ docs:
 	cd ./cmd/makedocs && go run main.go
 
 ci:
-	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tests; fi
+	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tidy; make ci-tests; fi
+
+ci-tidy:
+	go mod tidy
+	# If you are testing Go 1.11: https://github.com/golang/go/issues/27868#issuecomment-431413621
+	go list all > /dev/null
+	git diff --exit-code --quiet || (echo "Please run 'go mod tidy' to clean up the 'go.mod' and 'go.sum' files."; false)
 
 ci-tests:
 	go test -v -race -count=1 -coverprofile=coverage.out ./...
