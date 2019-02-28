@@ -10,6 +10,11 @@ import (
 func appliedSuggestions(s string, b []byte) {
 	var wg sync.WaitGroup
 	wg.Done()
+	wg.Add(1)
+
+	var buf bytes.Buffer
+	buf.Reset()
+	buf.Truncate(1)
 
 	strings.ToTitle(s)
 	strings.ReplaceAll(s, "a", "b")
