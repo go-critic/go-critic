@@ -9,28 +9,18 @@ import (
 
 func init() {
 	var info lintpack.CheckerInfo
-	info.Name = "dupImports"
+	info.Name = "dupImport"
 	info.Tags = []string{"style", "experimental"}
-	info.Summary = "Detects multiple imports of the same package under different aliases."
+	info.Summary = "Detects multiple imports of the same package under different aliases"
 	info.Before = `
 import (
 	"fmt"
-	priting "fmt"
-)
-
-func helloWorld() {
-	fmt.Println("Hello")
-	printing.Println("World")
-}`
+	priting "fmt" // Imported the second time
+)`
 	info.After = `
 import(
 	"fmt"
-)
-
-func helloWorld() {
-	fmt.Println("Hello")
-	fmt.Println("World")
-}`
+)`
 
 	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
 		return &dupImportChecker{ctx: ctx}
@@ -48,29 +38,26 @@ func (c *dupImportChecker) WalkFile(f *ast.File) {
 		imports[pkg] = append(imports[pkg], importDcl)
 	}
 
-	fPos := c.ctx.FileSet.File(f.Pos())
-	if fPos == nil {
-		// Bail out if we can't, for any reason, determine
-		// the source file we are dealing with.
-		return
-	}
 	for _, importList := range imports {
 		if len(importList) == 1 {
 			continue
 		}
+		c.warn(importList)
+	}
+}
 
-		msg := fmt.Sprintf("package is imported %d times under different aliases on lines", len(importList))
-		for idx, importDcl := range importList {
-			switch {
-			case idx == len(importList)-1:
-				msg += " and"
-			case idx > 0:
-				msg += ","
-			}
-			msg += fmt.Sprintf(" %d", fPos.Line(importDcl.Pos()))
+func (c *dupImportChecker) warn(importList []*ast.ImportSpec) {
+	msg := fmt.Sprintf("package is imported %d times under different aliases on lines", len(importList))
+	for idx, importDcl := range importList {
+		switch {
+		case idx == len(importList)-1:
+			msg += " and"
+		case idx > 0:
+			msg += ","
 		}
-		for _, importDcl := range importList {
-			c.ctx.Warn(importDcl, msg)
-		}
+		msg += fmt.Sprintf(" %d", c.ctx.FileSet.Position(importDcl.Pos()).Line)
+	}
+	for _, importDcl := range importList {
+		c.ctx.Warn(importDcl, msg)
 	}
 }
