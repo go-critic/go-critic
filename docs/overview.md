@@ -32,6 +32,11 @@ They also detect code that may be correct, but looks suspicious.
   <td>Detects suspicious arguments order</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#badCall-ref">badCall</a>
+  </td>
+  <td>Detects suspicious function calls</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#badCond-ref">badCond</a>
   </td>
   <td>Detects suspicious condition expressions</td>
@@ -170,6 +175,11 @@ with another one that is considered more idiomatic or simple.
   </td>
   <td>Detects comments that silence go lint complaints about doc-comment</td>
 </tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#dupImport-ref">dupImport</a>
+  </td>
+  <td>Detects multiple imports of the same package under different aliases</td>
+</tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#elseif-ref">elseif</a>
   </td>
@@ -214,6 +224,11 @@ with another one that is considered more idiomatic or simple.
     <a href="#nestingReduce-ref">nestingReduce</a>
   </td>
   <td>Finds where nesting level could be reduced</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#newDeref-ref">newDeref</a>
+  </td>
+  <td>Detects immediate dereferencing of `new` expressions</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#paramTypeCombine-ref">paramTypeCombine</a>
@@ -453,6 +468,31 @@ x = x * 2
 **After:**
 ```go
 x *= 2
+```
+
+
+
+  <a name="badCall-ref"></a>
+## badCall
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious function calls.
+
+
+
+
+
+**Before:**
+```go
+strings.Replace(s, from, to, 0)
+```
+
+**After:**
+```go
+strings.Replace(s, from, to, -1)
 ```
 
 
@@ -888,6 +928,36 @@ case ys[0], ys[1], ys[2], ys[0], ys[4]:
 switch x {
 case ys[0], ys[1], ys[2], ys[3], ys[4]:
 }
+```
+
+
+
+  <a name="dupImport-ref"></a>
+## dupImport
+
+[
+  **style**
+  **experimental** ]
+
+Detects multiple imports of the same package under different aliases.
+
+
+
+
+
+**Before:**
+```go
+import (
+	"fmt"
+	priting "fmt" // Imported the second time
+)
+```
+
+**After:**
+```go
+import(
+	"fmt"
+)
 ```
 
 
@@ -1382,6 +1452,31 @@ Checker parameters:
 </li>
 
 </ul>
+
+
+  <a name="newDeref-ref"></a>
+## newDeref
+
+[
+  **style**
+  **experimental** ]
+
+Detects immediate dereferencing of `new` expressions.
+
+
+
+
+
+**Before:**
+```go
+x := *new(bool)
+```
+
+**After:**
+```go
+x := false
+```
+
 
 
   <a name="nilValReturn-ref"></a>
