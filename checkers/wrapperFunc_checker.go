@@ -50,6 +50,9 @@ func init() {
 				{0, "http.NotFound"},
 			},
 
+			"strings.SplitN => strings.Split": {
+				{2, "-1"},
+			},
 			"strings.Replace => strings.ReplaceAll": {
 				{3, "-1"},
 			},
@@ -60,6 +63,9 @@ func init() {
 				{0, "unicode.ToTitle"},
 			},
 
+			"bytes.SplitN => bytes.Split": {
+				{2, "-1"},
+			},
 			"bytes.Replace => bytes.ReplaceAll": {
 				{3, "-1"},
 			},

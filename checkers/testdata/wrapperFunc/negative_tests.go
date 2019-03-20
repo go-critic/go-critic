@@ -16,9 +16,11 @@ func appliedSuggestions(s string, b []byte) {
 	buf.Reset()
 	buf.Truncate(1)
 
+	strings.Split(s, ".")
 	strings.ToTitle(s)
 	strings.ReplaceAll(s, "a", "b")
 
+	bytes.Split(b, []byte("."))
 	bytes.ToUpper(b)
 	bytes.ToLower(b)
 	bytes.ToTitle(b)
