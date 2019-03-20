@@ -272,5 +272,9 @@ func newDeref() {
 	_ = *new(string)
 }
 
+func badCall(s string) {
+	_ = strings.Replace(s, "-", "=", 0)
+}
+
 func main() {
 }

@@ -3,6 +3,7 @@ exit status 1
 ./main.go:19:2: appendCombine: can combine chain of 2 appends into one
 ./main.go:268:6: argOrder: probably meant `strings.HasPrefix(s, "$")`
 ./main.go:24:2: assignOp: replace `x = x + 2` with `x += 2`
+./main.go:276:35: badCall: suspicious arg 0, probably meant -1
 ./main.go:246:6: badCond: `x < 100 && x > 200` condition is always false
 ./main.go:28:9: boolExprSimplify: can simplify `!(x == y+1)` to `x != y+1`
 ./main.go:31:20: builtinShadow: shadowing of predeclared identifier: new
