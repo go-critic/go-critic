@@ -143,3 +143,7 @@ func foo1() {
 // NOTE: Deprecated.
 func foo2() {
 }
+
+/*! the proper format is `Deprecated: <text>` */
+// deprecated in 1.8: use bar instead.
+type foo3 string
