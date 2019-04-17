@@ -28,6 +28,10 @@ func verboseAssignments(x, y int, z *int) {
 	y = y >> uint(x)
 	/*! replace `y = y &^ (1 << 10)` with `y &^= (1 << 10)` */
 	y = y &^ (1 << 10)
+	/*! replace `y = y + 1` with `y++` */
+	y = y + 1
+	/*! replace `y = y - 1` with `y--` */
+	y = y - 1
 
 	for {
 		/*! replace `o.count = o.count / 2` with `o.count /= 2` */
