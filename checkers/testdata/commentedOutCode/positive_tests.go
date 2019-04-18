@@ -22,4 +22,20 @@ func multiLineCode() {
 			log.Printf("this is forgotten debug code")
 		}
 	*/
+
+	/*! may want to remove commented-out code */
+	/*
+		resp, err := ioutil.ReadAll(c.Request().Body)
+		if err != nil {
+			e := err.Error()
+			return c.JSON(http.StatusNotFound, structs.Response{Ok: false, Reason: &e})
+		}
+		fmt.Println(string(resp))
+		return c.JSON(http.StatusNotFound, structs.Response{Ok: false})
+	*/
+
+	/*! may want to remove commented-out code */
+	//rulebases.POST("/", postRsHandler)                                //create a rulebase
+	//rulebases.DELETE("/:id", deleteRsHandler)                         //delete a rulebase
+	//rulebases.PUT("/:setid", putRsHandler)                            //update a rulebase
 }
