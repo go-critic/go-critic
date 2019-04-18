@@ -87,11 +87,9 @@ func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
 	// multiple statements.
 	stmt = strparse.Stmt(fmt.Sprintf("{ %s }", s))
 
-	if stmt == strparse.BadStmt {
-		return // Most likely not a code
+	if stmt != strparse.BadStmt {
+		c.warn(cg)
 	}
-
-	c.warn(cg)
 }
 
 func (c *commentedOutCodeChecker) isPermittedStmt(stmt ast.Stmt) bool {
