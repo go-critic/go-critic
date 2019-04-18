@@ -1,6 +1,7 @@
 package checkers
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 	"regexp"
@@ -77,11 +78,16 @@ func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
 	}
 
 	stmt := strparse.Stmt(s)
-	if stmt == strparse.BadStmt {
-		return // Most likely not a code
+
+	if c.isPermittedStmt(stmt) {
+		return
 	}
 
-	if !c.isPermittedStmt(stmt) {
+	// Add parentheses to make block statement from
+	// multiple statements.
+	stmt = strparse.Stmt(fmt.Sprintf("{ %s }", s))
+
+	if stmt != strparse.BadStmt {
 		c.warn(cg)
 	}
 }
