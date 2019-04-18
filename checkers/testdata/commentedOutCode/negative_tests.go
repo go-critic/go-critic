@@ -43,4 +43,10 @@ func permittedComments() {
 	// notAfunccall (this is not a function call)
 
 	// funccall () with period .
+
+	// pretty-print
+
+	// Output: "64 bytes or fewer"
+
+	// Result: int *int
 }
