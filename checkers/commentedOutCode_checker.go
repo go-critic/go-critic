@@ -97,7 +97,7 @@ func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
 	// multiple statements.
 	stmt = strparse.Stmt(fmt.Sprintf("{ %s }", s))
 
-	if stmt, ok := stmt.(*ast.BlockStmt); ok && len(stmt.List) > 0 {
+	if stmt, ok := stmt.(*ast.BlockStmt); ok && len(stmt.List) != 0 {
 		c.warn(cg)
 	}
 }
