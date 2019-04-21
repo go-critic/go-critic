@@ -43,4 +43,32 @@ func permittedComments() {
 	// notAfunccall (this is not a function call)
 
 	// funccall () with period .
+
+	// pretty-print
+
+	// Output: "64 bytes or fewer"
+
+	// Result: int *int
+
+	// golang.org/issue/5290
+
+	// testRead | testWriteTo | testRemaining
+
+	// WriteHeader(hdr) == wantErr
+
+	// Size: SizeOf(uint8) + SizeOf(uint32)
+
+	// Flags: ModTime
+
+	// 0 <= n <= len(b.buf)
+
+	// b.r == 0 && b.w == 0
+
+	// ignored //line directives
+
+	// invalid //line directives with one colon
+
+	// //line directives with omitted filenames lead to empty filenames
+
+	/* CINC/CINV/CNEG */
 }
