@@ -1,0 +1,1 @@
+check -enable=dupImport . | linttest.golden
