@@ -58,6 +58,9 @@ func floatCompare() {
 
 	// Can't be simplified to `f1 != f2`.
 	_ = !(f1 == f2)
+
+	// Can't be simplified to `p == 1`.
+	_ = f1 > 0 && f1 <= 1
 }
 
 func balancedIncDec(x, y, z int) {
