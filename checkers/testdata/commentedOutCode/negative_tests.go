@@ -1,5 +1,11 @@
 package checker_test
 
+func ExampleFoo() {
+	// Output:
+	// blah
+	// blah
+}
+
 func permittedComments() {
 	// TODO: foo(1+2)
 
