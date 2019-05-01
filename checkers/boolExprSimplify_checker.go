@@ -235,7 +235,7 @@ func (c *boolExprSimplifyChecker) removeIncDec(cur *astutil.Cursor) bool {
 }
 
 func (c *boolExprSimplifyChecker) foldRanges(cur *astutil.Cursor) bool {
-	if c.hasFloats { // See #673
+	if c.hasFloats { // See #848
 		return false
 	}
 
