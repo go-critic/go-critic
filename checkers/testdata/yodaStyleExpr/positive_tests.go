@@ -1,5 +1,17 @@
 package checker_test
 
+func yodaComparisons() {
+	var x int
+	/*! consider to change order in expression to x <= 0 */
+	_ = 0 > x
+	/*! consider to change order in expression to x >= 0 */
+	_ = 0 < x
+	/*! consider to change order in expression to x < 0 */
+	_ = 0 >= x
+	/*! consider to change order in expression to x > 0 */
+	_ = 0 <= x
+}
+
 func f1() {
 	var m map[int]int
 	/*! consider to change order in expression to m == nil */
