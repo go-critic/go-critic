@@ -32,7 +32,7 @@ ci-tests:
 ci-linter:
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.15.0
 	golangci-lint run -v
-	go install github.com/Quasilyte/go-consistent
+	go install github.com/quasilyte/go-consistent
 	go-consistent ./...
 
 cover:
