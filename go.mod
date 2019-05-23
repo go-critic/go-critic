@@ -1,16 +1,15 @@
 module github.com/go-critic/go-critic
 
 require (
-	github.com/Quasilyte/go-consistent v0.0.0-20181230194409-8f8379e70f99
 	github.com/go-lintpack/lintpack v0.5.2
-	github.com/go-toolsmith/astcast v0.0.0-20181028201508-b7a89ed70af1
-	github.com/go-toolsmith/astcopy v0.0.0-20180903214859-79b422d080c4
-	github.com/go-toolsmith/astequal v0.0.0-20180903214952-dcb477bfacd6
-	github.com/go-toolsmith/astfmt v0.0.0-20180903215011-8f8ee99c3086
-	github.com/go-toolsmith/astp v0.0.0-20180903215135-0af7e3c24f30
-	github.com/go-toolsmith/strparse v0.0.0-20180903215201-830b6daa1241
-	github.com/go-toolsmith/typep v0.0.0-20181030061450-d63dc7650676
+	github.com/go-toolsmith/astcast v1.0.0
+	github.com/go-toolsmith/astcopy v1.0.0
+	github.com/go-toolsmith/astequal v1.0.0
+	github.com/go-toolsmith/astfmt v1.0.0
+	github.com/go-toolsmith/astp v1.0.0
+	github.com/go-toolsmith/strparse v1.0.0
+	github.com/go-toolsmith/typep v1.0.0
 	github.com/mattn/goveralls v0.0.2
-	github.com/pborman/uuid v1.2.0 // indirect
-	golang.org/x/tools v0.0.0-20181205014116-22934f0fdb62
+	github.com/quasilyte/go-consistent v0.0.0-20190521200055-c6f3937de18c
+	golang.org/x/tools v0.0.0-20190521203540-521d6ed310dd
 )
