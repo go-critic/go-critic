@@ -1,6 +1,6 @@
 module github.com/go-critic/go-critic
 
-go 1.13
+go 1.12
 
 require (
 	github.com/go-lintpack/lintpack v0.5.2
