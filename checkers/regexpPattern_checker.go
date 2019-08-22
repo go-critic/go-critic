@@ -64,6 +64,5 @@ func (c *regexpPatternChecker) VisitExpr(x ast.Expr) {
 }
 
 func (c *regexpPatternChecker) warnDomain(cause ast.Expr, domain string) {
-	c.ctx.Warn(cause, "'.%s' should probably be '\\.%s'",
-		domain, domain)
+	c.ctx.Warn(cause, "'.%s' should probably be '\\.%s'", domain, domain)
 }
