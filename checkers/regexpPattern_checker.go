@@ -28,7 +28,8 @@ func init() {
 			"de",
 		}
 
-		domainRE := regexp.MustCompile(`[^\\]\.(` + strings.Join(domains, "|") + `)\b`)
+		allDomains := strings.Join(domains, "|")
+		domainRE := regexp.MustCompile(`[^\\]\.(` + allDomains + `)\b`)
 		return astwalk.WalkerForExpr(&regexpPatternChecker{
 			ctx:      ctx,
 			domainRE: domainRE,
