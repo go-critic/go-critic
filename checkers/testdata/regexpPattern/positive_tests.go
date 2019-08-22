@@ -11,3 +11,11 @@ func domainDots() {
 	/*! '.ru' should probably be '\.ru' */
 	regexp.CompilePOSIX(`yandex.ru|radio.yandex.ru`)
 }
+
+func unescapedAnchors() {
+	/*! unescaped ^ in the middle of the regexp */
+	regexp.Compile(`2^10`)
+
+	/*! unescaped $ in the middle of the regexp */
+	regexp.Compile(`100$\+1`)
+}

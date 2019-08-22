@@ -31,8 +31,10 @@ func init() {
 		allDomains := strings.Join(domains, "|")
 		domainRE := regexp.MustCompile(`[^\\]\.(` + allDomains + `)\b`)
 		return astwalk.WalkerForExpr(&regexpPatternChecker{
-			ctx:      ctx,
-			domainRE: domainRE,
+			ctx:           ctx,
+			domainRE:      domainRE,
+			beginAnchorRE: regexp.MustCompile(`[^\\^]\^`),
+			endAnchorRE:   regexp.MustCompile(`[^\\]\$.+`),
 		})
 	})
 }
@@ -41,7 +43,16 @@ type regexpPatternChecker struct {
 	astwalk.WalkHandler
 	ctx *lintpack.CheckerContext
 
-	domainRE *regexp.Regexp
+	domainRE      *regexp.Regexp
+	beginAnchorRE *regexp.Regexp
+	endAnchorRE   *regexp.Regexp
+}
+
+type regexpFlags struct {
+	i bool // case-insensitive
+	m bool // multi-line mode: ^ and $ match begin/end line in addition to begin/end text
+	s bool // let . match \n
+	U bool // ungreedy: swap meaning of x* and x*?, x+ and x+?, etc
 }
 
 func (c *regexpPatternChecker) VisitExpr(x ast.Expr) {
@@ -51,16 +62,64 @@ func (c *regexpPatternChecker) VisitExpr(x ast.Expr) {
 	}
 
 	switch qualifiedName(call.Fun) {
-	case "regexp.Compile", "regexp.CompilePOSIX", "regexp.MustCompile", "regexp.MustCompilePosix":
-		cv := c.ctx.TypesInfo.Types[call.Args[0]].Value
-		if cv == nil || cv.Kind() != constant.String {
-			return
-		}
-		s := constant.StringVal(cv)
-		if m := c.domainRE.FindStringSubmatch(s); m != nil {
-			c.warnDomain(call.Args[0], m[1])
-		}
+	case "regexp.Compile", "regexp.MustCompile", "regexp.CompilePOSIX", "regexp.MustCompilePOSIX":
+		c.checkPattern(call.Args[0])
 	}
+}
+
+func (c *regexpPatternChecker) checkPattern(arg ast.Expr) {
+	cv := c.ctx.TypesInfo.Types[arg].Value
+	if cv == nil || cv.Kind() != constant.String {
+		return
+	}
+	pat := constant.StringVal(cv)
+
+	if m := c.domainRE.FindStringSubmatch(pat); m != nil {
+		c.warnDomain(arg, m[1])
+	}
+
+	flags, offset := c.regexpFlags(pat)
+	if flags.m {
+		return
+	}
+	pat = pat[offset:] // Drop the flags group
+	if c.beginAnchorRE.MatchString(pat) {
+		c.warnAnchor(arg, "^")
+	}
+	if c.endAnchorRE.MatchString(pat) {
+		c.warnAnchor(arg, "$")
+	}
+}
+
+func (c *regexpPatternChecker) regexpFlags(pat string) (regexpFlags, int) {
+	var flags regexpFlags
+
+	if !strings.HasPrefix(pat, "(?") {
+		return flags, 0
+	}
+
+	offset := len("(?")
+	for offset < len(pat)-1 && pat[offset] != ')' {
+		switch pat[offset] {
+		case 'i':
+			flags.i = true
+		case 'm':
+			flags.m = true
+		case 's':
+			flags.s = true
+		case 'U':
+			flags.U = true
+		default:
+			return flags, 0
+		}
+		offset++
+	}
+	offset += len(")")
+	return flags, offset
+}
+
+func (c *regexpPatternChecker) warnAnchor(cause ast.Expr, anchor string) {
+	c.ctx.Warn(cause, "unescaped %s in the middle of the regexp", anchor)
 }
 
 func (c *regexpPatternChecker) warnDomain(cause ast.Expr, domain string) {
