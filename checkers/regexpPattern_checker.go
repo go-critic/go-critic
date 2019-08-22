@@ -49,7 +49,7 @@ func (c *regexpPatternChecker) VisitExpr(x ast.Expr) {
 		return
 	}
 
-	switch name := qualifiedName(call.Fun); name {
+	switch qualifiedName(call.Fun) {
 	case "regexp.Compile", "regexp.CompilePOSIX", "regexp.MustCompile", "regexp.MustCompilePosix":
 		cv := c.ctx.TypesInfo.Types[call.Args[0]].Value
 		if cv == nil || cv.Kind() != constant.String {
