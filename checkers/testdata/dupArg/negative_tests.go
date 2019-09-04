@@ -53,6 +53,10 @@ func differentArgs() {
 	_ = types.Identical(typ, typ2)
 	_ = types.IdenticalIgnoreTags(typ, typ2)
 
+	// shadowing builtin "copy"
+	copy := func(x int) int { return x }
+	_ = copy(1)
+
 	{
 		var area image.Rectangle
 		var point image.Point
