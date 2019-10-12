@@ -113,6 +113,7 @@ These are first-order dependencies:
 * [github.com/go-toolsmith/astequal](https://github.com/go-toolsmith/astequal)
 * [github.com/go-toolsmith/strparse](https://github.com/go-toolsmith/strparse)
 * [github.com/go-toolsmith/astfmt](https://github.com/go-toolsmith/astfmt)
+* [github.com/go-toolsmith/typep](https://github.com/go-toolsmith/typep)
 * [golang.org/x/tools/go/loader](https://godoc.org/golang.org/x/tools/go/loader)
 * [golang.org/x/tools/go/ast/astutil](https://godoc.org/golang.org/x/tools/go/ast/astutil)
 
