@@ -52,7 +52,14 @@ func (c *truncateCmpChecker) VisitExpr(expr ast.Expr) {
 		if astp.IsBasicLit(cmp.X) || astp.IsBasicLit(cmp.Y) {
 			return // Don't bother about untyped consts
 		}
-		if !c.checkCmp(cmp.X, cmp.Y) {
+		leftCast := c.isTruncCast(cmp.X)
+		rightCast := c.isTruncCast(cmp.Y)
+		switch {
+		case leftCast && rightCast:
+			return
+		case leftCast:
+			c.checkCmp(cmp.X, cmp.Y)
+		case rightCast:
 			c.checkCmp(cmp.Y, cmp.X)
 		}
 	default:
@@ -60,17 +67,20 @@ func (c *truncateCmpChecker) VisitExpr(expr ast.Expr) {
 	}
 }
 
-func (c *truncateCmpChecker) checkCmp(cmpX, cmpY ast.Expr) bool {
-	// Check if we have a cast to a type that can truncate.
-	xcast := astcast.ToCallExpr(cmpX)
-	switch astcast.ToIdent(xcast.Fun).Name {
+func (c *truncateCmpChecker) isTruncCast(x ast.Expr) bool {
+	switch astcast.ToIdent(astcast.ToCallExpr(x).Fun).Name {
 	case "int8", "int16", "int32", "uint8", "uint16", "uint32":
-		// OK.
+		return true
 	default:
 		return false
 	}
+}
+
+func (c *truncateCmpChecker) checkCmp(cmpX, cmpY ast.Expr) {
+	// Check if we have a cast to a type that can truncate.
+	xcast := astcast.ToCallExpr(cmpX)
 	if len(xcast.Args) != 1 {
-		return false // Just in case of the shadowed builtin
+		return // Just in case of the shadowed builtin
 	}
 
 	x := xcast.Args[0]
@@ -79,28 +89,27 @@ func (c *truncateCmpChecker) checkCmp(cmpX, cmpY ast.Expr) bool {
 	// Check that both x and y are signed or unsigned int-typed.
 	xtyp, ok := c.ctx.TypesInfo.TypeOf(x).Underlying().(*types.Basic)
 	if !ok || xtyp.Info()&types.IsInteger == 0 {
-		return false
+		return
 	}
 	ytyp, ok := c.ctx.TypesInfo.TypeOf(y).Underlying().(*types.Basic)
 	if !ok || xtyp.Info() != ytyp.Info() {
-		return false
+		return
 	}
 
 	xsize := c.ctx.SizesInfo.Sizeof(xtyp)
 	ysize := c.ctx.SizesInfo.Sizeof(ytyp)
 	if xsize <= ysize {
-		return false
+		return
 	}
 
 	if c.skipArchDependent {
 		switch xtyp.Kind() {
 		case types.Int, types.Uint, types.Uintptr:
-			return false
+			return
 		}
 	}
 
 	c.warn(xcast, xsize*8, ysize*8, xtyp.String())
-	return true
 }
 
 func (c *truncateCmpChecker) warn(cause ast.Expr, xsize, ysize int64, suggest string) {

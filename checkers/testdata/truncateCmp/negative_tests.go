@@ -1,5 +1,9 @@
 package checker_test
 
+func bothTruncated(x int32, y int64) {
+	_ = int16(x) < int16(y)
+}
+
 func cmpWithConst(x int64) {
 	_ = int16(x) < 0
 	_ = 0 < int16(x)
