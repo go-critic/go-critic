@@ -30,7 +30,7 @@ ci-tests:
 	go test -v -race -count=1 -coverprofile=coverage.out ./...
 
 ci-linter:
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.15.0
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b ${GOPATH}/bin v1.21.0
 	golangci-lint run -v
 	go install github.com/quasilyte/go-consistent
 	go-consistent ./...
