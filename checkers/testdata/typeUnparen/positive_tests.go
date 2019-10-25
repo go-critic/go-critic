@@ -74,6 +74,9 @@ func myFunc1() {
 			})
 		}{}
 	}()
+	
+	/*! could simplify (interface{...}) to interface{...} */
+	var _ (interface{})
 
 	/*! could simplify (int) to int */
 	type localType2 (int)
