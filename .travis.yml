@@ -1,7 +1,6 @@
 language: go
 go:
   - 1.x
-  - master
 env:
   - TEST_SUITE=tests
   - TEST_SUITE=linter
