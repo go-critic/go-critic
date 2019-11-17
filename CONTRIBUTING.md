@@ -85,15 +85,15 @@ you'll find all answers there in a short time.
    See [lint/internal/astwalk/visitor.go](/lint/internal/astwalk/visitor.go) for the whole list.
    If none seem to match your needs, use `FuncDeclVisitor`.
 
-3. Define checker type and constructor function inside a new file under `lint/${checkerName}_checker.go`.
+3. Define checker type and constructor function inside a new file under `checkers/${checkerName}_checker.go`.
 
 4. Define a `lintpack.CheckerInfo` within an `init()` function in your new file. Specify the checker `Name`, `Summary`, `Before`, and `After` fields. It's a good idea to also specify appropriate `Tags` (e.g. `"diagnostic"`, `"style"`, `"performace"`, `"opinionated"`); new checkers should generally include the `"experimental"` tag.
 
 5. Register the checker by calling `AddChecker` function in `init()`, passing in the `CheckerInfo`.
 
-6. Add a test directory, named after the new checker, in `lint/testdata`.
+6. Add a test directory, named after the new checker, in `checkers/testdata`.
 
-7. Add `positive_tests.go` and `negative_tests.go` files in that directory. In `positive_tests.go`, add examples of Go code for which the checker should issue warnings. Before each line that should produce a warning, include a multiline comment starting with `/*!`, with the desired warning text as the comment body. In `negative_tests.go`, add examples of Go code for which the checker should _not_ issue a warning. See existing [`positive_tests.go`](/lint/testdata/ifElseChain/positive_tests.go)/[`negative_tests.go`](/lint/testdata/ifElseChain/negative_tests.go) files for inspiration.
+7. Add `positive_tests.go` and `negative_tests.go` files in that directory. In `positive_tests.go`, add examples of Go code for which the checker should issue warnings. Before each line that should produce a warning, include a multiline comment starting with `/*!`, with the desired warning text as the comment body. In `negative_tests.go`, add examples of Go code for which the checker should _not_ issue a warning. See existing [`positive_tests.go`](/checkers/testdata/ifElseChain/positive_tests.go)/[`negative_tests.go`](/checkers/testdata/ifElseChain/negative_tests.go) files for inspiration.
 
 8. Run tests. They must fail as your checker does not check anything yet.
    Tests can be run with `go test -v -race -count=1 ./...`.
