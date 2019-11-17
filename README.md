@@ -43,10 +43,10 @@ Get `go-critic` checkers:
 go get -v github.com/go-critic/go-critic/...
 ```
 
-After that, you can create `go-critic` binary by running:
+After that, you can create `gocritic` binary by running:
 
 ```bash
-lintpack build -o gocritic -linter.version='v0.3.4' -linter.name='gocritic' github.com/go-critic/go-critic/checkers
+make gocritic
 ```
 
 > Windows note: `lintpack build` might emit a warning. See https://github.com/go-critic/go-critic/issues/760.

@@ -39,5 +39,8 @@ cover:
 	go install github.com/mattn/goveralls
 	goveralls -package github.com/go-critic/go-critic/checkers -coverprofile=coverage.out -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
+gocritic:
+	lintpack build -o gocritic -linter.version='v0.3.4' -linter.name='gocritic' github.com/go-critic/go-critic/checkers
+
 install:
 	go install ./cmd/gocritic
