@@ -82,8 +82,8 @@ you'll find all answers there in a short time.
 1. Come up with a checker idea. Concentrate on what it checks.
 
 2. Select one of the base checker kinds (example: expr checker, stmt checker, etc.).
-   See [lint/internal/astwalk/visitor.go](/lint/internal/astwalk/visitor.go) for the whole list.
-   If none seem to match your needs, use `FuncDeclVisitor`.
+   See [go-lintpack/lintpack/astwalk/walker.go](https://github.com/go-lintpack/lintpack/blob/master/astwalk/walker.go) for the whole list.
+   If none seem to match your needs, use `WalkerForFuncDecl`.
 
 3. Define checker type and constructor function inside a new file under `checkers/${checkerName}_checker.go`.
 
