@@ -8,16 +8,16 @@ Some sections are copied from [ZeroMQ C4](https://rfc.zeromq.org/spec:42/C4/) (C
 
 There are three main ways to contribute:
 
-1. Join [issue tracker](https://github.com/go-critic/go-critic/issues) and help us with
+1. Join the [issue tracker](https://github.com/go-critic/go-critic/issues) and help us with
    feature requests, bug reports (including false-positive results), etc.
 
-2. Submit code patches: you can add a new checker, fix or improve already existing checkers
-   or make checkers running framework better. This includes patches that improve testing.
+2. Submit code patches: you can add a new checker, fix or improve existing checkers,
+   or make the framework for running checkers better. This includes patches that improve testing.
 
 3. Improve documentation and/or wiki pages.
 
-The simplest and recommended way to make a first contribution is to fix minor style issue
-like typo or missing doc comment. You can also filter issues by using
+The simplest and recommended way to make a first contribution is to fix a minor style issue such as
+a typo or missing doc comment. You can also filter issues by using
 [help wanted](https://github.com/go-critic/go-critic/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) and
 [good first issue](https://github.com/go-critic/go-critic/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) labels.
 
@@ -79,29 +79,26 @@ you'll find all answers there in a short time.
 [Russian](https://t.me/joinchat/DWka6kba5sa_EwTgmd3Vng)  
 ([Telegram website](https://telegram.org/))
 
-1. Come up with checker idea. Concentrate on what it checks.
+1. Come up with a checker idea. Concentrate on what it checks.
 
-2. Select one of the base checkers kind (example: expr checker, stmt checker, etc.).
+2. Select one of the base checker kinds (example: expr checker, stmt checker, etc.).
    See [lint/internal/astwalk/visitor.go](/lint/internal/astwalk/visitor.go) for the whole list.
    If none seem to match your needs, use `FuncDeclVisitor`.
 
 3. Define checker type and constructor function inside a new file under `lint/${checkerName}_checker.go`.
 
-4. Add `InitDocumentation(d *Documentation)` method. Fill `Summary`, `Before` and `After` fields.
+4. Define a `lintpack.CheckerInfo` within an `init()` function in your new file. Specify the checker `Name`, `Summary`, `Before`, and `After` fields. It's a good idea to also specify appropriate `Tags` (e.g. `"diagnostic"`, `"style"`, `"performace"`, `"opinionated"`); new checkers should generally include the `"experimental"` tag.
 
-5. Register checker with `addChecker` function in `init()`. It could be a good idea to mark recently added checker as `experimental`.
-   To do so, pass `attrExperimental` argument to the `addChecker` call.
+5. Register the checker by calling `AddChecker` function in `init()`, passing in the `CheckerInfo`.
 
-6. Add test directory that is named after the checker in `lint/testdata`.
+6. Add a test directory, named after the new checker, in `lint/testdata`.
 
-7. Add `positive_tests.go` and `negative_tests.go` files in that directory and add some positive and negative tests there.
-   Positive tests catch warnings, negative tests are used to avoid false positives.
-   See existing [positive_tests.go](/lint/testdata/ifElseChain/positive_tests.go) files for inspiration.
+7. Add `positive_tests.go` and `negative_tests.go` files in that directory. In `positive_tests.go`, add examples of Go code for which the checker should issue warnings. Before each line that should produce a warning, include a multiline comment starting with `/*!`, with the desired warning text as the comment body. In `negative_tests.go`, add examples of Go code for which the checker should _not_ issue a warning. See existing [`positive_tests.go`](/lint/testdata/ifElseChain/positive_tests.go)/[`negative_tests.go`](/lint/testdata/ifElseChain/negative_tests.go) files for inspiration.
 
-8. Run tests. They must fail as your checker does not check anything yet.  
+8. Run tests. They must fail as your checker does not check anything yet.
    Tests can be run with `go test -v -race -count=1 ./...`.
 
-9. Implement checker itself. Make tests pass.
+9. Implement the checker itself. Make the tests pass.
    `make ci` can be useful to check whether CI build will be successful.
 
 ## Dependencies
