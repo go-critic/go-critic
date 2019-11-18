@@ -13,7 +13,7 @@ func init() {
 	info := lintpack.CheckerInfo{
 		Name:    "whyNoLint",
 		Tags:    []string{"style", "experimental"},
-		Summary: "Ensures that //nolint comments include an explanation",
+		Summary: "Ensures that `//nolint` comments include an explanation",
 		Before:  `//nolint`,
 		After:   `//nolint // reason`,
 	}
