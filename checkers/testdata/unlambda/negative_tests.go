@@ -104,3 +104,8 @@ func typeConvert() {
 	_ = func(x int) int32 { return int32(x) }
 	_ = func(x int) int { return int(x) }
 }
+
+func varFunc() {
+	var varfunc func(x int) int
+	_ = func(x int) int { return varfunc(x) }
+}
