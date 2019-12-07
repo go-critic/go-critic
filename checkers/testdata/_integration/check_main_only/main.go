@@ -212,7 +212,7 @@ loop:
 }
 
 func unlambda(func(x int) int) {
-	add1 := func(x int) int { return x + 1 }
+	// Don't use local func here, see #888.
 	unlambda(func(x int) int { return add1(x) })
 }
 
@@ -276,5 +276,9 @@ func badCall(s string) {
 	_ = strings.Replace(s, "-", "=", 0)
 }
 
+// No test functions below this line, please.
+
 func main() {
 }
+
+func add1(x int) int { return x + 1 }
