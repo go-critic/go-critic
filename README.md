@@ -46,7 +46,7 @@ go get -v github.com/go-critic/go-critic/...
 After that, you can create `gocritic` binary by running:
 
 ```bash
-cd (go env GOPATH)/src/github.com/go-critic/go-critic &&
+cd $(go env GOPATH)/src/github.com/go-critic/go-critic &&
 	make gocritic
 ```
 
