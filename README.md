@@ -46,7 +46,8 @@ go get -v github.com/go-critic/go-critic/...
 After that, you can create `gocritic` binary by running:
 
 ```bash
-make gocritic
+cd (go env GOPATH)/src/github.com/go-critic/go-critic &&
+	make gocritic
 ```
 
 > Windows note: `lintpack build` might emit a warning. See https://github.com/go-critic/go-critic/issues/760.
