@@ -46,9 +46,9 @@ func badInt16(x1 int8, x2 int16, y int32) {
 
 func badInt32(x1 int8, x2 int16, x3 int32, y int64) {
 	/*! truncation in comparison 64->8 bit; cast the other operand to int64 instead */
-	_ = uint8(y) == x1
+	_ = int8(y) == x1
 	/*! truncation in comparison 64->8 bit; cast the other operand to int64 instead */
-	_ = x1 == uint8(y)
+	_ = x1 == int8(y)
 
 	/*! truncation in comparison 64->16 bit; cast the other operand to int64 instead */
 	_ = int16(y) == x2
