@@ -66,13 +66,11 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 }
 
 func (c *exitAfterDeferChecker) warn(cause *ast.CallExpr, deferStmt *ast.DeferStmt) {
-	var s string
+	s := astfmt.Sprint(deferStmt)
 	if fnlit, ok := deferStmt.Call.Fun.(*ast.FuncLit); ok {
 		// To avoid long and multi-line warning messages,
 		// collapse the function literals.
 		s = "defer " + astfmt.Sprint(fnlit.Type) + "{...}(...)"
-	} else {
-		s = astfmt.Sprint(deferStmt)
 	}
 	c.ctx.Warn(cause, "%s clutters `%s`", cause.Fun, s)
 }
