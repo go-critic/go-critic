@@ -81,6 +81,11 @@ func init() {
 			"bytes.Map => bytes.ToTitle": {
 				{0, "unicode.ToTitle"},
 			},
+
+			"draw.DrawMask => draw.Draw": {
+				{4, "nil"},
+				{5, "image.Point{}"},
+			},
 		}
 
 		matchers := make(map[string]*matcher)
