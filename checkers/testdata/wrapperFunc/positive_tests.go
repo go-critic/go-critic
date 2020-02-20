@@ -2,13 +2,15 @@ package checker_test
 
 import (
 	"bytes"
+	"image"
+	"image/draw"
 	"net/http"
 	"strings"
 	"sync"
 	"unicode"
 )
 
-func f(s string, b []byte) {
+func f(s string, b []byte, i draw.Image, r image.Rectangle, p image.Point, o draw.Op) {
 	var wg sync.WaitGroup
 	/*! use WaitGroup.Done method in `wg.Add(-1)` */
 	wg.Add(-1)
@@ -41,4 +43,7 @@ func f(s string, b []byte) {
 
 	/*! use http.NotFoundHandler method in `http.HandlerFunc(http.NotFound)` */
 	_ = http.HandlerFunc(http.NotFound)
+
+	/*! use draw.Draw method in `draw.DrawMask(i, r, i, p, nil, image.Point{}, o)` */
+	draw.DrawMask(i, r, i, p, nil, image.Point{}, o)
 }

@@ -2,12 +2,14 @@ package checker_test
 
 import (
 	"bytes"
+	"image"
+	"image/draw"
 	"net/http"
 	"strings"
 	"sync"
 )
 
-func appliedSuggestions(s string, b []byte) {
+func appliedSuggestions(s string, b []byte, i draw.Image, r image.Rectangle, p image.Point, o draw.Op) {
 	var wg sync.WaitGroup
 	wg.Done()
 	wg.Add(1)
@@ -28,9 +30,11 @@ func appliedSuggestions(s string, b []byte) {
 	bytes.ReplaceAll(b, b, b)
 
 	_ = http.NotFoundHandler()
+
+	draw.Draw(i, r, i, p, o)
 }
 
-func nonMatchingArgs(s string, b []byte) {
+func nonMatchingArgs(s string, b []byte, i draw.Image, r image.Rectangle, p image.Point, o draw.Op) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 
@@ -45,4 +49,6 @@ func nonMatchingArgs(s string, b []byte) {
 	bytes.Replace(b, b, b, 1)
 
 	_ = http.HandlerFunc(nil)
+
+	draw.DrawMask(i, r, i, p, i, image.Point{}, o)
 }
