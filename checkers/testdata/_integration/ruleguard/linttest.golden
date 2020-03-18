@@ -1,0 +1,3 @@
+exit status 1
+./f1.go:5:1: ruleguard: error as an underlying type is probably a mistake
+./f1.go:9:10: ruleguard: suggestion: s1+s2
