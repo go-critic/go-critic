@@ -15,11 +15,18 @@
 [pr-welcome-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 [pr-welcome-url]: https://github.com/go-critic/go-critic/blob/master/CONTRIBUTING.md
 
-Go source code linter providing checks currently missing from other linters.
+Highly extensible Go source code linter providing checks currently missing from other linters.
 
 ![Logo](https://avatars1.githubusercontent.com/u/40007520?s=400&u=b44287d8845a63fb0102d5259710c11ea367bb13&v=4)
 
 There is never too much static code analysis. Try it out.
+
+## Features
+
+* Almost hundred of diagnostics that check for [bugs](https://go-critic.github.io/overview#checkers-from-the-diagnostic-group), [performance](https://go-critic.github.io/overview#checkers-from-the-performance-group) and [style](https://go-critic.github.io/overview#checkers-from-the-style-group) issues
+* Extensible without re-compilation with [dynamic rules](https://quasilyte.dev/blog/post/ruleguard/)
+* Includes `#opinionated` checks with very strict and specific requirements
+* Self-documented: `gocritic doc <checkname>` gives a checker description
 
 ## Documentation
 
