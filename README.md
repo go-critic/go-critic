@@ -89,6 +89,9 @@ gocritic check fmt
 # Run all stable checkers on `pkg1` and `pkg2`
 gocritic check pkg1 pkg2
 
+# Run all stable checkers on `fmt` package and configure rangeExprCopy checker
+gocritic check -@rangeExprCopy.sizeThreshold 128 fmt
+
 # Runs specified checkers on `fmt` package:
 gocritic check -enable elseif,paramName fmt
 
@@ -104,6 +107,8 @@ gocritic check foo.go
 # Run stable diagnostics over `string` package
 gocritic check -enable='#diagnostic' -disable='#experimental' string
 ```
+
+> To get a list of available checker parameters, run `gocritic doc <checkerName>`.
 
 In place of a single name, **tag** can be used. Tag is a named checkers group.
 
