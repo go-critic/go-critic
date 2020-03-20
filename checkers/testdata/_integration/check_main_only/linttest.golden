@@ -42,8 +42,7 @@ exit status 1
 ./main.go:173:5: sloppyReassign: re-assignment to `err` can be replaced with `err := (point{})`
 ./main.go:180:2: switchTrue: replace 'switch true {}' with 'switch {}'
 ./main.go:260:2: typeAssertChain: rewrite if-else to type switch statement
-./main.go:189:2: typeSwitchVar: case 0 can benefit from type switch with assignment
-./main.go:189:2: typeSwitchVar: case 1 can benefit from type switch with assignment
+./main.go:189:2: typeSwitchVar: 2 cases can benefit from type switch with assignment
 ./main.go:200:8: typeUnparen: could simplify (func()) to func()
 ./main.go:204:9: underef: could simplify (*xs)[2] to xs[2]
 ./main.go:208:1: unlabelStmt: label loop is redundant
