@@ -101,11 +101,14 @@ gocritic check ./...
 # Like above, but without `appendAssign` check:
 gocritic check -disable=appendAssign ./...
 
-# Run all stable checkers on `foo.go` file
+# Run all stable checkers on `foo.go` file:
 gocritic check foo.go
 
-# Run stable diagnostics over `string` package
-gocritic check -enable='#diagnostic' -disable='#experimental' string
+# Run stable diagnostics over `strings` package:
+gocritic check -enable='#diagnostic' -disable='#experimental' strings
+
+# Run all stable and non-opinionated checks:
+gocritic check -enableAll -disable='#experimental,#opinionated' ./src/...
 ```
 
 > To get a list of available checker parameters, run `gocritic doc <checkerName>`.
