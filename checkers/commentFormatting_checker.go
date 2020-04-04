@@ -21,9 +21,10 @@ func init() {
 
 	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
 		parts := []string{
-			`^//\w+:.*$`,      //key: value
-			`^//nolint$`,      //nolint
-			`^//line /.*:\d+`, //line /path/to/file:123
+			`^//go:generate .*$`, //go:generate value
+			`^//\w+:.*$`,         //key: value
+			`^//nolint$`,         //nolint
+			`^//line /.*:\d+`,    //line /path/to/file:123
 		}
 		pat := "(?m)" + strings.Join(parts, "|")
 		pragmaRE := regexp.MustCompile(pat)
