@@ -13,6 +13,8 @@ are ignored
 
 //directive: abc
 
+//go:generate abc
+
 //#ifdef foo
 //#endif
 
