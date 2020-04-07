@@ -15,6 +15,6 @@ require (
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/quasilyte/go-consistent v0.0.0-20190521200055-c6f3937de18c
 	github.com/quasilyte/go-ruleguard v0.1.2-0.20200318202121-b00d7a75d3d8
-	github.com/quasilyte/regex/syntax v0.0.0-20200405164239-f6e043421647
+	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
 	golang.org/x/tools v0.0.0-20190521203540-521d6ed310dd
 )
