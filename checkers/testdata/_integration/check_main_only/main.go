@@ -276,6 +276,13 @@ func badCall(s string) {
 	_ = strings.Replace(s, "-", "=", 0)
 }
 
+func deferUnlambda() {
+	defer func() {
+		add1(1)
+	}()
+	_ = add1(0) // To avoid unnecessaryDefer warning
+}
+
 // No test functions below this line, please.
 
 func main() {
