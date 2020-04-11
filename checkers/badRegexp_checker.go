@@ -196,10 +196,8 @@ func (c *badRegexpChecker) checkCharClassRanges(cc syntax.Expr) bool {
 		if ch == 0 {
 			return false
 		}
-		okay := (ch >= 'a' && ch <= 'z') ||
-			(ch >= 'A' && ch <= 'Z') ||
-			(ch >= '0' && ch <= '9')
-		if !okay {
+		good := unicode.IsLetter(ch) || (ch >= '0' && ch <= '9')
+		if !good {
 			c.warnSloppyCharRange(e.Value, cc.Value)
 		}
 	}
