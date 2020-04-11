@@ -11,6 +11,7 @@ func goodRegexps() {
 }
 
 func goodRegexpsFromCorpus() {
+	regexp.MustCompile(`[а-яё]`)
 	regexp.MustCompile(`\s*\{weight=(\d+)\}\s*`)
 	regexp.MustCompile(`\{inherits=(\d+)\}`)
 	regexp.MustCompile(`[<>]+`)
