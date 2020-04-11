@@ -1,13 +1,11 @@
 # go-critic
 
-[![Build Status][travis-image]][travis-url]
+![Build Status](https://github.com/go-critic/go-critic/workflows/Go/badge.svg)
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#code-analysis)
 [![Go Report Card][go-report-image]][go-report-url]
 [![coverage][coverage-image]][coverage-url]
 [![PRs Welcome][pr-welcome-image]][pr-welcome-url]
 
-[travis-image]: https://travis-ci.org/go-critic/go-critic.svg?branch=master
-[travis-url]: https://travis-ci.org/go-critic/go-critic
 [go-report-image]: https://goreportcard.com/badge/github.com/go-critic/go-critic
 [go-report-url]: https://goreportcard.com/report/github.com/go-critic/go-critic
 [coverage-image]: https://coveralls.io/repos/github/go-critic/go-critic/badge.svg?branch=master
