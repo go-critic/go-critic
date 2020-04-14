@@ -197,13 +197,4 @@ func danglingAnchor() {
 	regexp.MustCompile(`(?i)(?m)\n^foo|bar|baz`)
 	/*! dangling or redundant ^, maybe \^ is intended? */
 	regexp.MustCompile("(?ms)^```(?:(?P<type>yaml)\\w*\\n(?P<content>.+?)|\\w*\\n(?P<content>\\{.+?\\}))\\n^```")
-
-	/*! dangling or redundant $, maybe \$ is intended? */
-	regexp.MustCompile(`$\b`)
-	/*! dangling or redundant $, maybe \$ is intended? */
-	regexp.MustCompile(`(a$|b)$`)
-	/*! dangling or redundant $, maybe \$ is intended? */
-	regexp.MustCompile(`(?:a+|b$)c`)
-	/*! dangling or redundant $, maybe \$ is intended? */
-	regexp.MustCompile(`^.* ENGINE=.*$/\)`)
 }
