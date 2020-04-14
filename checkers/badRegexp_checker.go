@@ -5,7 +5,6 @@ import (
 	"go/constant"
 	"sort"
 	"strconv"
-	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -39,8 +38,11 @@ type badRegexpChecker struct {
 	parser *syntax.Parser
 	cause  ast.Expr
 
-	exprFlags []string
+	flagStates  []regexpFlagState
+	goodAnchors []syntax.Position
 }
+
+type regexpFlagState [256]bool
 
 func (c *badRegexpChecker) VisitExpr(x ast.Expr) {
 	call, ok := x.(*ast.CallExpr)
@@ -66,9 +68,62 @@ func (c *badRegexpChecker) checkPattern(pat string) {
 		return
 	}
 
-	c.exprFlags = c.exprFlags[:0]
+	c.flagStates = c.flagStates[:0]
+	c.goodAnchors = c.goodAnchors[:0]
 
+	// In Go all flags (modifiers) are set to false by default,
+	// so we start from the empty flag set.
+	c.flagStates = append(c.flagStates, regexpFlagState{})
+
+	c.markGoodCarets(re.Expr)
+	c.markGoodDollars(re.Expr)
 	c.walk(re.Expr)
+}
+
+func (c *badRegexpChecker) markGoodCarets(e syntax.Expr) {
+	canSkip := func(e syntax.Expr) bool {
+		switch e.Op {
+		case syntax.OpFlagOnlyGroup:
+			return true
+		case syntax.OpGroup:
+			x := e.Args[0]
+			return x.Op == syntax.OpConcat && len(x.Args) == 0
+		}
+		return false
+	}
+
+	if e.Op == syntax.OpConcat && len(e.Args) > 1 {
+		i := 0
+		for i < len(e.Args) && canSkip(e.Args[i]) {
+			i++
+		}
+		if i < len(e.Args) {
+			c.markGoodCarets(e.Args[i])
+		}
+		return
+	}
+	if e.Op == syntax.OpCaret {
+		c.addGoodAnchor(e.Pos)
+	}
+	for _, a := range e.Args {
+		c.markGoodCarets(a)
+	}
+}
+
+func (c *badRegexpChecker) markGoodDollars(e syntax.Expr) {
+	if e.Op == syntax.OpConcat && len(e.Args) > 1 {
+		i := len(e.Args) - 1
+		if i >= 0 {
+			c.markGoodDollars(e.Args[i])
+		}
+		return
+	}
+	if e.Op == syntax.OpDollar {
+		c.addGoodAnchor(e.Pos)
+	}
+	for _, a := range e.Args {
+		c.markGoodDollars(a)
+	}
 }
 
 func (c *badRegexpChecker) walk(e syntax.Expr) {
@@ -90,18 +145,31 @@ func (c *badRegexpChecker) walk(e syntax.Expr) {
 		c.walk(e.Args[0])
 
 	case syntax.OpFlagOnlyGroup:
-		c.checkFlags(e, e.Args[0].Value)
-		c.exprFlags = append(c.exprFlags, e.Args[0].Value)
+		c.updateFlagState(c.currentFlagState(), e, e.Args[0].Value)
 	case syntax.OpGroupWithFlags:
-		nflags := len(c.exprFlags)
-		c.checkFlags(e, e.Args[1].Value)
-		c.exprFlags = append(c.exprFlags, e.Args[1].Value)
+		// Creates a new context using the current context copy.
+		// New flags are evaluated inside a new context.
+		// After nested expressions are processed, previous context is restored.
+		nflags := len(c.flagStates)
+		c.flagStates = append(c.flagStates, *c.currentFlagState())
+		c.updateFlagState(c.currentFlagState(), e, e.Args[1].Value)
 		c.walk(e.Args[0])
-		c.exprFlags = c.exprFlags[:nflags]
+		c.flagStates = c.flagStates[:nflags]
 	case syntax.OpGroup, syntax.OpCapture, syntax.OpNamedCapture:
-		nflags := len(c.exprFlags)
+		// Like with OpGroupWithFlags, but doesn't evaluate any new flags.
+		nflags := len(c.flagStates)
+		c.flagStates = append(c.flagStates, *c.currentFlagState())
 		c.walk(e.Args[0])
-		c.exprFlags = c.exprFlags[:nflags]
+		c.flagStates = c.flagStates[:nflags]
+
+	case syntax.OpCaret:
+		if !c.isGoodAnchor(e) {
+			c.warn("dangling or redundant ^, maybe \\^ is intended?")
+		}
+	case syntax.OpDollar:
+		if !c.isGoodAnchor(e) {
+			c.warn("dangling or redundant $, maybe \\$ is intended?")
+		}
 
 	default:
 		for _, a := range e.Args {
@@ -110,11 +178,29 @@ func (c *badRegexpChecker) walk(e syntax.Expr) {
 	}
 }
 
-func (c *badRegexpChecker) checkFlags(e syntax.Expr, flags string) {
-	for _, fset := range c.exprFlags {
-		if i := strings.IndexAny(flags, fset); i != -1 {
-			c.warn("redundant flag %c in %s", flags[i], e.Value)
+func (c *badRegexpChecker) currentFlagState() *regexpFlagState {
+	return &c.flagStates[len(c.flagStates)-1]
+}
+
+func (c *badRegexpChecker) updateFlagState(state *regexpFlagState, e syntax.Expr, flagString string) {
+	clearing := false
+	for i := 0; i < len(flagString); i++ {
+		ch := flagString[i]
+		if ch == '-' {
+			clearing = true
+			continue
 		}
+
+		if clearing {
+			if !state[ch] {
+				c.warn("clearing unset flag %c in %s", ch, e.Value)
+			}
+		} else {
+			if state[ch] {
+				c.warn("redundant flag %c in %s", ch, e.Value)
+			}
+		}
+		state[ch] = !clearing
 	}
 }
 
@@ -145,15 +231,19 @@ func (c *badRegexpChecker) checkAltDups(alt syntax.Expr) {
 	}
 }
 
+func (c *badRegexpChecker) isCharOrLit(e syntax.Expr) bool {
+	return e.Op == syntax.OpChar || e.Op == syntax.OpLiteral
+}
+
 func (c *badRegexpChecker) checkAltAnchor(alt syntax.Expr) {
 	// Seek suspicious anchors.
 
 	// Case 1: an alternation of literals where 1st expr begins with ^ anchor.
 	first := alt.Args[0]
-	if first.Op == syntax.OpConcat && len(first.Args) > 0 && first.Args[0].Op == syntax.OpCaret {
+	if first.Op == syntax.OpConcat && len(first.Args) == 2 && first.Args[0].Op == syntax.OpCaret && c.isCharOrLit(first.Args[1]) {
 		matched := true
 		for _, a := range alt.Args[1:] {
-			if a.Op != syntax.OpLiteral && a.Op != syntax.OpChar {
+			if !c.isCharOrLit(a) {
 				matched = false
 				break
 			}
@@ -165,10 +255,10 @@ func (c *badRegexpChecker) checkAltAnchor(alt syntax.Expr) {
 
 	// Case 2: an alternation of literals where last expr ends with $ anchor.
 	last := alt.Args[len(alt.Args)-1]
-	if last.Op == syntax.OpConcat && len(last.Args) > 0 && last.LastArg().Op == syntax.OpDollar {
+	if last.Op == syntax.OpConcat && len(last.Args) == 2 && last.Args[1].Op == syntax.OpDollar && c.isCharOrLit(last.Args[0]) {
 		matched := true
 		for _, a := range alt.Args[:len(alt.Args)-1] {
-			if a.Op != syntax.OpLiteral && a.Op != syntax.OpChar {
+			if !c.isCharOrLit(a) {
 				matched = false
 				break
 			}
@@ -189,7 +279,8 @@ func (c *badRegexpChecker) checkCharClassRanges(cc syntax.Expr) bool {
 		if e.Op != syntax.OpCharRange {
 			continue
 		}
-		if e.Args[0].Op == syntax.OpEscapeOctal || e.Args[0].Op == syntax.OpEscapeHex {
+		switch e.Args[0].Op {
+		case syntax.OpEscapeOctal, syntax.OpEscapeHex:
 			continue
 		}
 		ch := c.charClassBoundRune(e.Args[0])
@@ -340,6 +431,19 @@ func (c *badRegexpChecker) hexToRune(e syntax.Expr) rune {
 func (c *badRegexpChecker) stringToRune(s string) rune {
 	ch, _ := utf8.DecodeRuneInString(s)
 	return ch
+}
+
+func (c *badRegexpChecker) addGoodAnchor(pos syntax.Position) {
+	c.goodAnchors = append(c.goodAnchors, pos)
+}
+
+func (c *badRegexpChecker) isGoodAnchor(e syntax.Expr) bool {
+	for _, pos := range c.goodAnchors {
+		if e.Pos == pos {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *badRegexpChecker) warn(format string, args ...interface{}) {

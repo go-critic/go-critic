@@ -13,6 +13,9 @@ func suspiciousCharRange() {
 
 	/*! suspicious char range `❤-❥` in [❤-❥] */
 	regexp.MustCompile(`[❤-❥]`)
+
+	/*! suspicious char range `,-.` in [0-9,-.] */
+	regexp.MustCompile("\\\\?(?:{[0-9,-.]*}|{q})")
 }
 
 func altDups() {
@@ -70,6 +73,12 @@ func charClassDuplicates() {
 
 	/*! `\W` intersects with `❤` in [\w\W❤] */
 	regexp.MustCompile(`[\w\W❤]`)
+
+	/*! `|` is duplicated in [a|b|m|k] */
+	regexp.MustCompile("(?i)\x1b\\[([0-9]{1,2}(;[0-9]{1,2})?)?[a|b|m|k]")
+
+	/*! `\w` intersects with `_` in [\w!#$%&'*+/=?^_`{|}~-] */
+	regexp.MustCompile("^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.+a)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?$")
 }
 
 func repeatedQuantifier() {
@@ -95,6 +104,33 @@ func redundantFlags() {
 	regexp.MustCompile(`((?m)(?m:a|b(?s:foo))(?i)x)`)
 }
 
+func flagClear() {
+	/*! clearing unset flag i in (?-i) */
+	regexp.MustCompile(`(?-i)x`)
+
+	/*! clearing unset flag i in (?-i) */
+	regexp.MustCompile(`(?i:foo)(?-i)bar`)
+
+	/*! clearing unset flag m in (?-mi) */
+	/*! clearing unset flag i in (?-mi) */
+	regexp.MustCompile(`(?i:(?m:fo(?-i)o))(?-mi)bar`)
+
+	/*! clearing unset flag i in (?i-ii) */
+	regexp.MustCompile(`(?i-ii)`)
+
+	/*! clearing unset flag i in (?-i) */
+	regexp.MustCompile(`(?:(?i)foo)(?-i)`)
+
+	/*! clearing unset flag i in (?-i) */
+	regexp.MustCompile(`((?i)(?-i))(?-i)`)
+
+	/*! clearing unset flag i in (?-i) */
+	regexp.MustCompile(`(?:(?i)(?-i))(?-i)`)
+
+	/*! clearing unset flag s in (?m-s) */
+	regexp.MustCompile(`(?m-s)(?:tags)/(\S+)$`)
+}
+
 func suspiciousAltAnchor() {
 	/*! ^ applied only to `foo` in ^foo|bar|baz */
 	regexp.MustCompile(`^foo|bar|baz`)
@@ -106,7 +142,7 @@ func suspiciousAltAnchor() {
 	regexp.MustCompile(`foo|bar|baz$`)
 
 	/*! $ applied only to `bc` in a|bc$ */
-	regexp.MustCompile(`(?:a|bc$)c`)
+	regexp.MustCompile(`c(?:a|bc$)`)
 }
 
 func badRegexps() {
@@ -138,4 +174,36 @@ func badRegexps() {
 
 	/*! $ applied only to `b` in a|b$ */
 	regexp.MustCompile(`^(?:(?:https?:\/\/)?google\.com)?\/(a|b$)`)
+}
+
+func danglingAnchor() {
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`a^`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`a^b`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`^^foo`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`foo?|bar^`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`(?i:a)^foo`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`(?i)^(?:foo|bar|^baz)`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`(?i)^(?m)foobar^baz`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`(?i:foo|((?:f|b|(foo|^bar)^)))`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile(`(?i)(?m)\n^foo|bar|baz`)
+	/*! dangling or redundant ^, maybe \^ is intended? */
+	regexp.MustCompile("(?ms)^```(?:(?P<type>yaml)\\w*\\n(?P<content>.+?)|\\w*\\n(?P<content>\\{.+?\\}))\\n^```")
+
+	/*! dangling or redundant $, maybe \$ is intended? */
+	regexp.MustCompile(`$\b`)
+	/*! dangling or redundant $, maybe \$ is intended? */
+	regexp.MustCompile(`(a$|b)$`)
+	/*! dangling or redundant $, maybe \$ is intended? */
+	regexp.MustCompile(`(?:a+|b$)c`)
+	/*! dangling or redundant $, maybe \$ is intended? */
+	regexp.MustCompile(`^.* ENGINE=.*$/\)`)
 }
