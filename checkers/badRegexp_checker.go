@@ -76,7 +76,6 @@ func (c *badRegexpChecker) checkPattern(pat string) {
 	c.flagStates = append(c.flagStates, regexpFlagState{})
 
 	c.markGoodCarets(re.Expr)
-	c.markGoodDollars(re.Expr)
 	c.walk(re.Expr)
 }
 
@@ -107,22 +106,6 @@ func (c *badRegexpChecker) markGoodCarets(e syntax.Expr) {
 	}
 	for _, a := range e.Args {
 		c.markGoodCarets(a)
-	}
-}
-
-func (c *badRegexpChecker) markGoodDollars(e syntax.Expr) {
-	if e.Op == syntax.OpConcat && len(e.Args) > 1 {
-		i := len(e.Args) - 1
-		if i >= 0 {
-			c.markGoodDollars(e.Args[i])
-		}
-		return
-	}
-	if e.Op == syntax.OpDollar {
-		c.addGoodAnchor(e.Pos)
-	}
-	for _, a := range e.Args {
-		c.markGoodDollars(a)
 	}
 }
 
@@ -165,10 +148,6 @@ func (c *badRegexpChecker) walk(e syntax.Expr) {
 	case syntax.OpCaret:
 		if !c.isGoodAnchor(e) {
 			c.warn("dangling or redundant ^, maybe \\^ is intended?")
-		}
-	case syntax.OpDollar:
-		if !c.isGoodAnchor(e) {
-			c.warn("dangling or redundant $, maybe \\$ is intended?")
 		}
 
 	default:
