@@ -42,7 +42,7 @@ type badRegexpChecker struct {
 	goodAnchors []syntax.Position
 }
 
-type regexpFlagState [256]bool
+type regexpFlagState [utf8.RuneSelf]bool
 
 func (c *badRegexpChecker) VisitExpr(x ast.Expr) {
 	call, ok := x.(*ast.CallExpr)
@@ -189,6 +189,9 @@ func (c *badRegexpChecker) updateFlagState(state *regexpFlagState, e syntax.Expr
 		if ch == '-' {
 			clearing = true
 			continue
+		}
+		if int(ch) >= len(state) {
+			continue // Should never happen in practice, but we don't want a panic
 		}
 
 		if clearing {
