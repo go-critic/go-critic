@@ -16,6 +16,23 @@ func multiPass() {
 	regexp.MustCompile(`(?:a|b|c)`)
 }
 
+func altCommonPrefixSuffix() {
+	/*! can re-write `foo|fo` as `foo?` */
+	regexp.MustCompile(`foo|fo`)
+
+	/*! can re-write `(?:http|https)://` as `(?:https?)://` */
+	regexp.MustCompile(`(?:http|https)://`)
+
+	/*! can re-write `xpath|path` as `x?path` */
+	regexp.MustCompile(`xpath|path`)
+
+	// Should also work with multi-byte runes.
+	/*! can re-write `❤path|path` as `❤?path` */
+	regexp.MustCompile(`❤path|path`)
+	/*! can re-write `fo|fo❤` as `fo❤?` */
+	regexp.MustCompile(`fo|fo❤`)
+}
+
 // xx* -> x+
 func merge() {
 	/*! can re-write `x[abcd][abcd]*y` as `x[abcd]+y` */

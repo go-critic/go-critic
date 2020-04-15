@@ -12,6 +12,15 @@ func shouldNotSimplify() {
 	regexp.MustCompile(`[)]`)
 }
 
+func noCommonPrefixSuffix() {
+	regexp.MustCompile(`aa|a`) // Too short to bother
+
+	regexp.MustCompile(`foo|fa`) // Doesn't match our criteria
+	regexp.MustCompile(`1path|2path`)
+
+	regexp.MustCompile(`(?:http|https|ftp)://`) // More than 2 alternatives
+}
+
 func cantSimplify() {
 	// Most of these patterns come from the projects available at GitHub.
 
