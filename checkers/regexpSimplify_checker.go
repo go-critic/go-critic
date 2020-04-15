@@ -6,6 +6,7 @@ import (
 	"go/constant"
 	"log"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/go-lintpack/lintpack"
 	"github.com/go-lintpack/lintpack/astwalk"
@@ -95,7 +96,6 @@ func (c *regexpSimplifyChecker) simplify(pass int, pat string) string {
 	// TODO(quasilyte): evaluate char range to suggest better replacements.
 	// TODO(quasilyte): (?:ab|ac) -> a[bc]
 	// TODO(quasilyte): suggest "s" and "." flag if things like [\w\W] are used.
-	// TODO(quasilyte): do more than 1 round, simplify [^0-9] -> \d.
 	// TODO(quasilyte): x{n}x? -> x{n,n+1}
 
 	c.walk(re.Expr)
@@ -364,28 +364,81 @@ func (c *regexpSimplifyChecker) canCombine(x, y syntax.Expr) (threshold int, ok 
 	return 0, false
 }
 
-func (c *regexpSimplifyChecker) walkAlt(alt syntax.Expr) {
-	allChars := true
-	for _, e := range alt.Args {
-		if e.Op != syntax.OpChar {
-			allChars = false
-			break
+func (c *regexpSimplifyChecker) concatLiteral(e syntax.Expr) string {
+	if e.Op == syntax.OpConcat && c.allChars(e) {
+		return e.Value
+	}
+	return ""
+}
+
+func (c *regexpSimplifyChecker) allChars(e syntax.Expr) bool {
+	for _, a := range e.Args {
+		if a.Op != syntax.OpChar {
+			return false
 		}
 	}
+	return true
+}
 
-	if allChars {
+func (c *regexpSimplifyChecker) factorPrefixSuffix(alt syntax.Expr) bool {
+	// TODO: more forms of prefixes/suffixes?
+	//
+	// A more generalized algorithm could handle `fo|fo1|fo2` -> `fo[12]?`.
+	// but it's an open question whether the latter form universally better.
+	//
+	// Right now it handles only the simplest cases:
+	// `http|https` -> `https?`
+	// `xfoo|foo` -> `x?foo`
+	if len(alt.Args) != 2 {
+		return false
+	}
+	x := c.concatLiteral(alt.Args[0])
+	y := c.concatLiteral(alt.Args[1])
+	if x == y {
+		return false // Reject non-literals and identical strings early
+	}
+
+	// Let x be a shorter string.
+	if len(x) > len(y) {
+		x, y = y, x
+	}
+	// Do we have a common prefix?
+	tail := strings.TrimPrefix(y, x)
+	if len(tail) <= utf8.UTFMax && utf8.RuneCountInString(tail) == 1 {
+		c.out.WriteString(x + tail + "?")
+		c.score++
+		return true
+	}
+	// Do we have a common suffix?
+	head := strings.TrimSuffix(y, x)
+	if len(head) <= utf8.UTFMax && utf8.RuneCountInString(head) == 1 {
+		c.out.WriteString(head + "?" + x)
+		c.score++
+		return true
+	}
+	return false
+}
+
+func (c *regexpSimplifyChecker) walkAlt(alt syntax.Expr) {
+	// `x|y|z` -> `[xyz]`.
+	if c.allChars(alt) {
 		c.score++
 		c.out.WriteString("[")
 		for _, e := range alt.Args {
 			c.out.WriteString(e.Value)
 		}
 		c.out.WriteString("]")
-	} else {
-		for i, e := range alt.Args {
-			c.walk(e)
-			if i != len(alt.Args)-1 {
-				c.out.WriteString("|")
-			}
+		return
+	}
+
+	if c.factorPrefixSuffix(alt) {
+		return
+	}
+
+	for i, e := range alt.Args {
+		c.walk(e)
+		if i != len(alt.Args)-1 {
+			c.out.WriteString("|")
 		}
 	}
 }
