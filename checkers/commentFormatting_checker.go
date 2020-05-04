@@ -25,6 +25,7 @@ func init() {
 			`^//\w+:.*$`,         //key: value
 			`^//nolint$`,         //nolint
 			`^//line /.*:\d+`,    //line /path/to/file:123
+			`^//export \w+$`,     // export Foo
 		}
 		pat := "(?m)" + strings.Join(parts, "|")
 		pragmaRE := regexp.MustCompile(pat)
