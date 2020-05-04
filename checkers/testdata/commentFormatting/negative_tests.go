@@ -27,6 +27,10 @@ are ignored
 //line /foo/bar/f-ad/a_d.go:13
 //line /bar.go:14
 
+//export myfunc
+func myfunc() {
+}
+
 //go:noinline
 func f1() {
 	//nolint
