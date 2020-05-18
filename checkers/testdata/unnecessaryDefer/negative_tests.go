@@ -35,3 +35,21 @@ func foo_6() int {
 	defer func() {}()
 	return foo_2()
 }
+
+func foo_7() int {
+	if true {
+		defer func() {}()
+	}
+	return 0
+}
+
+func foo_8() int {
+	if true {
+		foo_1()
+		foo_2()
+		foo_3()
+
+		defer func() {}()
+	}
+	return 0
+}

@@ -38,11 +38,6 @@ github.com/quasilyte/go-consistent v0.0.0-20190521200055-c6f3937de18c h1:JoUA0uz
 github.com/quasilyte/go-consistent v0.0.0-20190521200055-c6f3937de18c/go.mod h1:5STLWrekHfjyYwxBRVRXNOSewLJ3PWfDJd1VyTS21fI=
 github.com/quasilyte/go-ruleguard v0.1.2-0.20200318202121-b00d7a75d3d8 h1:DvnesvLtRPQOvaUbfXfh0tpMHg29by0H7F2U+QIkSu8=
 github.com/quasilyte/go-ruleguard v0.1.2-0.20200318202121-b00d7a75d3d8/go.mod h1:CGFX09Ci3pq9QZdj86B+VGIdNj4VyCo2iPOGS9esB/k=
-github.com/quasilyte/regex v0.0.0-20200402210348-d7167c1cb489 h1:MaRo2gFtvdQHnxOMUhKxyWAbaRXn7siZJOD4zKrYeQU=
-github.com/quasilyte/regex/syntax v0.0.0-20200402210348-d7167c1cb489 h1:Wg/knSPrrEsisZKcWBk8cGbiroiNk7v6jeHZAcAfzz4=
-github.com/quasilyte/regex/syntax v0.0.0-20200402210348-d7167c1cb489/go.mod h1:rlzQ04UMyJXu/aOvhd8qT+hvDrFpiwqp8MRXDY9szc0=
-github.com/quasilyte/regex/syntax v0.0.0-20200405164239-f6e043421647 h1:ST0AU0FGuLuKkS3RlulTWjV4pBelyTH7wBLA9/SYAUE=
-github.com/quasilyte/regex/syntax v0.0.0-20200405164239-f6e043421647/go.mod h1:rlzQ04UMyJXu/aOvhd8qT+hvDrFpiwqp8MRXDY9szc0=
 github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95 h1:L8QM9bvf68pVdQ3bCFZMDmnt9yqcMBro1pC7F+IPYMY=
 github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95/go.mod h1:rlzQ04UMyJXu/aOvhd8qT+hvDrFpiwqp8MRXDY9szc0=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
