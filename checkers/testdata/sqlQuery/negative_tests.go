@@ -4,6 +4,12 @@ import (
 	"database/sql"
 )
 
+func foo() (int, int) { return 0, 0 }
+
+func notQueryCall() {
+	_, _ = foo()
+}
+
 func queryResultIsUsed(db *sql.DB, qe QueryExecer, mydb *myDatabase) {
 	const queryString = "SELECT * FROM users"
 

@@ -36,16 +36,16 @@ func (c *sqlQueryChecker) VisitStmt(stmt ast.Stmt) {
 		return
 	}
 
-	call := astcast.ToCallExpr(assign.Rhs[0])
-	funcExpr := astcast.ToSelectorExpr(call.Fun)
-	if !c.funcIsQuery(funcExpr) {
-		return
-	}
-
 	// If Query() is called, but first return value is ignored,
 	// there is no way to close/read the returned rows.
 	// This can cause a connection leak.
 	if id, ok := assign.Lhs[0].(*ast.Ident); ok && id.Name != "_" {
+		return
+	}
+
+	call := astcast.ToCallExpr(assign.Rhs[0])
+	funcExpr := astcast.ToSelectorExpr(call.Fun)
+	if !c.funcIsQuery(funcExpr) {
 		return
 	}
 
@@ -57,6 +57,9 @@ func (c *sqlQueryChecker) VisitStmt(stmt ast.Stmt) {
 }
 
 func (c *sqlQueryChecker) funcIsQuery(funcExpr *ast.SelectorExpr) bool {
+	if funcExpr.Sel == nil {
+		return false
+	}
 	switch funcExpr.Sel.Name {
 	case "Query", "QueryContext":
 		// Stdlib and friends.
