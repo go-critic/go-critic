@@ -15,7 +15,7 @@
 
 Highly extensible Go source code linter providing checks currently missing from other linters.
 
-![Logo](https://avatars1.githubusercontent.com/u/40007520?s=400&u=b44287d8845a63fb0102d5259710c11ea367bb13&v=4)
+![Logo](https://avatars1.githubusercontent.com/u/40007520?s=300&u=b44287d8845a63fb0102d5259710c11ea367bb13&v=4)
 
 There is never too much static code analysis. Try it out.
 
