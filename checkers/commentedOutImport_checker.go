@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/go-lintpack/lintpack"
-	"github.com/go-lintpack/lintpack/astwalk"
+	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 )
 
 func init() {
