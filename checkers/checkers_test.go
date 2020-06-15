@@ -3,8 +3,8 @@ package checkers
 import (
 	"testing"
 
-	"github.com/go-lintpack/lintpack"
-	"github.com/go-lintpack/lintpack/linttest"
+	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/framework/linttest"
 )
 
 func TestCheckers(t *testing.T) {
@@ -12,7 +12,7 @@ func TestCheckers(t *testing.T) {
 		"captLocal": {"paramsOnly": false},
 	}
 
-	for _, info := range lintpack.GetCheckersInfo() {
+	for _, info := range linter.GetCheckersInfo() {
 		params := allParams[info.Name]
 		for key, p := range info.Params {
 			v, ok := params[key]
@@ -25,7 +25,13 @@ func TestCheckers(t *testing.T) {
 	linttest.TestCheckers(t)
 }
 
-func TestIntegration(t *testing.T) { linttest.TestIntegration(t) }
+func TestIntegration(t *testing.T) {
+	cfg := linttest.IntegrationTest{
+		Main: "github.com/go-critic/go-critic/cmd/gocritic",
+		Dir:  "./testdata/_integration",
+	}
+	cfg.Run(t)
+}
 
 func TestTags(t *testing.T) {
 	// Verify that we're only using strict set of tags.
@@ -33,7 +39,7 @@ func TestTags(t *testing.T) {
 	//
 	// Also check that exactly 1 category tag is used.
 
-	for _, info := range lintpack.GetCheckersInfo() {
+	for _, info := range linter.GetCheckersInfo() {
 		categories := 0
 		for _, tag := range info.Tags {
 			switch tag {
@@ -55,7 +61,7 @@ func TestTags(t *testing.T) {
 }
 
 func TestDocs(t *testing.T) {
-	for _, info := range lintpack.GetCheckersInfo() {
+	for _, info := range linter.GetCheckersInfo() {
 		if info.Summary == "" {
 			t.Errorf("%q checker lacks summary", info.Name)
 		}
@@ -111,7 +117,7 @@ func TestStableList(t *testing.T) {
 		m[name] = true
 	}
 
-	for _, info := range lintpack.GetCheckersInfo() {
+	for _, info := range linter.GetCheckersInfo() {
 		if info.HasTag("experimental") {
 			continue
 		}

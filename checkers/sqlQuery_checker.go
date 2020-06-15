@@ -4,27 +4,27 @@ import (
 	"go/ast"
 	"go/types"
 
-	"github.com/go-lintpack/lintpack"
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
-	var info lintpack.CheckerInfo
+	var info linter.CheckerInfo
 	info.Name = "sqlQuery"
 	info.Tags = []string{"diagnostic", "experimental"}
 	info.Summary = "Detects issue in Query() and Exec() calls"
 	info.Before = `_, err := db.Query("UPDATE ...")`
 	info.After = `_, err := db.Exec("UPDATE ...")`
 
-	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		return astwalk.WalkerForStmt(&sqlQueryChecker{ctx: ctx})
 	})
 }
 
 type sqlQueryChecker struct {
 	astwalk.WalkHandler
-	ctx *lintpack.CheckerContext
+	ctx *linter.CheckerContext
 }
 
 func (c *sqlQueryChecker) VisitStmt(stmt ast.Stmt) {

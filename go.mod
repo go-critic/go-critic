@@ -9,8 +9,11 @@ require (
 	github.com/go-toolsmith/astequal v1.0.0
 	github.com/go-toolsmith/astfmt v1.0.0
 	github.com/go-toolsmith/astp v1.0.0
+	github.com/go-toolsmith/pkgload v1.0.0
 	github.com/go-toolsmith/strparse v1.0.0
 	github.com/go-toolsmith/typep v1.0.2
+	github.com/google/go-cmp v0.2.0
+	github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
 	github.com/mattn/goveralls v0.0.2
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/quasilyte/go-consistent v0.0.0-20190521200055-c6f3937de18c

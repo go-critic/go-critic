@@ -8,13 +8,13 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/go-lintpack/lintpack"
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/quasilyte/regex/syntax"
 )
 
 func init() {
-	var info lintpack.CheckerInfo
+	var info linter.CheckerInfo
 	info.Name = "regexpSimplify"
 	info.Tags = []string{"style", "experimental", "opinionated"}
 	info.Summary = "Detects regexp patterns that can be simplified"
@@ -26,7 +26,7 @@ func init() {
 	//      `[[:digit:]] -> \d`
 	//      `[A-Za-z0-9_]` -> `\w`
 
-	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		opts := &syntax.ParserOptions{
 			NoLiterals: true,
 		}
@@ -41,7 +41,7 @@ func init() {
 
 type regexpSimplifyChecker struct {
 	astwalk.WalkHandler
-	ctx    *lintpack.CheckerContext
+	ctx    *linter.CheckerContext
 	parser *syntax.Parser
 
 	// out is a tmp buffer where we build a simplified regexp pattern.

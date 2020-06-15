@@ -7,15 +7,15 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/go-lintpack/lintpack"
+	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/quasilyte/go-ruleguard/ruleguard"
 )
 
 func init() {
-	var info lintpack.CheckerInfo
+	var info linter.CheckerInfo
 	info.Name = "ruleguard"
 	info.Tags = []string{"style", "experimental"}
-	info.Params = lintpack.CheckerParams{
+	info.Params = linter.CheckerParams{
 		"rules": {
 			Value: "",
 			Usage: "path to a gorules file",
@@ -27,12 +27,12 @@ func init() {
 	info.After = `N/A`
 	info.Note = "See https://github.com/quasilyte/go-ruleguard."
 
-	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		return newRuleguardChecker(&info, ctx)
 	})
 }
 
-func newRuleguardChecker(info *lintpack.CheckerInfo, ctx *lintpack.CheckerContext) *ruleguardChecker {
+func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *ruleguardChecker {
 	c := &ruleguardChecker{ctx: ctx}
 	rulesFilename := info.Params.String("rules")
 	if rulesFilename == "" {
@@ -63,7 +63,7 @@ func newRuleguardChecker(info *lintpack.CheckerInfo, ctx *lintpack.CheckerContex
 }
 
 type ruleguardChecker struct {
-	ctx *lintpack.CheckerContext
+	ctx *linter.CheckerContext
 
 	rset *ruleguard.GoRuleSet
 }

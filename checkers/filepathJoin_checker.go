@@ -4,27 +4,27 @@ import (
 	"go/ast"
 	"strings"
 
-	"github.com/go-lintpack/lintpack"
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
-	var info lintpack.CheckerInfo
+	var info linter.CheckerInfo
 	info.Name = "filepathJoin"
 	info.Tags = []string{"diagnostic", "experimental"}
 	info.Summary = "Detects problems in filepath.Join() function calls"
 	info.Before = `filepath.Join("dir/", filename)`
 	info.After = `filepath.Join("dir", filename)`
 
-	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		return astwalk.WalkerForExpr(&filepathJoinChecker{ctx: ctx})
 	})
 }
 
 type filepathJoinChecker struct {
 	astwalk.WalkHandler
-	ctx *lintpack.CheckerContext
+	ctx *linter.CheckerContext
 }
 
 func (c *filepathJoinChecker) VisitExpr(expr ast.Expr) {

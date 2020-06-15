@@ -6,20 +6,20 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/go-lintpack/lintpack"
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
-	var info lintpack.CheckerInfo
+	var info linter.CheckerInfo
 	info.Name = "wrapperFunc"
 	info.Tags = []string{"style", "experimental"}
 	info.Summary = "Detects function calls that can be replaced with convenience wrappers"
 	info.Before = `wg.Add(-1)`
 	info.After = `wg.Done()`
 
-	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		type arg struct {
 			index int
 			value string
@@ -208,7 +208,7 @@ func init() {
 
 type wrapperFuncChecker struct {
 	astwalk.WalkHandler
-	ctx *lintpack.CheckerContext
+	ctx *linter.CheckerContext
 
 	findSuggestion func(*ast.CallExpr) string
 }

@@ -4,27 +4,27 @@ import (
 	"go/ast"
 	"go/types"
 
-	"github.com/go-lintpack/lintpack"
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-toolsmith/astcast"
 )
 
 func init() {
-	var info lintpack.CheckerInfo
+	var info linter.CheckerInfo
 	info.Name = "deferUnlambda"
 	info.Tags = []string{"style", "experimental"}
 	info.Summary = "Detects deferred function literals that can be simplified"
 	info.Before = `defer func() { f() }()`
 	info.After = `f()`
 
-	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		return astwalk.WalkerForStmt(&deferUnlambdaChecker{ctx: ctx})
 	})
 }
 
 type deferUnlambdaChecker struct {
 	astwalk.WalkHandler
-	ctx *lintpack.CheckerContext
+	ctx *linter.CheckerContext
 }
 
 func (c *deferUnlambdaChecker) VisitStmt(x ast.Stmt) {
