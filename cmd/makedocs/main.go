@@ -7,7 +7,7 @@ import (
 	"text/template"
 
 	_ "github.com/go-critic/go-critic/checkers"
-	"github.com/go-lintpack/lintpack"
+	"github.com/go-critic/go-critic/framework/linter"
 )
 
 const (
@@ -23,9 +23,9 @@ func main() {
 
 	buf := bytes.Buffer{}
 	err := tmpl.ExecuteTemplate(&buf, "overview", struct {
-		Checkers []*lintpack.CheckerInfo
+		Checkers []*linter.CheckerInfo
 	}{
-		Checkers: lintpack.GetCheckersInfo(),
+		Checkers: linter.GetCheckersInfo(),
 	})
 	if err != nil {
 		log.Fatalf("render template: %v", err)

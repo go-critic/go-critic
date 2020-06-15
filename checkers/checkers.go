@@ -4,10 +4,10 @@ package checkers
 import (
 	"os"
 
-	"github.com/go-lintpack/lintpack"
+	"github.com/go-critic/go-critic/framework/linter"
 )
 
-var collection = &lintpack.CheckerCollection{
+var collection = &linter.CheckerCollection{
 	URL: "https://github.com/go-critic/go-critic/checkers",
 }
 

@@ -3,15 +3,15 @@ package checkers
 import (
 	"go/ast"
 
-	"github.com/go-critic/go-critic/checkers/internal/lintutil"
-	"github.com/go-lintpack/lintpack"
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/checkers/internal/lintutil"
+	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-toolsmith/astequal"
 	"github.com/go-toolsmith/astp"
 )
 
 func init() {
-	var info lintpack.CheckerInfo
+	var info linter.CheckerInfo
 	info.Name = "typeSwitchVar"
 	info.Tags = []string{"style"}
 	info.Summary = "Detects type switches that can benefit from type guard clause with variable"
@@ -34,14 +34,14 @@ default:
 	return 0
 }`
 
-	collection.AddChecker(&info, func(ctx *lintpack.CheckerContext) lintpack.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		return astwalk.WalkerForStmt(&typeSwitchVarChecker{ctx: ctx})
 	})
 }
 
 type typeSwitchVarChecker struct {
 	astwalk.WalkHandler
-	ctx   *lintpack.CheckerContext
+	ctx   *linter.CheckerContext
 	count int
 }
 

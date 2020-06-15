@@ -34,28 +34,16 @@ The latest documentation is available at [go-critic.github.io](https://go-critic
 
 For most users, using `go-critic` under [golangci-lint](https://github.com/golangci/golangci-lint) is enough.
 
-Instructions below describe how to install "bare" `go-critic`.
+Precompiled `go-critic` binaries can be found at [releases](https://github.com/go-critic/go-critic/releases) page.
 
-If you don't have [lintpack](https://github.com/go-lintpack/lintpack) installed, do:
-
-```bash
-go get -v github.com/go-lintpack/lintpack/...
-```
-
-Get `go-critic` checkers:
+Instructions below show how to build `go-critic` from sources.
 
 ```bash
-go get -v github.com/go-critic/go-critic/...
+GO111MODULE=on go get -v -u github.com/go-critic/go-critic/cmd/gocritic
 ```
 
-After that, you can create `gocritic` binary by running:
-
-```bash
-cd $(go env GOPATH)/src/github.com/go-critic/go-critic &&
-	make gocritic
-```
-
-> Windows note: `lintpack build` might emit a warning. See https://github.com/go-critic/go-critic/issues/760.
+If the command above does not work, you can try cloning this repository
+under your `GOPATH` and run `make gocritic`.
 
 ## Usage
 
