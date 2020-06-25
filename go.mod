@@ -3,7 +3,6 @@ module github.com/go-critic/go-critic
 go 1.12
 
 require (
-	github.com/go-lintpack/lintpack v0.5.2
 	github.com/go-toolsmith/astcast v1.0.0
 	github.com/go-toolsmith/astcopy v1.0.0
 	github.com/go-toolsmith/astequal v1.0.0
