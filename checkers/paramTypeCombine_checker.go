@@ -51,7 +51,8 @@ func (c *paramTypeCombineChecker) optimizeParams(params *ast.FieldList) *ast.Fie
 	// ast.Field have empty name list.
 	skip := params == nil ||
 		len(params.List) < 2 ||
-		len(params.List[0].Names) == 0
+		len(params.List[0].Names) == 0 ||
+		c.paramsAreMultiLine(params)
 	if skip {
 		return params
 	}
@@ -83,4 +84,10 @@ func (c *paramTypeCombineChecker) optimizeParams(params *ast.FieldList) *ast.Fie
 
 func (c *paramTypeCombineChecker) warn(f1, f2 *ast.FuncType) {
 	c.ctx.Warn(f1, "%s could be replaced with %s", f1, f2)
+}
+
+func (c *paramTypeCombineChecker) paramsAreMultiLine(params *ast.FieldList) bool {
+	startPos := c.ctx.FileSet.Position(params.Opening)
+	endPos := c.ctx.FileSet.Position(params.Closing)
+	return startPos.Line != endPos.Line
 }

@@ -94,7 +94,7 @@ func checkFile(t *testing.T, c *linter.Checker, ctx *linter.Context, f *ast.File
 
 	rc, err := os.Open(testFilename)
 	if err != nil {
-		t.Fatalf("read file %q: %w", testFilename, err)
+		t.Fatalf("read file %q: %v", testFilename, err)
 	}
 	defer rc.Close()
 
