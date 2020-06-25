@@ -16,3 +16,12 @@ func unnamedParams(uint32, uint32) {}
 func unnamedResults(sep []byte) (uint32, uint32) {
 	return 0, 0
 }
+
+func multiline(
+	a string,
+	b int,
+	c int,
+	d []byte,
+) int {
+	return 0
+}

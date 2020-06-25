@@ -25,7 +25,7 @@ func TestShortenLocation(t *testing.T) {
 		{`C:\home\queen\go\src\`, `C:\home\queen\go\src\file.go`, "./file.go"},
 	}
 
-	l := &linter{
+	l := &program{
 		gopath: testGopath,
 		goroot: testGoroot,
 	}
