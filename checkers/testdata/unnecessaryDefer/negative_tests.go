@@ -53,3 +53,16 @@ func foo_8() int {
 	}
 	return 0
 }
+
+type sharedData struct {
+	value int
+}
+
+func (*sharedData) Lock()   {}
+func (*sharedData) Unlock() {}
+
+func issue941(d *sharedData) int {
+	d.Lock()
+	defer d.Unlock()
+	return d.value
+}

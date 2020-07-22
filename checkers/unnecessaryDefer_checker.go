@@ -4,10 +4,8 @@ import (
 	"go/ast"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
-	"github.com/go-critic/go-critic/checkers/internal/lintutil"
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-toolsmith/astfmt"
-	"github.com/go-toolsmith/astp"
 )
 
 func init() {
@@ -69,12 +67,11 @@ func (c *unnecessaryDeferChecker) checkDeferBeforeReturn(funcDecl *ast.BlockStmt
 			continue
 		}
 		explicitReturn = true
-		if lintutil.ContainsNode(retStmt, astp.IsCallExpr) {
+		if !c.isTrivialReturn(retStmt) {
 			continue
 		}
 		retIndex = i
 		break
-
 	}
 	if retIndex == 0 {
 		return
@@ -88,6 +85,19 @@ func (c *unnecessaryDeferChecker) checkDeferBeforeReturn(funcDecl *ast.BlockStmt
 			c.warn(deferStmt)
 		}
 	}
+}
+
+func (c *unnecessaryDeferChecker) isTrivialReturn(ret *ast.ReturnStmt) bool {
+	for _, e := range ret.Results {
+		if !c.isConstExpr(e) {
+			return false
+		}
+	}
+	return true
+}
+
+func (c *unnecessaryDeferChecker) isConstExpr(e ast.Expr) bool {
+	return c.ctx.TypesInfo.Types[e].Value != nil
 }
 
 func (c *unnecessaryDeferChecker) warn(deferStmt *ast.DeferStmt) {
