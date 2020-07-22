@@ -56,3 +56,11 @@ func foo7() {
 	}
 	return
 }
+
+func returnConstExpr(s *sharedData) (string, bool, int) {
+	const foo = "12"
+	s.Lock()
+	/*! defer s.Unlock() is placed just before return */
+	defer s.Unlock()
+	return foo + "3", false, len(foo) + 1
+}
