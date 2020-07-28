@@ -29,3 +29,25 @@ func caseWithTwoValues(x int) {
 	case 1, 2:
 	}
 }
+
+func caseWithBreak(x interface{}) {
+	switch x.(type) {
+	case int:
+		println(x)
+		break
+	}
+
+	switch x.(int) {
+	case 0:
+		println(x)
+		break
+	}
+
+	for {
+		switch x.(int) {
+		case 0:
+			println(x)
+			break
+		}
+	}
+}

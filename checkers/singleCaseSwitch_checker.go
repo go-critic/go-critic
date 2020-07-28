@@ -2,9 +2,11 @@ package checkers
 
 import (
 	"go/ast"
+	"go/token"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
+	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
@@ -42,14 +44,35 @@ func (c *singleCaseSwitchChecker) VisitStmt(stmt ast.Stmt) {
 }
 
 func (c *singleCaseSwitchChecker) checkSwitchStmt(stmt ast.Stmt, body *ast.BlockStmt) {
-	if len(body.List) == 1 {
-		if body.List[0].(*ast.CaseClause).List == nil {
-			// default case.
-			c.warnDefault(stmt)
-		} else if len(body.List[0].(*ast.CaseClause).List) == 1 {
-			c.warn(stmt)
-		}
+	if len(body.List) != 1 {
+		return
 	}
+	cc := body.List[0].(*ast.CaseClause)
+	if c.hasBreak(cc) {
+		return
+	}
+	switch {
+	case cc.List == nil:
+		c.warnDefault(stmt)
+	case len(cc.List) == 1:
+		c.warn(stmt)
+	}
+}
+
+func (c *singleCaseSwitchChecker) hasBreak(stmt ast.Stmt) bool {
+	found := false
+	astutil.Apply(stmt, func(cur *astutil.Cursor) bool {
+		switch n := cur.Node().(type) {
+		case *ast.BranchStmt:
+			if n.Tok == token.BREAK {
+				found = true
+			}
+		case *ast.ForStmt, *ast.RangeStmt, *ast.SelectStmt, *ast.SwitchStmt:
+			return false
+		}
+		return true
+	}, nil)
+	return found
 }
 
 func (c *singleCaseSwitchChecker) warn(stmt ast.Stmt) {
