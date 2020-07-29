@@ -25,3 +25,24 @@ func switchWithOneCase(x int) {
 	case 1:
 	}
 }
+
+func badCaseWithBreak(x, y int) {
+	/*! should rewrite switch statement to if statement */
+	switch x {
+	case 0:
+		println(x)
+		for {
+			break
+		}
+	}
+
+	/*! should rewrite switch statement to if statement */
+	switch x {
+	case 0:
+		println(x)
+		switch y {
+		case 2:
+			break
+		}
+	}
+}
