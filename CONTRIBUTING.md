@@ -87,7 +87,7 @@ you'll find all answers there in a short time.
 
 3. Define checker type and constructor function inside a new file under `checkers/${checkerName}_checker.go`.
 
-4. Define a `linter.CheckerInfo` within an `init()` function in your new file. Specify the checker `Name`, `Summary`, `Before`, and `After` fields. It's a good idea to also specify appropriate `Tags` (e.g. `"diagnostic"`, `"style"`, `"performace"`, `"opinionated"`); new checkers should generally include the `"experimental"` tag.
+4. Define a `linter.CheckerInfo` within an `init()` function in your new file. Specify the checker `Name`, `Summary`, `Before`, and `After` fields. It's a good idea to also specify appropriate `Tags` (e.g. `"diagnostic"`, `"style"`, `"performance"`, `"opinionated"`); new checkers should generally include the `"experimental"` tag.
 
 5. Register the checker by calling `AddChecker` function in `init()`, passing in the `CheckerInfo`.
 
