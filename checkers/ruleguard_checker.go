@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/quasilyte/go-ruleguard/ruleguard"
+	"fmt"
 )
 
 func init() {
@@ -34,62 +35,89 @@ func init() {
 
 func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *ruleguardChecker {
 	c := &ruleguardChecker{ctx: ctx}
-	rulesFilename := info.Params.String("rules")
-	if rulesFilename == "" {
+
+	var rules []string
+	if info.Params.IsStringSlice("rules") {
+		rules = info.Params.StringSlice("rules")
+	} else if info.Params.IsString("rules") {
+		rules = []string{info.Params.String("rules")}
+	} else {
 		return c
 	}
 
+	for _, rulesFileName := range rules {
+		if rulesFileName == "" {
+			continue
+		}
+		rset, err := parseRuleGuardFile(rulesFileName)
+		if err != nil {
+			log.Printf("unable to parse file %s: %+v", rulesFileName, err)
+			return c
+		}
+		c.rset = append(c.rset, goRuleSetWithFileName{
+			RuleFileName: rulesFileName,
+			GoRuleSet:    rset,
+		})
+	}
+	return c
+}
+
+func parseRuleGuardFile(rulesFilename string) (*ruleguard.GoRuleSet, error) {
 	// TODO(quasilyte): handle initialization errors better when we make
 	// a transition to the go/analysis framework.
 	//
 	// For now, we log error messages and return a ruleguard checker
 	// with an empty rules set.
-
 	data, err := ioutil.ReadFile(rulesFilename)
 	if err != nil {
-		log.Printf("ruleguard init error: %+v", err)
-		return c
+		return nil, fmt.Errorf("ruleguard init error: %+v", err)
 	}
 
 	fset := token.NewFileSet()
 	rset, err := ruleguard.ParseRules(rulesFilename, fset, bytes.NewReader(data))
 	if err != nil {
-		log.Printf("ruleguard init error: %+v", err)
-		return c
+		return nil, fmt.Errorf("ruleguard init error: %+v",err)
 	}
+	return rset,err
+}
 
-	c.rset = rset
-	return c
+type goRuleSetWithFileName struct {
+	RuleFileName string
+	*ruleguard.GoRuleSet
 }
 
 type ruleguardChecker struct {
 	ctx *linter.CheckerContext
-
-	rset *ruleguard.GoRuleSet
+	rset []goRuleSetWithFileName
 }
 
 func (c *ruleguardChecker) WalkFile(f *ast.File) {
-	if c.rset == nil {
+	if len(c.rset) == 0 {
 		return
 	}
 
-	ctx := &ruleguard.Context{
-		Pkg:   c.ctx.Pkg,
-		Types: c.ctx.TypesInfo,
-		Sizes: c.ctx.SizesInfo,
-		Fset:  c.ctx.FileSet,
-		Report: func(n ast.Node, msg string, _ *ruleguard.Suggestion) {
-			// TODO(quasilyte): investigate whether we should add a rule name as
-			// a message prefix here.
-			c.ctx.Warn(n, msg)
-		},
+	for _, rset := range c.rset {
+		ctx := &ruleguard.Context{
+			Pkg:   c.ctx.Pkg,
+			Types: c.ctx.TypesInfo,
+			Sizes: c.ctx.SizesInfo,
+			Fset:  c.ctx.FileSet,
+			Report: func(n ast.Node, msg string, _ *ruleguard.Suggestion) {
+				// TODO(quasilyte): investigate whether we should add a rule name as
+				// a message prefix here.
+				c.ctx.Warn(n, "%s: %v", rset.RuleFileName, msg)
+			},
+		}
+
+
+		err := ruleguard.RunRules(ctx, f, rset.GoRuleSet)
+		if err != nil {
+			// Normally this should never happen, but since
+			// we don't have a better mechanism to report errors,
+			// emit a warning.
+			c.ctx.Warn(f, "execution error: %s: %v", rset.RuleFileName, err)
+		}
 	}
 
-	err := ruleguard.RunRules(ctx, f, c.rset)
-	if err != nil {
-		// Normally this should never happen, but since
-		// we don't have a better mechanism to report errors,
-		// emit a warning.
-		c.ctx.Warn(f, "execution error: %v", err)
-	}
+
 }

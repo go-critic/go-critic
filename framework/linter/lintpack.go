@@ -39,6 +39,7 @@ type CheckerParam struct {
 	//	- int
 	//	- bool
 	//	- string
+	//	- []string
 	Value interface{}
 
 	// Usage gives an overview about what parameter does.
@@ -50,14 +51,41 @@ type CheckerParam struct {
 // Provides convenient access to the loosely typed underlying map.
 type CheckerParams map[string]*CheckerParam
 
+// IsInt lookups pname key in underlying map and returns true if the value is the int type.
+func (params CheckerParams) IsInt(pname string) bool {
+	_, ok := params[pname].Value.(int)
+	return ok
+}
+
 // Int lookups pname key in underlying map and type-asserts it to int.
 func (params CheckerParams) Int(pname string) int { return params[pname].Value.(int) }
+
+// IsBool lookups pname key in underlying map and returns true if the value is the bool type.
+func (params CheckerParams) IsBool(pname string) bool {
+	_, ok := params[pname].Value.(bool)
+	return ok
+}
 
 // Bool lookups pname key in underlying map and type-asserts it to bool.
 func (params CheckerParams) Bool(pname string) bool { return params[pname].Value.(bool) }
 
+// IsString lookups pname key in underlying map and returns true if the value is the string type.
+func (params CheckerParams) IsString(pname string) bool {
+	_, ok := params[pname].Value.(string)
+	return ok
+}
+
 // String lookups pname key in underlying map and type-asserts it to string.
 func (params CheckerParams) String(pname string) string { return params[pname].Value.(string) }
+
+// IsStringSlice lookups pname key in underlying map and returns true if the value is the []string type.
+func (params CheckerParams) IsStringSlice(pname string) bool {
+	_, ok := params[pname].Value.([]string)
+	return ok
+}
+
+// StringSlice lookups pname key in underlying map and type-asserts it to []string.
+func (params CheckerParams) StringSlice(pname string) []string { return params[pname].Value.([]string) }
 
 // CheckerInfo holds checker metadata and structured documentation.
 type CheckerInfo struct {
