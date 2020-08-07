@@ -51,8 +51,8 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 		}
 		rset, err := parseRuleGuardFile(rulesFileName)
 		if err != nil {
-			log.Printf("unable to parse file %s: %+v", rulesFileName, err)
-			return c
+			log.Printf("skipped file %s: unable to parse: %+v", rulesFileName, err)
+			continue
 		}
 		c.rset = append(c.rset, goRuleSetWithFileName{
 			RuleFileName: rulesFileName,
@@ -70,15 +70,15 @@ func parseRuleGuardFile(rulesFilename string) (*ruleguard.GoRuleSet, error) {
 	// with an empty rules set.
 	data, err := ioutil.ReadFile(rulesFilename)
 	if err != nil {
-		return nil, fmt.Errorf("ruleguard init error: %+v", err)
+		return nil, fmt.Errorf("ruleguard init error: %w", err)
 	}
 
 	fset := token.NewFileSet()
 	rset, err := ruleguard.ParseRules(rulesFilename, fset, bytes.NewReader(data))
 	if err != nil {
-		return nil, fmt.Errorf("ruleguard init error: %+v",err)
+		return nil, fmt.Errorf("ruleguard init error: %w",err)
 	}
-	return rset,err
+	return rset, err
 }
 
 type goRuleSetWithFileName struct {
