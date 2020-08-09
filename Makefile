@@ -27,6 +27,7 @@ ci-tidy:
 	git diff --exit-code --quiet || (echo "Please run 'go mod tidy' to clean up the 'go.mod' and 'go.sum' files."; false)
 
 ci-tests:
+	go vet $(shell go list ./... | grep -v /vendor/)
 	go test -v -race -count=1 -coverprofile=coverage.out ./...
 
 ci-linter:
