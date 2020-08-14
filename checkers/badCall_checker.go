@@ -12,7 +12,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "badCall"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"diagnostic"}
 	info.Summary = "Detects suspicious function calls"
 	info.Before = `strings.Replace(s, from, to, 0)`
 	info.After = `strings.Replace(s, from, to, -1)`

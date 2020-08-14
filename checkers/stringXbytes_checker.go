@@ -11,7 +11,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "stringXbytes"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{"style"}
 	info.Summary = "Detects redundant conversions between string and []byte"
 	info.Before = `copy(b, []byte(s))`
 	info.After = `copy(b, s)`

@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "wrapperFunc"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{"style"}
 	info.Summary = "Detects function calls that can be replaced with convenience wrappers"
 	info.Before = `wg.Add(-1)`
 	info.After = `wg.Done()`
