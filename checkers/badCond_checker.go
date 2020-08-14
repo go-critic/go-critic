@@ -18,7 +18,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "badCond"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"diagnostic"}
 	info.Summary = "Detects suspicious condition expressions"
 	info.Before = `
 for i := 0; i > n; i++ {

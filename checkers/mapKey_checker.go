@@ -16,7 +16,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "mapKey"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"diagnostic"}
 	info.Summary = "Detects suspicious map literal keys"
 	info.Before = `
 _ = map[string]int{

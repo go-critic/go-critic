@@ -15,7 +15,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "argOrder"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"diagnostic"}
 	info.Summary = "Detects suspicious arguments order"
 	info.Before = `strings.HasPrefix("#", userpass)`
 	info.After = `strings.HasPrefix(userpass, "#")`
