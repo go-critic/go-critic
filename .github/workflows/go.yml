@@ -19,3 +19,7 @@ jobs:
     - name: Test
       run: |
         make ci-test
+
+    - name: Linters
+      run: |
+        make ci-linter
