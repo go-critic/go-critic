@@ -35,7 +35,7 @@ ci-linter:
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.30.0
 	@$(GOPATH_DIR)/bin/golangci-lint run -v
 	go install github.com/quasilyte/go-consistent
-	go-consistent ./...
+	@$(GOPATH_DIR)/bin/go-consistent ./...
 
 cover:
 	go install github.com/mattn/goveralls
