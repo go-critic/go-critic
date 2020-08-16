@@ -16,6 +16,10 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
 
+    - name: Linter
+      run: |
+        make ci-linter
+
     - name: Test
       run: |
         make ci-test

@@ -36,7 +36,7 @@ func (c *stringXbytes) VisitExpr(expr ast.Expr) {
 
 	byteCast, ok := src.(*ast.CallExpr)
 	if ok && typep.IsTypeExpr(c.ctx.TypesInfo, byteCast.Fun) &&
-		typep.HasStringProp(c.ctx.TypesInfo.TypeOf(byteCast.Args[0])) {
+		typep.HasStringProp(c.ctx.TypeOf(byteCast.Args[0])) {
 
 		c.warn(byteCast, byteCast.Args[0])
 	}
