@@ -13,7 +13,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "newDeref"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{"style"}
 	info.Summary = "Detects immediate dereferencing of `new` expressions"
 	info.Before = `x := *new(bool)`
 	info.After = `x := false`

@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "flagName"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"diagnostic"}
 	info.Summary = "Detects flag names with whitespace"
 	info.Before = `b := flag.Bool(" foo ", false, "description")`
 	info.After = `b := flag.Bool("foo", false, "description")`

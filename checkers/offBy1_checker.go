@@ -15,7 +15,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "offBy1"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"diagnostic"}
 	info.Summary = "Detects various off-by-one kind of errors"
 	info.Before = `xs[len(xs)]`
 	info.After = `xs[len(xs)-1]`

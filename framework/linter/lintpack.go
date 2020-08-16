@@ -238,6 +238,25 @@ func (ctx *CheckerContext) Warn(node ast.Node, format string, args ...interface{
 	})
 }
 
+var unknownType types.Type = types.Typ[types.Invalid]
+
+// TypeOf returns the type of expression x.
+//
+// Unlike TypesInfo.TypeOf, it never returns nil.
+// Instead, it returns the Invalid type as a sentinel value.
+func (ctx *CheckerContext) TypeOf(x ast.Expr) types.Type {
+	typ := ctx.TypesInfo.TypeOf(x)
+	if typ != nil {
+		return typ
+	}
+	// Usually it means that some incorrect type info was loaded
+	// or the analyzed package was only partially (?) correct.
+	// To avoid nil pointer panics we can return a sentinel value
+	// that will fail most type assertions as well as kind checks
+	// (if the call side expects a *types.Basic).
+	return unknownType
+}
+
 // FileWalker is an interface every checker should implement.
 //
 // The WalkFile method is executed for every Go file inside the

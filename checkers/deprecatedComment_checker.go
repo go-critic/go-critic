@@ -12,7 +12,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "deprecatedComment"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"diagnostic"}
 	info.Summary = "Detects malformed 'deprecated' doc-comments"
 	info.Before = `
 // deprecated, use FuncNew instead

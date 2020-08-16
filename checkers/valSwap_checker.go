@@ -13,7 +13,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "valSwap"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{"style"}
 	info.Summary = "Detects value swapping code that are not using parallel assignment"
 	info.Before = `
 tmp := *x

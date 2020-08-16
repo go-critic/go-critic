@@ -78,7 +78,7 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		Types: c.ctx.TypesInfo,
 		Sizes: c.ctx.SizesInfo,
 		Fset:  c.ctx.FileSet,
-		Report: func(n ast.Node, msg string, _ *ruleguard.Suggestion) {
+		Report: func(_ ruleguard.GoRuleInfo, n ast.Node, msg string, _ *ruleguard.Suggestion) {
 			// TODO(quasilyte): investigate whether we should add a rule name as
 			// a message prefix here.
 			c.ctx.Warn(n, msg)

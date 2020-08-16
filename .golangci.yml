@@ -11,6 +11,7 @@ linters:
     - gofmt
     - goimports
     - golint
+    - govet
     - gosimple
     - ineffassign
     - megacheck
@@ -27,7 +28,6 @@ linters:
     - depguard
     - dupl
     - gocyclo
-    - govet
     - interfacer
     - lll
     - maligned
