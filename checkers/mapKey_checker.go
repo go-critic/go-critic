@@ -47,7 +47,7 @@ func (c *mapKeyChecker) VisitExpr(expr ast.Expr) {
 		return
 	}
 
-	typ, ok := c.ctx.TypesInfo.TypeOf(lit).Underlying().(*types.Map)
+	typ, ok := c.ctx.TypeOf(lit).Underlying().(*types.Map)
 	if !ok {
 		return
 	}

@@ -70,12 +70,12 @@ func (c *argOrderChecker) isConstLiteral(x ast.Expr) bool {
 		if len(x.Args) != 1 || !astp.IsBasicLit(x.Args[0]) {
 			return false
 		}
-		typ, ok := c.ctx.TypesInfo.TypeOf(x.Fun).(*types.Slice)
+		typ, ok := c.ctx.TypeOf(x.Fun).(*types.Slice)
 		return ok && typep.HasUint8Kind(typ.Elem())
 
 	case *ast.CompositeLit:
 		// Check if it's a const byte slice.
-		typ, ok := c.ctx.TypesInfo.TypeOf(x).(*types.Slice)
+		typ, ok := c.ctx.TypeOf(x).(*types.Slice)
 		if !ok || !typep.HasUint8Kind(typ.Elem()) {
 			return false
 		}

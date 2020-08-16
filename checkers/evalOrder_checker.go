@@ -75,7 +75,7 @@ func (c *evalOrderChecker) VisitStmt(stmt ast.Stmt) {
 }
 
 func (c *evalOrderChecker) hasPtrRecv(fn *ast.Ident) bool {
-	sig, ok := c.ctx.TypesInfo.TypeOf(fn).(*types.Signature)
+	sig, ok := c.ctx.TypeOf(fn).(*types.Signature)
 	if !ok {
 		return false
 	}
