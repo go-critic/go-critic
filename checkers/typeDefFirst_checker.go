@@ -3,7 +3,6 @@ package checkers
 import (
 	"go/ast"
 	"go/token"
-	"strings"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
@@ -34,30 +33,30 @@ type typeDefFirstChecker struct {
 	ctx *linter.CheckerContext
 }
 
-func (t *typeDefFirstChecker) WalkFile(f *ast.File) {
-	typeUsageMap := make(map[string]bool)
-
+func (c *typeDefFirstChecker) WalkFile(f *ast.File) {
 	if f.Decls == nil {
 		return
 	}
 
+	typeUsageMap := make(map[string]bool)
 	for _, declaration := range f.Decls {
 		switch decl := declaration.(type) {
 		case *ast.FuncDecl:
 			if decl.Recv != nil {
 				receiver := decl.Recv.List[0]
-				typeName := trimAsterisk(NodeToString(t.ctx.FileSet, receiver.Type))
+				typeName := c.receiverType(receiver.Type)
 				typeUsageMap[typeName] = true
 			}
 
 		case *ast.GenDecl:
-			if decl.Tok == token.TYPE {
-				for _, spec := range decl.Specs {
-					if spec, ok := spec.(*ast.TypeSpec); ok {
-						typeName := trimAsterisk(spec.Name.Name)
-						if val, ok := typeUsageMap[typeName]; ok && val {
-							t.warn(decl, typeName)
-						}
+			if decl.Tok != token.TYPE {
+				continue
+			}
+			for _, spec := range decl.Specs {
+				if spec, ok := spec.(*ast.TypeSpec); ok {
+					typeName := spec.Name.Name
+					if val, ok := typeUsageMap[typeName]; ok && val {
+						c.warn(decl, typeName)
 					}
 				}
 			}
@@ -65,11 +64,17 @@ func (t *typeDefFirstChecker) WalkFile(f *ast.File) {
 	}
 }
 
-func (t *typeDefFirstChecker) warn(cause ast.Node, typeName string) {
-	t.ctx.Warn(cause, "definition of type '%s' should appear before its methods", typeName)
+func (c *typeDefFirstChecker) warn(cause ast.Node, typeName string) {
+	c.ctx.Warn(cause, "definition of type '%s' should appear before its methods", typeName)
 }
 
-// removing '*' from type
-func trimAsterisk(typeName string) string {
-	return strings.TrimLeft(typeName, "* ")
+func (c *typeDefFirstChecker) receiverType(e ast.Expr) string {
+	switch e := e.(type) {
+	case *ast.StarExpr:
+		return c.receiverType(e.X)
+	case *ast.Ident:
+		return e.Name
+	default:
+		panic("unreachable")
+	}
 }

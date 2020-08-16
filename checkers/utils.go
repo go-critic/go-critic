@@ -1,9 +1,7 @@
 package checkers
 
 import (
-	"github.com/go-toolsmith/astfmt"
 	"go/ast"
-	"go/token"
 	"go/types"
 	"strings"
 
@@ -308,8 +306,4 @@ func identOf(x ast.Node) *ast.Ident {
 		// Note that this function is not comprehensive.
 		return nil
 	}
-}
-
-func NodeToString(set *token.FileSet, node ast.Node) string {
-	return astfmt.NewPrinter(set).Sprint(node)
 }
