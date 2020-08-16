@@ -33,3 +33,11 @@ linters:
     - maligned
     - prealloc
   fast: false
+
+  linters-settings:
+    gocritic:
+      enabled-checks:
+        - ruleguard
+      settings:
+        ruleguard:
+          rules: "rules.go"

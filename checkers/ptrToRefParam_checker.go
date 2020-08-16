@@ -35,7 +35,7 @@ func (c *ptrToRefParamChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 
 func (c *ptrToRefParamChecker) checkParams(params []*ast.Field) {
 	for _, param := range params {
-		ptr, ok := c.ctx.TypesInfo.TypeOf(param.Type).(*types.Pointer)
+		ptr, ok := c.ctx.TypeOf(param.Type).(*types.Pointer)
 		if !ok {
 			continue
 		}

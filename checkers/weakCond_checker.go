@@ -46,7 +46,7 @@ func (c *weakCondChecker) VisitExpr(expr ast.Expr) {
 
 	// lhs is `x <op> nil`
 	x := lhs.X
-	if !typep.IsSlice(c.ctx.TypesInfo.TypeOf(x)) {
+	if !typep.IsSlice(c.ctx.TypeOf(x)) {
 		return
 	}
 	if astcast.ToIdent(lhs.Y).Name != "nil" {
