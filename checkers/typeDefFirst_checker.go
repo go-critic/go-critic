@@ -12,7 +12,7 @@ func init() {
 	var info linter.CheckerInfo
 	info.Name = "typeDefFirst"
 	info.Tags = []string{"style", "experimental"}
-	info.Summary = "File-scoped checker, that requires type definition before its method definitions"
+	info.Summary = "Detects method declarations preceding the type definition itself"
 	info.Before = `
 func (r rec) Method() {}
 type rec struct{}
@@ -30,42 +30,46 @@ func (r rec) Method() {}
 
 type typeDefFirstChecker struct {
 	astwalk.WalkHandler
-	ctx *linter.CheckerContext
+	ctx          *linter.CheckerContext
+	trackedTypes map[string]bool
 }
 
 func (c *typeDefFirstChecker) WalkFile(f *ast.File) {
-	if f.Decls == nil {
+	if len(f.Decls) == 0 {
 		return
 	}
 
-	typeUsageMap := make(map[string]bool)
-	for _, declaration := range f.Decls {
-		switch decl := declaration.(type) {
-		case *ast.FuncDecl:
-			if decl.Recv != nil {
-				receiver := decl.Recv.List[0]
-				typeName := c.receiverType(receiver.Type)
-				typeUsageMap[typeName] = true
-			}
-
-		case *ast.GenDecl:
-			if decl.Tok != token.TYPE {
-				continue
-			}
-			for _, spec := range decl.Specs {
-				if spec, ok := spec.(*ast.TypeSpec); ok {
-					typeName := spec.Name.Name
-					if val, ok := typeUsageMap[typeName]; ok && val {
-						c.warn(decl, typeName)
-					}
-				}
-			}
-		}
+	c.trackedTypes = make(map[string]bool)
+	for _, decl := range f.Decls {
+		c.walkDecl(decl)
 	}
 }
 
-func (c *typeDefFirstChecker) warn(cause ast.Node, typeName string) {
-	c.ctx.Warn(cause, "definition of type '%s' should appear before its methods", typeName)
+func (c *typeDefFirstChecker) walkDecl(decl ast.Decl) {
+	switch decl := decl.(type) {
+	case *ast.FuncDecl:
+		if decl.Recv == nil {
+			return
+		}
+		receiver := decl.Recv.List[0]
+		typeName := c.receiverType(receiver.Type)
+		c.trackedTypes[typeName] = true
+
+	case *ast.GenDecl:
+		if decl.Tok != token.TYPE {
+			return
+		}
+		for _, spec := range decl.Specs {
+			spec, ok := spec.(*ast.TypeSpec)
+			if !ok {
+				return
+			}
+			typeName := spec.Name.Name
+			if val, ok := c.trackedTypes[typeName]; ok && val {
+				c.warn(decl, typeName)
+			}
+		}
+	}
 }
 
 func (c *typeDefFirstChecker) receiverType(e ast.Expr) string {
@@ -77,4 +81,8 @@ func (c *typeDefFirstChecker) receiverType(e ast.Expr) string {
 	default:
 		panic("unreachable")
 	}
+}
+
+func (c *typeDefFirstChecker) warn(cause ast.Node, typeName string) {
+	c.ctx.Warn(cause, "definition of type '%s' should appear before its methods", typeName)
 }
