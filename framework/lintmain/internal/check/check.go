@@ -245,8 +245,16 @@ func (p *program) loadProgram() error {
 	}
 
 	p.fset = token.NewFileSet()
+	mode := packages.NeedName |
+		packages.NeedFiles |
+		packages.NeedCompiledGoFiles |
+		packages.NeedImports |
+		packages.NeedTypes |
+		packages.NeedSyntax |
+		packages.NeedTypesInfo |
+		packages.NeedTypesSizes
 	cfg := packages.Config{
-		Mode:  packages.NeedFiles | packages.NeedCompiledGoFiles | packages.NeedImports | packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo | packages.NeedTypesSizes,
+		Mode:  mode,
 		Tests: true,
 		Fset:  p.fset,
 	}
