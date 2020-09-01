@@ -190,7 +190,7 @@ func init() {
 				}
 			}
 
-			typ := c.ctx.TypesInfo.TypeOf(x)
+			typ := c.ctx.TypeOf(x)
 			tn, ok := typ.(*types.Named)
 			if !ok {
 				return ""

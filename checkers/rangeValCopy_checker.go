@@ -61,7 +61,7 @@ func (c *rangeValCopyChecker) VisitStmt(stmt ast.Stmt) {
 	if !ok || rng.Value == nil {
 		return
 	}
-	typ := c.ctx.TypesInfo.TypeOf(rng.Value)
+	typ := c.ctx.TypeOf(rng.Value)
 	if typ == nil {
 		return
 	}

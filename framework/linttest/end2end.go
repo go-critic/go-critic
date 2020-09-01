@@ -9,7 +9,6 @@ import (
 
 var (
 	warningDirectiveRE = regexp.MustCompile(`^\s*/\*! (.*) \*/`)
-	commentRE          = regexp.MustCompile(`^\s*//`)
 )
 
 type warnings map[int][]string

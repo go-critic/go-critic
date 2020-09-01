@@ -147,9 +147,7 @@ func (p *program) checkFile(f *ast.File) {
 				}
 			}()
 
-			for _, warn := range c.Check(f) {
-				warnings[i] = append(warnings[i], warn)
-			}
+			warnings[i] = append(warnings[i], c.Check(f)...)
 		}(i, c)
 	}
 	wg.Wait()
@@ -247,8 +245,16 @@ func (p *program) loadProgram() error {
 	}
 
 	p.fset = token.NewFileSet()
+	mode := packages.NeedName |
+		packages.NeedFiles |
+		packages.NeedCompiledGoFiles |
+		packages.NeedImports |
+		packages.NeedTypes |
+		packages.NeedSyntax |
+		packages.NeedTypesInfo |
+		packages.NeedTypesSizes
 	cfg := packages.Config{
-		Mode:  packages.LoadSyntax,
+		Mode:  mode,
 		Tests: true,
 		Fset:  p.fset,
 	}

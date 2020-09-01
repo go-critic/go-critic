@@ -93,7 +93,7 @@ func (c *dupSubExprChecker) checkBinaryExpr(expr *ast.BinaryExpr) {
 }
 
 func (c *dupSubExprChecker) resultIsFloat(expr ast.Expr) bool {
-	typ, ok := c.ctx.TypesInfo.TypeOf(expr).(*types.Basic)
+	typ, ok := c.ctx.TypeOf(expr).(*types.Basic)
 	return ok && typ.Info()&types.IsFloat != 0
 }
 

@@ -46,7 +46,7 @@ func (c *unsliceChecker) unslice(expr ast.Expr) ast.Expr {
 		// because it's only permitted if expr.High is not nil.
 		return expr
 	}
-	switch c.ctx.TypesInfo.TypeOf(slice.X).(type) {
+	switch c.ctx.TypeOf(slice.X).(type) {
 	case *types.Slice, *types.Basic:
 		// Basic kind catches strings, Slice cathes everything else.
 		return c.unslice(slice.X)
