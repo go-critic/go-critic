@@ -39,7 +39,7 @@ func (c *offBy1Checker) VisitExpr(e ast.Expr) {
 
 	indexExpr := astcast.ToIndexExpr(e)
 	indexed := indexExpr.X
-	if !typep.IsSlice(c.ctx.TypesInfo.TypeOf(indexed)) {
+	if !typep.IsSlice(c.ctx.TypeOf(indexed)) {
 		return
 	}
 	if !typep.SideEffectFree(c.ctx.TypesInfo, indexed) {

@@ -56,7 +56,7 @@ func (c *caseOrderChecker) checkTypeSwitch(s *ast.TypeSwitchStmt) {
 	for _, cc := range s.Body.List {
 		cc := cc.(*ast.CaseClause)
 		for _, x := range cc.List {
-			typ := c.ctx.TypesInfo.TypeOf(x)
+			typ := c.ctx.TypeOf(x)
 			if typ == nil {
 				c.warnTypeImpl(cc, x)
 				return

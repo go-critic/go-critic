@@ -48,7 +48,7 @@ func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 		return // Skip named results
 	}
 
-	typeName := func(x ast.Expr) string { return c.typeName(c.ctx.TypesInfo.TypeOf(x)) }
+	typeName := func(x ast.Expr) string { return c.typeName(c.ctx.TypeOf(x)) }
 	isError := func(x ast.Expr) bool { return qualifiedName(x) == "error" }
 	isBool := func(x ast.Expr) bool { return qualifiedName(x) == "bool" }
 

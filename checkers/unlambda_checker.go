@@ -53,8 +53,8 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 			return // See #888
 		}
 	}
-	fnType := c.ctx.TypesInfo.TypeOf(fn)
-	resultType := c.ctx.TypesInfo.TypeOf(result.Fun)
+	fnType := c.ctx.TypeOf(fn)
+	resultType := c.ctx.TypeOf(result.Fun)
 	if !types.Identical(fnType, resultType) {
 		return
 	}

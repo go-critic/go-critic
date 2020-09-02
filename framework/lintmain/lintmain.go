@@ -39,8 +39,7 @@ func Run(cfg Config) {
 			Examples: makeExamples(
 				"%s check -help",
 				"%s check -enable='paramTypeCombine,unslice' strings bytes",
-				"%s check -v -enable='#diagnostic' -disable='#experimental,#opinionated' ./...",
-			),
+				"%s check -v -enable='#diagnostic' -disable='#experimental,#opinionated' ./..."),
 		},
 		{
 			Main:     printVersion,
@@ -55,8 +54,7 @@ func Run(cfg Config) {
 			Examples: makeExamples(
 				"%s doc -help",
 				"%s doc",
-				"%s doc checkerName",
-			),
+				"%s doc checkerName"),
 		},
 	}
 
