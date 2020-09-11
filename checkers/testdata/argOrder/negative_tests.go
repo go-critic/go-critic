@@ -2,6 +2,7 @@ package checker_test
 
 import (
 	"bytes"
+	"path/filepath"
 	"strings"
 )
 
@@ -40,4 +41,10 @@ func properArgsOrder(s string, b []byte) {
 	_ = bytes.TrimSuffix(b, []byte(":"))
 	_ = strings.Split(s, "/")
 	_ = bytes.Split(b, []byte("/"))
+}
+
+func trimSuffix() {
+	// See #963.
+	const configFileName = "foo.json"
+	_ = strings.TrimSuffix(configFileName, filepath.Ext(configFileName))
 }
