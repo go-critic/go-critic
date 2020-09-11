@@ -11,7 +11,7 @@ func init() {
 	var info linter.CheckerInfo
 	info.Name = "builtinShadow"
 	info.Tags = []string{"style", "opinionated"}
-	info.Summary = "Detects when predeclared identifiers shadowed in assignments"
+	info.Summary = "Detects when predeclared identifiers are shadowed in assignments"
 	info.Before = `len := 10`
 	info.After = `length := 10`
 
