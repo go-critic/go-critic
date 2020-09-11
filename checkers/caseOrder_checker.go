@@ -57,8 +57,8 @@ func (c *caseOrderChecker) checkTypeSwitch(s *ast.TypeSwitchStmt) {
 		cc := cc.(*ast.CaseClause)
 		for _, x := range cc.List {
 			typ := c.ctx.TypeOf(x)
-			if typ == nil {
-				c.warnTypeImpl(cc, x)
+			if typ == linter.UnknownType {
+				c.warnUnknownType(cc, x)
 				return
 			}
 			for _, iface := range ifaces {
@@ -78,7 +78,7 @@ func (c *caseOrderChecker) warnTypeSwitch(cause, concrete, iface ast.Node) {
 	c.ctx.Warn(cause, "case %s must go before the %s case", concrete, iface)
 }
 
-func (c *caseOrderChecker) warnTypeImpl(cause, concrete ast.Node) {
+func (c *caseOrderChecker) warnUnknownType(cause, concrete ast.Node) {
 	c.ctx.Warn(cause, "type is not defined %s", concrete)
 }
 
