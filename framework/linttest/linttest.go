@@ -154,8 +154,16 @@ func checkUnmatched(ws warnings, matched map[*string]struct{}, t *testing.T, tes
 }
 
 func newPackages(t *testing.T, pattern string, fset *token.FileSet) []*packages.Package {
+	mode := packages.NeedName |
+		packages.NeedFiles |
+		packages.NeedCompiledGoFiles |
+		packages.NeedImports |
+		packages.NeedTypes |
+		packages.NeedSyntax |
+		packages.NeedTypesInfo |
+		packages.NeedTypesSizes
 	cfg := packages.Config{
-		Mode:  packages.NeedFiles | packages.NeedCompiledGoFiles | packages.NeedImports | packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo | packages.NeedTypesSizes,
+		Mode:  mode,
 		Tests: true,
 		Fset:  fset,
 	}
