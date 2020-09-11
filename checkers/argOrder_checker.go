@@ -59,12 +59,11 @@ func (c *argOrderChecker) VisitExpr(expr ast.Expr) {
 }
 
 func (c *argOrderChecker) isConstLiteral(x ast.Expr) bool {
-	if c.ctx.TypesInfo.Types[x].Value != nil {
-		return true
-	}
-
 	// Also permit byte slices.
 	switch x := x.(type) {
+	case *ast.BasicLit:
+		return true
+
 	case *ast.CallExpr:
 		// Handle `[]byte("abc")` as well.
 		if len(x.Args) != 1 || !astp.IsBasicLit(x.Args[0]) {
