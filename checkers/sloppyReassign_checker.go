@@ -37,12 +37,12 @@ func (c *sloppyReassignChecker) VisitStmt(stmt ast.Stmt) {
 		return
 	}
 
-	// TODO(Quasilyte): is handling of multi-value assignments worthwhile?
+	// TODO(quasilyte): is handling of multi-value assignments worthwhile?
 	if len(assign.Lhs) != 1 || len(assign.Rhs) != 1 {
 		return
 	}
 
-	// TODO(Quasilyte): handle not only the simplest, return-only case.
+	// TODO(quasilyte): handle not only the simplest, return-only case.
 	body := ifStmt.Body.List
 	if len(body) != 1 {
 		return
@@ -54,7 +54,7 @@ func (c *sloppyReassignChecker) VisitStmt(stmt ast.Stmt) {
 		return
 	}
 
-	// TODO(Quasilyte): handle not only nil comparisons.
+	// TODO(quasilyte): handle not only nil comparisons.
 	eqToNil := &ast.BinaryExpr{
 		Op: token.NEQ,
 		X:  reAssigned,

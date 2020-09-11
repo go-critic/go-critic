@@ -38,7 +38,7 @@ type exitAfterDeferChecker struct {
 }
 
 func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
-	// TODO(Quasilyte): handle goto and other kinds of flow that break
+	// TODO(quasilyte): handle goto and other kinds of flow that break
 	// the algorithm below that expects the latter statement to be
 	// executed after the ones that come before it.
 

@@ -26,7 +26,7 @@ func init() {
 			"this (?:file|code) (?:was|is) generated",
 			"code in this file (?:was|is) auto(?:matically)? generated",
 			"generated (?:file|code) - do not edit",
-			// TODO(Quasilyte): more of these.
+			// TODO(quasilyte): more of these.
 		}
 		re := regexp.MustCompile("(?i)" + strings.Join(patterns, "|"))
 		return &codegenCommentChecker{

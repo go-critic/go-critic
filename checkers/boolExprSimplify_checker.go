@@ -327,7 +327,7 @@ func (c *boolExprSimplifyChecker) foldRanges(cur *astutil.Cursor) bool {
 }
 
 func (c *boolExprSimplifyChecker) int64val(x ast.Expr) (int64, bool) {
-	// TODO(Quasilyte): if we had types info, we could use TypesInfo.Types[x].Value,
+	// TODO(quasilyte): if we had types info, we could use TypesInfo.Types[x].Value,
 	// but since copying erases leaves us without it, only basic literals are handled.
 	lit, ok := x.(*ast.BasicLit)
 	if !ok {

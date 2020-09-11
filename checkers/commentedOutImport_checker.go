@@ -41,7 +41,7 @@ type commentedOutImportChecker struct {
 }
 
 func (c *commentedOutImportChecker) WalkFile(f *ast.File) {
-	// TODO(Quasilyte): handle commented-out import spec,
+	// TODO(quasilyte): handle commented-out import spec,
 	// for example: // import "errors".
 
 	for _, decl := range f.Decls {

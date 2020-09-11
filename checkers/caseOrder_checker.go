@@ -83,6 +83,6 @@ func (c *caseOrderChecker) warnUnknownType(cause, concrete ast.Node) {
 }
 
 func (c *caseOrderChecker) checkSwitch(s *ast.SwitchStmt) {
-	// TODO(Quasilyte): can handle expression cases that overlap.
+	// TODO(quasilyte): can handle expression cases that overlap.
 	// Cases that have narrower value range should go before wider ones.
 }

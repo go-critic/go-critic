@@ -63,8 +63,8 @@ type IntegrationTest struct {
 
 // TestCheckers runs end2end tests over all registered checkers using default options.
 //
-// TODO(Quasilyte): document default options.
-// TODO(Quasilyte): make it possible to run tests with different options.
+// TODO(quasilyte): document default options.
+// TODO(quasilyte): make it possible to run tests with different options.
 func TestCheckers(t *testing.T) {
 	for _, info := range saneCheckersList(t) {
 		t.Run(info.Name, func(t *testing.T) {
@@ -174,7 +174,7 @@ func newPackages(t *testing.T, pattern string, fset *token.FileSet) []*packages.
 	return pkgs
 }
 
-// TODO(Quasilyte): copied from check.go. Should it be added to pkgload?
+// TODO(quasilyte): copied from check.go. Should it be added to pkgload?
 func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {
 	pkgs, err := packages.Load(cfg, patterns...)
 	if err != nil {

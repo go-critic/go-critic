@@ -31,8 +31,8 @@ type offBy1Checker struct {
 }
 
 func (c *offBy1Checker) VisitExpr(e ast.Expr) {
-	// TODO(Quasilyte): handle more off-by-1 patterns.
-	// TODO(Quasilyte): check whether go/analysis can help here.
+	// TODO(quasilyte): handle more off-by-1 patterns.
+	// TODO(quasilyte): check whether go/analysis can help here.
 
 	// Detect s[len(s)] expressions that always panic.
 	// The correct form is s[len(s)-1].

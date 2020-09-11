@@ -34,7 +34,7 @@ func (c *argOrderChecker) VisitExpr(expr ast.Expr) {
 	call := astcast.ToCallExpr(expr)
 
 	// For now only handle functions of 2 args.
-	// TODO(Quasilyte): generalize the algorithm and add more patterns.
+	// TODO(quasilyte): generalize the algorithm and add more patterns.
 	if len(call.Args) != 2 {
 		return
 	}
