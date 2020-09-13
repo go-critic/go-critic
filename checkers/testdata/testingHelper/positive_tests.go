@@ -23,3 +23,16 @@ func bad4(t *testing.T) {
 
 	t.Helper()
 }
+
+type fooStruct struct{}
+
+/*! consider to make *testing.T a first parameter */
+func (fooStruct) test(_ int, t *testing.T) {}
+
+/*! consider to make *testing.T a first parameter */
+/*! consider to call t.Helper() a first statement */
+func bad5(_ string, t *testing.T) {
+	t.Cleanup()
+
+	t.Helper()
+}
