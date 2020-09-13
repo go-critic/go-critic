@@ -40,15 +40,15 @@ func (c *testingHelperChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 
 	typ := c.ctx.TypesInfo.TypeOf(decl.Name)
 	if sig, ok := typ.(*types.Signature); ok {
-
 		params := sig.Params()
+
 		for i := 0; i < params.Len(); i++ {
 			typ := params.At(i).Type().String()
 			if typ == "*testing.T" {
 				if i != 0 {
 					c.warnFirstParam(decl)
 				}
-				if !c.containsHelperCall(decl.Body) {
+				if !c.hasFirstCallHelper(decl.Body) {
 					c.warnPossibleHelper(decl)
 				}
 			}
@@ -56,26 +56,27 @@ func (c *testingHelperChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	}
 }
 
-func (c *testingHelperChecker) containsHelperCall(body *ast.BlockStmt) bool {
-	for _, s := range body.List {
-		stmt, ok := s.(*ast.ExprStmt)
-		if !ok {
-			continue
-		}
-		call, ok := stmt.X.(*ast.CallExpr)
-		if !ok {
-			continue
-		}
-		if astfmt.Sprint(call) == "t.Helper()" {
-			return true
-		}
+func (c *testingHelperChecker) hasFirstCallHelper(body *ast.BlockStmt) bool {
+	if len(body.List) == 0 {
+		return true
 	}
-	return false
+
+	expr := body.List[0]
+	stmt, ok := expr.(*ast.ExprStmt)
+	if !ok {
+		return false
+	}
+	call, ok := stmt.X.(*ast.CallExpr)
+	if !ok {
+		return false
+	}
+	return astfmt.Sprint(call) == "t.Helper()"
 }
 
 func (c *testingHelperChecker) warnFirstParam(...interface{}) {
 	// TODO
 }
+
 func (c *testingHelperChecker) warnPossibleHelper(...interface{}) {
 	// TODO
 }
