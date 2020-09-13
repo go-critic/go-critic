@@ -112,7 +112,7 @@ func (cfg *IntegrationTest) buildLinter() (string, error) {
 	tmpDir := os.TempDir()
 	filename := filepath.Join(tmpDir, "_gocritic_inttest_")
 
-	args := []string{"build", "-o", filename, cfg.Main}
+	args := []string{"build", "-race", "-o", filename, cfg.Main}
 	out, err := exec.Command("go", args...).CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("%v: %s", err, out)
