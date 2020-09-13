@@ -13,10 +13,19 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "testingHelper"
-	info.Tags = []string{"style", "opinionated", "experimental"}
-	info.Summary = "TODO"
-	info.Before = `TODO`
-	info.After = `TODO`
+	info.Tags = []string{"style", "experimental"}
+	info.Summary = "Detects helper test functions that do not call t.Helper()"
+	info.Before = `func myHelper(v int, t *testing.T) {
+	if v != 10 {
+		t.Fatal("expected 10")
+	}
+}`
+	info.After = `func myHelper(t *testing.T, v int) {
+	t.Helper()
+	if v != 10 {
+		t.Fatal("expected 10")
+	}
+}`
 
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
 		return astwalk.WalkerForFuncDecl(&testingHelperChecker{ctx: ctx})
@@ -32,27 +41,30 @@ func (c *testingHelperChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 	if isUnitTestFunc(c.ctx, decl) {
 		return
 	}
-
-	params := decl.Type.Params
-	if len(params.List) == 0 {
+	if len(decl.Type.Params.List) == 0 {
 		return
 	}
 
 	typ := c.ctx.TypesInfo.TypeOf(decl.Name)
-	if sig, ok := typ.(*types.Signature); ok {
-		params := sig.Params()
+	sig, ok := typ.(*types.Signature)
+	if !ok {
+		return
+	}
 
-		for i := 0; i < params.Len(); i++ {
-			typ := params.At(i).Type().String()
-			if typ == "*testing.T" {
-				if i != 0 {
-					c.warnFirstParam(decl)
-				}
-				if !c.hasFirstCallHelper(decl.Body) {
-					c.warnPossibleHelper(decl)
-				}
-			}
+	params := sig.Params()
+	for i := 0; i < params.Len(); i++ {
+		typ := params.At(i).Type().String()
+		if typ != "*testing.T" {
+			continue
 		}
+
+		if i != 0 {
+			c.warnFirstParam(decl)
+		}
+		if !c.hasFirstCallHelper(decl.Body) {
+			c.warnPossibleHelper(decl)
+		}
+		break
 	}
 }
 
@@ -73,10 +85,10 @@ func (c *testingHelperChecker) hasFirstCallHelper(body *ast.BlockStmt) bool {
 	return astfmt.Sprint(call) == "t.Helper()"
 }
 
-func (c *testingHelperChecker) warnFirstParam(...interface{}) {
-	// TODO
+func (c *testingHelperChecker) warnFirstParam(fn ast.Node) {
+	c.ctx.Warn(fn, "consider to make *testing.T a first parameter")
 }
 
-func (c *testingHelperChecker) warnPossibleHelper(...interface{}) {
-	// TODO
+func (c *testingHelperChecker) warnPossibleHelper(fn ast.Node) {
+	c.ctx.Warn(fn, "consider to call t.Helper() a first statement")
 }
