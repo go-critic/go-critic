@@ -45,7 +45,7 @@ func (c *testingHelperChecker) VisitFuncDecl(decl *ast.FuncDecl) {
 		return
 	}
 
-	typ := c.ctx.TypesInfo.TypeOf(decl.Name)
+	typ := c.ctx.TypeOf(decl.Name)
 	sig, ok := typ.(*types.Signature)
 	if !ok {
 		return
