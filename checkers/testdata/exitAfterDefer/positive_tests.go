@@ -6,14 +6,14 @@ import (
 
 func simpleExitAfterDefer() {
 	defer println("before return")
-	/*! os.Exit clutters `defer println("before return")` */
+	/*! os.Exit will exit, and `defer println("before return")` will not run */
 	os.Exit(0)
 }
 
 func conditionalExitAfterDefer(cond bool) {
 	defer println("I'm deferred")
 	if cond {
-		/*! os.Exit clutters `defer println("I'm deferred")` */
+		/*! os.Exit will exit, and `defer println("I'm deferred")` will not run */
 		os.Exit(0)
 	}
 }
@@ -26,7 +26,7 @@ func twoExits1(cond1, cond2 bool) {
 	}
 	defer println("")
 	if cond2 {
-		/*! os.Exit clutters `defer println("")` */
+		/*! os.Exit will exit, and `defer println("")` will not run */
 		os.Exit(0)
 	}
 }
@@ -35,7 +35,7 @@ func twoExits2() {
 	// Only the first exit gives a warning.
 
 	defer println("")
-	/*! os.Exit clutters `defer println("")` */
+	/*! os.Exit will exit, and `defer println("")` will not run */
 	os.Exit(0)
 	os.Exit(0)
 }
@@ -45,6 +45,6 @@ func deferLambda() {
 		println(x)
 	}(1)
 
-	/*! os.Exit clutters `defer func(x int){...}(...)` */
+	/*! os.Exit will exit, and `defer func(x int){...}(...)` will not run */
 	os.Exit(0)
 }
