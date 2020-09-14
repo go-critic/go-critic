@@ -72,5 +72,5 @@ func (c *exitAfterDeferChecker) warn(cause *ast.CallExpr, deferStmt *ast.DeferSt
 		// collapse the function literals.
 		s = "defer " + astfmt.Sprint(fnlit.Type) + "{...}(...)"
 	}
-	c.ctx.Warn(cause, "%s clutters `%s`", cause.Fun, s)
+	c.ctx.Warn(cause, "%s will exit, and `%s` will not run", cause.Fun, s)
 }
