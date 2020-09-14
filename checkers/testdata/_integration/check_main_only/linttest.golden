@@ -22,7 +22,7 @@ exit status 1
 ./main.go:91:9: elseif: can replace 'else {if cond {}}' with 'else if cond {}'
 ./main.go:102:3: emptyFallthrough: replace empty case containing only fallthrough with expression list
 ./main.go:100:3: emptyFallthrough: replace empty case containing only fallthrough with expression list
-./main.go:255:2: exitAfterDefer: log.Fatal clutters `defer func(){...}(...)`
+./main.go:255:2: exitAfterDefer: log.Fatal will exit, and `defer func(){...}(...)` will not run
 ./main.go:111:6: flagDeref: immediate deref in *flag.String("str", "", "usage") is most likely an error; consider using flag.StringVar
 ./main.go:238:6: flagName: flag name " foo " contains whitespace
 ./main.go:114:16: hugeParam: x is heavy (80000 bytes); consider passing it by pointer
