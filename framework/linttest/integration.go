@@ -75,7 +75,7 @@ func (cfg *IntegrationTest) runTest(t *testing.T, gocritic, gopath string) {
 			if err != nil {
 				t.Errorf("read golden file: %v", err)
 			}
-			want = string(data)
+			want = strings.TrimSpace(string(data))
 			goldenDataCache[goldenFile] = want
 		}
 
