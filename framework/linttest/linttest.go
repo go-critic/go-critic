@@ -18,10 +18,10 @@ import (
 
 var sizes = types.SizesFor("gc", runtime.GOARCH)
 
-func saneCheckersList(t *testing.T) []*linter.CheckerInfo {
+func saneCheckersList(t *testing.T, checkers []*linter.CheckerInfo) []*linter.CheckerInfo {
 	var saneList []*linter.CheckerInfo
 
-	for _, info := range linter.GetCheckersInfo() {
+	for _, info := range checkers {
 		pkgPath := "github.com/go-critic/go-critic/framework/linttest/testdata/sanity"
 		t.Run(info.Name+"/sanity", func(t *testing.T) {
 			fset := token.NewFileSet()
@@ -66,25 +66,40 @@ type IntegrationTest struct {
 // TODO(quasilyte): document default options.
 // TODO(quasilyte): make it possible to run tests with different options.
 func TestCheckers(t *testing.T) {
-	for _, info := range saneCheckersList(t) {
+	checkers := linter.GetCheckersInfo()
+
+	// See #980.
+	for i := range checkers {
+		info := checkers[i]
+		t.Run(info.Name+"/debug", func(t *testing.T) {
+			debugFile := filepath.Join("testdata", info.Name, "debug.go")
+			checkTarget(t, debugFile, info)
+		})
+	}
+
+	for _, info := range saneCheckersList(t, checkers) {
 		t.Run(info.Name, func(t *testing.T) {
 			pkgPath := "./testdata/" + info.Name
-
-			fset := token.NewFileSet()
-			pkgs := newPackages(t, pkgPath, fset)
-			for _, pkg := range pkgs {
-				ctx := &linter.Context{
-					SizesInfo: sizes,
-					FileSet:   fset,
-					TypesInfo: pkg.TypesInfo,
-					Pkg:       pkg.Types,
-				}
-				c := linter.NewChecker(ctx, info)
-				for _, f := range pkg.Syntax {
-					checkFile(t, c, ctx, f)
-				}
-			}
+			checkTarget(t, pkgPath, info)
 		})
+	}
+}
+
+func checkTarget(t *testing.T, pattern string, info *linter.CheckerInfo) {
+	t.Helper()
+	fset := token.NewFileSet()
+	pkgs := newPackages(t, pattern, fset)
+	for _, pkg := range pkgs {
+		ctx := &linter.Context{
+			SizesInfo: sizes,
+			FileSet:   fset,
+			TypesInfo: pkg.TypesInfo,
+			Pkg:       pkg.Types,
+		}
+		c := linter.NewChecker(ctx, info)
+		for _, f := range pkg.Syntax {
+			checkFile(t, c, ctx, f)
+		}
 	}
 }
 
