@@ -61,35 +61,63 @@ type IntegrationTest struct {
 	Dir string
 }
 
-// TestCheckers runs end2end tests over all registered checkers using default options.
+type CheckersTest struct {
+	// IgnoreErrors is a checker names list those tests ignore parse/typecheck errors.
+	IgnoreErrors []string
+}
+
+// Run executes every registered checker tests.
 //
 // TODO(quasilyte): document default options.
-// TODO(quasilyte): make it possible to run tests with different options.
-func TestCheckers(t *testing.T) {
+func (cfg *CheckersTest) Run(t *testing.T) {
 	checkers := linter.GetCheckersInfo()
+
+	ignoreErrors := make(map[string]bool, len(cfg.IgnoreErrors))
+	for _, checkerName := range cfg.IgnoreErrors {
+		ignoreErrors[checkerName] = true
+	}
 
 	// See #980.
 	for i := range checkers {
 		info := checkers[i]
 		t.Run(info.Name+"/debug", func(t *testing.T) {
 			debugFile := filepath.Join("testdata", info.Name, "debug.go")
-			checkTarget(t, debugFile, info)
+			target := lintTarget{
+				pattern:      debugFile,
+				ignoreErrors: ignoreErrors[info.Name],
+			}
+			checkTarget(t, target, info)
 		})
 	}
 
 	for _, info := range saneCheckersList(t, checkers) {
 		t.Run(info.Name, func(t *testing.T) {
 			pkgPath := "./testdata/" + info.Name
-			checkTarget(t, pkgPath, info)
+			target := lintTarget{
+				pattern:      pkgPath,
+				ignoreErrors: ignoreErrors[info.Name],
+			}
+			checkTarget(t, target, info)
 		})
 	}
 }
 
-func checkTarget(t *testing.T, pattern string, info *linter.CheckerInfo) {
+type lintTarget struct {
+	pattern      string
+	ignoreErrors bool
+}
+
+func checkTarget(t *testing.T, target lintTarget, info *linter.CheckerInfo) {
 	t.Helper()
 	fset := token.NewFileSet()
-	pkgs := newPackages(t, pattern, fset)
+	pkgs := newPackages(t, target.pattern, fset)
 	for _, pkg := range pkgs {
+		if len(pkg.Errors) != 0 && !target.ignoreErrors {
+			for _, err := range pkg.Errors {
+				t.Error(err)
+			}
+			return
+		}
 		ctx := &linter.Context{
 			SizesInfo: sizes,
 			FileSet:   fset,

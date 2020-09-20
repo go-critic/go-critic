@@ -22,7 +22,13 @@ func TestCheckers(t *testing.T) {
 		}
 	}
 
-	linttest.TestCheckers(t)
+	cfg := linttest.CheckersTest{
+		IgnoreErrors: []string{
+			"caseOrder",
+		},
+	}
+
+	cfg.Run(t)
 }
 
 func TestIntegration(t *testing.T) {
