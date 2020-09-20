@@ -23,10 +23,6 @@ func calculateString(x string) string {
 	return x
 }
 
-func calculateIntPair(x, y int) (int, int) {
-	return x, y
-}
-
 func NoWarningsCalc() {
 	_ = calculateInt(0)
 	_ = calculateInt(1)
@@ -35,7 +31,7 @@ func NoWarningsCalc() {
 	_ = calculateInt(12)
 	_ = calculateInt(1 + 2)
 
-	var int x = 03
+	var x = 03
 	_ = calculateInt(x)
 
 	_ = calculateHex(0x0)
@@ -51,9 +47,9 @@ func NoWarningsCalc() {
 	_ = calculateString("01")
 	_ = calculateString("0.1")
 
-	_ = calculateIntPair(1, 2)
-	_ = calculateIntPair(-1, 2)
-	_ = calculateIntPair(0, 2)
+	_, _ = calculateIntPair(1, 2)
+	_, _ = calculateIntPair(-1, 2)
+	_, _ = calculateIntPair(0, 2)
 
 	_ = math.Exp(12)
 	_ = math.Exp(0x12)
@@ -72,5 +68,5 @@ func NoWarningsOs() {
 }
 
 func NoWarningsIoutil() {
-	_ = ioutil.WriteFile("notes.txt", []byte(), 0666)
+	_ = ioutil.WriteFile("notes.txt", nil, 0666)
 }

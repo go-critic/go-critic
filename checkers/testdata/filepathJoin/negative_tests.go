@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 )
 
-func badArgs() {
+func goodArgs() {
 	filename := "file.go"
 	dir := "testdata"
 
