@@ -1,4 +1,4 @@
-//nolint
+//nolint // it's not a Go code file
 package gorules
 
 import (

@@ -87,7 +87,7 @@ func (c *sortSliceChecker) VisitExpr(expr ast.Expr) {
 	}
 }
 
-func (c *sortSliceChecker) paramIdents(e *ast.FuncType) (*ast.Ident, *ast.Ident) {
+func (c *sortSliceChecker) paramIdents(e *ast.FuncType) (ivar, jvar *ast.Ident) {
 	// Covers both `i, j int` and `i int, j int`.
 	idents := make([]*ast.Ident, 0, 2)
 	for _, field := range e.Params.List {

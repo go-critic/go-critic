@@ -44,7 +44,7 @@ func (c whyNoLintChecker) VisitComment(cg *ast.CommentGroup) {
 			continue
 		}
 
-		if s := sl[1]; !strings.HasPrefix(s, "//") || len(strings.TrimPrefix(s, "//")) == 0 {
+		if s := sl[1]; !strings.HasPrefix(s, "//") || strings.TrimPrefix(s, "//") == "" {
 			c.ctx.Warn(cg, "include an explanation for nolint directive")
 			return
 		}
