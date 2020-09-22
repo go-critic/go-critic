@@ -1,4 +1,7 @@
+//nolint // reason
 package checker_test
+
+//nolint reason
 
 /*
 multi-line comments

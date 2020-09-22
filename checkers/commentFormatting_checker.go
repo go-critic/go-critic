@@ -23,7 +23,7 @@ func init() {
 		parts := []string{
 			`^//go:generate .*$`, // e.g.: go:generate value
 			`^//\w+:.*$`,         // e.g.: key: value
-			`^//nolint$`,         // e.g.: nolint
+			`^//nolint\b`,        // e.g.: nolint
 			`^//line /.*:\d+`,    // e.g.: line /path/to/file:123
 			`^//export \w+$`,     // e.g.: export Foo
 		}
