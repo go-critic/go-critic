@@ -36,6 +36,8 @@ ci-linter:
 	@$(GOPATH_DIR)/bin/golangci-lint run -v
 	go install github.com/quasilyte/go-consistent
 	@$(GOPATH_DIR)/bin/go-consistent ./...
+	go build -o gocritic ./cmd/gocritic
+	./gocritic check -enableAll ./...
 
 cover:
 	go install github.com/mattn/goveralls
