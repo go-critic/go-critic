@@ -107,6 +107,7 @@ Tags:
 * `#performance` - kind of checks that detect potential performance issues in code
 * `#experimental` - check is under testing and development. Disabled by default
 * `#opinionated` - check can be unwanted for some people. Disabled by default
+* `#security` -  kind of checks that find security issues in code
 
 ## Contributing
 
