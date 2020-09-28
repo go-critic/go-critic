@@ -327,7 +327,8 @@ func (p *program) bindDefaultEnabledList() error {
 	for _, info := range p.infoList {
 		enable := !info.HasTag("experimental") &&
 			!info.HasTag("opinionated") &&
-			!info.HasTag("performance")
+			!info.HasTag("performance") &&
+			!info.HasTag("security")
 		if enable {
 			enabled = append(enabled, info.Name)
 		}
