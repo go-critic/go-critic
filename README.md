@@ -125,3 +125,4 @@ Code style is the same as in Go project, see [CodeReviewComments](https://github
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 It also describes how to develop a new checker for the linter.
+Thank you 😊,
