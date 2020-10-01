@@ -2,6 +2,7 @@ package checkers
 
 import (
 	"go/ast"
+	"go/token"
 	"go/types"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
@@ -61,6 +62,14 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 	// Now check that all arguments match the parameters.
 	n := 0
 	for _, params := range fn.Type.Params.List {
+		if _, ok := params.Type.(*ast.Ellipsis); ok {
+			if result.Ellipsis == token.NoPos {
+				return
+			}
+			n++
+			continue
+		}
+
 		for _, id := range params.Names {
 			if !astequal.Expr(id, result.Args[n]) {
 				return
