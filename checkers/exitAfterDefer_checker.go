@@ -61,9 +61,6 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 				return true
 			}
 			if deferStmt != nil {
-				if deferStmt.Call == n {
-					return true
-				}
 				switch qualifiedName(n.Fun) {
 				case "log.Fatal", "log.Fatalf", "log.Fatalln", "os.Exit":
 					c.warn(n, deferStmt)
