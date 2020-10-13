@@ -52,7 +52,18 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 		case *ast.DeferStmt:
 			deferStmt = n
 		case *ast.CallExpr:
+			// See #995. We allow `defer os.Exit()` calls
+			// as it's harder to determine whether they're going
+			// to clutter anything without actually trying to
+			// simulate the defer stack + understanding the control flow.
+			// TODO: can we use CFG here?
+			if _, ok := cur.Parent().(*ast.DeferStmt); ok {
+				return true
+			}
 			if deferStmt != nil {
+				if deferStmt.Call == n {
+					return true
+				}
 				switch qualifiedName(n.Fun) {
 				case "log.Fatal", "log.Fatalf", "log.Fatalln", "os.Exit":
 					c.warn(n, deferStmt)
