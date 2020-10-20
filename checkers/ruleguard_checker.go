@@ -6,6 +6,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"log"
+	"strings"
 
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/quasilyte/go-ruleguard/ruleguard"
@@ -18,7 +19,7 @@ func init() {
 	info.Params = linter.CheckerParams{
 		"rules": {
 			Value: "",
-			Usage: "path to a gorules file",
+			Usage: "comma-separated list of gorule file paths",
 		},
 	}
 	info.Summary = "Runs user-defined rules using ruleguard linter"
@@ -34,8 +35,8 @@ func init() {
 
 func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *ruleguardChecker {
 	c := &ruleguardChecker{ctx: ctx}
-	rulesFilename := info.Params.String("rules")
-	if rulesFilename == "" {
+	rulesFlag := info.Params.String("rules")
+	if rulesFlag == "" {
 		return c
 	}
 
@@ -45,20 +46,25 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 	// For now, we log error messages and return a ruleguard checker
 	// with an empty rules set.
 
-	data, err := ioutil.ReadFile(rulesFilename)
-	if err != nil {
-		log.Printf("ruleguard init error: %+v", err)
-		return c
-	}
-
 	fset := token.NewFileSet()
-	rset, err := ruleguard.ParseRules(rulesFilename, fset, bytes.NewReader(data))
-	if err != nil {
-		log.Printf("ruleguard init error: %+v", err)
-		return c
+	filenames := strings.Split(rulesFlag, ",")
+	var ruleSets []*ruleguard.GoRuleSet
+	for _, filename := range filenames {
+		filename = strings.TrimSpace(filename)
+		data, err := ioutil.ReadFile(filename)
+		if err != nil {
+			log.Printf("ruleguard init error: %+v", err)
+			return c
+		}
+		rset, err := ruleguard.ParseRules(filename, fset, bytes.NewReader(data))
+		if err != nil {
+			log.Printf("ruleguard init error: %+v", err)
+			return c
+		}
+		ruleSets = append(ruleSets, rset)
 	}
 
-	c.rset = rset
+	c.rset = ruleguard.MergeRuleSets(ruleSets)
 	return c
 }
 
