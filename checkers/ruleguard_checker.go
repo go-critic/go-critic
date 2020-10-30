@@ -2,10 +2,12 @@ package checkers
 
 import (
 	"bytes"
+	"fmt"
 	"go/ast"
 	"go/token"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/go-critic/go-critic/framework/linter"
@@ -21,6 +23,10 @@ func init() {
 			Value: "",
 			Usage: "comma-separated list of gorule file paths",
 		},
+		"debug": {
+			Value: "",
+			Usage: "enable debug for the specified named rules group",
+		},
 	}
 	info.Summary = "Runs user-defined rules using ruleguard linter"
 	info.Details = "Reads a rules file and turns them into go-critic checkers."
@@ -34,7 +40,10 @@ func init() {
 }
 
 func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *ruleguardChecker {
-	c := &ruleguardChecker{ctx: ctx}
+	c := &ruleguardChecker{
+		ctx:        ctx,
+		debugGroup: info.Params.String("debug"),
+	}
 	rulesFlag := info.Params.String("rules")
 	if rulesFlag == "" {
 		return c
@@ -71,7 +80,8 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 type ruleguardChecker struct {
 	ctx *linter.CheckerContext
 
-	rset *ruleguard.GoRuleSet
+	debugGroup string
+	rset       *ruleguard.GoRuleSet
 }
 
 func (c *ruleguardChecker) WalkFile(f *ast.File) {
@@ -80,6 +90,10 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 	}
 
 	ctx := &ruleguard.Context{
+		Debug: c.debugGroup,
+		DebugPrint: func(s string) {
+			fmt.Fprintln(os.Stderr, s)
+		},
 		Pkg:   c.ctx.Pkg,
 		Types: c.ctx.TypesInfo,
 		Sizes: c.ctx.SizesInfo,
