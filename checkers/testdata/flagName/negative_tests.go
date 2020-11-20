@@ -4,6 +4,10 @@ import (
 	"flag"
 )
 
+func dynamicFlagName(flagName string) {
+	_ = flag.String(flagName, "", "") // can't analyze
+}
+
 func methodCall() {
 	// See #784.
 	var getter flag.Getter
