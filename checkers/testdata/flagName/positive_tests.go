@@ -4,6 +4,28 @@ import (
 	"flag"
 )
 
+func flagsWithEmptyName() {
+	/*! empty flag name */
+	_ = flag.Bool("", false, "")
+}
+
+func flagsWithHypenPrefix() {
+	/*! flag name "-name" should not start with a hypen */
+	_ = flag.Bool("-name", false, "")
+	/*! flag name "--name" should not start with a hypen */
+	_ = flag.Bool("--name", false, "")
+}
+
+func flagsWithEqSign() {
+	/*! flag name "foo=bar" should not contain '=' */
+	_ = flag.Bool("foo=bar", false, "")
+
+	const flagName = "foo="
+
+	/*! flag name "foo=" should not contain '=' */
+	_ = flag.Bool(flagName, false, "")
+}
+
 func flagsWithWhitespace() {
 	/*! flag name " name" contains whitespace */
 	_ = flag.Bool(" name", false, "")
