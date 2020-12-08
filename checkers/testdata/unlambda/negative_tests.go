@@ -2,6 +2,12 @@ package checker_test
 
 import "errors"
 
+type withNested struct {
+	x struct {
+		y object
+	}
+}
+
 func goodFunctionLiterals() {
 	_ = returnInt
 }
@@ -10,6 +16,19 @@ func goodMethodValues() {
 	var o object
 
 	_ = o.returnInt
+
+	// Can't suggest here: o2 is nil
+	// See #1007
+	var o2 *object
+	_ = func(x int) int { return o2.returnInt(x) }
+	o2 = new(object)
+
+	// Should this give a warning?
+	var o3 withNested
+	_ = func(x int) int { return o3.x.y.returnInt(x) }
+
+	var o4 *withNested
+	_ = func(x int) int { return o4.x.y.returnInt(x) }
 }
 
 func add(x, y int) int { return x + y }

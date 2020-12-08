@@ -6,9 +6,11 @@ import (
 	"go/types"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/checkers/internal/lintutil"
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astequal"
+	"github.com/go-toolsmith/typep"
 )
 
 func init() {
@@ -48,12 +50,22 @@ func (c *unlambdaChecker) VisitExpr(x ast.Expr) {
 	if isBuiltin(callable) {
 		return // See #762
 	}
-	if id, ok := result.Fun.(*ast.Ident); ok {
-		obj := c.ctx.TypesInfo.ObjectOf(id)
-		if _, ok := obj.(*types.Var); ok {
-			return // See #888
+	hasVars := lintutil.ContainsNode(result.Fun, func(n ast.Node) bool {
+		id, ok := n.(*ast.Ident)
+		if !ok {
+			return false
 		}
+		obj, ok := c.ctx.TypesInfo.ObjectOf(id).(*types.Var)
+		if !ok {
+			return false
+		}
+		// Permit only non-pointer struct method values.
+		return !typep.IsStruct(obj.Type().Underlying())
+	})
+	if hasVars {
+		return // See #888 #1007
 	}
+
 	fnType := c.ctx.TypeOf(fn)
 	resultType := c.ctx.TypeOf(result.Fun)
 	if !types.Identical(fnType, resultType) {
