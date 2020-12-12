@@ -1,5 +1,18 @@
 package checker_test
 
+type Foo struct{}
+
+func (Foo) Method() int     { return 1 }
+func (*Foo) PtrMethod() int { return 1 }
+
+func methodExpr() {
+	/*! replace `func(f Foo) int { return Foo.Method(f) }` with `Foo.Method` */
+	_ = func(f Foo) int { return Foo.Method(f) }
+
+	// TODO: should generate warning too.
+	_ = func(f *Foo) int { return (*Foo).PtrMethod(f) }
+}
+
 func returnIntError(x int) (int, error) {
 	return x, nil
 }
