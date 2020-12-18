@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/go-critic/go-critic/framework/linter"
@@ -61,27 +62,34 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 	// with an empty rules set.
 
 	fset := token.NewFileSet()
-	filenames := strings.Split(rulesFlag, ",")
+	filePatterns := strings.Split(rulesFlag, ",")
 	var ruleSets []*ruleguard.GoRuleSet
-	for _, filename := range filenames {
-		filename = strings.TrimSpace(filename)
-		data, err := ioutil.ReadFile(filename)
+	for _, filePattern := range filePatterns {
+		filenames, err := filepath.Glob(strings.TrimSpace(filePattern))
 		if err != nil {
-			if failOnErrorFlag {
-				log.Panicf("ruleguard init error: %+v", err)
-			}
+			// The only possible returned error is ErrBadPattern, when pattern is malformed.
 			log.Printf("ruleguard init error: %+v", err)
 			continue
 		}
-		rset, err := ruleguard.ParseRules(filename, fset, bytes.NewReader(data))
-		if err != nil {
-			if failOnErrorFlag {
-				log.Panicf("ruleguard init error: %+v", err)
+		for _, filename := range filenames {
+			data, err := ioutil.ReadFile(filename)
+			if err != nil {
+				if failOnErrorFlag {
+					log.Panicf("ruleguard init error: %+v", err)
+				}
+				log.Printf("ruleguard init error: %+v", err)
+				continue
 			}
-			log.Printf("ruleguard init error: %+v", err)
-			continue
+			rset, err := ruleguard.ParseRules(filename, fset, bytes.NewReader(data))
+			if err != nil {
+				if failOnErrorFlag {
+					log.Panicf("ruleguard init error: %+v", err)
+				}
+				log.Printf("ruleguard init error: %+v", err)
+				return c
+			}
+			ruleSets = append(ruleSets, rset)
 		}
-		ruleSets = append(ruleSets, rset)
 	}
 
 	c.rset = ruleguard.MergeRuleSets(ruleSets)
