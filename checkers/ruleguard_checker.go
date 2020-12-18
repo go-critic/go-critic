@@ -22,7 +22,7 @@ func init() {
 	info.Params = linter.CheckerParams{
 		"rules": {
 			Value: "",
-			Usage: "comma-separated list of gorule file paths",
+			Usage: "comma-separated list of gorule file paths. Patterns such as 'rules-*.go' may be specified",
 		},
 		"debug": {
 			Value: "",
