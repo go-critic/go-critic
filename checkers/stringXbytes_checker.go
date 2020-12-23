@@ -28,7 +28,7 @@ type stringXbytes struct {
 
 func (c *stringXbytes) VisitExpr(expr ast.Expr) {
 	x, ok := expr.(*ast.CallExpr)
-	if !ok || qualifiedName(x.Fun) != "copy" {
+	if !ok || qualifiedName(x.Fun) != "copy" || len(x.Args) != 2 {
 		return
 	}
 
