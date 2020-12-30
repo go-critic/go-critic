@@ -27,6 +27,10 @@ func init() {
 			Value: "",
 			Usage: "enable debug for the specified named rules group",
 		},
+		"failOnError": {
+			Value: false,
+			Usage: "If true, panic when the gorule files contain a syntax error. If false, log and skip rules that contain an error",
+		},
 	}
 	info.Summary = "Runs user-defined rules using ruleguard linter"
 	info.Details = "Reads a rules file and turns them into go-critic checkers."
@@ -48,6 +52,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 	if rulesFlag == "" {
 		return c
 	}
+	failOnErrorFlag := info.Params.Bool("failOnError")
 
 	// TODO(quasilyte): handle initialization errors better when we make
 	// a transition to the go/analysis framework.
@@ -62,13 +67,19 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 		filename = strings.TrimSpace(filename)
 		data, err := ioutil.ReadFile(filename)
 		if err != nil {
+			if failOnErrorFlag {
+				log.Panicf("ruleguard init error: %+v", err)
+			}
 			log.Printf("ruleguard init error: %+v", err)
-			return c
+			continue
 		}
 		rset, err := ruleguard.ParseRules(filename, fset, bytes.NewReader(data))
 		if err != nil {
+			if failOnErrorFlag {
+				log.Panicf("ruleguard init error: %+v", err)
+			}
 			log.Printf("ruleguard init error: %+v", err)
-			return c
+			continue
 		}
 		ruleSets = append(ruleSets, rset)
 	}
