@@ -86,7 +86,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 					log.Panicf("ruleguard init error: %+v", err)
 				}
 				log.Printf("ruleguard init error: %+v", err)
-				return c
+				continue
 			}
 			ruleSets = append(ruleSets, rset)
 		}
