@@ -2,10 +2,10 @@
 package gorules
 
 import (
-	"github.com/quasilyte/go-ruleguard/dsl/fluent"
+	"github.com/quasilyte/go-ruleguard/dsl"
 )
 
-func nilSafeTypeOf(m fluent.Matcher) {
+func nilSafeTypeOf(m dsl.Matcher) {
 	m.Match(`$_.ctx.TypesInfo.TypeOf($x)`).
 		Report(`use ctx.TypeOf($x) instead, it's nil-safe`)
 }

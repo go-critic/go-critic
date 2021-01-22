@@ -2,9 +2,9 @@
 
 package gorules
 
-import "github.com/quasilyte/go-ruleguard/dsl/fluent"
+import "github.com/quasilyte/go-ruleguard/dsl"
 
-func osFilepath(m fluent.Matcher) {
+func osFilepath(m dsl.Matcher) {
 	// path/filepath package forwards path separators so if
 	// the file already uses filepath-related API it might be
 	// a good idea to reduce the direct os package dependency.
