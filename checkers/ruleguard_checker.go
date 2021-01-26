@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/go-critic/go-critic/framework/linter"
@@ -21,7 +22,7 @@ func init() {
 	info.Params = linter.CheckerParams{
 		"rules": {
 			Value: "",
-			Usage: "comma-separated list of gorule file paths",
+			Usage: "comma-separated list of gorule file paths. Glob patterns such as 'rules-*.go' may be specified",
 		},
 		"debug": {
 			Value: "",
@@ -60,47 +61,61 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	// For now, we log error messages and return a ruleguard checker
 	// with an empty rules set.
 
+	engine := ruleguard.NewEngine()
 	fset := token.NewFileSet()
-	filenames := strings.Split(rulesFlag, ",")
-	var ruleSets []*ruleguard.GoRuleSet
-	for _, filename := range filenames {
-		filename = strings.TrimSpace(filename)
-		data, err := ioutil.ReadFile(filename)
-		if err != nil {
-			if failOnErrorFlag {
-				return nil, fmt.Errorf("ruleguard init error: %+v", err)
-			}
-			log.Printf("ruleguard init error: %+v", err)
-			continue
-		}
-		rset, err := ruleguard.ParseRules(filename, fset, bytes.NewReader(data))
-		if err != nil {
-			if failOnErrorFlag {
-				return nil, fmt.Errorf("ruleguard init error: %+v", err)
-			}
-			log.Printf("ruleguard init error: %+v", err)
-			continue
-		}
-		ruleSets = append(ruleSets, rset)
+	filePatterns := strings.Split(rulesFlag, ",")
+
+	parseContext := &ruleguard.ParseContext{
+		Fset: fset,
 	}
 
-	c.rset = ruleguard.MergeRuleSets(ruleSets)
-	return c, nil
+	loaded := 0
+	for _, filePattern := range filePatterns {
+		filenames, err := filepath.Glob(strings.TrimSpace(filePattern))
+		if err != nil {
+			// The only possible returned error is ErrBadPattern, when pattern is malformed.
+			log.Printf("ruleguard init error: %+v", err)
+			continue
+		}
+		for _, filename := range filenames {
+			data, err := ioutil.ReadFile(filename)
+			if err != nil {
+				if failOnErrorFlag {
+					return nil, fmt.Errorf("ruleguard init error: %+v", err)
+				}
+				log.Printf("ruleguard init error: %+v", err)
+				continue
+			}
+			if err := engine.Load(parseContext, filename, bytes.NewReader(data)); err != nil {
+				if failOnErrorFlag {
+					return nil, fmt.Errorf("ruleguard init error: %+v", err)
+				}
+				log.Printf("ruleguard init error: %+v", err)
+				continue
+			}
+			loaded++
+		}
+	}
+
+	if loaded != 0 {
+		c.engine = engine
+	}
+	return c
 }
 
 type ruleguardChecker struct {
 	ctx *linter.CheckerContext
 
 	debugGroup string
-	rset       *ruleguard.GoRuleSet
+	engine     *ruleguard.Engine
 }
 
 func (c *ruleguardChecker) WalkFile(f *ast.File) {
-	if c.rset == nil {
+	if c.engine == nil {
 		return
 	}
 
-	ctx := &ruleguard.Context{
+	ctx := &ruleguard.RunContext{
 		Debug: c.debugGroup,
 		DebugPrint: func(s string) {
 			fmt.Fprintln(os.Stderr, s)
@@ -116,8 +131,7 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		},
 	}
 
-	err := ruleguard.RunRules(ctx, f, c.rset)
-	if err != nil {
+	if err := c.engine.Run(ctx, f); err != nil {
 		// Normally this should never happen, but since
 		// we don't have a better mechanism to report errors,
 		// emit a warning.
