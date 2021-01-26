@@ -138,7 +138,8 @@ type Warning struct {
 
 // NewChecker returns initialized checker identified by an info.
 // info must be non-nil.
-// Panics if info describes a checker that was not properly registered.
+// Returns an error if info describes a checker that was not properly registered,
+// or if checker fails to initialize.
 func NewChecker(ctx *Context, info *CheckerInfo) (*Checker, error) {
 	return newChecker(ctx, info)
 }

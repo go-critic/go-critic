@@ -223,9 +223,10 @@ func (p *program) initCheckers() error {
 			log.Printf("\tdebug: %s: %s", info.Name, notice)
 		}
 		if enabled {
-			if checker, err := linter.NewChecker(p.ctx, info); err != nil {
+			if checker, err := linter.NewChecker(p.ctx, info); err == nil {
 				p.checkers = append(p.checkers, checker)
 			} else {
+				log.Printf("\tdebug: %s: initialization failure: %v", info.Name, err)
 				return err
 			}
 		}
