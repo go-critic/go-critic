@@ -100,7 +100,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	if loaded != 0 {
 		c.engine = engine
 	}
-	return c
+	return c, nil
 }
 
 type ruleguardChecker struct {
