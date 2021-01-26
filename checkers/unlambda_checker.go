@@ -21,8 +21,8 @@ func init() {
 	info.Before = `func(x int) int { return fn(x) }`
 	info.After = `fn`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&unlambdaChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&unlambdaChecker{ctx: ctx}), nil
 	})
 }
 

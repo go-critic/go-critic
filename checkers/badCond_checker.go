@@ -29,8 +29,8 @@ for i := 0; i < n; i++ {
 	xs[i] = 0
 }`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForFuncDecl(&badCondChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForFuncDecl(&badCondChecker{ctx: ctx}), nil
 	})
 }
 

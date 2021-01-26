@@ -33,7 +33,10 @@ func saneCheckersList(t *testing.T, checkers []*linter.CheckerInfo) []*linter.Ch
 					TypesInfo: pkg.TypesInfo,
 					Pkg:       pkg.Types,
 				}
-				c := linter.NewChecker(ctx, info)
+				c, err := linter.NewChecker(ctx, info)
+				if err != nil {
+					t.Errorf("Unexpected error: %v\n%s", err, debug.Stack())
+				}
 				defer func() {
 					r := recover()
 					if r != nil {
@@ -124,7 +127,10 @@ func checkTarget(t *testing.T, target lintTarget, info *linter.CheckerInfo) {
 			TypesInfo: pkg.TypesInfo,
 			Pkg:       pkg.Types,
 		}
-		c := linter.NewChecker(ctx, info)
+		c, err := linter.NewChecker(ctx, info)
+		if err != nil {
+			t.Errorf("Unexpected error: %v\n%s", err, debug.Stack())
+		}
 		for _, f := range pkg.Syntax {
 			checkFile(t, c, ctx, f)
 		}

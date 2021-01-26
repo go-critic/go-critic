@@ -20,8 +20,8 @@ func init() {
 	info.After = `b := flag.Bool("foo", false, "description")`
 	info.Note = "https://github.com/golang/go/issues/41792"
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&flagNameChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&flagNameChecker{ctx: ctx}), nil
 	})
 }
 

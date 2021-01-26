@@ -21,11 +21,11 @@ func init() {
 	info.Before = `func f(x [1024]int) {}`
 	info.After = `func f(x *[1024]int) {}`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		return astwalk.WalkerForFuncDecl(&hugeParamChecker{
 			ctx:           ctx,
 			sizeThreshold: int64(info.Params.Int("sizeThreshold")),
-		})
+		}), nil
 	})
 }
 

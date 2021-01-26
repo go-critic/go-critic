@@ -19,11 +19,11 @@ func init() {
 	}
 	re := regexp.MustCompile(`^// *nolint(?::[^ ]+)? *(.*)$`)
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		return astwalk.WalkerForComment(&whyNoLintChecker{
 			ctx: ctx,
 			re:  re,
-		})
+		}), nil
 	})
 }
 

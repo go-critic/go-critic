@@ -28,10 +28,10 @@ v := (*a)[5] // only if a is array`
 k.field = 5
 v := a[5]`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		c := &underefChecker{ctx: ctx}
 		c.skipRecvDeref = info.Params.Bool("skipRecvDeref")
-		return astwalk.WalkerForExpr(c)
+		return astwalk.WalkerForExpr(c), nil
 	})
 }
 

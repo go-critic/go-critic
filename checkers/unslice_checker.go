@@ -21,8 +21,8 @@ copy(b[:], values...) // b is []byte`
 f(s)
 copy(b, values...)`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&unsliceChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&unsliceChecker{ctx: ctx}), nil
 	})
 }
 

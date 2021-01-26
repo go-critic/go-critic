@@ -19,7 +19,7 @@ func init() {
 	info.Before = `//This is a comment`
 	info.After = `// This is a comment`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		parts := []string{
 			`^//go:generate .*$`, // e.g.: go:generate value
 			`^//\w+:.*$`,         // e.g.: key: value
@@ -32,7 +32,7 @@ func init() {
 		return astwalk.WalkerForComment(&commentFormattingChecker{
 			ctx:      ctx,
 			pragmaRE: pragmaRE,
-		})
+		}), nil
 	})
 }
 

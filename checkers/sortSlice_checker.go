@@ -21,8 +21,8 @@ func init() {
 	info.Before = `sort.Slice(xs, func(i, j) bool { return keys[i] < keys[j] })`
 	info.After = `sort.Slice(kv, func(i, j) bool { return kv[i].key < kv[j].key })`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&sortSliceChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&sortSliceChecker{ctx: ctx}), nil
 	})
 }
 

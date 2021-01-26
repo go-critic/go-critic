@@ -21,10 +21,10 @@ type rec struct{}
 type rec struct{}
 func (r rec) Method() {}
 `
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		return &typeDefFirstChecker{
 			ctx: ctx,
-		}
+		}, nil
 	})
 }
 

@@ -17,8 +17,8 @@ func init() {
 	info.Before = `_, err := db.Query("UPDATE ...")`
 	info.After = `_, err := db.Exec("UPDATE ...")`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForStmt(&sqlQueryChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForStmt(&sqlQueryChecker{ctx: ctx}), nil
 	})
 }
 

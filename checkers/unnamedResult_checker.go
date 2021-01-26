@@ -22,10 +22,10 @@ func init() {
 	info.Before = `func f() (float64, float64)`
 	info.After = `func f() (x, y float64)`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		c := &unnamedResultChecker{ctx: ctx}
 		c.checkExported = info.Params.Bool("checkExported")
-		return astwalk.WalkerForFuncDecl(c)
+		return astwalk.WalkerForFuncDecl(c), nil
 	})
 }
 
