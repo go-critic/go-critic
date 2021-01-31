@@ -15,8 +15,8 @@ func init() {
 	info.Before = `len := 10`
 	info.After = `length := 10`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForLocalDef(&builtinShadowChecker{ctx: ctx}, ctx.TypesInfo)
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForLocalDef(&builtinShadowChecker{ctx: ctx}, ctx.TypesInfo), nil
 	})
 }
 

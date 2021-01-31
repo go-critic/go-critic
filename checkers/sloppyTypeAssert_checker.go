@@ -25,8 +25,8 @@ function f(r io.Reader) interface{} {
 }
 `
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&sloppyTypeAssertChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&sloppyTypeAssertChecker{ctx: ctx}), nil
 	})
 }
 

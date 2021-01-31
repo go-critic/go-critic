@@ -16,8 +16,8 @@ func init() {
 	info.Before = `copy(b, []byte(s))`
 	info.After = `copy(b, s)`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&stringXbytes{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&stringXbytes{ctx: ctx}), nil
 	})
 }
 

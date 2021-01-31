@@ -39,19 +39,19 @@ func init() {
 	info.After = `N/A`
 	info.Note = "See https://github.com/quasilyte/go-ruleguard."
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		return newRuleguardChecker(&info, ctx)
 	})
 }
 
-func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *ruleguardChecker {
+func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (*ruleguardChecker, error) {
 	c := &ruleguardChecker{
 		ctx:        ctx,
 		debugGroup: info.Params.String("debug"),
 	}
 	rulesFlag := info.Params.String("rules")
 	if rulesFlag == "" {
-		return c
+		return c, nil
 	}
 	failOnErrorFlag := info.Params.Bool("failOnError")
 
@@ -81,14 +81,14 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 			data, err := ioutil.ReadFile(filename)
 			if err != nil {
 				if failOnErrorFlag {
-					log.Panicf("ruleguard init error: %+v", err)
+					return nil, fmt.Errorf("ruleguard init error: %+v", err)
 				}
 				log.Printf("ruleguard init error: %+v", err)
 				continue
 			}
 			if err := engine.Load(parseContext, filename, bytes.NewReader(data)); err != nil {
 				if failOnErrorFlag {
-					log.Panicf("ruleguard init error: %+v", err)
+					return nil, fmt.Errorf("ruleguard init error: %+v", err)
 				}
 				log.Printf("ruleguard init error: %+v", err)
 				continue
@@ -100,7 +100,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 	if loaded != 0 {
 		c.engine = engine
 	}
-	return c
+	return c, nil
 }
 
 type ruleguardChecker struct {

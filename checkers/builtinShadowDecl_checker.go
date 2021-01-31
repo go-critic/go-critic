@@ -15,8 +15,8 @@ func init() {
 	info.Before = `type int struct {}`
 	info.After = `type myInt struct {}`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return &builtinShadowDeclChecker{ctx: ctx}
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return &builtinShadowDeclChecker{ctx: ctx}, nil
 	})
 }
 

@@ -20,8 +20,8 @@ mu.Unlock()`
 mu.Lock()
 defer mu.Unlock()`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForStmtList(&badLockChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForStmtList(&badLockChecker{ctx: ctx}), nil
 	})
 }
 
