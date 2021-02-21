@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/go-critic/go-critic/framework/linter"
@@ -115,6 +116,12 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		return
 	}
 
+	type ruleguardReport struct {
+		node    ast.Node
+		message string
+	}
+	var reports []ruleguardReport
+
 	ctx := &ruleguard.RunContext{
 		Debug: c.debugGroup,
 		DebugPrint: func(s string) {
@@ -127,7 +134,10 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		Report: func(_ ruleguard.GoRuleInfo, n ast.Node, msg string, _ *ruleguard.Suggestion) {
 			// TODO(quasilyte): investigate whether we should add a rule name as
 			// a message prefix here.
-			c.ctx.Warn(n, msg)
+			reports = append(reports, ruleguardReport{
+				node:    n,
+				message: msg,
+			})
 		},
 	}
 
@@ -136,5 +146,12 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		// we don't have a better mechanism to report errors,
 		// emit a warning.
 		c.ctx.Warn(f, "execution error: %v", err)
+	}
+
+	sort.Slice(reports, func(i, j int) bool {
+		return reports[i].message < reports[j].message
+	})
+	for _, report := range reports {
+		c.ctx.Warn(report.node, report.message)
 	}
 }
