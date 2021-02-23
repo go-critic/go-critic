@@ -78,6 +78,9 @@ func newErrorHandler(failOnErrorFlag string) (*parseErrorHandler, error) {
 		"all":    func(err error) bool { return true },
 	}
 	for _, k := range strings.Split(failOnErrorFlag, ",") {
+		if k == "" {
+			continue
+		}
 		if p, ok := failOnErrorPredicates[k]; ok {
 			h.failureConditions[k] = p
 		} else {
@@ -85,8 +88,8 @@ func newErrorHandler(failOnErrorFlag string) (*parseErrorHandler, error) {
 			for key := range failOnErrorPredicates {
 				supportedValues = append(supportedValues, key)
 			}
-			return nil, fmt.Errorf("ruleguard init error: 'failOnError' flag must be a comma-separated list. Supported values are '%s'",
-				strings.Join(supportedValues, ","))
+			return nil, fmt.Errorf("ruleguard init error: 'failOnError' flag '%s' is invalid. It must be a comma-separated list and supported values are '%s'",
+				k, strings.Join(supportedValues, ","))
 		}
 	}
 	return &h, nil

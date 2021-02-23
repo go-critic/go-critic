@@ -1,0 +1,1 @@
+check -@ruleguard.rules rules1.go -@ruleguard.failOnError=dsl -enable ruleguard ./... | linttest.golden
