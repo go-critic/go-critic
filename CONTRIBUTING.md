@@ -75,8 +75,8 @@ Always use existing checkers as a reference if in doubdts.
 If you struggle for a long time, consider joining our dev chats,
 you'll find all answers there in a short time.
 
-[English](https://t.me/joinchat/DWka6g9VbCADtJI5J5w8nQ)  
-[Russian](https://t.me/joinchat/DWka6kba5sa_EwTgmd3Vng)  
+[English](https://t.me/go_critic_eng)
+[Russian](https://t.me/go_critic_ru) 
 ([Telegram website](https://telegram.org/))
 
 1. Come up with a checker idea. Concentrate on what it checks.
