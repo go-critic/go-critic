@@ -25,13 +25,16 @@ are ignored
 
 //nolint
 
-//line /foo/bar.go:10
-
-//line /foo/bar/f-ad/a_d.go:13
-//line /bar.go:14
-
 //export myfunc
 func myfunc() {
+}
+
+func example() {
+	//go:noinline
+}
+
+//go-sumtype:decl Data
+type Data struct {
 }
 
 //go:noinline
