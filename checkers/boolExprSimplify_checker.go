@@ -29,8 +29,8 @@ b := !(x) == !(y)`
 a := elapsed < expectElapsedMin
 b := (x) == (y)`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&boolExprSimplifyChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&boolExprSimplifyChecker{ctx: ctx}), nil
 	})
 }
 

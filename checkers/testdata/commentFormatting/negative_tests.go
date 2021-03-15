@@ -1,4 +1,7 @@
+//nolint // reason
 package checker_test
+
+//nolint reason
 
 /*
 multi-line comments
@@ -32,7 +35,7 @@ func myfunc() {
 }
 
 //go:noinline
-func f1() {
+func f2() {
 	//nolint
 
 	//	code

@@ -75,8 +75,8 @@ Always use existing checkers as a reference if in doubdts.
 If you struggle for a long time, consider joining our dev chats,
 you'll find all answers there in a short time.
 
-[English](https://t.me/joinchat/DWka6g9VbCADtJI5J5w8nQ)  
-[Russian](https://t.me/joinchat/DWka6kba5sa_EwTgmd3Vng)  
+[English](https://t.me/go_critic_eng)
+[Russian](https://t.me/go_critic_ru) 
 ([Telegram website](https://telegram.org/))
 
 1. Come up with a checker idea. Concentrate on what it checks.
@@ -100,18 +100,3 @@ you'll find all answers there in a short time.
 
 9. Implement the checker itself. Make the tests pass.
    `make ci` can be useful to check whether CI build will be successful.
-
-## Dependencies
-
-These are first-order dependencies:
-
-* [github.com/go-toolsmith/astp](https://github.com/go-toolsmith/astp)
-* [github.com/go-toolsmith/astcopy](https://github.com/go-toolsmith/astcopy)
-* [github.com/go-toolsmith/astequal](https://github.com/go-toolsmith/astequal)
-* [github.com/go-toolsmith/strparse](https://github.com/go-toolsmith/strparse)
-* [github.com/go-toolsmith/astfmt](https://github.com/go-toolsmith/astfmt)
-* [github.com/go-toolsmith/typep](https://github.com/go-toolsmith/typep)
-* [golang.org/x/tools/go/loader](https://godoc.org/golang.org/x/tools/go/loader)
-* [golang.org/x/tools/go/ast/astutil](https://godoc.org/golang.org/x/tools/go/ast/astutil)
-
-If, for whatever reason, you can't build `gocritic` due to missing packages, try to `go get` every one of them.

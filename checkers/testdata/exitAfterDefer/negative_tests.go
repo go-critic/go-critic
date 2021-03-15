@@ -4,6 +4,18 @@ import (
 	"os"
 )
 
+func deferExitBranches(cond bool) {
+	if cond {
+		defer os.Exit(1)
+	} else {
+		defer os.Exit(0)
+	}
+}
+
+func deferExit() {
+	defer os.Exit(1)
+}
+
 func exitInsideLambda() {
 	defer println("before return")
 	// Exit inside some anonymous function is fine.

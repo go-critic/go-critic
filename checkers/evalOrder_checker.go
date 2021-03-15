@@ -24,8 +24,8 @@ err := f(&x)
 return x, err
 `
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForStmt(&evalOrderChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForStmt(&evalOrderChecker{ctx: ctx}), nil
 	})
 }
 

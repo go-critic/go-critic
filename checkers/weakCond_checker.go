@@ -21,8 +21,8 @@ func init() {
 	info.Before = `xs != nil && xs[0] != nil`
 	info.After = `len(xs) != 0 && xs[0] != nil`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&weakCondChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&weakCondChecker{ctx: ctx}), nil
 	})
 }
 

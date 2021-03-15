@@ -20,8 +20,8 @@ func init() {
 	info.Before = `strings.HasPrefix("#", userpass)`
 	info.After = `strings.HasPrefix(userpass, "#")`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&argOrderChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&argOrderChecker{ctx: ctx}), nil
 	})
 }
 

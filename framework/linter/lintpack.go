@@ -22,7 +22,7 @@ type CheckerCollection struct {
 //
 // If checker is never needed, for example if it is disabled,
 // constructor will not be called.
-func (coll *CheckerCollection) AddChecker(info *CheckerInfo, constructor func(*CheckerContext) FileWalker) {
+func (coll *CheckerCollection) AddChecker(info *CheckerInfo, constructor func(*CheckerContext) (FileWalker, error)) {
 	if coll == nil {
 		panic("adding checker to a nil collection")
 	}
@@ -138,8 +138,9 @@ type Warning struct {
 
 // NewChecker returns initialized checker identified by an info.
 // info must be non-nil.
-// Panics if info describes a checker that was not properly registered.
-func NewChecker(ctx *Context, info *CheckerInfo) *Checker {
+// Returns an error if info describes a checker that was not properly registered,
+// or if checker fails to initialize.
+func NewChecker(ctx *Context, info *CheckerInfo) (*Checker, error) {
 	return newChecker(ctx, info)
 }
 

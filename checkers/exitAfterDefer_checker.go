@@ -27,8 +27,8 @@ if bad {
 	return
 }`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForFuncDecl(&exitAfterDeferChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForFuncDecl(&exitAfterDeferChecker{ctx: ctx}), nil
 	})
 }
 
@@ -52,6 +52,14 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 		case *ast.DeferStmt:
 			deferStmt = n
 		case *ast.CallExpr:
+			// See #995. We allow `defer os.Exit()` calls
+			// as it's harder to determine whether they're going
+			// to clutter anything without actually trying to
+			// simulate the defer stack + understanding the control flow.
+			// TODO: can we use CFG here?
+			if _, ok := cur.Parent().(*ast.DeferStmt); ok {
+				return true
+			}
 			if deferStmt != nil {
 				switch qualifiedName(n.Fun) {
 				case "log.Fatal", "log.Fatalf", "log.Fatalln", "os.Exit":
@@ -72,5 +80,5 @@ func (c *exitAfterDeferChecker) warn(cause *ast.CallExpr, deferStmt *ast.DeferSt
 		// collapse the function literals.
 		s = "defer " + astfmt.Sprint(fnlit.Type) + "{...}(...)"
 	}
-	c.ctx.Warn(cause, "%s clutters `%s`", cause.Fun, s)
+	c.ctx.Warn(cause, "%s will exit, and `%s` will not run", cause.Fun, s)
 }

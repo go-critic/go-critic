@@ -19,8 +19,8 @@ func init() {
 	info.Before = `if err = f(); err != nil { return err }`
 	info.After = `if err := f(); err != nil { return err }`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForStmt(&sloppyReassignChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForStmt(&sloppyReassignChecker{ctx: ctx}), nil
 	})
 }
 

@@ -28,8 +28,8 @@ case ast.Expr:
 	fmt.Println("expr")
 }`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForStmt(&caseOrderChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForStmt(&caseOrderChecker{ctx: ctx}), nil
 	})
 }
 

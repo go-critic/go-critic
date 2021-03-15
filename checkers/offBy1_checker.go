@@ -20,8 +20,8 @@ func init() {
 	info.Before = `xs[len(xs)]`
 	info.After = `xs[len(xs)-1]`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&offBy1Checker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&offBy1Checker{ctx: ctx}), nil
 	})
 }
 

@@ -18,8 +18,8 @@ func init() {
 	info.Before = `x := *new(bool)`
 	info.After = `x := false`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&newDerefChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&newDerefChecker{ctx: ctx}), nil
 	})
 }
 

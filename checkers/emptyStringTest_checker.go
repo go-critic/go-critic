@@ -20,8 +20,8 @@ func init() {
 	info.After = `s == ""`
 	info.Note = "See https://dmitri.shuralyov.com/idiomatic-go#empty-string-check."
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForExpr(&emptyStringTestChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForExpr(&emptyStringTestChecker{ctx: ctx}), nil
 	})
 }
 

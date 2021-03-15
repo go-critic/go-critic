@@ -31,10 +31,10 @@ func f(x int32, int16) bool {
   return x < int32(y)
 }`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		c := &truncateCmpChecker{ctx: ctx}
 		c.skipArchDependent = info.Params.Bool("skipArchDependent")
-		return astwalk.WalkerForExpr(c)
+		return astwalk.WalkerForExpr(c), nil
 	})
 }
 

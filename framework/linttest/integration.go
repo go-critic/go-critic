@@ -75,7 +75,7 @@ func (cfg *IntegrationTest) runTest(t *testing.T, gocritic, gopath string) {
 			if err != nil {
 				t.Errorf("read golden file: %v", err)
 			}
-			want = string(data)
+			want = strings.TrimSpace(string(data))
 			goldenDataCache[goldenFile] = want
 		}
 
@@ -85,8 +85,7 @@ func (cfg *IntegrationTest) runTest(t *testing.T, gocritic, gopath string) {
 		cmd.Env = append(cmd.Env,
 			// Override GOPATH.
 			"GOPATH="+gopath,
-			// Disable modules. See #62.
-			"GO111MODULE=off")
+			"GO111MODULE=auto")
 
 		out, err := cmd.CombinedOutput()
 		out = bytes.TrimSpace(out)

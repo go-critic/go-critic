@@ -24,8 +24,8 @@ case reflect.Int, reflect.Int32:
 	return Int
 }`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForStmt(&emptyFallthroughChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForStmt(&emptyFallthroughChecker{ctx: ctx}), nil
 	})
 }
 
@@ -49,7 +49,7 @@ func (c *emptyFallthroughChecker) VisitStmt(stmt ast.Stmt) {
 					warn = true
 					if prevCaseDefault {
 						c.warnDefault(bs)
-					} else {
+					} else if cc.List != nil {
 						c.warn(bs)
 					}
 				}

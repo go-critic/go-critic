@@ -28,8 +28,8 @@ for x := range xs {
 	}
 }`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForStmt(&unlabelStmtChecker{ctx: ctx})
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		return astwalk.WalkerForStmt(&unlabelStmtChecker{ctx: ctx}), nil
 	})
 }
 

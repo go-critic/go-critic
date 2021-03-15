@@ -4,10 +4,6 @@ import (
 	"math"
 )
 
-func calculateInt(x int) int {
-	return x
-}
-
 func calculateIntPair(x, y int) (int, int) {
 	return x, y
 }
@@ -30,27 +26,27 @@ func warningsCalc() {
 	_ = calculateInt(calculateInt(012))
 
 	/*! suspicious octal args in `calculateIntPair(01, 2)` */
-	_ = calculateIntPair(01, 2)
+	_, _ = calculateIntPair(01, 2)
 
 	/*! suspicious octal args in `calculateIntPair(-1, -012)` */
-	_ = calculateIntPair(-1, -012)
+	_, _ = calculateIntPair(-1, -012)
 
 	/*! suspicious octal args in `calculateIntPair(01, 02)` */
-	_ = calculateIntPair(01, 02)
+	_, _ = calculateIntPair(01, 02)
 
 	/*! suspicious octal args in `calculateInt(01)` */
 	/*! suspicious octal args in `calculateInt(02)` */
-	_ = calculateIntPair(calculateInt(01), calculateInt(02))
+	_, _ = calculateIntPair(calculateInt(01), calculateInt(02))
 
 	/*! suspicious octal args in `calculateIntPair(01, calculateInt(02))` */
 	/*! suspicious octal args in `calculateInt(02)` */
-	_ = calculateIntPair(01, calculateInt(02))
+	_, _ = calculateIntPair(01, calculateInt(02))
 
 	/*! suspicious octal args in `calculateManyArgs(11, "12", 013)` */
-	_ = calculateManyArgs(11, "12", 013)
+	_, _, _ = calculateManyArgs(11, "12", 013)
 
 	/*! suspicious octal args in `calculateManyArgs(-02, "3", -04)` */
-	_ = calculateManyArgs(-02, "3", -04)
+	_, _, _ = calculateManyArgs(-02, "3", -04)
 
 	/*! suspicious octal args in `math.Exp(012)` */
 	_ = math.Exp(012)
