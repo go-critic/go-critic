@@ -22,7 +22,7 @@ func init() {
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		parts := []string{
 			`^//go:generate .*$`, // e.g.: go:generate value
-			`^//\w+:.*$`,         // e.g.: key: value
+			`^//[\w-]+:.*$`,      // e.g.: key: value
 			`^//nolint\b`,        // e.g.: nolint
 			`^//line /.*:\d+`,    // e.g.: line /path/to/file:123
 			`^//export \w+$`,     // e.g.: export Foo
@@ -58,7 +58,7 @@ func (c *commentFormattingChecker) VisitComment(cg *ast.CommentGroup) {
 		// Make a decision based on a first comment text rune.
 		r, _ := utf8.DecodeRuneInString(comment.Text[len("//"):])
 		if !c.specialChar(r) && !unicode.IsSpace(r) {
-			c.warn(cg)
+			c.warn(comment)
 			return
 		}
 	}
@@ -74,6 +74,6 @@ func (c *commentFormattingChecker) specialChar(r rune) bool {
 	}
 }
 
-func (c *commentFormattingChecker) warn(cg *ast.CommentGroup) {
-	c.ctx.Warn(cg, "put a space between `//` and comment text")
+func (c *commentFormattingChecker) warn(comment *ast.Comment) {
+	c.ctx.Warn(comment, "put a space between `//` and comment text")
 }
