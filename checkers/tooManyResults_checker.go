@@ -22,11 +22,12 @@ func init() {
 	info.Before = `func fn() (a, b, c, d float32, _ int, _ bool)`
 	info.After = `func fn() (resultStruct, bool)`
 
-	collection.AddChecker(&info, func(ctx *linter.CheckerContext) linter.FileWalker {
-		return astwalk.WalkerForFuncDecl(&tooManyResultsChecker{
+	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
+		c := astwalk.WalkerForFuncDecl(&tooManyResultsChecker{
 			ctx:       ctx,
 			maxParams: info.Params.Int("maxResults"),
 		})
+		return c, nil
 	})
 }
 
