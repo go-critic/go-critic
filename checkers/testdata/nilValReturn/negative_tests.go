@@ -22,6 +22,13 @@ func explicitNil() {
 		return nil
 	}
 
+	_ = func(o *object, err error) (*object, error) {
+		if err == nil {
+			return o, nil
+		}
+		return nil, err
+	}
+
 	_ = func(pointers [][][]map[string]*int) *int {
 		if pointers[0][1][2]["ptr"] == nil {
 			return nil
@@ -53,6 +60,20 @@ func explicitNotEqual() {
 			return o.data
 		}
 		return nil
+	}
+
+	_ = func(o *object, a *object) *object {
+		if o != nil {
+			return o
+		}
+		return a
+	}
+
+	_ = func(o *object, err error) (*object, error) {
+		if err != nil {
+			return nil, err
+		}
+		return o, nil
 	}
 
 	_ = func(pointers [][][]map[string]*int) *int {
