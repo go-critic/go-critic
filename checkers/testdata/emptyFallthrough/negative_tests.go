@@ -2,6 +2,16 @@ package checker_test
 
 import "fmt"
 
+func fallthroughDefault(x int) {
+	// See #1028
+	switch x {
+	default:
+		fallthrough
+	case 1, 2:
+		fmt.Println(x)
+	}
+}
+
 func noWarningsNonEmptyFallthrough(i int) bool {
 	switch i {
 	case 0:
