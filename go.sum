@@ -37,6 +37,8 @@ github.com/quasilyte/go-ruleguard v0.3.0/go.mod h1:p2miAhLp6fERzFNbcuQ4bevXs8rgK
 github.com/quasilyte/go-ruleguard v0.3.1-0.20210203134552-1b5a410e1cc8/go.mod h1:KsAh3x0e7Fkpgs+Q9pNLS5XpFSvYCEVl5gP9Pp1xp30=
 github.com/quasilyte/go-ruleguard v0.3.1 h1:2KTXnHBCR4BUl8UAL2bCUorOBGC8RsmYncuDA9NEFW4=
 github.com/quasilyte/go-ruleguard v0.3.1/go.mod h1:s41wdpioTcgelE3dlTUgK57UaUxjihg/DBGUccoN5IU=
+github.com/quasilyte/go-ruleguard v0.3.2 h1:1RtaBtMceTuYIfYaiNJodEtn7S92ovJpmDrGnLUYJMQ=
+github.com/quasilyte/go-ruleguard v0.3.2/go.mod h1:s41wdpioTcgelE3dlTUgK57UaUxjihg/DBGUccoN5IU=
 github.com/quasilyte/go-ruleguard/dsl v0.0.0-20210106184943-e47d54850b18 h1:YJnDZ7AWC93dIJ0nqah6jtIJWTKMhdmYWVhTyY2kpAE=
 github.com/quasilyte/go-ruleguard/dsl v0.0.0-20210106184943-e47d54850b18/go.mod h1:KeCP03KrjuSO0H1kTuZQCWlQPulDV6YMIXmpQss17rU=
 github.com/quasilyte/go-ruleguard/dsl v0.0.0-20210115110123-c73ee1cbff1f h1:e+uECJCDesYxvHKYsB1xWY/WpReTQoN6F14Nhny2Vik=
