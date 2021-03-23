@@ -1,3 +1,3 @@
 exit status 1
-debug: ruleguard: initialization failure: ruleguard init error: typechecker error: rules1.go:18:9: undeclared name: version
-init checkers: ruleguard init error: typechecker error: rules1.go:18:9: undeclared name: version
+debug: ruleguard: initialization failure: ruleguard init error: typechecker error: rules1.go:17:9: undeclared name: version
+init checkers: ruleguard init error: typechecker error: rules1.go:17:9: undeclared name: version
