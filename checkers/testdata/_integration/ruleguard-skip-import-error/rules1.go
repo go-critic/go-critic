@@ -12,6 +12,6 @@ func badLock(m dsl.Matcher) {
 	// Use case: a ruleguard file contains an import that may or may not exist depending
 	// on the module being analyzed.
 	m.Match(`$mu.RLock(); defer $mu.Unlock()`).
-		Where(m["mu].Type.Implements("foo.bar.MyInterface")).
+		Where(m["mu"].Type.Implements("foo.bar.MyInterface")).
 		Report(`maybe $mu.Lock() was intended?`)
 }
