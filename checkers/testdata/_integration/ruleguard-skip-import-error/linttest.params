@@ -1,1 +1,1 @@
-check -@ruleguard.rules rules1.go -@ruleguard.failOnError=import -enable ruleguard ./... | linttest.golden
+check -@ruleguard.rules rules1.go -enable ruleguard ./... | linttest.golden
