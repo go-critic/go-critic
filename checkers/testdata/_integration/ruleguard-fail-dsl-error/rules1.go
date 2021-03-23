@@ -13,7 +13,6 @@ func badLock(m dsl.Matcher) {
 	// Use case: suppose a directory contains multiple ruleguard rules.
 	// One of these files contains a ruleguard DSL with a newer keyword which is not supported
 	// by the installed version of go-critic + ruleguard.
-	m.Match(`$mu.RLock(); defer $mu.Unlock()`).
-		Where(version == "1.17").
+	m.AdvancedMatch(`$mu.RLock(); defer $mu.Unlock()`).
 		Report(`maybe $mu.Lock() was intended?`)
 }
