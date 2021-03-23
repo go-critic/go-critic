@@ -1,2 +1,3 @@
 exit status 1
-6:4: m.AdvancedMatch undefined (type dsl.Matcher has no field or method AdvancedMatch
+debug: ruleguard: initialization failure: ruleguard init error: typechecker error: rules1.go:16:4: m.AdvancedMatch undefined (type dsl.Matcher has no field or method AdvancedMatch)
+init checkers: ruleguard init error: typechecker error: rules1.go:16:4: m.AdvancedMatch undefined (type dsl.Matcher has no field or method AdvancedMatch)
