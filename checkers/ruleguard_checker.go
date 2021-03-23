@@ -58,7 +58,7 @@ type parseErrorHandler struct {
 	failureConditions map[string]func(err error) bool
 }
 
-// failOnParseError returns true if a parseError occured and that error should be not be ignored.
+// failOnParseError returns true if a parseError occurred and that error should be not be ignored.
 func (e parseErrorHandler) failOnParseError(parseError error) bool {
 	for _, p := range e.failureConditions {
 		if p(parseError) {
