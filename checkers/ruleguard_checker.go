@@ -84,7 +84,7 @@ func newErrorHandler(failOnErrorFlag string) (*parseErrorHandler, error) {
 		if p, ok := failOnErrorPredicates[k]; ok {
 			h.failureConditions[k] = p
 		} else {
-			supportedValues := make([]string, 0)
+			supportedValues := []string{}
 			for key := range failOnErrorPredicates {
 				supportedValues = append(supportedValues, key)
 			}
