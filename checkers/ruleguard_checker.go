@@ -83,9 +83,12 @@ func newErrorHandler(failOnErrorFlag string) (*parseErrorHandler, error) {
 		if k == "" {
 			continue
 		}
+		log.Printf("FLAG: %v", k)
 		if p, ok := failOnErrorPredicates[k]; ok {
+			log.Printf("ADDING FLAG: %v", k)
 			h.failureConditions[k] = p
 		} else {
+			// Wrong flag value.
 			supportedValues := []string{}
 			for key := range failOnErrorPredicates {
 				supportedValues = append(supportedValues, key)
