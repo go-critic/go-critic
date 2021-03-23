@@ -7,6 +7,8 @@ import "github.com/quasilyte/go-ruleguard/dsl"
 func badLock(m dsl.Matcher) {
 	m.Match(`$mu.Lock(); defer $mu.RUnlock()`).Report(`maybe $mu.RLock() was intended?`)
 	// DSL invalid predicate is intentional. This is for test purpose.
+	// In this test, -@ruleguard.failOnError=dsl is specified, so go-critic should
+	// return with non-zero status.
 	// This is specifically used to test the '-failOnError' flag when a
 	// DSL syntax error or import error is encountered while parsing ruleguard files.
 	// Use case 1: suppose a directory contains multiple ruleguard rules.
