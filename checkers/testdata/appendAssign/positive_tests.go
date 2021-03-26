@@ -1,6 +1,6 @@
 package checker_test
 
-func suspeciousAppends() {
+func suspiciousAppends() {
 	var xs []int
 	var ys []int
 
