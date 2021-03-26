@@ -35,7 +35,8 @@ func suspiciousAppends() {
 		xs2 = append(xs, 1)
 	}
 
-	/* append result short assigned to a new slice */
+	/*! append result not assigned to the same slice */
 	zs := append(xs, 1)
+
 	_ = zs
 }
