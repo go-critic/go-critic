@@ -37,4 +37,5 @@ func suspeciousAppends() {
 
 	/* append result short assigned to a new slice */
 	zs := append(xs, 1)
+	_ = zs
 }
