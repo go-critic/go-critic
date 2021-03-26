@@ -34,4 +34,7 @@ func suspeciousAppends() {
 		/*! append result not assigned to the same slice */
 		xs2 = append(xs, 1)
 	}
+
+	/* append result short assigned to a new slice */
+	zs := append(xs, 1)
 }
