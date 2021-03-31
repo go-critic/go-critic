@@ -15,9 +15,15 @@ func permittedAppends() {
 	// where y is used instead of x by mistake, so lines below
 	// do not trigger a warning.
 
-	xs0 := append(xs, 1)
-	xs1 := append(xs, 1)
-	ys0 := append(ys, 1)
+	xs = append(xs, 1)
+	xs0 := xs
+	xs = append(xs, 1)
+	xs1 := xs
+	ys = append(ys, 1)
+	ys0 := ys
+
+	ts := append([]int{1}, 1)
+	_ = ts
 
 	// Also permit to assign to "_".
 	_ = append(xs, xs0[0], xs1[1], ys0[0])
@@ -76,9 +82,9 @@ func appendNotInAssignment() {
 		v2 = append(xs, v1[0])
 		v3 = append(v2[:], ys[0])
 	)
-	v4 := append(v3, xs[0])
+	v3 = append(v3, xs[0])
 	{
-		v3 := append(v4, 1)
+		v3 = append(v3, 1)
 		_ = v3
 	}
 }
