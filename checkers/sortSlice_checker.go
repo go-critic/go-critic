@@ -18,8 +18,16 @@ func init() {
 	info.Name = "sortSlice"
 	info.Tags = []string{"diagnostic", "experimental"}
 	info.Summary = "Detects suspicious sort.Slice calls"
-	info.Before = `sort.Slice(xs, func(i, j) bool { return keys[i] < keys[j] })`
-	info.After = `sort.Slice(kv, func(i, j) bool { return kv[i].key < kv[j].key })`
+	info.Before = `
+	sort.Slice(xs, func(i, j int) bool {
+		return kv[i] < kv[j]
+	})
+	`
+	info.After = `
+	sort.Slice(xs, func(i, j int) bool {
+		return xs[i] < xs[j]
+	})
+	`
 
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		return astwalk.WalkerForExpr(&sortSliceChecker{ctx: ctx}), nil
