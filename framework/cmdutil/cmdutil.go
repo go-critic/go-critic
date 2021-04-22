@@ -42,11 +42,11 @@ func DispatchCommand(cmdList []*SubCommand) {
 		log.Printf("unknown sub-command: %s\n\n", sub)
 		printSubCommands(cmdList)
 		os.Exit(1)
+	} else {
+		// The called function may exit with non-zero status.
+		// No code should follow this call.
+		cmd.Main()
 	}
-
-	// The called function may exit with non-zero status.
-	// No code should follow this call.
-	cmd.Main()
 }
 
 // findSubCommand looks up SubCommand by its name.
