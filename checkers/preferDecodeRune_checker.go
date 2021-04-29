@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "preferDecodeRune"
-	info.Tags = []string{"performance"}
+	info.Tags = []string{"performance", "experimental"}
 	info.Summary = "Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation"
 	info.Before = `r := []rune(s)[0]`
 	info.After = `r, _ := utf8.DecodeRuneInString(s)`
