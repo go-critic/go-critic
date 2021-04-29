@@ -87,6 +87,10 @@ type CheckerInfo struct {
 	// Note is an optional caution message or advice.
 	Note string
 
+	// EmbeddedRuleguard tells whether this checker is auto-generated
+	// from the embedded ruleguard rules.
+	EmbeddedRuleguard bool
+
 	// Collection establishes a checker-to-collection relationship.
 	Collection *CheckerCollection
 }
