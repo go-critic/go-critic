@@ -14,3 +14,14 @@ func httpNoBody(m dsl.Matcher) {
 		Suggest("http.NewRequest($method, $url, http.NoBody)").
 		Report("http.NoBody should be preferred to the nil request body")
 }
+
+//doc:summary Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation
+//doc:tags    performance experimental
+//doc:before  r := []rune(s)[0]
+//doc:after   r, _ := utf8.DecodeRuneInString(s)
+//doc:note    See Go issue for details: https://github.com/golang/go/issues/45260
+func preferDecodeRune(m dsl.Matcher) {
+	m.Match(`[]rune($s)[0]`).
+		Where(m["s"].Type.Is(`string`)).
+		Report(`consider replacing $$ with utf8.DecodeRuneInString($s)`)
+}
