@@ -2,6 +2,7 @@
   "run": {
     # timeout for analysis, e.g. 30s, 5m, default is 1m
     "deadline": "3m",
+    "skip-dirs": ["checkers/rules"],
   },
   "fast": false,
   "linters": {
