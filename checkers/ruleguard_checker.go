@@ -155,6 +155,6 @@ func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.En
 		return reports[i].message < reports[j].message
 	})
 	for _, report := range reports {
-		ctx.Warn(report.node, report.message)
+		ctx.Warn(report.node, "%s", report.message)
 	}
 }

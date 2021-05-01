@@ -12,6 +12,6 @@ func positiveTests(x []byte, y string) {
 	/*! consider replacing strings.Index(string([]byte{'1', '2'}), y) with bytes.Index([]byte{'1', '2'}, []byte(y)) */
 	_ = strings.Index(string([]byte{'1', '2'}), y)
 
-	/*! consider replacing strings.Index(string(x), "a"+y) with bytes.Index(x, []byte("a" + y)) */
+	/*! consider replacing strings.Index(string(x), "a"+y) with bytes.Index(x, []byte("a"+y)) */
 	_ = strings.Index(string(x), "a"+y)
 }
