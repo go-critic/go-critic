@@ -15,7 +15,7 @@ func init() {
 	info.Tags = []string{"style", "experimental"}
 	info.Summary = "Detects deferred function literals that can be simplified"
 	info.Before = `defer func() { f() }()`
-	info.After = `f()`
+	info.After = `defer f()`
 
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		return astwalk.WalkerForStmt(&deferUnlambdaChecker{ctx: ctx}), nil
