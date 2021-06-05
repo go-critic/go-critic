@@ -56,3 +56,17 @@ func mismatchingUnlock2Struct(x *withMutex, op func()) {
 	defer x.mu.Unlock()
 	op()
 }
+
+func mismatchingDeferLock1(x *withMutex, op func()) {
+	x.mu.Lock()
+	/*! maybe defer x.mu.Unlock() was intended? */
+	defer x.mu.Lock()
+	op()
+}
+
+func mismatchingDeferLock2(x *withMutex, op func()) {
+	x.mu.RLock()
+	/*! maybe defer x.mu.RUnlock() was intended? */
+	defer x.mu.RLock()
+	op()
+}
