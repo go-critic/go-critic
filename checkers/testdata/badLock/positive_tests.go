@@ -15,6 +15,13 @@ func immediateUnlock(mu *sync.Mutex, op func()) {
 	op()
 }
 
+func immediateRUnlock(mu *sync.RWMutex, op func()) {
+	mu.RLock()
+	/*! defer is missing, mutex is unlocked immediately */
+	mu.RUnlock()
+	op()
+}
+
 func immediateUnlockStruct(x *withMutex, op func()) {
 	x.mu.Lock()
 	/*! defer is missing, mutex is unlocked immediately */

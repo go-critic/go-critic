@@ -10,6 +10,12 @@ func deferredUnlock(mu *sync.Mutex, op func()) {
 	op()
 }
 
+func deferredRUnlock(mu *sync.RWMutex, op func()) {
+	mu.RLock()
+	defer mu.RUnlock()
+	op()
+}
+
 func goodUnlock(mu *sync.RWMutex, op func()) {
 	mu.Lock()
 	defer mu.Unlock()

@@ -4,6 +4,32 @@ import (
 	"github.com/quasilyte/go-ruleguard/dsl"
 )
 
+//doc:summary Detects suspicious mutex lock/unlock operations
+//doc:tags    diagnostic experimental
+//doc:before  mu.Lock(); mu.Unlock()
+//doc:after   mu.Lock(); defer mu.Unlock()
+func badLock(m dsl.Matcher) {
+	m.Match(`$mu1.Lock(); $mu2.Unlock()`).
+		Where(m["mu1"].Text == m["mu2"].Text).
+		Report(`defer is missing, mutex is unlocked immediately`).
+		At(m["mu2"])
+
+	m.Match(`$mu1.RLock(); $mu2.RUnlock()`).
+		Where(m["mu1"].Text == m["mu2"].Text).
+		Report(`defer is missing, mutex is unlocked immediately`).
+		At(m["mu2"])
+
+	m.Match(`$mu1.Lock(); defer $mu2.RUnlock()`).
+		Where(m["mu1"].Text == m["mu2"].Text).
+		Report(`suspicious unlock, maybe Unlock was intended?`).
+		At(m["mu2"])
+
+	m.Match(`$mu1.RLock(); defer $mu2.Unlock()`).
+		Where(m["mu1"].Text == m["mu2"].Text).
+		Report(`suspicious unlock, maybe RUnlock was intended?`).
+		At(m["mu2"])
+}
+
 //doc:summary Detects nil usages in http.NewRequest calls, suggesting http.NoBody as an alternative
 //doc:tags    style experimental
 //doc:before  http.NewRequest("GET", url, nil)
