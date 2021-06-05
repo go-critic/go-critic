@@ -4,6 +4,30 @@ import (
 	"github.com/quasilyte/go-ruleguard/dsl"
 )
 
+//doc:summary Detects deprecated io/ioutil package usages
+//doc:tags    style experimental
+//doc:before  ioutil.ReadAll(r)
+//doc:after   io.ReadAll(r)
+func ioutilDeprecated(m dsl.Matcher) {
+	m.Match(`ioutil.ReadAll($_)`).
+		Report(`ioutil.ReadAll is deprecated, use io.ReadAll instead`)
+
+	m.Match(`ioutil.ReadFile($_)`).
+		Report(`ioutil.ReadFile is deprecated, use os.ReadFile instead`)
+
+	m.Match(`ioutil.WriteFile($_, $_, $_)`).
+		Report(`ioutil.WriteFile is deprecated, use os.WriteFile instead`)
+
+	m.Match(`ioutil.ReadDir($_)`).
+		Report(`ioutil.ReadDir is deprecated, use os.ReadDir instead`)
+
+	m.Match(`ioutil.NopCloser($_)`).
+		Report(`ioutil.NopCloser is deprecated, use io.NopCloser instead`)
+
+	m.Match(`ioutil.Discard`).
+		Report(`ioutil.NopCloser is deprecated, use io.Discard instead`)
+}
+
 //doc:summary Detects suspicious mutex lock/unlock operations
 //doc:tags    diagnostic experimental
 //doc:before  mu.Lock(); mu.Unlock()
