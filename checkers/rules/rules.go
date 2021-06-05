@@ -25,7 +25,7 @@ func ioutilDeprecated(m dsl.Matcher) {
 		Report(`ioutil.NopCloser is deprecated, use io.NopCloser instead`)
 
 	m.Match(`ioutil.Discard`).
-		Report(`ioutil.NopCloser is deprecated, use io.Discard instead`)
+		Report(`ioutil.Discard is deprecated, use io.Discard instead`)
 }
 
 //doc:summary Detects suspicious mutex lock/unlock operations

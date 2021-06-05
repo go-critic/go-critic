@@ -16,6 +16,6 @@ func _(r io.Reader) {
 	ioutil.ReadDir("")
 	/*! ioutil.NopCloser is deprecated, use io.NopCloser instead */
 	ioutil.NopCloser(r)
-	/*! ioutil.NopCloser is deprecated, use io.Discard instead */
+	/*! ioutil.Discard is deprecated, use io.Discard instead */
 	_ = ioutil.Discard
 }
