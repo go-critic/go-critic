@@ -9,6 +9,9 @@ import (
 //doc:before  mu.Lock(); mu.Unlock()
 //doc:after   mu.Lock(); defer mu.Unlock()
 func badLock(m dsl.Matcher) {
+	// `mu1` and `mu2` are added to make possible report a line where `m2` is used (with a defer)
+
+	// no defer
 	m.Match(`$mu1.Lock(); $mu2.Unlock()`).
 		Where(m["mu1"].Text == m["mu2"].Text).
 		Report(`defer is missing, mutex is unlocked immediately`).
@@ -19,6 +22,7 @@ func badLock(m dsl.Matcher) {
 		Report(`defer is missing, mutex is unlocked immediately`).
 		At(m["mu2"])
 
+	// different lock operations
 	m.Match(`$mu1.Lock(); defer $mu2.RUnlock()`).
 		Where(m["mu1"].Text == m["mu2"].Text).
 		Report(`suspicious unlock, maybe Unlock was intended?`).
@@ -27,6 +31,17 @@ func badLock(m dsl.Matcher) {
 	m.Match(`$mu1.RLock(); defer $mu2.Unlock()`).
 		Where(m["mu1"].Text == m["mu2"].Text).
 		Report(`suspicious unlock, maybe RUnlock was intended?`).
+		At(m["mu2"])
+
+	// double locks
+	m.Match(`$mu1.Lock(); defer $mu2.Lock()`).
+		Where(m["mu1"].Text == m["mu2"].Text).
+		Report(`maybe defer $mu1.Unlock() was intended?`).
+		At(m["mu2"])
+
+	m.Match(`$mu1.RLock(); defer $mu2.RLock()`).
+		Where(m["mu1"].Text == m["mu2"].Text).
+		Report(`maybe defer $mu1.RUnlock() was intended?`).
 		At(m["mu2"])
 }
 
