@@ -41,6 +41,12 @@ type myStruct1 struct {
 	y (int64)
 }
 
+/*! could simplify (struct{...}) to struct{...} */
+type myStruct2 (struct {
+	/*! could simplify (***(int)) to ***int */
+	x (***(int))
+})
+
 type myInterface1 interface {
 	/*! could simplify [](int) to []int */
 	foo([](int))
@@ -74,7 +80,7 @@ func myFunc1() {
 			})
 		}{}
 	}()
-	
+
 	/*! could simplify (interface{...}) to interface{...} */
 	var _ (interface{})
 
@@ -174,4 +180,27 @@ func conversions() {
 func methodExpr() {
 	/*! could simplify *(noopWriter) to *noopWriter */
 	_ = (*(noopWriter)).myWrite
+}
+
+func chanType() {
+	/*! could simplify (chan int) to chan int */
+	_ = (chan int)(nil)
+
+	/*! could simplify chan (int) to chan int */
+	_ = make(chan (int))
+
+	/*! could simplify chan ([2](int)) to chan [2]int */
+	_ = make(chan ([2](int)))
+
+	/*! could simplify chan (chan int) to chan chan int */
+	_ = make(chan (chan int))
+
+	/*! could simplify chan (chan (int)) to chan chan int */
+	_ = make(chan (chan (int)))
+
+	/*! could simplify <-chan (int) to <-chan int */
+	_ = make(<-chan (int))
+
+	/*! could simplify chan<- (int) to chan<- int */
+	_ = make(chan<- (int))
 }
