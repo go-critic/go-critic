@@ -78,3 +78,21 @@ func ptrCast() {
 func goodMethodExpr() {
 	_ = (*noopWriter).myWrite
 }
+
+func channelIssue1035() {
+	type WebsocketMsg struct{}
+
+	_ = make(chan (<-chan *WebsocketMsg))
+	_ = make(<-chan int)
+	_ = make(chan<- int)
+	_ = make(chan int)
+	_ = make(chan int)
+
+	var _ chan (<-chan *WebsocketMsg)
+	var _ chan (<-chan int)
+	var _ chan (chan<- int)
+	var _ chan<- (chan<- int)
+	var _ <-chan (chan<- int)
+	var _ chan (<-chan (chan int))
+	var _ chan (<-chan (<-chan int))
+}
