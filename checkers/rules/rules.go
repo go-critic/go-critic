@@ -4,6 +4,20 @@ import (
 	"github.com/quasilyte/go-ruleguard/dsl"
 )
 
+//doc:summary Detects deferred function literals that can be simplified
+//doc:tags    style experimental
+//doc:before  defer func() { f() }()
+//doc:after   defer f()
+func deferUnlambda(m dsl.Matcher) {
+	m.Match(`defer func() { $f($*args) }()`).
+		Where(m["f"].Node.Is(`Ident`) && m["f"].Text != "panic" && m["f"].Text != "recover" && m["args"].Const).
+		Report("can rewrite as `defer $f($args)`")
+
+	m.Match(`defer func() { $pkg.$f($*args) }()`).
+		Where(m["f"].Node.Is(`Ident`) && m["args"].Const && m["pkg"].Object.Is(`PkgName`)).
+		Report("can rewrite as `defer $pkg.$f($args)`")
+}
+
 //doc:summary Detects deprecated io/ioutil package usages
 //doc:tags    style experimental
 //doc:before  ioutil.ReadAll(r)
