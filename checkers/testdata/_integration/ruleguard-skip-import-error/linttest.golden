@@ -1,2 +1,0 @@
-exit status 1
-./file.go:20:2: ruleguard: maybe mu.RLock() was intended?
