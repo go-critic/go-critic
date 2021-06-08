@@ -1,1 +1,0 @@
-check -@ruleguard.rules rules1.go -enable ruleguard ./... | linttest.golden
