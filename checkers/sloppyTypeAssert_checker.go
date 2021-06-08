@@ -15,12 +15,12 @@ func init() {
 	info.Tags = []string{"diagnostic", "experimental"}
 	info.Summary = "Detects redundant type assertions"
 	info.Before = `
-function f(r io.Reader) interface{} {
+func f(r io.Reader) interface{} {
 	return r.(interface{})
 }
 `
 	info.After = `
-function f(r io.Reader) interface{} {
+func f(r io.Reader) interface{} {
 	return r
 }
 `

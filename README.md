@@ -45,6 +45,8 @@ GO111MODULE=on go get -v -u github.com/go-critic/go-critic/cmd/gocritic
 If the command above does not work, you can try cloning this repository
 under your `GOPATH` and run `make gocritic`.
 
+On macOS, you can also install `go-critic` using [MacPorts](https://www.macports.org): `sudo port install go-critic`
+
 ## Usage
 
 Be sure `gocritic` executable is under your `$PATH`.

@@ -169,13 +169,7 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		return
 	}
 
-	type ruleguardReport struct {
-		node    ast.Node
-		message string
-	}
-	var reports []ruleguardReport
-
-	ctx := &ruleguard.RunContext{
+	runRuleguardEngine(c.ctx, f, c.engine, &ruleguard.RunContext{
 		Debug: c.debugGroup,
 		DebugPrint: func(s string) {
 			fmt.Fprintln(os.Stderr, s)
@@ -184,27 +178,36 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		Types: c.ctx.TypesInfo,
 		Sizes: c.ctx.SizesInfo,
 		Fset:  c.ctx.FileSet,
-		Report: func(_ ruleguard.GoRuleInfo, n ast.Node, msg string, _ *ruleguard.Suggestion) {
-			// TODO(quasilyte): investigate whether we should add a rule name as
-			// a message prefix here.
-			reports = append(reports, ruleguardReport{
-				node:    n,
-				message: msg,
-			})
-		},
+	})
+}
+
+func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.Engine, runCtx *ruleguard.RunContext) {
+	type ruleguardReport struct {
+		node    ast.Node
+		message string
+	}
+	var reports []ruleguardReport
+
+	runCtx.Report = func(_ ruleguard.GoRuleInfo, n ast.Node, msg string, _ *ruleguard.Suggestion) {
+		// TODO(quasilyte): investigate whether we should add a rule name as
+		// a message prefix here.
+		reports = append(reports, ruleguardReport{
+			node:    n,
+			message: msg,
+		})
 	}
 
-	if err := c.engine.Run(ctx, f); err != nil {
+	if err := e.Run(runCtx, f); err != nil {
 		// Normally this should never happen, but since
 		// we don't have a better mechanism to report errors,
 		// emit a warning.
-		c.ctx.Warn(f, "execution error: %v", err)
+		ctx.Warn(f, "execution error: %v", err)
 	}
 
 	sort.Slice(reports, func(i, j int) bool {
 		return reports[i].message < reports[j].message
 	})
 	for _, report := range reports {
-		c.ctx.Warn(report.node, report.message)
+		ctx.Warn(report.node, "%s", report.message)
 	}
 }

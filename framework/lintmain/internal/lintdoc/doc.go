@@ -34,6 +34,7 @@ func printDoc(name string) {
 	info := findInfoByName(name)
 	if info == nil {
 		log.Fatalf("checker with name %q not found", name)
+		return // To avoid `info can be nil` from the staticcheck
 	}
 
 	tmplString := `{{.Checker.Name}} checker documentation
