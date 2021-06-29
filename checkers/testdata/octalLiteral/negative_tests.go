@@ -59,7 +59,7 @@ func NoWarningsCalc() {
 }
 
 func NoWarningsFs() {
-	_ = fs.FileMode(0999)
+	_ = fs.FileMode(0555)
 }
 
 func NoWarningsOs() {
