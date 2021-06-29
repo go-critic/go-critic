@@ -22,8 +22,8 @@ func init() {
 		c := &octalLiteralChecker{
 			ctx: ctx,
 			octFriendlyPkg: map[string]bool{
-				"fs":        true,
 				"os":        true,
+				"io/fs":     true,
 				"io/ioutil": true,
 			},
 		}
