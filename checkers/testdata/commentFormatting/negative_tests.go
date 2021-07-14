@@ -52,3 +52,11 @@ func f2() {
 	//
 	// inside it.
 }
+
+//////////// Vertical ////////////////
+//++++++++++++ bars ++++++++++++++++++
+//############# are ##################
+//---------- permitted ---------------
+
+// Comment in a comment is //OK
+// path */*//with asterisk
