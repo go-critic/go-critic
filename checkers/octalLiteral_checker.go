@@ -23,6 +23,7 @@ func init() {
 			ctx: ctx,
 			octFriendlyPkg: map[string]bool{
 				"os":        true,
+				"io/fs":     true,
 				"io/ioutil": true,
 			},
 		}

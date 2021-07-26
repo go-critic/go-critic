@@ -1,6 +1,7 @@
 package checker_test
 
 import (
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"math"
@@ -55,6 +56,10 @@ func NoWarningsCalc() {
 	_ = math.Exp(0x12)
 	_ = math.Max(12, 0xd)
 	_ = math.Min(0, 1)
+}
+
+func NoWarningsFs() {
+	_ = fs.FileMode(0555)
 }
 
 func NoWarningsOs() {
