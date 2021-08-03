@@ -5,6 +5,6 @@ import (
 )
 
 func _(b *strings.Builder) {
-	b.WriteRune('ь')
-	b.WriteByte('\n')
+	/*! consider replacing b.WriteRune('\n') with b.WriteByte('\n') */
+	b.WriteRune('\n')
 }

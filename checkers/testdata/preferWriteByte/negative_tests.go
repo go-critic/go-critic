@@ -5,6 +5,14 @@ import (
 )
 
 func _(b *strings.Builder) {
-	/*! consider replacing b.WriteRune('\n') with b.WriteByte('\n') */
-	b.WriteRune('\n')
+	b.WriteRune('ь')
+	b.WriteByte('\n')
+}
+
+type RuneWriter interface {
+	WriteRune(r rune) (int, error)
+}
+
+func notByteWriter(w RuneWriter) {
+	w.WriteRune('\n')
 }
