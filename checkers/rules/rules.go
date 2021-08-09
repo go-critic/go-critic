@@ -269,3 +269,13 @@ func assignOp(m dsl.Matcher) {
 	m.Match(`$x = $x >> $y`).Where(m["x"].Pure).Report("replace `$$` with `$x >>= $y`")
 	m.Match(`$x = $x &^ $y`).Where(m["x"].Pure).Report("replace `$$` with `$x &^= $y`")
 }
+
+//doc:summary Detects WriteRune calls with byte literal argument and reports to use WriteByte instead
+//doc:tags    performance experimental
+//doc:before  w.WriteRune('\n')
+//doc:after   w.WriteByte('\n')
+func preferWriteByte(m dsl.Matcher) {
+	m.Match(`$w.WriteRune($c)`).Where(
+		m["w"].Type.Implements("io.ByteWriter") && (m["c"].Const && m["c"].Value.Int() < 256),
+	).Report(`consider replacing $$ with $w.WriteByte($c)`)
+}
