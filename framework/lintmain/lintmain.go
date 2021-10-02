@@ -15,13 +15,14 @@ type Config struct {
 	Name    string
 }
 
-var config *Config
-
 // Run executes corresponding main after sub-command resolving.
 // Does not return.
 func Run(cfg Config) {
-	config = &cfg // TODO(quasilyte): don't use global var for this
 	log.SetFlags(0)
+
+	printVersion := func() {
+		log.Println(cfg.Version)
+	}
 
 	// makeExample replaces all ${linter} placeholders to a bound linter name.
 	makeExamples := func(examples ...string) []string {
@@ -59,8 +60,4 @@ func Run(cfg Config) {
 	}
 
 	cmdutil.DispatchCommand(subCommands)
-}
-
-func printVersion() {
-	log.Println(config.Version)
 }
