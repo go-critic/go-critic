@@ -162,7 +162,6 @@ func (p *program) checkFile(f *ast.File) {
 			printWarning(p, c.Info.Name, loc, warn.Text)
 		}
 	}
-
 }
 
 func (p *program) initCheckers() error {
