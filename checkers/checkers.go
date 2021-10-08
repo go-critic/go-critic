@@ -2,7 +2,6 @@
 package checkers
 
 import (
-	"bytes"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -24,17 +23,10 @@ var debug = func() func() bool {
 	}
 }()
 
-// go-bindata is github.com/shuLhan/go-bindata;
-// TODO(quasilyte): use embed pragma in future.
-//
-//go:generate go-bindata -pkg rulesdata -o rulesdata/rulesdata.go rules/rules.go
+//go:generate go run ./rules/precompile.go -rules ./rules/rules.go -o ./rulesdata/rulesdata.go
 
 func init() {
 	filename := "rules/rules.go"
-	data, err := rulesdata.Asset(filename)
-	if err != nil {
-		panic(fmt.Sprintf("can't read embedded file: %v", err))
-	}
 
 	fset := token.NewFileSet()
 	var groups []ruleguard.GoRuleGroup
@@ -48,10 +40,10 @@ func init() {
 	{
 		rootEngine := ruleguard.NewEngine()
 
-		parseContext := &ruleguard.ParseContext{
+		loadContext := &ruleguard.LoadContext{
 			Fset: fset,
 		}
-		if err := rootEngine.Load(parseContext, filename, bytes.NewReader(data)); err != nil {
+		if err := rootEngine.LoadFromIR(loadContext, filename, rulesdata.PrecompiledRules); err != nil {
 			panic(fmt.Sprintf("load embedded ruleguard rules: %v", err))
 		}
 		groups = rootEngine.LoadedGroups()
@@ -72,14 +64,14 @@ func init() {
 			EmbeddedRuleguard: true,
 		}
 		collection.AddChecker(info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
-			parseContext := &ruleguard.ParseContext{
+			parseContext := &ruleguard.LoadContext{
 				Fset: fset,
 				GroupFilter: func(name string) bool {
 					return name == g.Name
 				},
 			}
 			engine := ruleguard.NewEngine()
-			err := engine.Load(parseContext, filename, bytes.NewReader(data))
+			err := engine.LoadFromIR(parseContext, filename, rulesdata.PrecompiledRules)
 			if err != nil {
 				return nil, err
 			}
