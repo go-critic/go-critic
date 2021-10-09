@@ -18,7 +18,7 @@ exit status 1
 ./main.go:66:2: dupArg: suspicious duplicated args in copy(xs, xs)
 ./main.go:70:2: dupBranchBody: both branches in if statement has same body
 ./main.go:81:7: dupCase: 'case x == 0' is duplicated
-./main.go:86:9: dupSubExpr: suspicious identical LHS and RHS for `<` operator
+./main.go:86:9: dupSubExpr: suspicious identical left and right expression near <
 ./main.go:91:9: elseif: can replace 'else {if cond {}}' with 'else if cond {}'
 ./main.go:102:3: emptyFallthrough: replace empty case containing only fallthrough with expression list
 ./main.go:100:3: emptyFallthrough: replace empty case containing only fallthrough with expression list
