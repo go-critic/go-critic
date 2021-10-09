@@ -317,6 +317,16 @@ func preferFprint(m dsl.Matcher) {
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
 }
 
+//doc:summary Detects suspicious http.Error call without following return
+//doc:tags    diagnostic experimental
+//doc:before  x + string(os.PathSeparator) + y
+//doc:after   filepath.Join(x, y)
+func returnAfterHttpError(m dsl.Matcher) {
+	m.Match(`if $_ { $*_; http.Error($w, $err, $code) }`).
+		Report("Possibly return is missed after the http.Error call").
+		At(m["w"])
+}
+
 //doc:summary Detects concatenation with os.PathSeparator which can be replaced with filepath.Join
 //doc:tags    style experimental
 //doc:before  x + string(os.PathSeparator) + y
