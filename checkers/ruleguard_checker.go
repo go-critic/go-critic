@@ -66,7 +66,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	fset := token.NewFileSet()
 	filePatterns := strings.Split(rulesFlag, ",")
 
-	parseContext := &ruleguard.ParseContext{
+	loadContext := &ruleguard.LoadContext{
 		Fset: fset,
 	}
 
@@ -87,7 +87,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 				log.Printf("ruleguard init error: %+v", err)
 				continue
 			}
-			if err := engine.Load(parseContext, filename, bytes.NewReader(data)); err != nil {
+			if err := engine.Load(loadContext, filename, bytes.NewReader(data)); err != nil {
 				if failOnErrorFlag {
 					return nil, fmt.Errorf("ruleguard init error: %+v", err)
 				}
