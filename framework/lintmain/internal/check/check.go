@@ -79,6 +79,7 @@ type program struct {
 	gopath  string
 	goroot  string
 
+	goVersion          string
 	exitCode           int
 	checkTests         bool
 	checkGenerated     bool
@@ -272,6 +273,7 @@ func (p *program) loadProgram() error {
 
 	p.loadedPackages = pkgs
 	p.ctx = linter.NewContext(p.fset, sizes)
+	p.ctx.SetGoVersion(p.goVersion)
 
 	return nil
 }
@@ -358,6 +360,8 @@ func (p *program) parseArgs() error {
 		`whether to use colored output`)
 	flag.BoolVar(&p.verbose, "v", false,
 		`whether to print output useful during linter debugging`)
+	flag.StringVar(&p.goVersion, "go", "",
+		`select the Go version to target. Leave as string for the latest`)
 
 	flag.Parse()
 
