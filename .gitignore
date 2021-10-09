@@ -4,7 +4,7 @@
 *.so
 *.dylib
 /gocritic
-
+.idea
 pkg/
 
 # Test binary, build with `go test -c`

@@ -279,3 +279,35 @@ func preferWriteByte(m dsl.Matcher) {
 		m["w"].Type.Implements("io.ByteWriter") && (m["c"].Const && m["c"].Value.Int() < 256),
 	).Report(`consider replacing $$ with $w.WriteByte($c)`)
 }
+
+//doc:summary Detects fmt.Sprint(f|ln) calls which can be replaced with fmt.Fprint(f|ln)
+//doc:tags    performance experimental
+//doc:before  w.Write([]byte(fmt.Sprintf("%x", 10)))
+//doc:after   fmt.Fprintf(w, "%x", 10)
+func preferFprint(m dsl.Matcher) {
+	// TODO: maybe this can be simplified when we decide how to
+	// interpret things like `fmt.Sprintf` by default.
+	// It sounds logical that stdlib symbols should be bound
+	// in a more convenient way (by default).
+	//
+	// Right now we have to make sure that $fmt is
+	// actually a package, not some variable.
+
+	m.Match(`$w.Write([]byte($fmt.Sprint($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer") &&
+			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+		Suggest("fmt.Fprint($w, $args)").
+		Report(`fmt.Fprint($w, $args) should be preferred to the $$`)
+
+	m.Match(`$w.Write([]byte($fmt.Sprintf($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer") &&
+			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+		Suggest("fmt.Fprintf($w, $args)").
+		Report(`fmt.Fprintf($w, $args) should be preferred to the $$`)
+
+	m.Match(`$w.Write([]byte($fmt.Sprintln($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer") &&
+			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+		Suggest("fmt.Fprintln($w, $args)").
+		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
+}
