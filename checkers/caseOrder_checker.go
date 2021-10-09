@@ -85,7 +85,7 @@ func (c *caseOrderChecker) warnUnknownType(cause, concrete ast.Node) {
 func (c *caseOrderChecker) checkSwitch(stmt *ast.SwitchStmt) {
 	// Cases that have narrower value range should go before wider ones.
 	type caseLen struct {
-		node        ast.Node
+		node        *ast.CaseClause
 		valuesCount int
 	}
 	var cases []caseLen
@@ -104,6 +104,22 @@ func (c *caseOrderChecker) checkSwitch(stmt *ast.SwitchStmt) {
 	}
 }
 
-func (c *caseOrderChecker) warnSwitch(cause, concrete, node ast.Node) {
-	c.ctx.Warn(cause, "%s should go before the %s", concrete, node)
+func (c *caseOrderChecker) warnSwitch(cause ast.Node, concrete, node *ast.CaseClause) {
+	var args []interface{}
+	prettyPrint := func(cc *ast.CaseClause) string {
+		s := "case %s"
+		args = append(args, interface{}(cc.List[0]))
+		if len(cc.List) == 1 {
+			return s
+		}
+
+		for _, l := range cc.List[1:] {
+			s += ", %s"
+			args = append(args, interface{}(l))
+		}
+
+		return s
+	}
+
+	c.ctx.Warn(cause, prettyPrint(concrete)+" should go before the "+prettyPrint(node), args...)
 }
