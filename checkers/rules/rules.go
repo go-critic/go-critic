@@ -311,3 +311,15 @@ func preferFprint(m dsl.Matcher) {
 		Suggest("fmt.Fprintln($w, $args)").
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
 }
+
+//doc:summary Detects concatenation with os.PathSeparator which can be replaced with filepath.Join
+//doc:tags    style experimental
+//doc:before  x + string(os.PathSeparator) + y
+//doc:after   filepath.Join(x, y)
+func preferFilepathJoin(m dsl.Matcher) {
+	m.Match(`$x + string($os.PathSeparator) + $y`).
+		Where(m["x"].Type.Is(`string`) && m["y"].Type.Is(`string`) &&
+			m["os"].Text == "os" && m["os"].Object.Is(`PkgName`)).
+		Suggest("filepath.Join($x, $y)").
+		Report(`filepath.Join($x, $y) should be preferred to the $$`)
+}
