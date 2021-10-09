@@ -92,6 +92,11 @@ func httpNoBody(m dsl.Matcher) {
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequest($method, $url, http.NoBody)").
 		Report("http.NoBody should be preferred to the nil request body")
+
+	m.Match("http.NewRequestWithContext($ctx, $method, $url, $nil)").
+		Where(m["nil"].Text == "nil").
+		Suggest("http.NewRequestWithContext($ctx, $method, $url, http.NoBody)").
+		Report("http.NoBody should be preferred to the nil request body")
 }
 
 //doc:summary Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation
@@ -428,4 +433,43 @@ func dupArg(m dsl.Matcher) {
 	m.Match(`draw.Draw($x, $_, $x, $_, $_)`).
 		Where(m["x"].Pure).
 		Report(`suspicious duplicated args in $$`)
+}
+
+//doc:summary Detects suspicious http.Error call without following return
+//doc:tags    diagnostic experimental
+//doc:before  x + string(os.PathSeparator) + y
+//doc:after   filepath.Join(x, y)
+func returnAfterHttpError(m dsl.Matcher) {
+	m.Match(`if $_ { $*_; http.Error($w, $err, $code) }`).
+		Report("Possibly return is missed after the http.Error call").
+		At(m["w"])
+}
+
+//doc:summary Detects concatenation with os.PathSeparator which can be replaced with filepath.Join
+//doc:tags    style experimental
+//doc:before  x + string(os.PathSeparator) + y
+//doc:after   filepath.Join(x, y)
+func preferFilepathJoin(m dsl.Matcher) {
+	m.Match(`$x + string($os.PathSeparator) + $y`).
+		Where(m["x"].Type.Is(`string`) && m["y"].Type.Is(`string`) &&
+			m["os"].Text == "os" && m["os"].Object.Is(`PkgName`)).
+		Suggest("filepath.Join($x, $y)").
+		Report(`filepath.Join($x, $y) should be preferred to the $$`)
+}
+
+//doc:summary Detects w.Write or io.WriteString calls which can be replaced with w.WriteString
+//doc:tags    performance experimental
+//doc:before  w.Write([]byte("foo"))
+//doc:after   w.WriteString("foo")
+func preferStringWriter(m dsl.Matcher) {
+	m.Match(`$w.Write([]byte($s))`).
+		Where(m["w"].Type.Implements("io.StringWriter")).
+		Suggest("$w.WriteString($s)").
+		Report(`$w.WriteString($s) should be preferred to the $$`)
+
+	m.Match(`$io.WriteString($w, $s)`).
+		Where(m["w"].Type.Implements("io.StringWriter") &&
+			m["io"].Text == "io" && m["io"].Object.Is(`PkgName`)).
+		Suggest("$w.WriteString($s)").
+		Report(`$w.WriteString($s) should be preferred to the $$`)
 }
