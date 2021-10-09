@@ -157,6 +157,9 @@ type Context struct {
 	// Arch-dependent.
 	SizesInfo types.Sizes
 
+	// GoVersion is a target Go version.
+	GoVersion GoVersion
+
 	// FileSet is a file set that was used during the program loading.
 	FileSet *token.FileSet
 
@@ -196,6 +199,19 @@ func NewContext(fset *token.FileSet, sizes types.Sizes) *Context {
 		SizesInfo: sizes,
 		TypesInfo: &types.Info{},
 	}
+}
+
+// SetGoVersion adjust the target Go language version.
+//
+// The format is like "1.5", "1.8", etc.
+// It's permitted to have "go" prefix (e.g. "go1.5").
+//
+// Empty string (the default) means that we make no
+// Go version assumptions and (like gocritic does) behave
+// like all features are available. To make gocritic
+// more conservative, the upper Go version level should be adjusted.
+func (c *Context) SetGoVersion(version string) {
+	c.GoVersion = parseGoVersion(version)
 }
 
 // SetPackageInfo sets package-related metadata.
