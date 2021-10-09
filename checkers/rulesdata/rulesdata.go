@@ -1368,6 +1368,26 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        319,
+			Name:        "returnAfterHttpError",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects suspicious http.Error call without following return",
+			DocBefore:  "x + string(os.PathSeparator) + y",
+			DocAfter:   "filepath.Join(x, y)",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:           320,
+					SyntaxPattern:  "if $_ { $*_; http.Error($w, $err, $code) }",
+					ReportTemplate: "Possibly return is missed after the http.Error call",
+					LocationVar:    "w",
+				},
+			},
+		},
 	},
 }
 
