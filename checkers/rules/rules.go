@@ -311,3 +311,20 @@ func preferFprint(m dsl.Matcher) {
 		Suggest("fmt.Fprintln($w, $args)").
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
 }
+
+//doc:summary Detects w.Write or io.WriteString calls which can be replaced with w.WriteString
+//doc:tags    performance experimental
+//doc:before  w.Write([]byte("foo"))
+//doc:after   w.WriteString("foo")
+func preferStringWriter(m dsl.Matcher) {
+	m.Match(`$w.Write([]byte($s))`).
+		Where(m["w"].Type.Implements("io.StringWriter")).
+		Suggest("$w.WriteString($s)").
+		Report(`$w.WriteString($s) should be preferred to the $$`)
+
+	m.Match(`$io.WriteString($w, $s)`).
+		Where(m["w"].Type.Implements("io.StringWriter") &&
+			m["io"].Text == "io" && m["io"].Object.Is(`PkgName`)).
+		Suggest("$w.WriteString($s)").
+		Report(`$w.WriteString($s) should be preferred to the $$`)
+}

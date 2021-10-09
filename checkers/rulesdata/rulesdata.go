@@ -1368,6 +1368,107 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        319,
+			Name:        "preferStringWriter",
+			MatcherName: "m",
+			DocTags: []string{
+				"performance",
+				"experimental",
+			},
+			DocSummary: "Detects w.Write or io.WriteString calls which can be replaced with w.WriteString",
+			DocBefore:  "w.Write([]byte(\"foo\"))",
+			DocAfter:   "w.WriteString(\"foo\")",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:            320,
+					SyntaxPattern:   "$w.Write([]byte($s))",
+					ReportTemplate:  "$w.WriteString($s) should be preferred to the $$",
+					SuggestTemplate: "$w.WriteString($s)",
+					WhereExpr: ir.FilterExpr{
+						Line:  321,
+						Op:    ir.FilterVarTypeImplementsOp,
+						Src:   "m[\"w\"].Type.Implements(\"io.StringWriter\")",
+						Value: "w",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  321,
+								Op:    ir.FilterStringOp,
+								Src:   "\"io.StringWriter\"",
+								Value: "io.StringWriter",
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:            325,
+					SyntaxPattern:   "$io.WriteString($w, $s)",
+					ReportTemplate:  "$w.WriteString($s) should be preferred to the $$",
+					SuggestTemplate: "$w.WriteString($s)",
+					WhereExpr: ir.FilterExpr{
+						Line: 326,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"w\"].Type.Implements(\"io.StringWriter\") &&\n\tm[\"io\"].Text == \"io\" && m[\"io\"].Object.Is(`PkgName`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line: 326,
+								Op:   ir.FilterAndOp,
+								Src:  "m[\"w\"].Type.Implements(\"io.StringWriter\") &&\n\tm[\"io\"].Text == \"io\"",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  326,
+										Op:    ir.FilterVarTypeImplementsOp,
+										Src:   "m[\"w\"].Type.Implements(\"io.StringWriter\")",
+										Value: "w",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  326,
+												Op:    ir.FilterStringOp,
+												Src:   "\"io.StringWriter\"",
+												Value: "io.StringWriter",
+											},
+										},
+									},
+									ir.FilterExpr{
+										Line: 327,
+										Op:   ir.FilterEqOp,
+										Src:  "m[\"io\"].Text == \"io\"",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  327,
+												Op:    ir.FilterVarTextOp,
+												Src:   "m[\"io\"].Text",
+												Value: "io",
+											},
+											ir.FilterExpr{
+												Line:  327,
+												Op:    ir.FilterStringOp,
+												Src:   "\"io\"",
+												Value: "io",
+											},
+										},
+									},
+								},
+							},
+							ir.FilterExpr{
+								Line:  327,
+								Op:    ir.FilterVarObjectIsOp,
+								Src:   "m[\"io\"].Object.Is(`PkgName`)",
+								Value: "io",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  327,
+										Op:    ir.FilterStringOp,
+										Src:   "`PkgName`",
+										Value: "PkgName",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
