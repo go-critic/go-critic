@@ -1494,6 +1494,108 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        319,
+			Name:        "preferFilepathJoin",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+				"experimental",
+			},
+			DocSummary: "Detects concatenation with os.PathSeparator which can be replaced with filepath.Join",
+			DocBefore:  "x + string(os.PathSeparator) + y",
+			DocAfter:   "filepath.Join(x, y)",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:            320,
+					SyntaxPattern:   "$x + string($os.PathSeparator) + $y",
+					ReportTemplate:  "filepath.Join($x, $y) should be preferred to the $$",
+					SuggestTemplate: "filepath.Join($x, $y)",
+					WhereExpr: ir.FilterExpr{
+						Line: 321,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"x\"].Type.Is(`string`) && m[\"y\"].Type.Is(`string`) &&\n\tm[\"os\"].Text == \"os\" && m[\"os\"].Object.Is(`PkgName`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line: 321,
+								Op:   ir.FilterAndOp,
+								Src:  "m[\"x\"].Type.Is(`string`) && m[\"y\"].Type.Is(`string`) &&\n\tm[\"os\"].Text == \"os\"",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line: 321,
+										Op:   ir.FilterAndOp,
+										Src:  "m[\"x\"].Type.Is(`string`) && m[\"y\"].Type.Is(`string`)",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  321,
+												Op:    ir.FilterVarTypeIsOp,
+												Src:   "m[\"x\"].Type.Is(`string`)",
+												Value: "x",
+												Args: []ir.FilterExpr{
+													ir.FilterExpr{
+														Line:  321,
+														Op:    ir.FilterStringOp,
+														Src:   "`string`",
+														Value: "string",
+													},
+												},
+											},
+											ir.FilterExpr{
+												Line:  321,
+												Op:    ir.FilterVarTypeIsOp,
+												Src:   "m[\"y\"].Type.Is(`string`)",
+												Value: "y",
+												Args: []ir.FilterExpr{
+													ir.FilterExpr{
+														Line:  321,
+														Op:    ir.FilterStringOp,
+														Src:   "`string`",
+														Value: "string",
+													},
+												},
+											},
+										},
+									},
+									ir.FilterExpr{
+										Line: 322,
+										Op:   ir.FilterEqOp,
+										Src:  "m[\"os\"].Text == \"os\"",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  322,
+												Op:    ir.FilterVarTextOp,
+												Src:   "m[\"os\"].Text",
+												Value: "os",
+											},
+											ir.FilterExpr{
+												Line:  322,
+												Op:    ir.FilterStringOp,
+												Src:   "\"os\"",
+												Value: "os",
+											},
+										},
+									},
+								},
+							},
+							ir.FilterExpr{
+								Line:  322,
+								Op:    ir.FilterVarObjectIsOp,
+								Src:   "m[\"os\"].Object.Is(`PkgName`)",
+								Value: "os",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  322,
+										Op:    ir.FilterStringOp,
+										Src:   "`PkgName`",
+										Value: "PkgName",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
