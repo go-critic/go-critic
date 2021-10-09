@@ -82,7 +82,28 @@ func (c *caseOrderChecker) warnUnknownType(cause, concrete ast.Node) {
 	c.ctx.Warn(cause, "type is not defined %s", concrete)
 }
 
-func (c *caseOrderChecker) checkSwitch(s *ast.SwitchStmt) {
-	// TODO(quasilyte): can handle expression cases that overlap.
+func (c *caseOrderChecker) checkSwitch(stmt *ast.SwitchStmt) {
 	// Cases that have narrower value range should go before wider ones.
+	type caseLen struct {
+		node        ast.Node
+		valuesCount int
+	}
+	var cases []caseLen
+
+	for i := range stmt.Body.List {
+		curCase := stmt.Body.List[i].(*ast.CaseClause)
+		cl := len(curCase.List)
+		for _, cc := range cases {
+			if cl > 0 && cc.valuesCount > cl {
+				c.warnSwitch(curCase, curCase, cc.node)
+				break
+			}
+		}
+
+		cases = append(cases, caseLen{valuesCount: cl, node: curCase})
+	}
+}
+
+func (c *caseOrderChecker) warnSwitch(cause, concrete, node ast.Node) {
+	c.ctx.Warn(cause, "%s should go before the %s", concrete, node)
 }

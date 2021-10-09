@@ -52,3 +52,25 @@ func typeSwitches(x interface{}) {
 	case myType:
 	}
 }
+
+func valueSwitches(x int) {
+	switch x {
+	case 1, 2, 3:
+	/*! case 4: should go before the case 1, 2, 3: */
+	case 4:
+	}
+
+	switch {
+	case 1 == (x - 1), 0 == x, x == 10:
+	/*! case x != 4: should go before the case 1 == (x - 1), 0 == x, x == 10: */
+	case x != 4:
+	}
+
+	switch x {
+	case 1, 2, 3, 4:
+	/*! case 5, 6, 7: should go before the case 1, 2, 3, 4: */
+	case 5, 6, 7:
+	/*! case 8, 9: should go before the case 1, 2, 3, 4: */
+	case 8, 9:
+	}
+}
