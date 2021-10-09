@@ -61,9 +61,7 @@ type parseErrorHandler struct {
 // failOnParseError returns true if a parseError occurred and that error should be not be ignored.
 func (e parseErrorHandler) failOnParseError(parseError error) bool {
 	for k, p := range e.failureConditions {
-		log.Printf("EVALUATING: %v for %v", k, parseError)
 		if p(parseError) {
-			log.Printf("FAIL: %v", parseError)
 			return true
 		}
 	}
@@ -83,9 +81,7 @@ func newErrorHandler(failOnErrorFlag string) (*parseErrorHandler, error) {
 		if k == "" {
 			continue
 		}
-		log.Printf("FLAG: %v", k)
 		if p, ok := failOnErrorPredicates[k]; ok {
-			log.Printf("ADDING FLAG: %v", k)
 			h.failureConditions[k] = p
 		} else {
 			// Wrong flag value.
