@@ -10,6 +10,36 @@ import (
 	"strings"
 )
 
+type MyInt struct{ value int }
+
+func (x MyInt) Equal(other MyInt) bool  { return x.value == other.value }
+func (x MyInt) Equals(other MyInt) bool { return x.value == other.value }
+func (x MyInt) Compare(other MyInt) int { return 0 }
+func (x MyInt) Cmp(other MyInt) int     { return 0 }
+
+func duplicatedReceiver() {
+	{
+		var x MyInt
+		/*! suspicious method call with the same argument and receiver */
+		_ = x.Equal(x)
+	}
+	{
+		var x MyInt
+		/*! suspicious method call with the same argument and receiver */
+		_ = x.Equals(x)
+	}
+	{
+		var x MyInt
+		/*! suspicious method call with the same argument and receiver */
+		_ = x.Compare(x)
+	}
+	{
+		var x MyInt
+		/*! suspicious method call with the same argument and receiver */
+		_ = x.Cmp(x)
+	}
+}
+
 func duplicatedArgs() {
 	var dstSlice []int
 	var s string

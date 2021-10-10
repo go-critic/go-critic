@@ -63,4 +63,21 @@ func differentArgs() {
 		var op draw.Op
 		draw.Draw(dstImg, area, srcImg, point, op)
 	}
+
+	{
+		var x, y MyInt
+		_ = x.Equal(y)
+	}
+	{
+		var x, y MyInt
+		_ = x.Equals(y)
+	}
+	{
+		var x, y MyInt
+		_ = x.Compare(y)
+	}
+	{
+		var x, y MyInt
+		_ = x.Cmp(y)
+	}
 }
