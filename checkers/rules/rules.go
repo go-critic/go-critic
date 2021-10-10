@@ -317,6 +317,124 @@ func preferFprint(m dsl.Matcher) {
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
 }
 
+//doc:summary Detects suspicious duplicated arguments
+//doc:tags    experimental diagnostic
+//doc:before  copy(dst, dst)
+//doc:after   copy(dst, src)
+func dupArg(m dsl.Matcher) {
+	m.Match(`copy($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+
+	m.Match(`math.Max($x, $x)`).
+		Where(m["x"].Pure).
+		Report("suspicious duplicated args in $$")
+	m.Match(`math.Min($x, $x)`).
+		Where(m["x"].Pure).
+		Report("suspicious duplicated args in $$")
+
+	m.Match(`reflect.Copy($x, $x)`).
+		Where(m["x"].Pure).
+		Report("suspicious duplicated args in $$")
+	m.Match(`reflect.DeepEqual($x, $x)`).
+		Where(m["x"].Pure).
+		Report("suspicious duplicated args in $$")
+
+	m.Match(`strings.Contains($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.Compare($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.EqualFold($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.HasPrefix($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.HasSuffix($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.Index($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.LastIndex($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.Split($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.SplitAfter($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.SplitAfterN($x, $x, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.SplitN($x, $x, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.Replace($_, $x, $x, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`strings.ReplaceAll($_, $x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+
+	m.Match(`bytes.Contains($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.Compare($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.Equal($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.EqualFold($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.HasPrefix($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.HasSuffix($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.Index($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.LastIndex($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.Split($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.SplitAfter($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.SplitAfterN($x, $x, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.SplitN($x, $x, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.Replace($_, $x, $x, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`bytes.ReplaceAll($_, $x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+
+	m.Match(`types.Identical($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+	m.Match(`types.IdenticalIgnoreTags($x, $x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+
+	m.Match(`draw.Draw($x, $_, $x, $_, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
+}
+
 //doc:summary Detects suspicious http.Error call without following return
 //doc:tags    diagnostic experimental
 //doc:before  x + string(os.PathSeparator) + y
