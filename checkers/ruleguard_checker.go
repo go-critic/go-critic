@@ -181,16 +181,25 @@ func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.En
 	type ruleguardReport struct {
 		node    ast.Node
 		message string
+		fix     linter.QuickFix
 	}
 	var reports []ruleguardReport
 
-	runCtx.Report = func(_ ruleguard.GoRuleInfo, n ast.Node, msg string, _ *ruleguard.Suggestion) {
+	runCtx.Report = func(_ ruleguard.GoRuleInfo, n ast.Node, msg string, fix *ruleguard.Suggestion) {
 		// TODO(quasilyte): investigate whether we should add a rule name as
 		// a message prefix here.
-		reports = append(reports, ruleguardReport{
+		r := ruleguardReport{
 			node:    n,
 			message: msg,
-		})
+		}
+		if fix != nil {
+			r.fix = linter.QuickFix{
+				From:        fix.From,
+				To:          fix.To,
+				Replacement: fix.Replacement,
+			}
+		}
+		reports = append(reports, r)
 	}
 
 	if err := e.Run(runCtx, f); err != nil {
@@ -204,6 +213,10 @@ func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.En
 		return reports[i].message < reports[j].message
 	})
 	for _, report := range reports {
-		ctx.Warn(report.node, "%s", report.message)
+		if report.fix.Replacement != nil {
+			ctx.WarnFixable(report.node, report.fix, "%s", report.message)
+		} else {
+			ctx.Warn(report.node, "%s", report.message)
+		}
 	}
 }
