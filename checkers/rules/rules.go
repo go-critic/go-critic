@@ -290,147 +290,62 @@ func preferWriteByte(m dsl.Matcher) {
 //doc:before  w.Write([]byte(fmt.Sprintf("%x", 10)))
 //doc:after   fmt.Fprintf(w, "%x", 10)
 func preferFprint(m dsl.Matcher) {
-	// TODO: maybe this can be simplified when we decide how to
-	// interpret things like `fmt.Sprintf` by default.
-	// It sounds logical that stdlib symbols should be bound
-	// in a more convenient way (by default).
-	//
-	// Right now we have to make sure that $fmt is
-	// actually a package, not some variable.
-
-	m.Match(`$w.Write([]byte($fmt.Sprint($*args)))`).
-		Where(m["w"].Type.Implements("io.Writer") &&
-			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+	m.Match(`$w.Write([]byte(fmt.Sprint($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprint($w, $args)").
 		Report(`fmt.Fprint($w, $args) should be preferred to the $$`)
 
-	m.Match(`$w.Write([]byte($fmt.Sprintf($*args)))`).
-		Where(m["w"].Type.Implements("io.Writer") &&
-			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+	m.Match(`$w.Write([]byte(fmt.Sprintf($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprintf($w, $args)").
 		Report(`fmt.Fprintf($w, $args) should be preferred to the $$`)
 
-	m.Match(`$w.Write([]byte($fmt.Sprintln($*args)))`).
-		Where(m["w"].Type.Implements("io.Writer") &&
-			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+	m.Match(`$w.Write([]byte(fmt.Sprintln($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprintln($w, $args)").
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
 }
 
 //doc:summary Detects suspicious duplicated arguments
-//doc:tags    experimental diagnostic
+//doc:tags    diagnostic
 //doc:before  copy(dst, dst)
 //doc:after   copy(dst, src)
 func dupArg(m dsl.Matcher) {
-	m.Match(`copy($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-
-	m.Match(`math.Max($x, $x)`).
-		Where(m["x"].Pure).
-		Report("suspicious duplicated args in $$")
-	m.Match(`math.Min($x, $x)`).
-		Where(m["x"].Pure).
-		Report("suspicious duplicated args in $$")
-
-	m.Match(`reflect.Copy($x, $x)`).
-		Where(m["x"].Pure).
-		Report("suspicious duplicated args in $$")
-	m.Match(`reflect.DeepEqual($x, $x)`).
-		Where(m["x"].Pure).
-		Report("suspicious duplicated args in $$")
-
-	m.Match(`strings.Contains($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.Compare($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.EqualFold($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.HasPrefix($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.HasSuffix($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.Index($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.LastIndex($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.Split($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.SplitAfter($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.SplitAfterN($x, $x, $_)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.SplitN($x, $x, $_)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.Replace($_, $x, $x, $_)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`strings.ReplaceAll($_, $x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-
-	m.Match(`bytes.Contains($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.Compare($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.Equal($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.EqualFold($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.HasPrefix($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.HasSuffix($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.Index($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.LastIndex($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.Split($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.SplitAfter($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.SplitAfterN($x, $x, $_)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.SplitN($x, $x, $_)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.Replace($_, $x, $x, $_)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`bytes.ReplaceAll($_, $x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-
-	m.Match(`types.Identical($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-	m.Match(`types.IdenticalIgnoreTags($x, $x)`).
-		Where(m["x"].Pure).
-		Report(`suspicious duplicated args in $$`)
-
-	m.Match(`draw.Draw($x, $_, $x, $_, $_)`).
+	m.Match(`copy($x, $x)`,
+		`math.Max($x, $x)`,
+		`math.Min($x, $x)`,
+		`reflect.Copy($x, $x)`,
+		`reflect.DeepEqual($x, $x)`,
+		`strings.Contains($x, $x)`,
+		`strings.Compare($x, $x)`,
+		`strings.EqualFold($x, $x)`,
+		`strings.HasPrefix($x, $x)`,
+		`strings.HasSuffix($x, $x)`,
+		`strings.Index($x, $x)`,
+		`strings.LastIndex($x, $x)`,
+		`strings.Split($x, $x)`,
+		`strings.SplitAfter($x, $x)`,
+		`strings.SplitAfterN($x, $x, $_)`,
+		`strings.SplitN($x, $x, $_)`,
+		`strings.Replace($_, $x, $x, $_)`,
+		`strings.ReplaceAll($_, $x, $x)`,
+		`bytes.Contains($x, $x)`,
+		`bytes.Compare($x, $x)`,
+		`bytes.Equal($x, $x)`,
+		`bytes.EqualFold($x, $x)`,
+		`bytes.HasPrefix($x, $x)`,
+		`bytes.HasSuffix($x, $x)`,
+		`bytes.Index($x, $x)`,
+		`bytes.LastIndex($x, $x)`,
+		`bytes.Split($x, $x)`,
+		`bytes.SplitAfter($x, $x)`,
+		`bytes.SplitAfterN($x, $x, $_)`,
+		`bytes.SplitN($x, $x, $_)`,
+		`bytes.Replace($_, $x, $x, $_)`,
+		`bytes.ReplaceAll($_, $x, $x)`,
+		`types.Identical($x, $x)`,
+		`types.IdenticalIgnoreTags($x, $x)`,
+		`draw.Draw($x, $_, $x, $_, $_)`).
 		Where(m["x"].Pure).
 		Report(`suspicious duplicated args in $$`)
 }
@@ -450,9 +365,8 @@ func returnAfterHttpError(m dsl.Matcher) {
 //doc:before  x + string(os.PathSeparator) + y
 //doc:after   filepath.Join(x, y)
 func preferFilepathJoin(m dsl.Matcher) {
-	m.Match(`$x + string($os.PathSeparator) + $y`).
-		Where(m["x"].Type.Is(`string`) && m["y"].Type.Is(`string`) &&
-			m["os"].Text == "os" && m["os"].Object.Is(`PkgName`)).
+	m.Match(`$x + string(os.PathSeparator) + $y`).
+		Where(m["x"].Type.Is(`string`) && m["y"].Type.Is(`string`)).
 		Suggest("filepath.Join($x, $y)").
 		Report(`filepath.Join($x, $y) should be preferred to the $$`)
 }
@@ -467,9 +381,8 @@ func preferStringWriter(m dsl.Matcher) {
 		Suggest("$w.WriteString($s)").
 		Report(`$w.WriteString($s) should be preferred to the $$`)
 
-	m.Match(`$io.WriteString($w, $s)`).
-		Where(m["w"].Type.Implements("io.StringWriter") &&
-			m["io"].Text == "io" && m["io"].Object.Is(`PkgName`)).
+	m.Match(`io.WriteString($w, $s)`).
+		Where(m["w"].Type.Implements("io.StringWriter")).
 		Suggest("$w.WriteString($s)").
 		Report(`$w.WriteString($s) should be preferred to the $$`)
 }
