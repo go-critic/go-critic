@@ -407,3 +407,13 @@ func preferStringWriter(m dsl.Matcher) {
 		Suggest("$w.WriteString($s)").
 		Report(`$w.WriteString($s) should be preferred to the $$`)
 }
+
+//doc:summary Detects slice clear loops, suggests an idiom that is recognized by the Go compiler
+//doc:tags    performance experimental
+//doc:before  for i := 0; i < len(buf); i++ { buf[i] = 0 }
+//doc:after   for i := range buf { buf[i] = 0 }
+func sliceClear(m dsl.Matcher) {
+	m.Match(`for $i := 0; $i < len($xs); $i++ { $xs[$i] = $zero }`).
+		Where(m["zero"].Value.Int() == 0).
+		Report(`rewrite as for-range so compiler can recognize this pattern`)
+}
