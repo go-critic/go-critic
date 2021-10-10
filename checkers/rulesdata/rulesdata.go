@@ -1973,6 +1973,44 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        415,
+			Name:        "sliceClear",
+			MatcherName: "m",
+			DocTags: []string{
+				"performance",
+				"experimental",
+			},
+			DocSummary: "Detects slice clear loops, suggests an idiom that is recognized by the Go compiler",
+			DocBefore:  "for i := 0; i < len(buf); i++ { buf[i] = 0 }",
+			DocAfter:   "for i := range buf { buf[i] = 0 }",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:           416,
+					SyntaxPattern:  "for $i := 0; $i < len($xs); $i++ { $xs[$i] = $zero }",
+					ReportTemplate: "rewrite as for-range so compiler can recognize this pattern",
+					WhereExpr: ir.FilterExpr{
+						Line: 417,
+						Op:   ir.FilterEqOp,
+						Src:  "m[\"zero\"].Value.Int() == 0",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  417,
+								Op:    ir.FilterVarValueIntOp,
+								Src:   "m[\"zero\"].Value.Int()",
+								Value: "zero",
+							},
+							ir.FilterExpr{
+								Line:  417,
+								Op:    ir.FilterIntOp,
+								Src:   "0",
+								Value: int64(0),
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
