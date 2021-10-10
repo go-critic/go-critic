@@ -4,6 +4,27 @@ import (
 	"github.com/quasilyte/go-ruleguard/dsl"
 )
 
+//doc:summary Detects redundant fmt.Sprint calls
+//doc:tags    style experimental
+//doc:before  fmt.Sprint(x)
+//doc:after   x.String()
+func redundantSprint(m dsl.Matcher) {
+	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
+		Where(m["x"].Type.Implements(`fmt.Stringer`)).
+		Suggest(`$x.String()`).
+		Report(`use $x.String() instead`)
+
+	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
+		Where(m["x"].Type.Implements(`error`)).
+		Suggest(`$x.Error()`).
+		Report(`use $x.Error() instead`)
+
+	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
+		Where(m["x"].Type.Is(`string`)).
+		Suggest(`$x`).
+		Report(`$x is already string`)
+}
+
 //doc:summary Detects deferred function literals that can be simplified
 //doc:tags    style experimental
 //doc:before  defer func() { f() }()
