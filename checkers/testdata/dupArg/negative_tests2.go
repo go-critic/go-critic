@@ -6,4 +6,7 @@ import (
 
 func nonStdPackage() {
 	strings.Contains("")
+
+	var x string
+	strings.Contains(x, x)
 }
