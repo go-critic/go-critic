@@ -480,6 +480,34 @@ func offBy1(m dsl.Matcher) {
 		Where(m["x"].Pure && m["x"].Type.Is(`[]$_`)).
 		Suggest(`$x[len($x)-1]`).
 		Report(`index expr always panics; maybe you wanted $x[len($x)-1]?`)
+
+	// TODO: use $slicing[$i:$*_] form when we'll update go-ruleguard
+	// version so it includes https://github.com/quasilyte/go-ruleguard/pull/284
+
+	m.Match(
+		`$i := strings.Index($s, $_); $_ := $slicing[$i:]`,
+		`$i := strings.Index($s, $_); $_ = $slicing[$i:]`,
+		`$i := bytes.Index($s, $_); $_ := $slicing[$i:]`,
+		`$i := bytes.Index($s, $_); $_ = $slicing[$i:]`).
+		Where(m["s"].Text == m["slicing"].Text).
+		Report(`Index() can return -1; maybe you wanted to do $s[$i+1:]`).
+		At(m["slicing"])
+
+	m.Match(
+		`$i := strings.Index($s, $_); $_ := $slicing[:$i]`,
+		`$i := strings.Index($s, $_); $_ = $slicing[:$i]`,
+		`$i := bytes.Index($s, $_); $_ := $slicing[:$i]`,
+		`$i := bytes.Index($s, $_); $_ = $slicing[:$i]`).
+		Where(m["s"].Text == m["slicing"].Text).
+		Report(`Index() can return -1; maybe you wanted to do $s[:$i+1]`).
+		At(m["slicing"])
+
+	m.Match(
+		`$s[strings.Index($s, $_):]`,
+		`$s[:strings.Index($s, $_)]`,
+		`$s[bytes.Index($s, $_):]`,
+		`$s[:bytes.Index($s, $_)]`).
+		Report(`Index() can return -1; maybe you wanted to do Index()+1`)
 }
 
 //doc:summary Detects slice expressions that can be simplified to sliced expression itself
