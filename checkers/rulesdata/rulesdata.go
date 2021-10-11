@@ -2055,6 +2055,106 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        429,
+			Name:        "syncMapLoadAndDelete",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects sync.Map load+delete operations that can be replaced with LoadAndDelete",
+			DocBefore:  "v, ok := m.Load(k); if ok { m.Delete($k); f(v); }",
+			DocAfter:   "v, deleted := m.LoadAndDelete(k); if deleted { f(v) }",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:           430,
+					SyntaxPattern:  "$_, $ok := $m.Load($k); if $ok { $m.Delete($k); $*_ }",
+					ReportTemplate: "use $m.LoadAndDelete to perform load+delete operations atomically",
+					WhereExpr: ir.FilterExpr{
+						Line: 431,
+						Op:   ir.FilterAndOp,
+						Src:  "m.GoVersion().GreaterEqThan(\"1.15\") &&\n\tm[\"m\"].Type.Is(`*sync.Map`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  431,
+								Op:    ir.FilterGoVersionGreaterEqThanOp,
+								Src:   "m.GoVersion().GreaterEqThan(\"1.15\")",
+								Value: "1.15",
+							},
+							ir.FilterExpr{
+								Line:  432,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"m\"].Type.Is(`*sync.Map`)",
+								Value: "m",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  432,
+										Op:    ir.FilterStringOp,
+										Src:   "`*sync.Map`",
+										Value: "*sync.Map",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		ir.RuleGroup{
+			Line:        440,
+			Name:        "sprintfQuotedString",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects \"%s\" formatting directives that can be replaced with %q",
+			DocBefore:  "fmt.Sprintf(`\"%s\"`, s)",
+			DocAfter:   "fmt.Sprintf(`%q`, s)",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:           441,
+					SyntaxPattern:  "fmt.Sprintf($s, $*_)",
+					ReportTemplate: "use %q instead of \"%s\" for quoted strings",
+					WhereExpr: ir.FilterExpr{
+						Line: 442,
+						Op:   ir.FilterOrOp,
+						Src:  "m[\"s\"].Text.Matches(\"^`.*\\\"%s\\\".*`$\") ||\n\tm[\"s\"].Text.Matches(`^\".*\\\\\"%s\\\\\".*\"$`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  442,
+								Op:    ir.FilterVarTextMatchesOp,
+								Src:   "m[\"s\"].Text.Matches(\"^`.*\\\"%s\\\".*`$\")",
+								Value: "s",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  442,
+										Op:    ir.FilterStringOp,
+										Src:   "\"^`.*\\\"%s\\\".*`$\"",
+										Value: "^`.*\"%s\".*`$",
+									},
+								},
+							},
+							ir.FilterExpr{
+								Line:  443,
+								Op:    ir.FilterVarTextMatchesOp,
+								Src:   "m[\"s\"].Text.Matches(`^\".*\\\\\"%s\\\\\".*\"$`)",
+								Value: "s",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  443,
+										Op:    ir.FilterStringOp,
+										Src:   "`^\".*\\\\\"%s\\\\\".*\"$`",
+										Value: "^\".*\\\\\"%s\\\\\".*\"$",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
