@@ -421,3 +421,25 @@ func sliceClear(m dsl.Matcher) {
 		Where(m["zero"].Value.Int() == 0).
 		Report(`rewrite as for-range so compiler can recognize this pattern`)
 }
+
+//doc:summary Detects sync.Map load+delete operations that can be replaced with LoadAndDelete
+//doc:tags    diagnostic experimental
+//doc:before  v, ok := m.Load(k); if ok { m.Delete($k); f(v); }
+//doc:after   v, deleted := m.LoadAndDelete(k); if deleted { f(v) }
+func syncMapLoadAndDelete(m dsl.Matcher) {
+	m.Match(`$_, $ok := $m.Load($k); if $ok { $m.Delete($k); $*_ }`).
+		Where(m.GoVersion().GreaterEqThan("1.15") &&
+			m["m"].Type.Is(`*sync.Map`)).
+		Report(`use $m.LoadAndDelete to perform load+delete operations atomically`)
+}
+
+//doc:summary Detects "%s" formatting directives that can be replaced with %q
+//doc:tags    diagnostic experimental
+//doc:before  fmt.Sprintf(`"%s"`, s)
+//doc:after   fmt.Sprintf(`%q`, s)
+func sprintfQuotedString(m dsl.Matcher) {
+	m.Match(`fmt.Sprintf($s, $*_)`).
+		Where(m["s"].Text.Matches("^`.*\"%s\".*`$") ||
+			m["s"].Text.Matches(`^".*\\"%s\\".*"$`)).
+		Report(`use %q instead of "%s" for quoted strings`)
+}
