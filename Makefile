@@ -7,6 +7,10 @@ export GO111MODULE := on
 %:      # stubs to get makefile param for `test-checker` command
 	@:	# see: https://stackoverflow.com/a/6273809/433041
 
+build-release:
+	mkdir -p bin
+	go build -o bin/gocritic -ldflags "-X 'main.Version=${GOCRITIC_VERSION}'" ./cmd/gocritic
+
 test:
 	go test -v -count=1 ./...
 
