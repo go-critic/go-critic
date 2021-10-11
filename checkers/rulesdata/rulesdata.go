@@ -2155,6 +2155,51 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        451,
+			Name:        "offBy1",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+			},
+			DocSummary: "Detects various off-by-one kind of errors",
+			DocBefore:  "xs[len(xs)]",
+			DocAfter:   "xs[len(xs)-1]",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:           452,
+					SyntaxPattern:  "$x[len($x)]",
+					ReportTemplate: "index expr always panics; maybe you wanted $x[len($x)-1]?",
+					WhereExpr: ir.FilterExpr{
+						Line: 453,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"x\"].Pure && m[\"x\"].Type.Is(`[]$_`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  453,
+								Op:    ir.FilterVarPureOp,
+								Src:   "m[\"x\"].Pure",
+								Value: "x",
+							},
+							ir.FilterExpr{
+								Line:  453,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"x\"].Type.Is(`[]$_`)",
+								Value: "x",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  453,
+										Op:    ir.FilterStringOp,
+										Src:   "`[]$_`",
+										Value: "[]$_",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
