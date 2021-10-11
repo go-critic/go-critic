@@ -332,6 +332,10 @@ func preferFprint(m dsl.Matcher) {
 //doc:before  copy(dst, dst)
 //doc:after   copy(dst, src)
 func dupArg(m dsl.Matcher) {
+	m.Match(`$x.Equal($x)`, `$x.Equals($x)`, `$x.Compare($x)`, `$x.Cmp($x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious method call with the same argument and receiver`)
+
 	m.Match(`copy($x, $x)`,
 		`math.Max($x, $x)`,
 		`math.Min($x, $x)`,
