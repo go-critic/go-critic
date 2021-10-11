@@ -443,3 +443,14 @@ func sprintfQuotedString(m dsl.Matcher) {
 			m["s"].Text.Matches(`^".*\\"%s\\".*"$`)).
 		Report(`use %q instead of "%s" for quoted strings`)
 }
+
+//doc:summary Detects various off-by-one kind of errors
+//doc:tags    diagnostic
+//doc:before  xs[len(xs)]
+//doc:after   xs[len(xs)-1]
+func offBy1(m dsl.Matcher) {
+	m.Match(`$x[len($x)]`).
+		Where(m["x"].Pure && m["x"].Type.Is(`[]$_`)).
+		Suggest(`$x[len($x)-1]`).
+		Report(`index expr always panics; maybe you wanted $x[len($x)-1]?`)
+}
