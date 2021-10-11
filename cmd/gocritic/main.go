@@ -5,9 +5,11 @@ import (
 	"github.com/go-critic/go-critic/framework/lintmain"
 )
 
+var Version string
+
 func main() {
 	lintmain.Run(lintmain.Config{
 		Name:    "gocritic",
-		Version: "v0.5.0",
+		Version: Version,
 	})
 }
