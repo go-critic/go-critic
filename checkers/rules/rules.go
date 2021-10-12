@@ -454,3 +454,14 @@ func offBy1(m dsl.Matcher) {
 		Suggest(`$x[len($x)-1]`).
 		Report(`index expr always panics; maybe you wanted $x[len($x)-1]?`)
 }
+
+//doc:summary Detects slice expressions that can be simplified to sliced expression itself
+//doc:tags    style
+//doc:before  copy(b[:], values...)
+//doc:after   copy(b, values...)
+func unslice(m dsl.Matcher) {
+	m.Match(`$s[:]`).
+		Where(m["s"].Type.Is(`string`) || m["s"].Type.Is(`[]$_`)).
+		Suggest(`$s`).
+		Report(`could simplify $$ to $s`)
+}

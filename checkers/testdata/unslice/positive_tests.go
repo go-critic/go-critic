@@ -5,7 +5,9 @@ func sliceArrayMultipleTimes() {
 
 	/*! could simplify xs[:][:] to xs[:] */
 	_ = xs[:][:]
-	/*! could simplify xs[:][:][:] to xs[:] */
+
+	/*! could simplify xs[:][:][:] to xs[:][:] */
+	/*! could simplify xs[:][:] to xs[:] */
 	_ = xs[:][:][:]
 }
 
@@ -15,10 +17,13 @@ func dullStringSlicing() {
 	/*! could simplify s[:] to s */
 	_ = s[:]
 
-	/*! could simplify s[:][:] to s */
+	/*! could simplify s[:][:] to s[:] */
+	/*! could simplify s[:] to s */
 	_ = s[:][:]
 
-	/*! could simplify s[:][:][:] to s */
+	/*! could simplify s[:][:][:] to s[:][:] */
+	/*! could simplify s[:][:] to s[:] */
+	/*! could simplify s[:] to s */
 	_ = s[:][:][:]
 }
 
@@ -49,6 +54,15 @@ func dullSlicing() {
 		var xs []struct{}
 		/*! could simplify xs[:] to xs */
 		_ = xs[:]
+
+		/*! could simplify xs[:][:] to xs[:] */
+		/*! could simplify xs[:] to xs */
+		_ = xs[:][:]
+
+		/*! could simplify xs[:][:][:] to xs[:][:] */
+		/*! could simplify xs[:][:] to xs[:] */
+		/*! could simplify xs[:] to xs */
+		_ = xs[:][:][:]
 	}
 	{
 		var xs map[string][][]int
