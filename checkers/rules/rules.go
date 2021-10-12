@@ -471,22 +471,13 @@ func unslice(m dsl.Matcher) {
 //doc:before  return nil != ptr
 //doc:after   return ptr != nil
 func yodaStyleExpr(m dsl.Matcher) {
-	m.Match(`$constval != $x`).Where(m["constval"].Const && !m["x"].Const).
+	m.Match(`$constval != $x`).Where(m["constval"].Node.Is(`BasicLit`) && !m["x"].Node.Is(`BasicLit`)).
 		Report(`consider to change order in expression to $x != $constval`)
-	m.Match(`$constval == $x`).Where(m["constval"].Const && !m["x"].Const).
+	m.Match(`$constval == $x`).Where(m["constval"].Node.Is(`BasicLit`) && !m["x"].Node.Is(`BasicLit`)).
 		Report(`consider to change order in expression to $x == $constval`)
 
-	m.Match(`nil != $x`).Where(!m["x"].Const).
+	m.Match(`nil != $x`).Where(!m["x"].Node.Is(`BasicLit`)).
 		Report(`consider to change order in expression to $x != nil`)
-	m.Match(`nil == $x`).Where(!m["x"].Const).
+	m.Match(`nil == $x`).Where(!m["x"].Node.Is(`BasicLit`)).
 		Report(`consider to change order in expression to $x == nil`)
-
-	m.Match(`$constval < $x`).Where(m["constval"].Const && !m["x"].Const).
-		Report(`consider to change order in expression to $x >= $constval`)
-	m.Match(`$constval <= $x`).Where(m["constval"].Const && !m["x"].Const).
-		Report(`consider to change order in expression to $x > $constval`)
-	m.Match(`$constval > $x`).Where(m["constval"].Const && !m["x"].Const).
-		Report(`consider to change order in expression to $x <= $constval`)
-	m.Match(`$constval >= $x`).Where(m["constval"].Const && !m["x"].Const).
-		Report(`consider to change order in expression to $x < $constval`)
 }
