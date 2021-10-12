@@ -52,3 +52,13 @@ func elseElse() {
 		}
 	}
 }
+
+func withInitClause() {
+	if true {
+
+	} else {
+		if x := 0; x == 5 {
+
+		}
+	}
+}
