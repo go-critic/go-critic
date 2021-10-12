@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("render template: %v", err)
 	}
-	if err := ioutil.WriteFile(docsPath+"overview.md", buf.Bytes(), 0600); err != nil {
+	if err := ioutil.WriteFile(docsPath+"overview.md", buf.Bytes(), 0o600); err != nil {
 		log.Fatalf("write output file: %v", err)
 	}
 }
