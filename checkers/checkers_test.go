@@ -190,14 +190,14 @@ func TestExternal(t *testing.T) {
 		gocriticCmd := exec.Command(gocriticBin, "check", "--enableAll", "./...")
 		gocriticCmd.Dir = projectPath
 		out, err := gocriticCmd.CombinedOutput()
-		have := err.Error() + "\n" + strings.TrimSpace(string(out))
+		haveLines := strings.Split(err.Error()+"\n"+strings.TrimSpace(string(out)), "\n")
 		wantBytes, err := os.ReadFile(filepath.Join(projectPath, "output.golden"))
-		want := strings.TrimSpace(string(wantBytes))
+		wantLines := strings.Split(strings.TrimSpace(string(wantBytes)), "\n")
 		if err != nil {
 			t.Errorf("read %s golden file: %v", proj.Name(), err)
 			continue
 		}
-		if diff := cmp.Diff(want, have); diff != "" {
+		if diff := cmp.Diff(wantLines, haveLines); diff != "" {
 			t.Errorf("%s output mismatches:\n%s", proj.Name(), diff)
 			continue
 		}
