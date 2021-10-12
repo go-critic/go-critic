@@ -2255,6 +2255,242 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        473,
+			Name:        "yodaStyleExpr",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+				"experimental",
+			},
+			DocSummary: "Detects Yoda style expressions and suggests to replace them",
+			DocBefore:  "return nil != ptr",
+			DocAfter:   "return ptr != nil",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:           474,
+					SyntaxPattern:  "$constval != $x",
+					ReportTemplate: "consider to change order in expression to $x != $constval",
+					WhereExpr: ir.FilterExpr{
+						Line: 474,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"constval\"].Const && !m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  474,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"constval\"].Const",
+								Value: "constval",
+							},
+							ir.FilterExpr{
+								Line: 474,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"x\"].Const",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  474,
+										Op:    ir.FilterVarConstOp,
+										Src:   "m[\"x\"].Const",
+										Value: "x",
+									},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:           476,
+					SyntaxPattern:  "$constval == $x",
+					ReportTemplate: "consider to change order in expression to $x == $constval",
+					WhereExpr: ir.FilterExpr{
+						Line: 476,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"constval\"].Const && !m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  476,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"constval\"].Const",
+								Value: "constval",
+							},
+							ir.FilterExpr{
+								Line: 476,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"x\"].Const",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  476,
+										Op:    ir.FilterVarConstOp,
+										Src:   "m[\"x\"].Const",
+										Value: "x",
+									},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:           479,
+					SyntaxPattern:  "nil != $x",
+					ReportTemplate: "consider to change order in expression to $x != nil",
+					WhereExpr: ir.FilterExpr{
+						Line: 479,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  479,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"x\"].Const",
+								Value: "x",
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:           481,
+					SyntaxPattern:  "nil == $x",
+					ReportTemplate: "consider to change order in expression to $x == nil",
+					WhereExpr: ir.FilterExpr{
+						Line: 481,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  481,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"x\"].Const",
+								Value: "x",
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:           484,
+					SyntaxPattern:  "$constval < $x",
+					ReportTemplate: "consider to change order in expression to $x >= $constval",
+					WhereExpr: ir.FilterExpr{
+						Line: 484,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"constval\"].Const && !m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  484,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"constval\"].Const",
+								Value: "constval",
+							},
+							ir.FilterExpr{
+								Line: 484,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"x\"].Const",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  484,
+										Op:    ir.FilterVarConstOp,
+										Src:   "m[\"x\"].Const",
+										Value: "x",
+									},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:           486,
+					SyntaxPattern:  "$constval <= $x",
+					ReportTemplate: "consider to change order in expression to $x > $constval",
+					WhereExpr: ir.FilterExpr{
+						Line: 486,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"constval\"].Const && !m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  486,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"constval\"].Const",
+								Value: "constval",
+							},
+							ir.FilterExpr{
+								Line: 486,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"x\"].Const",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  486,
+										Op:    ir.FilterVarConstOp,
+										Src:   "m[\"x\"].Const",
+										Value: "x",
+									},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:           488,
+					SyntaxPattern:  "$constval > $x",
+					ReportTemplate: "consider to change order in expression to $x <= $constval",
+					WhereExpr: ir.FilterExpr{
+						Line: 488,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"constval\"].Const && !m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  488,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"constval\"].Const",
+								Value: "constval",
+							},
+							ir.FilterExpr{
+								Line: 488,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"x\"].Const",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  488,
+										Op:    ir.FilterVarConstOp,
+										Src:   "m[\"x\"].Const",
+										Value: "x",
+									},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:           490,
+					SyntaxPattern:  "$constval >= $x",
+					ReportTemplate: "consider to change order in expression to $x < $constval",
+					WhereExpr: ir.FilterExpr{
+						Line: 490,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"constval\"].Const && !m[\"x\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  490,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"constval\"].Const",
+								Value: "constval",
+							},
+							ir.FilterExpr{
+								Line: 490,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"x\"].Const",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  490,
+										Op:    ir.FilterVarConstOp,
+										Src:   "m[\"x\"].Const",
+										Value: "x",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
