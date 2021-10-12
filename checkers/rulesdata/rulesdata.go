@@ -2167,9 +2167,10 @@ var PrecompiledRules = &ir.File{
 			DocAfter:   "xs[len(xs)-1]",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line:           452,
-					SyntaxPattern:  "$x[len($x)]",
-					ReportTemplate: "index expr always panics; maybe you wanted $x[len($x)-1]?",
+					Line:            452,
+					SyntaxPattern:   "$x[len($x)]",
+					ReportTemplate:  "index expr always panics; maybe you wanted $x[len($x)-1]?",
+					SuggestTemplate: "$x[len($x)-1]",
 					WhereExpr: ir.FilterExpr{
 						Line: 453,
 						Op:   ir.FilterAndOp,
@@ -2189,6 +2190,60 @@ var PrecompiledRules = &ir.File{
 								Args: []ir.FilterExpr{
 									ir.FilterExpr{
 										Line:  453,
+										Op:    ir.FilterStringOp,
+										Src:   "`[]$_`",
+										Value: "[]$_",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		ir.RuleGroup{
+			Line:        462,
+			Name:        "unslice",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+			},
+			DocSummary: "Detects slice expressions that can be simplified to sliced expression itself",
+			DocBefore:  "copy(b[:], values...)",
+			DocAfter:   "copy(b, values...)",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:            463,
+					SyntaxPattern:   "$s[:]",
+					ReportTemplate:  "could simplify $$ to $s",
+					SuggestTemplate: "$s",
+					WhereExpr: ir.FilterExpr{
+						Line: 464,
+						Op:   ir.FilterOrOp,
+						Src:  "m[\"s\"].Type.Is(`string`) || m[\"s\"].Type.Is(`[]$_`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  464,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"s\"].Type.Is(`string`)",
+								Value: "s",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  464,
+										Op:    ir.FilterStringOp,
+										Src:   "`string`",
+										Value: "string",
+									},
+								},
+							},
+							ir.FilterExpr{
+								Line:  464,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"s\"].Type.Is(`[]$_`)",
+								Value: "s",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  464,
 										Op:    ir.FilterStringOp,
 										Src:   "`[]$_`",
 										Value: "[]$_",
