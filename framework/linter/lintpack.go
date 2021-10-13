@@ -130,6 +130,14 @@ func (c *Checker) Check(f *ast.File) []Warning {
 	return c.ctx.warnings
 }
 
+// QuickFix is our analysis.TextEdit; we're using it here to avoid
+// direct analysis package dependency for now.
+type QuickFix struct {
+	From        token.Pos
+	To          token.Pos
+	Replacement []byte
+}
+
 // Warning represents issue that is found by checker.
 type Warning struct {
 	// Node is an AST node that caused warning to trigger.
@@ -138,6 +146,19 @@ type Warning struct {
 
 	// Text is warning message without source location info.
 	Text string
+
+	// Suggestion is a quick fix for a given problem.
+	// QuickFix is analysis.TextEdit and can be used to
+	// construct an analysis.SuggestedFix object.
+	//
+	// For convenience, there is Warning.HasQuickFix() method
+	// that reports whether Suggestion has something meaningful.
+	Suggestion QuickFix
+}
+
+// HasQuickFix reports whether this warning has a suggested fix.
+func (warn Warning) HasQuickFix() bool {
+	return warn.Suggestion.Replacement != nil
 }
 
 // NewChecker returns initialized checker identified by an info.
@@ -256,6 +277,15 @@ func (ctx *CheckerContext) Warn(node ast.Node, format string, args ...interface{
 	ctx.warnings = append(ctx.warnings, Warning{
 		Text: ctx.printer.Sprintf(format, args...),
 		Node: node,
+	})
+}
+
+// WarnFixable emits a warning with a fix suggestion provided by the caller.
+func (ctx *CheckerContext) WarnFixable(node ast.Node, fix QuickFix, format string, args ...interface{}) {
+	ctx.warnings = append(ctx.warnings, Warning{
+		Text:       ctx.printer.Sprintf(format, args...),
+		Node:       node,
+		Suggestion: fix,
 	})
 }
 

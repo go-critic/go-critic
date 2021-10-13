@@ -32,7 +32,7 @@ func NoWarningsCalc() {
 	_ = calculateInt(12)
 	_ = calculateInt(1 + 2)
 
-	var x = 03
+	var x = 0x3
 	_ = calculateInt(x)
 
 	_ = calculateHex(0x0)
@@ -59,11 +59,11 @@ func NoWarningsCalc() {
 }
 
 func NoWarningsFs() {
-	_ = fs.FileMode(0555)
+	_ = fs.FileMode(0o555)
 }
 
 func NoWarningsOs() {
-	f, err := os.OpenFile("notes.txt", os.O_RDWR|os.O_CREATE, 0755)
+	f, err := os.OpenFile("notes.txt", os.O_RDWR|os.O_CREATE, 0o755)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,5 +73,5 @@ func NoWarningsOs() {
 }
 
 func NoWarningsIoutil() {
-	_ = ioutil.WriteFile("notes.txt", nil, 0666)
+	_ = ioutil.WriteFile("notes.txt", nil, 0o666)
 }

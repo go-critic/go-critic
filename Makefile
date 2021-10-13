@@ -7,6 +7,10 @@ export GO111MODULE := on
 %:      # stubs to get makefile param for `test-checker` command
 	@:	# see: https://stackoverflow.com/a/6273809/433041
 
+build-release:
+	mkdir -p bin
+	go build -o bin/gocritic -ldflags "-X 'main.Version=${GOCRITIC_VERSION}'" ./cmd/gocritic
+
 test:
 	go test -v -count=1 ./...
 
@@ -29,7 +33,7 @@ ci-tidy:
 	git diff --exit-code --quiet || (echo "Please run 'go mod tidy' to clean up the 'go.mod' and 'go.sum' files."; false)
 
 ci-tests:
-	go test -v -race -count=1 -coverprofile=coverage.out ./...
+	GOCRITIC_EXTERNAL_TESTS=1 go test -v -race -count=1 -coverprofile=coverage.out ./...
 
 ci-linter:
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.30.0

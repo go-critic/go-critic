@@ -1,6 +1,6 @@
 module github.com/go-critic/go-critic
 
-go 1.12
+go 1.13
 
 require (
 	github.com/go-toolsmith/astcast v1.0.0
@@ -16,9 +16,9 @@ require (
 	github.com/mattn/goveralls v0.0.2
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/quasilyte/go-consistent v0.0.0-20190521200055-c6f3937de18c
-	github.com/quasilyte/go-ruleguard v0.3.8
-	github.com/quasilyte/go-ruleguard/dsl v0.3.6
-	github.com/quasilyte/go-ruleguard/rules v0.0.0-20211008121208-42d78454da19 // indirect
+	github.com/quasilyte/go-ruleguard v0.3.10
+	github.com/quasilyte/go-ruleguard/dsl v0.3.9
+	github.com/quasilyte/go-ruleguard/rules v0.0.0-20211011155712-9e8c6ecaecd8 // indirect
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
 	golang.org/x/tools v0.0.0-20201230224404-63754364767c
 )

@@ -1,3 +1,3 @@
 package strings
 
-func Contains(s string) {}
+func Contains(s ...string) {}

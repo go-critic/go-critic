@@ -37,4 +37,23 @@ func positive() {
 		println("empty const decl (0 specs)")
 		const ()
 	}
+
+	switch a {
+	case 1:
+		/*! case statement doesn't require a block statement */
+		{
+			x := 10
+			println(x)
+		}
+	}
+
+	var ch chan string
+	select {
+	case ch <- "1":
+		/*! case statement doesn't require a block statement */
+		{
+			x := 10
+			println(x)
+		}
+	}
 }

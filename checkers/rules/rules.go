@@ -4,6 +4,27 @@ import (
 	"github.com/quasilyte/go-ruleguard/dsl"
 )
 
+//doc:summary Detects redundant fmt.Sprint calls
+//doc:tags    style experimental
+//doc:before  fmt.Sprint(x)
+//doc:after   x.String()
+func redundantSprint(m dsl.Matcher) {
+	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
+		Where(m["x"].Type.Implements(`fmt.Stringer`)).
+		Suggest(`$x.String()`).
+		Report(`use $x.String() instead`)
+
+	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
+		Where(m["x"].Type.Implements(`error`)).
+		Suggest(`$x.Error()`).
+		Report(`use $x.Error() instead`)
+
+	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
+		Where(m["x"].Type.Is(`string`)).
+		Suggest(`$x`).
+		Report(`$x is already string`)
+}
+
 //doc:summary Detects deferred function literals that can be simplified
 //doc:tags    style experimental
 //doc:before  defer func() { f() }()
@@ -290,31 +311,68 @@ func preferWriteByte(m dsl.Matcher) {
 //doc:before  w.Write([]byte(fmt.Sprintf("%x", 10)))
 //doc:after   fmt.Fprintf(w, "%x", 10)
 func preferFprint(m dsl.Matcher) {
-	// TODO: maybe this can be simplified when we decide how to
-	// interpret things like `fmt.Sprintf` by default.
-	// It sounds logical that stdlib symbols should be bound
-	// in a more convenient way (by default).
-	//
-	// Right now we have to make sure that $fmt is
-	// actually a package, not some variable.
-
-	m.Match(`$w.Write([]byte($fmt.Sprint($*args)))`).
-		Where(m["w"].Type.Implements("io.Writer") &&
-			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+	m.Match(`$w.Write([]byte(fmt.Sprint($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprint($w, $args)").
 		Report(`fmt.Fprint($w, $args) should be preferred to the $$`)
 
-	m.Match(`$w.Write([]byte($fmt.Sprintf($*args)))`).
-		Where(m["w"].Type.Implements("io.Writer") &&
-			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+	m.Match(`$w.Write([]byte(fmt.Sprintf($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprintf($w, $args)").
 		Report(`fmt.Fprintf($w, $args) should be preferred to the $$`)
 
-	m.Match(`$w.Write([]byte($fmt.Sprintln($*args)))`).
-		Where(m["w"].Type.Implements("io.Writer") &&
-			m["fmt"].Text == "fmt" && m["fmt"].Object.Is(`PkgName`)).
+	m.Match(`$w.Write([]byte(fmt.Sprintln($*args)))`).
+		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprintln($w, $args)").
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
+}
+
+//doc:summary Detects suspicious duplicated arguments
+//doc:tags    diagnostic
+//doc:before  copy(dst, dst)
+//doc:after   copy(dst, src)
+func dupArg(m dsl.Matcher) {
+	m.Match(`$x.Equal($x)`, `$x.Equals($x)`, `$x.Compare($x)`, `$x.Cmp($x)`).
+		Where(m["x"].Pure).
+		Report(`suspicious method call with the same argument and receiver`)
+
+	m.Match(`copy($x, $x)`,
+		`math.Max($x, $x)`,
+		`math.Min($x, $x)`,
+		`reflect.Copy($x, $x)`,
+		`reflect.DeepEqual($x, $x)`,
+		`strings.Contains($x, $x)`,
+		`strings.Compare($x, $x)`,
+		`strings.EqualFold($x, $x)`,
+		`strings.HasPrefix($x, $x)`,
+		`strings.HasSuffix($x, $x)`,
+		`strings.Index($x, $x)`,
+		`strings.LastIndex($x, $x)`,
+		`strings.Split($x, $x)`,
+		`strings.SplitAfter($x, $x)`,
+		`strings.SplitAfterN($x, $x, $_)`,
+		`strings.SplitN($x, $x, $_)`,
+		`strings.Replace($_, $x, $x, $_)`,
+		`strings.ReplaceAll($_, $x, $x)`,
+		`bytes.Contains($x, $x)`,
+		`bytes.Compare($x, $x)`,
+		`bytes.Equal($x, $x)`,
+		`bytes.EqualFold($x, $x)`,
+		`bytes.HasPrefix($x, $x)`,
+		`bytes.HasSuffix($x, $x)`,
+		`bytes.Index($x, $x)`,
+		`bytes.LastIndex($x, $x)`,
+		`bytes.Split($x, $x)`,
+		`bytes.SplitAfter($x, $x)`,
+		`bytes.SplitAfterN($x, $x, $_)`,
+		`bytes.SplitN($x, $x, $_)`,
+		`bytes.Replace($_, $x, $x, $_)`,
+		`bytes.ReplaceAll($_, $x, $x)`,
+		`types.Identical($x, $x)`,
+		`types.IdenticalIgnoreTags($x, $x)`,
+		`draw.Draw($x, $_, $x, $_, $_)`).
+		Where(m["x"].Pure).
+		Report(`suspicious duplicated args in $$`)
 }
 
 //doc:summary Detects suspicious http.Error call without following return
@@ -332,9 +390,8 @@ func returnAfterHttpError(m dsl.Matcher) {
 //doc:before  x + string(os.PathSeparator) + y
 //doc:after   filepath.Join(x, y)
 func preferFilepathJoin(m dsl.Matcher) {
-	m.Match(`$x + string($os.PathSeparator) + $y`).
-		Where(m["x"].Type.Is(`string`) && m["y"].Type.Is(`string`) &&
-			m["os"].Text == "os" && m["os"].Object.Is(`PkgName`)).
+	m.Match(`$x + string(os.PathSeparator) + $y`).
+		Where(m["x"].Type.Is(`string`) && m["y"].Type.Is(`string`)).
 		Suggest("filepath.Join($x, $y)").
 		Report(`filepath.Join($x, $y) should be preferred to the $$`)
 }
@@ -349,9 +406,78 @@ func preferStringWriter(m dsl.Matcher) {
 		Suggest("$w.WriteString($s)").
 		Report(`$w.WriteString($s) should be preferred to the $$`)
 
-	m.Match(`$io.WriteString($w, $s)`).
-		Where(m["w"].Type.Implements("io.StringWriter") &&
-			m["io"].Text == "io" && m["io"].Object.Is(`PkgName`)).
+	m.Match(`io.WriteString($w, $s)`).
+		Where(m["w"].Type.Implements("io.StringWriter")).
 		Suggest("$w.WriteString($s)").
 		Report(`$w.WriteString($s) should be preferred to the $$`)
+}
+
+//doc:summary Detects slice clear loops, suggests an idiom that is recognized by the Go compiler
+//doc:tags    performance experimental
+//doc:before  for i := 0; i < len(buf); i++ { buf[i] = 0 }
+//doc:after   for i := range buf { buf[i] = 0 }
+func sliceClear(m dsl.Matcher) {
+	m.Match(`for $i := 0; $i < len($xs); $i++ { $xs[$i] = $zero }`).
+		Where(m["zero"].Value.Int() == 0).
+		Report(`rewrite as for-range so compiler can recognize this pattern`)
+}
+
+//doc:summary Detects sync.Map load+delete operations that can be replaced with LoadAndDelete
+//doc:tags    diagnostic experimental
+//doc:before  v, ok := m.Load(k); if ok { m.Delete($k); f(v); }
+//doc:after   v, deleted := m.LoadAndDelete(k); if deleted { f(v) }
+func syncMapLoadAndDelete(m dsl.Matcher) {
+	m.Match(`$_, $ok := $m.Load($k); if $ok { $m.Delete($k); $*_ }`).
+		Where(m.GoVersion().GreaterEqThan("1.15") &&
+			m["m"].Type.Is(`*sync.Map`)).
+		Report(`use $m.LoadAndDelete to perform load+delete operations atomically`)
+}
+
+//doc:summary Detects "%s" formatting directives that can be replaced with %q
+//doc:tags    diagnostic experimental
+//doc:before  fmt.Sprintf(`"%s"`, s)
+//doc:after   fmt.Sprintf(`%q`, s)
+func sprintfQuotedString(m dsl.Matcher) {
+	m.Match(`fmt.Sprintf($s, $*_)`).
+		Where(m["s"].Text.Matches("^`.*\"%s\".*`$") ||
+			m["s"].Text.Matches(`^".*\\"%s\\".*"$`)).
+		Report(`use %q instead of "%s" for quoted strings`)
+}
+
+//doc:summary Detects various off-by-one kind of errors
+//doc:tags    diagnostic
+//doc:before  xs[len(xs)]
+//doc:after   xs[len(xs)-1]
+func offBy1(m dsl.Matcher) {
+	m.Match(`$x[len($x)]`).
+		Where(m["x"].Pure && m["x"].Type.Is(`[]$_`)).
+		Suggest(`$x[len($x)-1]`).
+		Report(`index expr always panics; maybe you wanted $x[len($x)-1]?`)
+}
+
+//doc:summary Detects slice expressions that can be simplified to sliced expression itself
+//doc:tags    style
+//doc:before  copy(b[:], values...)
+//doc:after   copy(b, values...)
+func unslice(m dsl.Matcher) {
+	m.Match(`$s[:]`).
+		Where(m["s"].Type.Is(`string`) || m["s"].Type.Is(`[]$_`)).
+		Suggest(`$s`).
+		Report(`could simplify $$ to $s`)
+}
+
+//doc:summary Detects Yoda style expressions and suggests to replace them
+//doc:tags    style experimental
+//doc:before  return nil != ptr
+//doc:after   return ptr != nil
+func yodaStyleExpr(m dsl.Matcher) {
+	m.Match(`$constval != $x`).Where(m["constval"].Node.Is(`BasicLit`) && !m["x"].Node.Is(`BasicLit`)).
+		Report(`consider to change order in expression to $x != $constval`)
+	m.Match(`$constval == $x`).Where(m["constval"].Node.Is(`BasicLit`) && !m["x"].Node.Is(`BasicLit`)).
+		Report(`consider to change order in expression to $x == $constval`)
+
+	m.Match(`nil != $x`).Where(!m["x"].Node.Is(`BasicLit`)).
+		Report(`consider to change order in expression to $x != nil`)
+	m.Match(`nil == $x`).Where(!m["x"].Node.Is(`BasicLit`)).
+		Report(`consider to change order in expression to $x == nil`)
 }
