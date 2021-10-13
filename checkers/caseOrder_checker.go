@@ -103,19 +103,18 @@ func (c *caseOrderChecker) checkSwitch(stmt *ast.SwitchStmt) {
 // isOverlappedCases - check that case1 wider value range than case2
 func isOverlappedCases(case1, case2 *ast.CaseClause) bool {
 	var (
-		y1, y2               *ast.BasicLit
-		operator1, operator2 token.Token
+		y1, y2 expression
 	)
 
 	compare := func(lss func() bool, eql func() bool) bool {
 		less := lss()
 		equal := eql()
 
-		if operator2 == token.EQL {
-			if (operator1 == token.LSS && less) || (operator1 == token.LEQ && (equal || less)) {
+		if y2.operator == token.EQL {
+			if (y1.operator == token.LSS && less && !equal) || (y1.operator == token.LEQ && (equal || less)) {
 				return true
 			}
-			if (operator1 == token.GTR && !less) || (operator1 == token.GEQ && (equal || !less)) {
+			if (y1.operator == token.GTR && !less && !equal) || (y1.operator == token.GEQ && (equal || !less)) {
 				return true
 			}
 		}
@@ -126,13 +125,11 @@ func isOverlappedCases(case1, case2 *ast.CaseClause) bool {
 	exprs1, exprs2 := collectExpressions(case1), collectExpressions(case2)
 
 	for i := range exprs1 {
-		y1 = exprs1[i].value
-		operator1 = exprs1[i].operator
+		y1 = exprs1[i]
 		for ii := range exprs2 {
-			y2 = exprs2[ii].value
-			operator2 = exprs2[ii].operator
+			y2 = exprs2[ii]
 
-			if y1.Kind != y2.Kind {
+			if y1.Kind != y2.Kind || y1.varname != y2.varname {
 				continue
 			}
 
@@ -159,14 +156,20 @@ func isOverlappedCases(case1, case2 *ast.CaseClause) bool {
 }
 
 type expression struct {
-	value    *ast.BasicLit
+	*ast.BasicLit
 	operator token.Token
+	varname  string
 }
 
 func collectExpressions(cc *ast.CaseClause) []expression {
 	var (
 		exprs    = make([]expression, 0, 1)
 		operator token.Token
+		varname  string
+		y        *ast.BasicLit
+		x        *ast.Ident
+		expr     *ast.BinaryExpr
+		ok       bool
 	)
 
 	invertOperator := func(op token.Token) token.Token {
@@ -185,26 +188,34 @@ func collectExpressions(cc *ast.CaseClause) []expression {
 	}
 
 	for i := range cc.List {
-		expr, ok := cc.List[i].(*ast.BinaryExpr)
-		if !ok {
+		if expr, ok = cc.List[i].(*ast.BinaryExpr); !ok {
 			continue
 		}
 
-		y, ok := expr.Y.(*ast.BasicLit)
-		if !ok {
-			y, ok = expr.X.(*ast.BasicLit)
-			if !ok {
+		if y, ok = expr.Y.(*ast.BasicLit); !ok {
+			if y, ok = expr.X.(*ast.BasicLit); !ok {
+				continue
+			}
+			if x, ok = expr.Y.(*ast.Ident); !ok {
+				continue
+			}
+			// TODO add BinaryExpr handling
+
+			varname = x.Name
+			operator = invertOperator(expr.Op)
+		} else {
+			if x, ok = expr.X.(*ast.Ident); !ok {
 				continue
 			}
 
-			operator = invertOperator(expr.Op)
-		} else {
+			varname = x.Name
 			operator = expr.Op
 		}
 
 		exprs = append(exprs, expression{
-			value:    y,
+			BasicLit: y,
 			operator: operator,
+			varname:  varname,
 		})
 	}
 

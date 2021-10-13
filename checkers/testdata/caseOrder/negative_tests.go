@@ -29,3 +29,34 @@ func goodTypeSwitches(x interface{}) {
 	case reader:
 	}
 }
+
+func switchWithTwoVars(x, y int) {
+	switch {
+	case y <= 10:
+	case x == 10:
+	case x == 1:
+	}
+
+	switch {
+	case y <= 10:
+	case y == 100 || x == 10:
+	}
+
+	switch {
+	case y <= 10:
+	case y < x:
+	}
+}
+
+func switchWithDifferentRanges(x int) {
+	switch {
+	case x <= 10:
+	case x == 11 || x == 12:
+	}
+
+	switch {
+	case x > 9:
+	case x == 9:
+	case x < 9:
+	}
+}
