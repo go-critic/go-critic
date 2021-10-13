@@ -2365,6 +2365,40 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        498,
+			Name:        "exposedSyncMutex",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+				"experimental",
+			},
+			DocSummary: "Detects exposed methods from sync.Mutex and sync.RWMutex",
+			DocBefore:  "type Foo struct{ ...; sync.Mutex; ... }",
+			DocAfter:   "type Foo struct{ ...; mu sync.Mutex; ... }",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:           499,
+					SyntaxPattern:  "type $_ struct{ $*_; sync.Mutex; $*_ }",
+					ReportTemplate: "don't embed sync.Mutex",
+				},
+				ir.Rule{
+					Line:           502,
+					SyntaxPattern:  "type $_ struct{ $*_; *sync.Mutex; $*_ }",
+					ReportTemplate: "don't embed *sync.Mutex",
+				},
+				ir.Rule{
+					Line:           505,
+					SyntaxPattern:  "type $_ struct{ $*_; sync.RWMutex; $*_ }",
+					ReportTemplate: "don't embed sync.RWMutex",
+				},
+				ir.Rule{
+					Line:           508,
+					SyntaxPattern:  "type $_ struct{ $*_; *sync.RWMutex; $*_ }",
+					ReportTemplate: "don't embed *sync.RWMutex",
+				},
+			},
+		},
 	},
 }
 
