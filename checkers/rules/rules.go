@@ -732,3 +732,15 @@ func dynamicFmtString(m dsl.Matcher) {
 		Suggest("errors.New($f($*args))").
 		Report(`use errors.New($f($*args)) or fmt.Errorf("%s", $f($*args)) instead`)
 }
+
+//doc:summary Detects unassigned errors
+//doc:tags    style experimental
+//doc:before  if rows.Err() != nil { ... }
+//doc:after   if err := rows.Err(); err != nil { ... }
+func unassignedError(m dsl.Matcher) {
+	m.Match(`$err != nil`, `$err == nil`).
+		Where(!m["err"].Pure && (m["$$"].Node.Parent().Is(`IfStmt`) ||
+			m["$$"].Node.Parent().Is(`ForStmt`) ||
+			m["$$"].Node.Parent().Is(`CaseClause`))).
+		Report("assign $err to a variable and check it afterwards")
+}
