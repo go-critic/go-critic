@@ -1,16 +1,6 @@
 package checker_test
 
-func yodaComparisons() {
-	var x int
-	/*! consider to change order in expression to x <= 0 */
-	_ = 0 > x
-	/*! consider to change order in expression to x >= 0 */
-	_ = 0 < x
-	/*! consider to change order in expression to x < 0 */
-	_ = 0 >= x
-	/*! consider to change order in expression to x > 0 */
-	_ = 0 <= x
-}
+import "unsafe"
 
 func f1() {
 	var m map[int]int
@@ -27,6 +17,9 @@ func f1() {
 	/*! consider to change order in expression to s == "" */
 	if "" == s {
 	}
+
+	/*! consider to change order in expression to unsafe.Sizeof(0) == 0 */
+	_ = 0 == unsafe.Sizeof(0)
 }
 
 func f2() bool {

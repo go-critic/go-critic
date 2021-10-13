@@ -1,7 +1,11 @@
 package checker_test
 
 import (
+	"io/fs"
+	"io/ioutil"
+	"log"
 	"math"
+	"os"
 )
 
 func calculateIntPair(x, y int) (int, int) {
@@ -13,48 +17,54 @@ func calculateManyArgs(x int, s string, y int) (int, string, int) {
 }
 
 func warningsCalc() {
-	/*! suspicious octal args in `calculateInt(00)` */
+	/*! use new octal literal style, 0o3 */
+	var x = 03
+	_ = calculateInt(x)
+
+	/*! use new octal literal style, 0o0 */
 	_ = calculateInt(00)
 
-	/*! suspicious octal args in `calculateInt(+01)` */
+	/*! use new octal literal style, 0o1 */
 	_ = calculateInt(+01)
 
-	/*! suspicious octal args in `calculateInt(-01)` */
+	/*! use new octal literal style, 0o1 */
 	_ = calculateInt(-01)
 
-	/*! suspicious octal args in `calculateInt(012)` */
+	/*! use new octal literal style, 0o12 */
 	_ = calculateInt(calculateInt(012))
 
-	/*! suspicious octal args in `calculateIntPair(01, 2)` */
+	/*! use new octal literal style, 0o1 */
 	_, _ = calculateIntPair(01, 2)
 
-	/*! suspicious octal args in `calculateIntPair(-1, -012)` */
+	/*! use new octal literal style, 0o12 */
 	_, _ = calculateIntPair(-1, -012)
 
-	/*! suspicious octal args in `calculateIntPair(01, 02)` */
+	/*! use new octal literal style, 0o1 */
+	/*! use new octal literal style, 0o2 */
 	_, _ = calculateIntPair(01, 02)
 
-	/*! suspicious octal args in `calculateInt(01)` */
-	/*! suspicious octal args in `calculateInt(02)` */
+	/*! use new octal literal style, 0o1 */
+	/*! use new octal literal style, 0o2 */
 	_, _ = calculateIntPair(calculateInt(01), calculateInt(02))
 
-	/*! suspicious octal args in `calculateIntPair(01, calculateInt(02))` */
-	/*! suspicious octal args in `calculateInt(02)` */
+	/*! use new octal literal style, 0o1 */
+	/*! use new octal literal style, 0o2 */
 	_, _ = calculateIntPair(01, calculateInt(02))
 
-	/*! suspicious octal args in `calculateManyArgs(11, "12", 013)` */
+	/*! use new octal literal style, 0o13 */
 	_, _, _ = calculateManyArgs(11, "12", 013)
 
-	/*! suspicious octal args in `calculateManyArgs(-02, "3", -04)` */
+	/*! use new octal literal style, 0o2 */
+	/*! use new octal literal style, 0o4 */
 	_, _, _ = calculateManyArgs(-02, "3", -04)
 
-	/*! suspicious octal args in `math.Exp(012)` */
+	/*! use new octal literal style, 0o12 */
 	_ = math.Exp(012)
 
-	/*! suspicious octal args in `math.Max(12, 01)` */
+	/*! use new octal literal style, 0o1 */
 	_ = math.Max(12, 01)
 
-	/*! suspicious octal args in `math.Max(1, 01)` */
+	/*! use new octal literal style, 0o1 */
 	_ = math.Max(1, math.Max(1, 01))
 }
 
@@ -67,7 +77,22 @@ func (os *OpenServer) Init(x int) {
 }
 
 func warningsOs() {
-	var os OpenServer
-	/*! suspicious octal args in `os.Init(02)` */
-	os.Init(02)
+	/*! use new octal literal style, 0o755 */
+	f, err := os.OpenFile("notes.txt", os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func warningsFs() {
+	/*! use new octal literal style, 0o555 */
+	_ = fs.FileMode(0555)
+}
+
+func warningsIoutil() {
+	/*! use new octal literal style, 0o666 */
+	_ = ioutil.WriteFile("notes.txt", nil, 0666)
 }

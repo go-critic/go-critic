@@ -1,6 +1,6 @@
 module github.com/go-critic/go-critic
 
-go 1.12
+go 1.13
 
 require (
 	github.com/go-toolsmith/astcast v1.0.0

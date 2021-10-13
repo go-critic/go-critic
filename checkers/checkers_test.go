@@ -1,10 +1,15 @@
 package checkers
 
 import (
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-critic/go-critic/framework/linttest"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestCheckers(t *testing.T) {
@@ -143,6 +148,58 @@ func TestStableList(t *testing.T) {
 		}
 		if !m[info.Name] {
 			t.Errorf("%q checker misses `experimental` tag", info.Name)
+		}
+	}
+}
+
+func TestExternal(t *testing.T) {
+	// Don't run these tests normally, unless asked to.
+	// Note that CI tests do enable GOCRITIC_EXTERNAL_TESTS.
+	if os.Getenv("GOCRITIC_EXTERNAL_TESTS") == "" {
+		t.Skip("GOCRITIC_EXTERNAL_TESTS is unset")
+	}
+
+	// Build the linter.
+	tmpDir := os.TempDir()
+	gocriticBin := filepath.Join(tmpDir, "gocritic_external_test.exe")
+	args := []string{"build", "-race", "-o", gocriticBin, "github.com/go-critic/go-critic/cmd/gocritic"}
+	out, err := exec.Command("go", args...).CombinedOutput()
+	if err != nil {
+		t.Fatalf("%v: %s", err, out)
+	}
+	defer os.Remove(gocriticBin)
+
+	externalTests := filepath.Join(tmpDir, "extern-testdata")
+	out, err = exec.Command("git", "clone", "https://github.com/go-critic/extern-testdata.git", externalTests).CombinedOutput()
+	if err != nil {
+		t.Fatalf("%v: %s", err, out)
+	}
+	defer os.RemoveAll(externalTests)
+
+	projects, err := os.ReadDir(filepath.Join(externalTests, "projects"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(projects) == 0 {
+		t.Fatal("found 0 test projects")
+	}
+
+	for _, proj := range projects {
+		projectPath := filepath.Join(externalTests, "projects", proj.Name())
+		gocriticCmd := exec.Command(gocriticBin, "check", "--enableAll", "./...")
+		gocriticCmd.Dir = projectPath
+		out, err := gocriticCmd.CombinedOutput()
+		have := err.Error() + "\n" + strings.TrimSpace(string(out))
+		wantBytes, err := os.ReadFile(filepath.Join(projectPath, "output.golden"))
+		want := strings.TrimSpace(string(wantBytes))
+		if err != nil {
+			t.Errorf("read %s golden file: %v", proj.Name(), err)
+			continue
+		}
+		if diff := cmp.Diff(want, have); diff != "" {
+			t.Errorf("%s output mismatches:\n%s", proj.Name(), diff)
+			continue
 		}
 	}
 }
