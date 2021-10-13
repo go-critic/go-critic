@@ -55,27 +55,306 @@ func typeSwitches(x interface{}) {
 	}
 }
 
-func valueSwitches(x int) {
-	switch x {
-	case 1, 2, 3:
-	/*! case 4 should go before the case 1, 2, 3 */
-	case 4:
+func valueSwitchesInt(x int) {
+	{
+		switch {
+		case x < 10:
+		/*! case x == 1 should go before the case x < 10 */
+		case x == 1:
+		}
+
+		switch {
+		case 10 > x:
+		/*! case x == 1 should go before the case 10 > x */
+		case x == 1:
+		}
+
+		switch {
+		case 10 > x:
+		/*! case 1 == x should go before the case 10 > x */
+		case 1 == x:
+		}
+
+		switch {
+		case x < 10:
+		/*! case 1 == x should go before the case x < 10 */
+		case 1 == x:
+		}
+	}
+	{
+		switch {
+		case x <= 10:
+		/*! case x == 10 should go before the case x <= 10 */
+		case x == 10:
+		}
+
+		switch {
+		case x <= 10:
+		/*! case 10 == x should go before the case x <= 10 */
+		case 10 == x:
+		}
+
+		switch {
+		case 10 >= x:
+		/*! case 10 == x should go before the case 10 >= x */
+		case 10 == x:
+		}
+
+		switch {
+		case 10 >= x:
+		/*! case x == 10 should go before the case 10 >= x */
+		case x == 10:
+		}
+
+		switch {
+		case x <= 10:
+		/*! case x == 5 should go before the case x <= 10 */
+		case x == 5:
+		}
+
+		switch {
+		case x <= 10:
+		/*! case 5 == x should go before the case x <= 10 */
+		case 5 == x:
+		}
+
+		switch {
+		case 10 >= x:
+		/*! case 5 == x should go before the case 10 >= x */
+		case 5 == x:
+		}
+
+		switch {
+		case 10 >= x:
+		/*! case x == 5 should go before the case 10 >= x */
+		case x == 5:
+		}
 	}
 
-	switch {
-	case 1 == (x - 1), 0 == x, x == 10:
-		println(x)
-	/*! case x != 4 should go before the case 1 == (x - 1), 0 == x, x == 10 */
-	case x != 4:
+	{
+		switch {
+		case x > 10:
+		/*! case x == 11 should go before the case x > 10 */
+		case x == 11:
+		}
+
+		switch {
+		case x > 10:
+		/*! case 11 == x should go before the case x > 10 */
+		case 11 == x:
+		}
+
+		switch {
+		case 10 < x:
+		/*! case 11 == x should go before the case 10 < x */
+		case 11 == x:
+		}
+		switch {
+		case 10 < x:
+		/*! case x == 11 should go before the case 10 < x */
+		case x == 11:
+		}
 	}
 
-	switch x {
-	case 1, 2, 3, 4:
-	/*! case 5, 6, 7 should go before the case 1, 2, 3, 4 */
-	case 5, 6, 7:
-		println(x)
-	/*! case 8, 9 should go before the case 1, 2, 3, 4 */
-	case 8, 9:
-		println(x)
+	{
+		switch {
+		case x >= 10:
+		/*! case x == 10 should go before the case x >= 10 */
+		case x == 10:
+		}
+
+		switch {
+		case x >= 10:
+		/*! case 10 == x should go before the case x >= 10 */
+		case 10 == x:
+		}
+
+		switch {
+		case 10 <= x:
+		/*! case 10 == x should go before the case 10 <= x */
+		case 10 == x:
+		}
+
+		switch {
+		case 10 <= x:
+		/*! case x == 10 should go before the case 10 <= x */
+		case x == 10:
+		}
+
+		switch {
+		case x >= 10:
+		/*! case x == 12 should go before the case x >= 10 */
+		case x == 12:
+		}
+
+		switch {
+		case x >= 10:
+		/*! case 12 == x should go before the case x >= 10 */
+		case 12 == x:
+		}
+
+		switch {
+		case 10 <= x:
+		/*! case 12 == x should go before the case 10 <= x */
+		case 12 == x:
+		}
+
+		switch {
+		case 10 <= x:
+		/*! case x == 12 should go before the case 10 <= x */
+		case x == 12:
+		}
+	}
+}
+
+func valueSwitchesFloat(x float32) {
+	{
+		switch {
+		case x < 10.1:
+		/*! case x == 1.1 should go before the case x < 10.1 */
+		case x == 1.1:
+		}
+
+		switch {
+		case 10.1 > x:
+		/*! case x == 1.1 should go before the case 10.1 > x */
+		case x == 1.1:
+		}
+
+		switch {
+		case 10.1 > x:
+		/*! case 1.1 == x should go before the case 10.1 > x */
+		case 1.1 == x:
+		}
+
+		switch {
+		case x < 10.1:
+		/*! case 1.1 == x should go before the case x < 10.1 */
+		case 1.1 == x:
+		}
+	}
+	{
+		switch {
+		case x <= 10.1:
+		/*! case x == 10.1 should go before the case x <= 10.1 */
+		case x == 10.1:
+		}
+
+		switch {
+		case x <= 10.1:
+		/*! case 10.1 == x should go before the case x <= 10.1 */
+		case 10.1 == x:
+		}
+
+		switch {
+		case 10.1 >= x:
+		/*! case 10.1 == x should go before the case 10.1 >= x */
+		case 10.1 == x:
+		}
+
+		switch {
+		case 10.1 >= x:
+		/*! case x == 10.1 should go before the case 10.1 >= x */
+		case x == 10.1:
+		}
+
+		switch {
+		case x <= 10.1:
+		/*! case x == 5.2 should go before the case x <= 10.1 */
+		case x == 5.2:
+		}
+
+		switch {
+		case x <= 10.1:
+		/*! case 5.2 == x should go before the case x <= 10.1 */
+		case 5.2 == x:
+		}
+
+		switch {
+		case 10.1 >= x:
+		/*! case 5.2 == x should go before the case 10.1 >= x */
+		case 5.2 == x:
+		}
+
+		switch {
+		case 10.1 >= x:
+		/*! case x == 5.2 should go before the case 10.1 >= x */
+		case x == 5.2:
+		}
+	}
+
+	{
+		switch {
+		case x > 10.1:
+		/*! case x == 11.1 should go before the case x > 10.1 */
+		case x == 11.1:
+		}
+
+		switch {
+		case x > 10.1:
+		/*! case 11.1 == x should go before the case x > 10.1 */
+		case 11.1 == x:
+		}
+
+		switch {
+		case 10.1 < x:
+		/*! case 11.1 == x should go before the case 10.1 < x */
+		case 11.1 == x:
+		}
+		switch {
+		case 10.1 < x:
+		/*! case x == 11.1 should go before the case 10.1 < x */
+		case x == 11.1:
+		}
+	}
+
+	{
+		switch {
+		case x >= 10.1:
+		/*! case x == 10.1 should go before the case x >= 10.1 */
+		case x == 10.1:
+		}
+
+		switch {
+		case x >= 10.1:
+		/*! case 10.1 == x should go before the case x >= 10.1 */
+		case 10.1 == x:
+		}
+
+		switch {
+		case 10.1 <= x:
+		/*! case 10.1 == x should go before the case 10.1 <= x */
+		case 10.1 == x:
+		}
+
+		switch {
+		case 10.1 <= x:
+		/*! case x == 10.1 should go before the case 10.1 <= x */
+		case x == 10.1:
+		}
+
+		switch {
+		case x >= 10.1:
+		/*! case x == 12.2 should go before the case x >= 10.1 */
+		case x == 12.2:
+		}
+
+		switch {
+		case x >= 10.1:
+		/*! case 12.2 == x should go before the case x >= 10.1 */
+		case 12.2 == x:
+		}
+
+		switch {
+		case 10.1 <= x:
+		/*! case 12.2 == x should go before the case 10.1 <= x */
+		case 12.2 == x:
+		}
+
+		switch {
+		case 10.1 <= x:
+		/*! case x == 12.2 should go before the case 10.1 <= x */
+		case x == 12.2:
+		}
 	}
 }
