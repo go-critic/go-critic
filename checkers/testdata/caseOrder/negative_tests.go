@@ -46,6 +46,31 @@ func switchWithTwoVars(x, y int) {
 	case y <= 10:
 	case y < x:
 	}
+
+	switch {
+	case x > 10 && y == 2:
+	case x == 1:
+	}
+
+	switch {
+	case x > 10 && y == 2:
+	case x == 1 || y == 3:
+	}
+
+	switch {
+	case x > 10 && y == 2:
+	case x == 1 && y == 3:
+	}
+
+	switch {
+	case x > 10 || y == 2:
+	case x == 1 && y == 3:
+	}
+
+	switch {
+	case x > 10 || y == 2:
+	case x == 1 || y == 3:
+	}
 }
 
 func switchWithDifferentRanges(x int) {

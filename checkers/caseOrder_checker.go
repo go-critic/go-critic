@@ -84,6 +84,8 @@ func (c *caseOrderChecker) warnUnknownType(cause, concrete ast.Node) {
 	c.ctx.Warn(cause, "type is not defined %s", concrete)
 }
 
+// TODO add check for two and more vars
+// TODO add more types
 func (c *caseOrderChecker) checkSwitch(stmt *ast.SwitchStmt) {
 	var cases []*ast.CaseClause
 
@@ -156,70 +158,66 @@ func isOverlappedCases(case1, case2 *ast.CaseClause) bool {
 }
 
 type expression struct {
-	*ast.BasicLit
+	ast.BasicLit
 	operator token.Token
 	varname  string
 }
 
 func collectExpressions(cc *ast.CaseClause) []expression {
 	var (
-		exprs    = make([]expression, 0, 1)
+		exprs    []expression
 		operator token.Token
-		varname  string
 		y        *ast.BasicLit
 		x        *ast.Ident
 		expr     *ast.BinaryExpr
 		ok       bool
 	)
 
-	invertOperator := func(op token.Token) token.Token {
-		switch op {
-		case token.LEQ:
-			return token.GEQ
-		case token.LSS:
-			return token.GTR
-		case token.GEQ:
-			return token.LEQ
-		case token.GTR:
-			return token.LSS
-		default:
-			return op
+	collector := func() {
+		if y, ok = expr.Y.(*ast.BasicLit); ok {
+			if x, ok = expr.X.(*ast.Ident); !ok {
+				return
+			}
+			operator = expr.Op
+		} else if y, ok = expr.X.(*ast.BasicLit); ok {
+			if x, ok = expr.Y.(*ast.Ident); !ok {
+				return
+			}
+			operator = invertOperator(expr.Op)
+		} else {
+			return
 		}
+
+		exprs = append(exprs, expression{
+			BasicLit: *y,
+			operator: operator,
+			varname:  x.Name,
+		})
 	}
 
 	for i := range cc.List {
 		if expr, ok = cc.List[i].(*ast.BinaryExpr); !ok {
 			continue
 		}
-
-		if y, ok = expr.Y.(*ast.BasicLit); !ok {
-			if y, ok = expr.X.(*ast.BasicLit); !ok {
-				continue
-			}
-			if x, ok = expr.Y.(*ast.Ident); !ok {
-				continue
-			}
-			// TODO add BinaryExpr handling
-
-			varname = x.Name
-			operator = invertOperator(expr.Op)
-		} else {
-			if x, ok = expr.X.(*ast.Ident); !ok {
-				continue
-			}
-
-			varname = x.Name
-			operator = expr.Op
-		}
-
-		exprs = append(exprs, expression{
-			BasicLit: y,
-			operator: operator,
-			varname:  varname,
-		})
+		collector()
 	}
 
 	return exprs
+}
+
+func invertOperator(op token.Token) token.Token {
+	switch op {
+	case token.LEQ:
+		return token.GEQ
+	case token.LSS:
+		return token.GTR
+	case token.GEQ:
+		return token.LEQ
+	case token.GTR:
+		return token.LSS
+	default:
+		return op
+	}
 }
 
 func (c *caseOrderChecker) warnSwitch(cause ast.Node, concrete, node *ast.CaseClause) {
