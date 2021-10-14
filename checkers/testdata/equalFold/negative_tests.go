@@ -33,3 +33,11 @@ func bytesEqualFold(x, y []byte) {
 	_ = bytes.EqualFold(x, append(y, 'a'))
 	_ = bytes.EqualFold(append(y, 'a'), x)
 }
+
+func stringsSideEffects(x, y string) {
+	_ = strings.ToLower(x) == concat(y, "123")
+}
+
+func bytesSideEffects(x, y []byte) {
+	_ = bytes.Equal(bytes.ToLower(x), append(y, 'a'))
+}
