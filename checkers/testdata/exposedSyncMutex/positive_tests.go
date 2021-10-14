@@ -10,6 +10,6 @@ type App struct {
 }
 
 /*! don't embed *sync.RWMutex */
-type Cache struct {
+type Cacher struct {
 	*sync.RWMutex
 }

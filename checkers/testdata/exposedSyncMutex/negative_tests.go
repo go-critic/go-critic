@@ -13,3 +13,8 @@ type srv struct {
 	Addr string
 	*sync.Mutex
 }
+
+var Cache struct {
+	sync.RWMutex
+	data map[string]interface{}
+}
