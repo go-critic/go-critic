@@ -521,7 +521,7 @@ func equalFold(m dsl.Matcher) {
 	// it just looks wrong and should probably be
 	// marked by some other checker.
 
-	// string== patterns
+	// string == patterns
 	m.Match(
 		`strings.ToLower($x) == $y`,
 		`strings.ToLower($x) == strings.ToLower($y)`,
@@ -533,7 +533,7 @@ func equalFold(m dsl.Matcher) {
 		Suggest(`strings.EqualFold($x, $y)]`).
 		Report(`consider replacing with strings.EqualFold($x, $y)`)
 
-	// string!= patterns
+	// string != patterns
 	m.Match(
 		`strings.ToLower($x) != $y`,
 		`strings.ToLower($x) != strings.ToLower($y)`,
