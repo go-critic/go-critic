@@ -2,6 +2,7 @@ package checker_test
 
 import (
 	"bytes"
+	"path/filepath"
 	"strings"
 )
 
@@ -30,4 +31,9 @@ func badAppend(xs []int) {
 	_ = append(xs)
 	/*! no-op append call, probably missing arguments */
 	_ = append(xs[2:])
+}
+
+func badFilepathJoin(s string) {
+	/*! suspicious Join on 1 argument */
+	_ = filepath.Join(s)
 }
