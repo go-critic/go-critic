@@ -2380,28 +2380,28 @@ var PrecompiledRules = &ir.File{
 				ir.Rule{
 					Line: 600,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 600, Value: "type $_ struct{ $*_; sync.Mutex; $*_ }"},
+						ir.PatternString{Line: 600, Value: "type $x struct { $*_; sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.Mutex",
 				},
 				ir.Rule{
 					Line: 603,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 603, Value: "type $_ struct{ $*_; *sync.Mutex; $*_ }"},
+						ir.PatternString{Line: 603, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.Mutex",
 				},
 				ir.Rule{
 					Line: 606,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 606, Value: "type $_ struct{ $*_; sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 606, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.RWMutex",
 				},
 				ir.Rule{
 					Line: 609,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 609, Value: "type $_ struct{ $*_; *sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 609, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.RWMutex",
 				},

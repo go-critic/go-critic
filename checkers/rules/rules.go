@@ -615,15 +615,15 @@ func timeExprSimplify(m dsl.Matcher) {
 //doc:before  type Foo struct{ ...; sync.Mutex; ... }
 //doc:after   type Foo struct{ ...; mu sync.Mutex; ... }
 func exposedSyncMutex(m dsl.Matcher) {
-	m.Match(`type $_ struct{ $*_; sync.Mutex; $*_ }`).
+	m.Match(`type $x struct { $*_; sync.Mutex; $*_ }`).
 		Report("don't embed sync.Mutex")
 
-	m.Match(`type $_ struct{ $*_; *sync.Mutex; $*_ }`).
+	m.Match(`type $x struct { $*_; *sync.Mutex; $*_ }`).
 		Report("don't embed *sync.Mutex")
 
-	m.Match(`type $_ struct{ $*_; sync.RWMutex; $*_ }`).
+	m.Match(`type $x struct { $*_; sync.RWMutex; $*_ }`).
 		Report("don't embed sync.RWMutex")
 
-	m.Match(`type $_ struct{ $*_; *sync.RWMutex; $*_ }`).
+	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
 		Report("don't embed *sync.RWMutex")
 }
