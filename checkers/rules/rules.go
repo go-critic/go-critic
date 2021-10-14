@@ -481,3 +481,21 @@ func yodaStyleExpr(m dsl.Matcher) {
 	m.Match(`nil == $x`).Where(!m["x"].Node.Is(`BasicLit`)).
 		Report(`consider to change order in expression to $x == nil`)
 }
+
+//doc:summary Detects manual conversion to milli- or microseconds
+//doc:tags    style experimental
+//doc:before  t.Unix() / 1000
+//doc:after   t.UnixMilli()
+func recommendUnixMilliMicro(m dsl.Matcher) {
+	m.Match(`$t.Unix() / 1000`).
+		Where(m.GoVersion().GreaterEqThan("1.17") &&
+			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Suggest("$t.UnixMilli()").
+		Report(`use $t.UnixMilli() instead of $$`)
+
+	m.Match(`$t.UnixNano() * 1000`).
+		Where(m.GoVersion().GreaterEqThan("1.17") &&
+			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Suggest("$t.UnixMicro()").
+		Report(`use $t.UnixMicro() instead of $$`)
+}

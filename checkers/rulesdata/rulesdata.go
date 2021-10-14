@@ -2415,6 +2415,128 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        489,
+			Name:        "recommendUnixMilliMicro",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+				"experimental",
+			},
+			DocSummary: "Detects manual conversion to milli- or microseconds",
+			DocBefore:  "t.Unix() / 1000",
+			DocAfter:   "t.UnixMilli()",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line:            490,
+					SyntaxPattern:   "$t.Unix() / 1000",
+					ReportTemplate:  "use $t.UnixMilli() instead of $$",
+					SuggestTemplate: "$t.UnixMilli()",
+					WhereExpr: ir.FilterExpr{
+						Line: 491,
+						Op:   ir.FilterAndOp,
+						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") &&\n\t(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  491,
+								Op:    ir.FilterGoVersionGreaterEqThanOp,
+								Src:   "m.GoVersion().GreaterEqThan(\"1.17\")",
+								Value: "1.17",
+							},
+							ir.FilterExpr{
+								Line: 492,
+								Op:   ir.FilterOrOp,
+								Src:  "(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  492,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  492,
+												Op:    ir.FilterStringOp,
+												Src:   "`time.Time`",
+												Value: "time.Time",
+											},
+										},
+									},
+									ir.FilterExpr{
+										Line:  492,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`*time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  492,
+												Op:    ir.FilterStringOp,
+												Src:   "`*time.Time`",
+												Value: "*time.Time",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line:            496,
+					SyntaxPattern:   "$t.UnixNano() * 1000",
+					ReportTemplate:  "use $t.UnixMicro() instead of $$",
+					SuggestTemplate: "$t.UnixMicro()",
+					WhereExpr: ir.FilterExpr{
+						Line: 497,
+						Op:   ir.FilterAndOp,
+						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") &&\n\t(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  497,
+								Op:    ir.FilterGoVersionGreaterEqThanOp,
+								Src:   "m.GoVersion().GreaterEqThan(\"1.17\")",
+								Value: "1.17",
+							},
+							ir.FilterExpr{
+								Line: 498,
+								Op:   ir.FilterOrOp,
+								Src:  "(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  498,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  498,
+												Op:    ir.FilterStringOp,
+												Src:   "`time.Time`",
+												Value: "time.Time",
+											},
+										},
+									},
+									ir.FilterExpr{
+										Line:  498,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`*time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line:  498,
+												Op:    ir.FilterStringOp,
+												Src:   "`*time.Time`",
+												Value: "*time.Time",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
