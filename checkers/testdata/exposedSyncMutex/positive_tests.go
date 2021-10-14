@@ -9,13 +9,6 @@ type App struct {
 	Addr string
 }
 
-/*! don't embed *sync.Mutex */
-type srv struct {
-	Port int
-	Addr string
-	*sync.Mutex
-}
-
 /*! don't embed *sync.RWMutex */
 type Cache struct {
 	*sync.RWMutex

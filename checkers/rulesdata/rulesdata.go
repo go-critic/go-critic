@@ -2383,27 +2383,63 @@ var PrecompiledRules = &ir.File{
 						ir.PatternString{Line: 600, Value: "type $x struct { $*_; sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.Mutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  601,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 601, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+						},
+					},
 				},
 				ir.Rule{
-					Line: 603,
+					Line: 604,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 603, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
+						ir.PatternString{Line: 604, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.Mutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  605,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 605, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+						},
+					},
 				},
 				ir.Rule{
-					Line: 606,
+					Line: 608,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 606, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 608, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.RWMutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  609,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 609, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+						},
+					},
 				},
 				ir.Rule{
-					Line: 609,
+					Line: 612,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 609, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 612, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.RWMutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  613,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 613, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+						},
+					},
 				},
 			},
 		},
