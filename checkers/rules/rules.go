@@ -191,11 +191,36 @@ func emptyStringTest(m dsl.Matcher) {
 }
 
 //doc:summary Detects redundant conversions between string and []byte
-//doc:tags    style
+//doc:tags    performance
 //doc:before  copy(b, []byte(s))
 //doc:after   copy(b, s)
 func stringXbytes(m dsl.Matcher) {
 	m.Match(`copy($_, []byte($s))`).Report("can simplify `[]byte($s)` to `$s`")
+
+	m.Match(`string($b) == ""`).Where(m["b"].Type.Is(`[]byte`)).Suggest(`len($b) == 0`)
+	m.Match(`string($b) != ""`).Where(m["b"].Type.Is(`[]byte`)).Suggest(`len($b) != 0`)
+
+	m.Match(`len(string($b))`).Where(m["b"].Type.Is(`[]byte`)).Suggest(`len($b)`)
+
+	m.Match(`string($x) == string($y)`).
+		Where(m["x"].Type.Is(`[]byte`) && m["y"].Type.Is(`[]byte`)).
+		Suggest(`bytes.Equal($x, $y)`)
+
+	m.Match(`string($x) != string($y)`).
+		Where(m["x"].Type.Is(`[]byte`) && m["y"].Type.Is(`[]byte`)).
+		Suggest(`!bytes.Equal($x, $y)`)
+
+	m.Match(`$re.Match([]byte($s))`).
+		Where(m["re"].Type.Is(`*regexp.Regexp`) && m["s"].Type.Is(`string`)).
+		Suggest(`$re.MatchString($s)`)
+
+	m.Match(`$re.FindIndex([]byte($s))`).
+		Where(m["re"].Type.Is(`*regexp.Regexp`) && m["s"].Type.Is(`string`)).
+		Suggest(`$re.FindStringIndex($s)`)
+
+	m.Match(`$re.FindAllIndex([]byte($s), $n)`).
+		Where(m["re"].Type.Is(`*regexp.Regexp`) && m["s"].Type.Is(`string`)).
+		Suggest(`$re.FindAllStringIndex($s, $n)`)
 }
 
 //doc:summary Detects strings.Index calls that may cause unwanted allocs
@@ -272,6 +297,8 @@ func badCall(m dsl.Matcher) {
 		Report(`suspicious arg 0, probably meant -1`).At(m["zero"])
 
 	m.Match(`append($_)`).Report(`no-op append call, probably missing arguments`)
+
+	m.Match(`filepath.Join($_)`).Report(`suspicious Join on 1 argument`)
 }
 
 //doc:summary Detects assignments that can be simplified by using assignment operators
@@ -480,4 +507,87 @@ func yodaStyleExpr(m dsl.Matcher) {
 		Report(`consider to change order in expression to $x != nil`)
 	m.Match(`nil == $x`).Where(!m["x"].Node.Is(`BasicLit`)).
 		Report(`consider to change order in expression to $x == nil`)
+}
+
+//doc:summary Detects unoptimal strings/bytes case-insensitive comparison
+//doc:tags    performance experimental
+//doc:before  strings.ToLower(x) == strings.ToLower(y)
+//doc:after   strings.EqualFold(x, y)
+func equalFold(m dsl.Matcher) {
+	// We specify so many patterns to avoid too generic
+	// patterns that would match things like
+	// `strings.ToLower(x) == strings.ToUpper(y)`
+	// While it could be an EqualFold candidate,
+	// it just looks wrong and should probably be
+	// marked by some other checker.
+
+	// string== patterns
+	m.Match(
+		`strings.ToLower($x) == $y`,
+		`strings.ToLower($x) == strings.ToLower($y)`,
+		`$x == strings.ToLower($y)`,
+		`strings.ToUpper($x) == $y`,
+		`strings.ToUpper($x) == strings.ToUpper($y)`,
+		`$x == strings.ToUpper($y)`).
+		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
+		Suggest(`strings.EqualFold($x, $y)]`).
+		Report(`consider replacing with strings.EqualFold($x, $y)`)
+
+	// string!= patterns
+	m.Match(
+		`strings.ToLower($x) != $y`,
+		`strings.ToLower($x) != strings.ToLower($y)`,
+		`$x != strings.ToLower($y)`,
+		`strings.ToUpper($x) != $y`,
+		`strings.ToUpper($x) != strings.ToUpper($y)`,
+		`$x != strings.ToUpper($y)`).
+		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
+		Suggest(`!strings.EqualFold($x, $y)]`).
+		Report(`consider replacing with !strings.EqualFold($x, $y)`)
+
+	// bytes.Equal patterns
+	m.Match(
+		`bytes.Equal(bytes.ToLower($x), $y)`,
+		`bytes.Equal(bytes.ToLower($x), bytes.ToLower($y))`,
+		`bytes.Equal($x, bytes.ToLower($y))`,
+		`bytes.Equal(bytes.ToUpper($x), $y)`,
+		`bytes.Equal(bytes.ToUpper($x), bytes.ToUpper($y))`,
+		`bytes.Equal($x, bytes.ToUpper($y))`).
+		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
+		Suggest(`bytes.EqualFold($x, $y)]`).
+		Report(`consider replacing with bytes.EqualFold($x, $y)`)
+}
+
+//doc:summary Detects suspicious arguments order
+//doc:tags    diagnostic
+//doc:before  strings.HasPrefix("#", userpass)
+//doc:after   strings.HasPrefix(userpass, "#")
+func argOrder(m dsl.Matcher) {
+	m.Match(
+		`strings.HasPrefix($lit, $s)`,
+		`bytes.HasPrefix($lit, $s)`,
+		`strings.HasSuffix($lit, $s)`,
+		`bytes.HasSuffix($lit, $s)`,
+		`strings.Contains($lit, $s)`,
+		`bytes.Contains($lit, $s)`,
+		`strings.TrimPrefix($lit, $s)`,
+		`bytes.TrimPrefix($lit, $s)`,
+		`strings.TrimSuffix($lit, $s)`,
+		`bytes.TrimSuffix($lit, $s)`,
+		`strings.Split($lit, $s)`,
+		`bytes.Split($lit, $s)`).
+		Where((m["lit"].Const || m["lit"].ConstSlice) &&
+			!(m["s"].Const || m["s"].ConstSlice) &&
+			!m["lit"].Node.Is(`Ident`)).
+		Report(`$lit and $s arguments order looks reversed`)
+}
+
+//doc:summary Detects string concat operations that can be simplified
+//doc:tags    style experimental
+//doc:before  strings.Join([]string{x, y}, "_")
+//doc:after   x + "_" + y
+func stringConcatSimplify(m dsl.Matcher) {
+	m.Match(`strings.Join([]string{$x, $y}, "")`).Suggest(`$x + $y`)
+	m.Match(`strings.Join([]string{$x, $y, $z}, "")`).Suggest(`$x + $y + $z`)
+	m.Match(`strings.Join([]string{$x, $y}, $glue)`).Suggest(`$x + $glue + $y`)
 }
