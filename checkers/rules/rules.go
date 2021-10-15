@@ -591,3 +591,43 @@ func stringConcatSimplify(m dsl.Matcher) {
 	m.Match(`strings.Join([]string{$x, $y, $z}, "")`).Suggest(`$x + $y + $z`)
 	m.Match(`strings.Join([]string{$x, $y}, $glue)`).Suggest(`$x + $glue + $y`)
 }
+
+//doc:summary Detects manual conversion to milli- or microseconds
+//doc:tags    style experimental
+//doc:before  t.Unix() / 1000
+//doc:after   t.UnixMilli()
+func timeExprSimplify(m dsl.Matcher) {
+	m.Match(`$t.Unix() / 1000`).
+		Where(m.GoVersion().GreaterEqThan("1.17") &&
+			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Suggest("$t.UnixMilli()").
+		Report(`use $t.UnixMilli() instead of $$`)
+
+	m.Match(`$t.UnixNano() * 1000`).
+		Where(m.GoVersion().GreaterEqThan("1.17") &&
+			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Suggest("$t.UnixMicro()").
+		Report(`use $t.UnixMicro() instead of $$`)
+}
+
+//doc:summary Detects exposed methods from sync.Mutex and sync.RWMutex
+//doc:tags    style experimental
+//doc:before  type Foo struct{ ...; sync.Mutex; ... }
+//doc:after   type Foo struct{ ...; mu sync.Mutex; ... }
+func exposedSyncMutex(m dsl.Matcher) {
+	m.Match(`type $x struct { $*_; sync.Mutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed sync.Mutex")
+
+	m.Match(`type $x struct { $*_; *sync.Mutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed *sync.Mutex")
+
+	m.Match(`type $x struct { $*_; sync.RWMutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed sync.RWMutex")
+
+	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed *sync.RWMutex")
+}

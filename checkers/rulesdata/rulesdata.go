@@ -2259,6 +2259,190 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        599,
+			Name:        "timeExprSimplify",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+				"experimental",
+			},
+			DocSummary: "Detects manual conversion to milli- or microseconds",
+			DocBefore:  "t.Unix() / 1000",
+			DocAfter:   "t.UnixMilli()",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 600,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 600, Value: "$t.Unix() / 1000"},
+					},
+					ReportTemplate:  "use $t.UnixMilli() instead of $$",
+					SuggestTemplate: "$t.UnixMilli()",
+					WhereExpr: ir.FilterExpr{
+						Line: 601,
+						Op:   ir.FilterAndOp,
+						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") &&\n\t(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  601,
+								Op:    ir.FilterGoVersionGreaterEqThanOp,
+								Src:   "m.GoVersion().GreaterEqThan(\"1.17\")",
+								Value: "1.17",
+							},
+							ir.FilterExpr{
+								Line: 602,
+								Op:   ir.FilterOrOp,
+								Src:  "(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  602,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{Line: 602, Op: ir.FilterStringOp, Src: "`time.Time`", Value: "time.Time"},
+										},
+									},
+									ir.FilterExpr{
+										Line:  602,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`*time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{Line: 602, Op: ir.FilterStringOp, Src: "`*time.Time`", Value: "*time.Time"},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 606,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 606, Value: "$t.UnixNano() * 1000"},
+					},
+					ReportTemplate:  "use $t.UnixMicro() instead of $$",
+					SuggestTemplate: "$t.UnixMicro()",
+					WhereExpr: ir.FilterExpr{
+						Line: 607,
+						Op:   ir.FilterAndOp,
+						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") &&\n\t(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  607,
+								Op:    ir.FilterGoVersionGreaterEqThanOp,
+								Src:   "m.GoVersion().GreaterEqThan(\"1.17\")",
+								Value: "1.17",
+							},
+							ir.FilterExpr{
+								Line: 608,
+								Op:   ir.FilterOrOp,
+								Src:  "(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line:  608,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{Line: 608, Op: ir.FilterStringOp, Src: "`time.Time`", Value: "time.Time"},
+										},
+									},
+									ir.FilterExpr{
+										Line:  608,
+										Op:    ir.FilterVarTypeIsOp,
+										Src:   "m[\"t\"].Type.Is(`*time.Time`)",
+										Value: "t",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{Line: 608, Op: ir.FilterStringOp, Src: "`*time.Time`", Value: "*time.Time"},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		ir.RuleGroup{
+			Line:        617,
+			Name:        "exposedSyncMutex",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+				"experimental",
+			},
+			DocSummary: "Detects exposed methods from sync.Mutex and sync.RWMutex",
+			DocBefore:  "type Foo struct{ ...; sync.Mutex; ... }",
+			DocAfter:   "type Foo struct{ ...; mu sync.Mutex; ... }",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 618,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 618, Value: "type $x struct { $*_; sync.Mutex; $*_ }"},
+					},
+					ReportTemplate: "don't embed sync.Mutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  619,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 619, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 622,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 622, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
+					},
+					ReportTemplate: "don't embed *sync.Mutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  623,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 623, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 626,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 626, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
+					},
+					ReportTemplate: "don't embed sync.RWMutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  627,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 627, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 630,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 630, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
+					},
+					ReportTemplate: "don't embed *sync.RWMutex",
+					WhereExpr: ir.FilterExpr{
+						Line:  631,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 631, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
