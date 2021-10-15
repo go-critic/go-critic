@@ -26,27 +26,42 @@ They also detect code that may be correct, but looks suspicious.
   </td>
   <td>Detects suspicious append result assignments</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#argOrder-ref">argOrder</a>
   </td>
   <td>Detects suspicious arguments order</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#badCall-ref">badCall</a>
   </td>
   <td>Detects suspicious function calls</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#badCond-ref">badCond</a>
   </td>
   <td>Detects suspicious condition expressions</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#badLock-ref">badLock</a>
+  </td>
+  <td>Detects suspicious mutex lock/unlock operations</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#badRegexp-ref">badRegexp</a>
+  </td>
+  <td>Detects suspicious regexp patterns</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#builtinShadowDecl-ref">builtinShadowDecl</a>
+  </td>
+  <td>Detects top-level declarations that shadow the predeclared identifiers</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#caseOrder-ref">caseOrder</a>
   </td>
   <td>Detects erroneous case order inside switch statements</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#codegenComment-ref">codegenComment</a>
   </td>
   <td>Detects malformed 'code generated' file comments</td>
@@ -56,7 +71,7 @@ They also detect code that may be correct, but looks suspicious.
   </td>
   <td>Detects commented-out code inside function bodies</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#deprecatedComment-ref">deprecatedComment</a>
   </td>
   <td>Detects malformed 'deprecated' doc-comments</td>
@@ -82,19 +97,34 @@ They also detect code that may be correct, but looks suspicious.
   <td>Detects suspicious duplicated sub-expressions</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#evalOrder-ref">evalOrder</a>
+  </td>
+  <td>Detects unwanted dependencies on the evaluation order</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
     <a href="#exitAfterDefer-ref">exitAfterDefer</a>
   </td>
   <td>Detects calls to exit/fatal inside functions that use defer</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#filepathJoin-ref">filepathJoin</a>
+  </td>
+  <td>Detects problems in filepath.Join() function calls</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#flagDeref-ref">flagDeref</a>
   </td>
   <td>Detects immediate dereferencing of `flag` package pointers</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#flagName-ref">flagName</a>
   </td>
-  <td>Detects flag names with whitespace</td>
+  <td>Detects suspicious flag names</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
+    <a href="#mapKey-ref">mapKey</a>
+  </td>
+  <td>Detects suspicious map literal keys</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#nilValReturn-ref">nilValReturn</a>
@@ -106,15 +136,60 @@ They also detect code that may be correct, but looks suspicious.
   </td>
   <td>Detects octal literals passed to functions</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#offBy1-ref">offBy1</a>
   </td>
   <td>Detects various off-by-one kind of errors</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#regexpPattern-ref">regexpPattern</a>
+  </td>
+  <td>Detects suspicious regexp patterns</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#returnAfterHttpError-ref">returnAfterHttpError</a>
+  </td>
+  <td>Detects suspicious http.Error call without following return</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#sloppyReassign-ref">sloppyReassign</a>
   </td>
   <td>Detects suspicious/confusing re-assignments</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#sloppyTypeAssert-ref">sloppyTypeAssert</a>
+  </td>
+  <td>Detects redundant type assertions</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#sortSlice-ref">sortSlice</a>
+  </td>
+  <td>Detects suspicious sort.Slice calls</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#sprintfQuotedString-ref">sprintfQuotedString</a>
+  </td>
+  <td>Detects "%s" formatting directives that can be replaced with %q</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#sqlQuery-ref">sqlQuery</a>
+  </td>
+  <td>Detects issue in Query() and Exec() calls</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#syncMapLoadAndDelete-ref">syncMapLoadAndDelete</a>
+  </td>
+  <td>Detects sync.Map load+delete operations that can be replaced with LoadAndDelete</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#truncateCmp-ref">truncateCmp</a>
+  </td>
+  <td>Detects potential truncation issues when comparing ints of different sizes</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#unnecessaryDefer-ref">unnecessaryDefer</a>
+  </td>
+  <td>Detects redundantly deferred calls</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#weakCond-ref">weakCond</a>
@@ -148,14 +223,14 @@ with another one that is considered more idiomatic or simple.
   <td nowrap>:white_check_mark:
     <a href="#builtinShadow-ref">builtinShadow</a>
   </td>
-  <td>Detects when predeclared identifiers shadowed in assignments</td>
+  <td>Detects when predeclared identifiers are shadowed in assignments</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#captLocal-ref">captLocal</a>
   </td>
   <td>Detects capitalized names for local variables</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#commentFormatting-ref">commentFormatting</a>
   </td>
   <td>Detects comments with non-idiomatic formatting</td>
@@ -169,6 +244,11 @@ with another one that is considered more idiomatic or simple.
     <a href="#defaultCaseOrder-ref">defaultCaseOrder</a>
   </td>
   <td>Detects when default case in switch isn't on 1st or last position</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#deferUnlambda-ref">deferUnlambda</a>
+  </td>
+  <td>Detects deferred function literals that can be simplified</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#docStub-ref">docStub</a>
@@ -200,6 +280,11 @@ with another one that is considered more idiomatic or simple.
   </td>
   <td>Detects hex literals that have mixed case letter digits</td>
 </tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#httpNoBody-ref">httpNoBody</a>
+  </td>
+  <td>Detects nil usages in http.NewRequest calls, suggesting http.NoBody as an alternative</td>
+</tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#ifElseChain-ref">ifElseChain</a>
   </td>
@@ -216,6 +301,11 @@ with another one that is considered more idiomatic or simple.
   <td>Detects non-assignment statements inside if/switch init clause</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#ioutilDeprecated-ref">ioutilDeprecated</a>
+  </td>
+  <td>Detects deprecated io/ioutil package usages</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#methodExprCall-ref">methodExprCall</a>
   </td>
   <td>Detects method expression call that can be replaced with a method call</td>
@@ -225,7 +315,7 @@ with another one that is considered more idiomatic or simple.
   </td>
   <td>Finds where nesting level could be reduced</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#newDeref-ref">newDeref</a>
   </td>
   <td>Detects immediate dereferencing of `new` expressions</td>
@@ -236,14 +326,34 @@ with another one that is considered more idiomatic or simple.
   <td>Detects if function parameters could be combined by type and suggest the way to do it</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#preferFilepathJoin-ref">preferFilepathJoin</a>
+  </td>
+  <td>Detects concatenation with os.PathSeparator which can be replaced with filepath.Join</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#ptrToRefParam-ref">ptrToRefParam</a>
   </td>
   <td>Detects input and output parameters that have a type of pointer to referential type</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#redundantSprint-ref">redundantSprint</a>
+  </td>
+  <td>Detects redundant fmt.Sprint calls</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#regexpMust-ref">regexpMust</a>
   </td>
   <td>Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#regexpSimplify-ref">regexpSimplify</a>
+  </td>
+  <td>Detects regexp patterns that can be simplified</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#ruleguard-ref">ruleguard</a>
+  </td>
+  <td>Runs user-defined rules using ruleguard linter</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#singleCaseSwitch-ref">singleCaseSwitch</a>
@@ -255,7 +365,7 @@ with another one that is considered more idiomatic or simple.
   </td>
   <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#stringXbytes-ref">stringXbytes</a>
   </td>
   <td>Detects redundant conversions between string and []byte</td>
@@ -266,9 +376,19 @@ with another one that is considered more idiomatic or simple.
   <td>Detects switch-over-bool statements that use explicit `true` tag value</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#tooManyResultsChecker-ref">tooManyResultsChecker</a>
+  </td>
+  <td>Detects function with too many results</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#typeAssertChain-ref">typeAssertChain</a>
   </td>
   <td>Detects repeated type assertions and suggests to replace them with type switch statement</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#typeDefFirst-ref">typeDefFirst</a>
+  </td>
+  <td>Detects method declarations preceding the type definition itself</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#typeSwitchVar-ref">typeSwitchVar</a>
@@ -310,12 +430,17 @@ with another one that is considered more idiomatic or simple.
   </td>
   <td>Detects slice expressions that can be simplified to sliced expression itself</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#valSwap-ref">valSwap</a>
   </td>
   <td>Detects value swapping code that are not using parallel assignment</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#whyNoLint-ref">whyNoLint</a>
+  </td>
+  <td>Ensures that `//nolint` comments include an explanation</td>
+</tr><tr>
+  <td nowrap>:heavy_check_mark:
     <a href="#wrapperFunc-ref">wrapperFunc</a>
   </td>
   <td>Detects function calls that can be replaced with convenience wrappers</td>
@@ -360,6 +485,26 @@ can make your code run slower than it could be.
   <td>Detects strings.Index calls that may cause unwanted allocs</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#preferDecodeRune-ref">preferDecodeRune</a>
+  </td>
+  <td>Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#preferFprint-ref">preferFprint</a>
+  </td>
+  <td>Detects fmt.Sprint(f|ln) calls which can be replaced with fmt.Fprint(f|ln)</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#preferStringWriter-ref">preferStringWriter</a>
+  </td>
+  <td>Detects w.Write or io.WriteString calls which can be replaced with w.WriteString</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#preferWriteByte-ref">preferWriteByte</a>
+  </td>
+  <td>Detects WriteRune calls with byte literal argument and reports to use WriteByte instead</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#rangeExprCopy-ref">rangeExprCopy</a>
   </td>
   <td>Detects expensive copies of `for` loop range expressions</td>
@@ -368,6 +513,11 @@ can make your code run slower than it could be.
     <a href="#rangeValCopy-ref">rangeValCopy</a>
   </td>
   <td>Detects loops that copy big objects during each iteration</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#sliceClear-ref">sliceClear</a>
+  </td>
+  <td>Detects slice clear loops, suggests an idiom that is recognized by the Go compiler</td>
 </tr>
 </table>
 
@@ -427,8 +577,7 @@ xs = append(xs, 1, 2)
 ## argOrder
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
 Detects suspicious arguments order.
 
@@ -476,8 +625,7 @@ x *= 2
 ## badCall
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
 Detects suspicious function calls.
 
@@ -501,8 +649,7 @@ strings.Replace(s, from, to, -1)
 ## badCond
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
 Detects suspicious condition expressions.
 
@@ -522,6 +669,56 @@ for i := 0; i > n; i++ {
 for i := 0; i < n; i++ {
 	xs[i] = 0
 }
+```
+
+
+
+  <a name="badLock-ref"></a>
+## badLock
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious mutex lock/unlock operations.
+
+
+
+
+
+**Before:**
+```go
+mu.Lock(); mu.Unlock()
+```
+
+**After:**
+```go
+mu.Lock(); defer mu.Unlock()
+```
+
+
+
+  <a name="badRegexp-ref"></a>
+## badRegexp
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious regexp patterns.
+
+
+
+
+
+**Before:**
+```go
+regexp.MustCompile(`(?:^aa|bb|cc)foo[aba]`)
+```
+
+**After:**
+```go
+regexp.MustCompile(`^(?:aa|bb|cc)foo[ab]`)
 ```
 
 
@@ -560,7 +757,7 @@ b := (x) == (y)
   **style**
   **opinionated** ]
 
-Detects when predeclared identifiers shadowed in assignments.
+Detects when predeclared identifiers are shadowed in assignments.
 
 
 
@@ -574,6 +771,31 @@ len := 10
 **After:**
 ```go
 length := 10
+```
+
+
+
+  <a name="builtinShadowDecl-ref"></a>
+## builtinShadowDecl
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects top-level declarations that shadow the predeclared identifiers.
+
+
+
+
+
+**Before:**
+```go
+type int struct {}
+```
+
+**After:**
+```go
+type myInt struct {}
 ```
 
 
@@ -650,8 +872,7 @@ case ast.Expr:
 ## codegenComment
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
 Detects malformed 'code generated' file comments.
 
@@ -675,8 +896,7 @@ Detects malformed 'code generated' file comments.
 ## commentFormatting
 
 [
-  **style**
-  **experimental** ]
+  **style** ]
 
 Detects comments with non-idiomatic formatting.
 
@@ -790,12 +1010,36 @@ default: // <- last case (could also be the first one)
 
 
 
+  <a name="deferUnlambda-ref"></a>
+## deferUnlambda
+
+[
+  **style**
+  **experimental** ]
+
+Detects deferred function literals that can be simplified.
+
+
+
+
+
+**Before:**
+```go
+defer func() { f() }()
+```
+
+**After:**
+```go
+defer f()
+```
+
+
+
   <a name="deprecatedComment-ref"></a>
 ## deprecatedComment
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
 Detects malformed 'deprecated' doc-comments.
 
@@ -1075,7 +1319,6 @@ Detects empty string checks that can be written more idiomatically.
 
 
 
-> See https://dmitri.shuralyov.com/idiomatic-go#empty-string-check.
 
 **Before:**
 ```go
@@ -1114,12 +1357,37 @@ strings.EqualFold(x, y)
 
 
 
-  <a name="exitAfterDefer-ref"></a>
-## exitAfterDefer
+  <a name="evalOrder-ref"></a>
+## evalOrder
 
 [
   **diagnostic**
   **experimental** ]
+
+Detects unwanted dependencies on the evaluation order.
+
+
+
+
+
+**Before:**
+```go
+return x, f(&x)
+```
+
+**After:**
+```go
+err := f(&x)
+return x, err
+```
+
+
+
+  <a name="exitAfterDefer-ref"></a>
+## exitAfterDefer
+
+[
+  **diagnostic** ]
 
 Detects calls to exit/fatal inside functions that use defer.
 
@@ -1146,6 +1414,31 @@ if bad {
 
 
 
+  <a name="filepathJoin-ref"></a>
+## filepathJoin
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects problems in filepath.Join() function calls.
+
+
+
+
+
+**Before:**
+```go
+filepath.Join("dir/", filename)
+```
+
+**After:**
+```go
+filepath.Join("dir", filename)
+```
+
+
+
   <a name="flagDeref-ref"></a>
 ## flagDeref
 
@@ -1154,11 +1447,9 @@ if bad {
 
 Detects immediate dereferencing of `flag` package pointers.
 
-Suggests to use pointer to array to avoid the copy using `&` on range expression.
 
 
-> Dereferencing returned pointers will lead to hard to find errors
-where flag values are not updated after flag.Parse().
+
 
 **Before:**
 ```go
@@ -1167,8 +1458,7 @@ b := *flag.Bool("b", false, "b docs")
 
 **After:**
 ```go
-var b bool
-flag.BoolVar(&b, "b", false, "b docs")
+var b bool; flag.BoolVar(&b, "b", false, "b docs")
 ```
 
 
@@ -1177,14 +1467,14 @@ flag.BoolVar(&b, "b", false, "b docs")
 ## flagName
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
-Detects flag names with whitespace.
-
+Detects suspicious flag names.
 
 
 
+
+> https://github.com/golang/go/issues/41792
 
 **Before:**
 ```go
@@ -1224,6 +1514,31 @@ x := 0x12
 y := 0xff
 // (B)
 y := 0xFF
+```
+
+
+
+  <a name="httpNoBody-ref"></a>
+## httpNoBody
+
+[
+  **style**
+  **experimental** ]
+
+Detects nil usages in http.NewRequest calls, suggesting http.NoBody as an alternative.
+
+
+
+
+
+**Before:**
+```go
+http.NewRequest("GET", url, nil)
+```
+
+**After:**
+```go
+http.NewRequest("GET", url, http.NoBody)
 ```
 
 
@@ -1382,6 +1697,61 @@ if cond {
 
 
 
+  <a name="ioutilDeprecated-ref"></a>
+## ioutilDeprecated
+
+[
+  **style**
+  **experimental** ]
+
+Detects deprecated io/ioutil package usages.
+
+
+
+
+
+**Before:**
+```go
+ioutil.ReadAll(r)
+```
+
+**After:**
+```go
+io.ReadAll(r)
+```
+
+
+
+  <a name="mapKey-ref"></a>
+## mapKey
+
+[
+  **diagnostic** ]
+
+Detects suspicious map literal keys.
+
+
+
+
+
+**Before:**
+```go
+_ = map[string]int{
+	"foo": 1,
+	"bar ": 2,
+}
+```
+
+**After:**
+```go
+_ = map[string]int{
+	"foo": 1,
+	"bar": 2,
+}
+```
+
+
+
   <a name="methodExprCall-ref"></a>
 ## methodExprCall
 
@@ -1458,8 +1828,7 @@ Checker parameters:
 ## newDeref
 
 [
-  **style**
-  **experimental** ]
+  **style** ]
 
 Detects immediate dereferencing of `new` expressions.
 
@@ -1542,8 +1911,7 @@ foo(2)
 ## offBy1
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
 Detects various off-by-one kind of errors.
 
@@ -1584,6 +1952,132 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 **After:**
 ```go
 func foo(a, b, c, d, e, f, g int) {}
+```
+
+
+
+  <a name="preferDecodeRune-ref"></a>
+## preferDecodeRune
+
+[
+  **performance**
+  **experimental** ]
+
+Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation.
+
+
+
+
+> See Go issue for details: https://github.com/golang/go/issues/45260
+
+**Before:**
+```go
+r := []rune(s)[0]
+```
+
+**After:**
+```go
+r, _ := utf8.DecodeRuneInString(s)
+```
+
+
+
+  <a name="preferFilepathJoin-ref"></a>
+## preferFilepathJoin
+
+[
+  **style**
+  **experimental** ]
+
+Detects concatenation with os.PathSeparator which can be replaced with filepath.Join.
+
+
+
+
+
+**Before:**
+```go
+x + string(os.PathSeparator) + y
+```
+
+**After:**
+```go
+filepath.Join(x, y)
+```
+
+
+
+  <a name="preferFprint-ref"></a>
+## preferFprint
+
+[
+  **performance**
+  **experimental** ]
+
+Detects fmt.Sprint(f|ln) calls which can be replaced with fmt.Fprint(f|ln).
+
+
+
+
+
+**Before:**
+```go
+w.Write([]byte(fmt.Sprintf("%x", 10)))
+```
+
+**After:**
+```go
+fmt.Fprintf(w, "%x", 10)
+```
+
+
+
+  <a name="preferStringWriter-ref"></a>
+## preferStringWriter
+
+[
+  **performance**
+  **experimental** ]
+
+Detects w.Write or io.WriteString calls which can be replaced with w.WriteString.
+
+
+
+
+
+**Before:**
+```go
+w.Write([]byte("foo"))
+```
+
+**After:**
+```go
+w.WriteString("foo")
+```
+
+
+
+  <a name="preferWriteByte-ref"></a>
+## preferWriteByte
+
+[
+  **performance**
+  **experimental** ]
+
+Detects WriteRune calls with byte literal argument and reports to use WriteByte instead.
+
+
+
+
+
+**Before:**
+```go
+w.WriteRune('\n')
+```
+
+**After:**
+```go
+w.WriteByte('\n')
 ```
 
 
@@ -1706,6 +2200,31 @@ Checker parameters:
 </ul>
 
 
+  <a name="redundantSprint-ref"></a>
+## redundantSprint
+
+[
+  **style**
+  **experimental** ]
+
+Detects redundant fmt.Sprint calls.
+
+
+
+
+
+**Before:**
+```go
+fmt.Sprint(x)
+```
+
+**After:**
+```go
+x.String()
+```
+
+
+
   <a name="regexpMust-ref"></a>
 ## regexpMust
 
@@ -1728,6 +2247,132 @@ re, _ := regexp.Compile("const pattern")
 re := regexp.MustCompile("const pattern")
 ```
 
+
+
+  <a name="regexpPattern-ref"></a>
+## regexpPattern
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious regexp patterns.
+
+
+
+
+
+**Before:**
+```go
+regexp.MustCompile(`google.com|yandex.ru`)
+```
+
+**After:**
+```go
+regexp.MustCompile(`google\.com|yandex\.ru`)
+```
+
+
+
+  <a name="regexpSimplify-ref"></a>
+## regexpSimplify
+
+[
+  **style**
+  **experimental**
+  **opinionated** ]
+
+Detects regexp patterns that can be simplified.
+
+
+
+
+
+**Before:**
+```go
+regexp.MustCompile(`(?:a|b|c)   [a-z][a-z]*`)
+```
+
+**After:**
+```go
+regexp.MustCompile(`[abc] {3}[a-z]+`)
+```
+
+
+
+  <a name="returnAfterHttpError-ref"></a>
+## returnAfterHttpError
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious http.Error call without following return.
+
+
+
+
+
+**Before:**
+```go
+x + string(os.PathSeparator) + y
+```
+
+**After:**
+```go
+filepath.Join(x, y)
+```
+
+
+
+  <a name="ruleguard-ref"></a>
+## ruleguard
+
+[
+  **style**
+  **experimental** ]
+
+Runs user-defined rules using ruleguard linter.
+
+Reads a rules file and turns them into go-critic checkers.
+
+
+> See https://github.com/quasilyte/go-ruleguard.
+
+**Before:**
+```go
+N/A
+```
+
+**After:**
+```go
+N/A
+```
+
+
+Checker parameters:
+<ul>
+<li>
+
+  `@ruleguard.debug` enable debug for the specified named rules group (default )
+
+</li>
+<li>
+
+  `@ruleguard.failOnError` Determines the behavior when an error occurs while parsing ruleguard files.
+If flag is not set, log error and skip rule files that contain an error.
+If flag is set, the value must be a comma-separated list of error conditions.
+* 'import': rule refers to a package that cannot be loaded.
+* 'dsl':    gorule file does not comply with the ruleguard DSL. (default )
+
+</li>
+<li>
+
+  `@ruleguard.rules` comma-separated list of gorule file paths. Glob patterns such as 'rules-*.go' may be specified (default )
+
+</li>
+
+</ul>
 
 
   <a name="singleCaseSwitch-ref"></a>
@@ -1759,6 +2404,31 @@ if x, ok := x.(int); ok {
 
 
 
+  <a name="sliceClear-ref"></a>
+## sliceClear
+
+[
+  **performance**
+  **experimental** ]
+
+Detects slice clear loops, suggests an idiom that is recognized by the Go compiler.
+
+
+
+
+
+**Before:**
+```go
+for i := 0; i < len(buf); i++ { buf[i] = 0 }
+```
+
+**After:**
+```go
+for i := range buf { buf[i] = 0 }
+```
+
+
+
   <a name="sloppyLen-ref"></a>
 ## sloppyLen
 
@@ -1773,14 +2443,11 @@ Detects usage of `len` when result is obvious or doesn't make sense.
 
 **Before:**
 ```go
-len(arr) >= 0 // Sloppy
-len(arr) <= 0 // Sloppy
-len(arr) < 0  // Doesn't make sense at all
+len(arr) <= 0
 ```
 
 **After:**
 ```go
-len(arr) > 0
 len(arr) == 0
 ```
 
@@ -1811,12 +2478,115 @@ if err := f(); err != nil { return err }
 
 
 
+  <a name="sloppyTypeAssert-ref"></a>
+## sloppyTypeAssert
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects redundant type assertions.
+
+
+
+
+
+**Before:**
+```go
+func f(r io.Reader) interface{} {
+	return r.(interface{})
+}
+```
+
+**After:**
+```go
+func f(r io.Reader) interface{} {
+	return r
+}
+```
+
+
+
+  <a name="sortSlice-ref"></a>
+## sortSlice
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious sort.Slice calls.
+
+
+
+
+
+**Before:**
+```go
+sort.Slice(xs, func(i, j) bool { return keys[i] < keys[j] })
+```
+
+**After:**
+```go
+sort.Slice(kv, func(i, j) bool { return kv[i].key < kv[j].key })
+```
+
+
+
+  <a name="sprintfQuotedString-ref"></a>
+## sprintfQuotedString
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects "%s" formatting directives that can be replaced with %q.
+
+
+
+
+
+**Before:**
+```go
+fmt.Sprintf(`"%s"`, s)
+```
+
+**After:**
+```go
+fmt.Sprintf(`%q`, s)
+```
+
+
+
+  <a name="sqlQuery-ref"></a>
+## sqlQuery
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects issue in Query() and Exec() calls.
+
+
+
+
+
+**Before:**
+```go
+_, err := db.Query("UPDATE ...")
+```
+
+**After:**
+```go
+_, err := db.Exec("UPDATE ...")
+```
+
+
+
   <a name="stringXbytes-ref"></a>
 ## stringXbytes
 
 [
-  **style**
-  **experimental** ]
+  **style** ]
 
 Detects redundant conversions between string and []byte.
 
@@ -1850,18 +2620,114 @@ Detects switch-over-bool statements that use explicit `true` tag value.
 
 **Before:**
 ```go
-switch true {
-case x > y:
+switch true {...}
+```
+
+**After:**
+```go
+switch {...}
+```
+
+
+
+  <a name="syncMapLoadAndDelete-ref"></a>
+## syncMapLoadAndDelete
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects sync.Map load+delete operations that can be replaced with LoadAndDelete.
+
+
+
+
+
+**Before:**
+```go
+v, ok := m.Load(k); if ok { m.Delete($k); f(v); }
+```
+
+**After:**
+```go
+v, deleted := m.LoadAndDelete(k); if deleted { f(v) }
+```
+
+
+
+  <a name="tooManyResultsChecker-ref"></a>
+## tooManyResultsChecker
+
+[
+  **style**
+  **opinionated**
+  **experimental** ]
+
+Detects function with too many results.
+
+
+
+
+
+**Before:**
+```go
+func fn() (a, b, c, d float32, _ int, _ bool)
+```
+
+**After:**
+```go
+func fn() (resultStruct, bool)
+```
+
+
+Checker parameters:
+<ul>
+<li>
+
+  `@tooManyResultsChecker.maxResults` maximum number of results (default 5)
+
+</li>
+
+</ul>
+
+
+  <a name="truncateCmp-ref"></a>
+## truncateCmp
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects potential truncation issues when comparing ints of different sizes.
+
+
+
+
+
+**Before:**
+```go
+func f(x int32, y int16) bool {
+  return int16(x) < y
 }
 ```
 
 **After:**
 ```go
-switch {
-case x > y:
+func f(x int32, int16) bool {
+  return x < int32(y)
 }
 ```
 
+
+Checker parameters:
+<ul>
+<li>
+
+  `@truncateCmp.skipArchDependent` whether to skip int/uint/uintptr types (default true)
+
+</li>
+
+</ul>
 
 
   <a name="typeAssertChain-ref"></a>
@@ -1898,6 +2764,33 @@ case cond2:
 default:
 	// Code C, uses x.
 }
+```
+
+
+
+  <a name="typeDefFirst-ref"></a>
+## typeDefFirst
+
+[
+  **style**
+  **experimental** ]
+
+Detects method declarations preceding the type definition itself.
+
+
+
+
+
+**Before:**
+```go
+func (r rec) Method() {}
+type rec struct{}
+```
+
+**After:**
+```go
+type rec struct{}
+func (r rec) Method() {}
 ```
 
 
@@ -2125,6 +3018,35 @@ print(x)
 
 
 
+  <a name="unnecessaryDefer-ref"></a>
+## unnecessaryDefer
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects redundantly deferred calls.
+
+
+
+
+
+**Before:**
+```go
+func() {
+	defer os.Remove(filename)
+}
+```
+
+**After:**
+```go
+func() {
+	os.Remove(filename)
+}
+```
+
+
+
   <a name="unslice-ref"></a>
 ## unslice
 
@@ -2139,13 +3061,11 @@ Detects slice expressions that can be simplified to sliced expression itself.
 
 **Before:**
 ```go
-f(s[:])               // s is string
-copy(b[:], values...) // b is []byte
+copy(b[:], values...)
 ```
 
 **After:**
 ```go
-f(s)
 copy(b, values...)
 ```
 
@@ -2155,8 +3075,7 @@ copy(b, values...)
 ## valSwap
 
 [
-  **style**
-  **experimental** ]
+  **style** ]
 
 Detects value swapping code that are not using parallel assignment.
 
@@ -2166,9 +3085,7 @@ Detects value swapping code that are not using parallel assignment.
 
 **Before:**
 ```go
-tmp := *x
-*x = *y
-*y = tmp
+*tmp = *x; *x = *y; *y = *tmp
 ```
 
 **After:**
@@ -2203,12 +3120,36 @@ len(xs) != 0 && xs[0] != nil
 
 
 
-  <a name="wrapperFunc-ref"></a>
-## wrapperFunc
+  <a name="whyNoLint-ref"></a>
+## whyNoLint
 
 [
   **style**
   **experimental** ]
+
+Ensures that `//nolint` comments include an explanation.
+
+
+
+
+
+**Before:**
+```go
+//nolint
+```
+
+**After:**
+```go
+//nolint // reason
+```
+
+
+
+  <a name="wrapperFunc-ref"></a>
+## wrapperFunc
+
+[
+  **style** ]
 
 Detects function calls that can be replaced with convenience wrappers.
 
