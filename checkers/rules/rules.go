@@ -596,7 +596,7 @@ func stringConcatSimplify(m dsl.Matcher) {
 //doc:tags    style experimental
 //doc:before  t.Unix() / 1000
 //doc:after   t.UnixMilli()
-func recommendUnixMilliMicro(m dsl.Matcher) {
+func timeExprSimplify(m dsl.Matcher) {
 	m.Match(`$t.Unix() / 1000`).
 		Where(m.GoVersion().GreaterEqThan("1.17") &&
 			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).

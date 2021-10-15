@@ -2261,7 +2261,7 @@ var PrecompiledRules = &ir.File{
 		},
 		ir.RuleGroup{
 			Line:        599,
-			Name:        "recommendUnixMilliMicro",
+			Name:        "timeExprSimplify",
 			MatcherName: "m",
 			DocTags: []string{
 				"style",
