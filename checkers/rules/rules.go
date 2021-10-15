@@ -230,7 +230,7 @@ func stringXbytes(m dsl.Matcher) {
 //doc:note    See Go issue for details: https://github.com/golang/go/issues/25864
 func indexAlloc(m dsl.Matcher) {
 	m.Match(`strings.Index(string($x), $y)`).
-		Where(m["x"].Pure && m["y"].Pure).
+		Where(m["y"].Pure).
 		Report(`consider replacing $$ with bytes.Index($x, []byte($y))`)
 }
 
@@ -658,4 +658,49 @@ func exposedSyncMutex(m dsl.Matcher) {
 	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
 		Where(m["x"].Text.Matches(`^\p{Lu}`)).
 		Report("don't embed *sync.RWMutex")
+}
+
+//doc:summary Detects suspicious duplicated sub-expressions
+//doc:tags    diagnostic
+//doc:before  xs[i] < xs[i]
+//doc:after   xs[i] < xs[j]
+func dupSubExpr(m dsl.Matcher) {
+	m.Match(`$x || $x`).
+		Report(`suspicious identical left and right expression near ||`)
+	m.Match(`$x && $x`).
+		Report(`suspicious identical left and right expression near &&`)
+	m.Match(`$x | $x`).
+		Report(`suspicious identical left and right expression near |`)
+	m.Match(`$x & $x`).
+		Report(`suspicious identical left and right expression near &`)
+	m.Match(`$x ^ $x`).
+		Report(`suspicious identical left and right expression near ^`)
+	m.Match(`$x < $x`).
+		Report(`suspicious identical left and right expression near <`)
+	m.Match(`$x > $x`).
+		Report(`suspicious identical left and right expression near >`)
+	m.Match(`$x &^ $x`).
+		Report(`suspicious identical left and right expression near &^`)
+	m.Match(`$x % $x`).
+		Report(`suspicious identical left and right expression near %`)
+
+	// TODO
+	m.Match(`$x == $x`).
+		Where(!m["x"].Type.Is(`float32`)).
+		Report(`suspicious identical left and right expression near ==`)
+	m.Match(`$x != $x`).
+		Where(!m["x"].Type.Is(`float32`)).
+		Report(`suspicious identical left and right expression near !=`)
+	m.Match(`$x <= $x`).
+		Where(!m["x"].Type.Is(`float32`)).
+		Report(`suspicious identical left and right expression near <=`)
+	m.Match(`$x >= $x`).
+		Where(!m["x"].Type.Is(`float32`)).
+		Report(`suspicious identical left and right expression near >=`)
+	m.Match(`$x / $x`).
+		Where(!m["x"].Type.Is(`float32`)).
+		Report(`suspicious identical left and right expression near /`)
+	m.Match(`$x - $x`).
+		Where(!m["x"].Type.Is(`float32`)).
+		Report(`suspicious identical left and right expression near -`)
 }

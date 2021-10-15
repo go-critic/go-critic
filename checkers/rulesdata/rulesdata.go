@@ -901,15 +901,7 @@ var PrecompiledRules = &ir.File{
 						ir.PatternString{Line: 232, Value: "strings.Index(string($x), $y)"},
 					},
 					ReportTemplate: "consider replacing $$ with bytes.Index($x, []byte($y))",
-					WhereExpr: ir.FilterExpr{
-						Line: 233,
-						Op:   ir.FilterAndOp,
-						Src:  "m[\"x\"].Pure && m[\"y\"].Pure",
-						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 233, Op: ir.FilterVarPureOp, Src: "m[\"x\"].Pure", Value: "x"},
-							ir.FilterExpr{Line: 233, Op: ir.FilterVarPureOp, Src: "m[\"y\"].Pure", Value: "y"},
-						},
-					},
+					WhereExpr:      ir.FilterExpr{Line: 233, Op: ir.FilterVarPureOp, Src: "m[\"y\"].Pure", Value: "y"},
 				},
 			},
 		},
@@ -2488,6 +2480,220 @@ var PrecompiledRules = &ir.File{
 						Value: "x",
 						Args: []ir.FilterExpr{
 							ir.FilterExpr{Line: 659, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+						},
+					},
+				},
+			},
+		},
+		ir.RuleGroup{
+			Line:        639,
+			Name:        "dupSubExpr",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+			},
+			DocSummary: "Detects suspicious duplicated sub-expressions",
+			DocBefore:  "xs[i] < xs[i]",
+			DocAfter:   "xs[i] < xs[j]",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 640,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 640, Value: "$x || $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near ||",
+				},
+				ir.Rule{
+					Line: 642,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 642, Value: "$x && $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near &&",
+				},
+				ir.Rule{
+					Line: 644,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 644, Value: "$x | $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near |",
+				},
+				ir.Rule{
+					Line: 646,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 646, Value: "$x & $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near &",
+				},
+				ir.Rule{
+					Line: 648,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 648, Value: "$x ^ $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near ^",
+				},
+				ir.Rule{
+					Line: 650,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 650, Value: "$x < $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near <",
+				},
+				ir.Rule{
+					Line: 652,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 652, Value: "$x > $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near >",
+				},
+				ir.Rule{
+					Line: 654,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 654, Value: "$x &^ $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near &^",
+				},
+				ir.Rule{
+					Line: 656,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 656, Value: "$x % $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near %",
+				},
+				ir.Rule{
+					Line: 660,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 660, Value: "$x == $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near ==",
+					WhereExpr: ir.FilterExpr{
+						Line: 661,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Type.Is(`float32`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  661,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"x\"].Type.Is(`float32`)",
+								Value: "x",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 661, Op: ir.FilterStringOp, Src: "`float32`", Value: "float32"},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 663,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 663, Value: "$x != $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near !=",
+					WhereExpr: ir.FilterExpr{
+						Line: 664,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Type.Is(`float32`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  664,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"x\"].Type.Is(`float32`)",
+								Value: "x",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 664, Op: ir.FilterStringOp, Src: "`float32`", Value: "float32"},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 666,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 666, Value: "$x <= $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near <=",
+					WhereExpr: ir.FilterExpr{
+						Line: 667,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Type.Is(`float32`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  667,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"x\"].Type.Is(`float32`)",
+								Value: "x",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 667, Op: ir.FilterStringOp, Src: "`float32`", Value: "float32"},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 669,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 669, Value: "$x >= $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near >=",
+					WhereExpr: ir.FilterExpr{
+						Line: 670,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Type.Is(`float32`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  670,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"x\"].Type.Is(`float32`)",
+								Value: "x",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 670, Op: ir.FilterStringOp, Src: "`float32`", Value: "float32"},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 672,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 672, Value: "$x / $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near /",
+					WhereExpr: ir.FilterExpr{
+						Line: 673,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Type.Is(`float32`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  673,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"x\"].Type.Is(`float32`)",
+								Value: "x",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 673, Op: ir.FilterStringOp, Src: "`float32`", Value: "float32"},
+								},
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 675,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 675, Value: "$x - $x"},
+					},
+					ReportTemplate: "suspicious identical left and right expression near -",
+					WhereExpr: ir.FilterExpr{
+						Line: 676,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"x\"].Type.Is(`float32`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  676,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"x\"].Type.Is(`float32`)",
+								Value: "x",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 676, Op: ir.FilterStringOp, Src: "`float32`", Value: "float32"},
+								},
+							},
 						},
 					},
 				},
