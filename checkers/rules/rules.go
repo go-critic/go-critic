@@ -609,3 +609,25 @@ func timeExprSimplify(m dsl.Matcher) {
 		Suggest("$t.UnixMicro()").
 		Report(`use $t.UnixMicro() instead of $$`)
 }
+
+//doc:summary Detects exposed methods from sync.Mutex and sync.RWMutex
+//doc:tags    style experimental
+//doc:before  type Foo struct{ ...; sync.Mutex; ... }
+//doc:after   type Foo struct{ ...; mu sync.Mutex; ... }
+func exposedSyncMutex(m dsl.Matcher) {
+	m.Match(`type $x struct { $*_; sync.Mutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed sync.Mutex")
+
+	m.Match(`type $x struct { $*_; *sync.Mutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed *sync.Mutex")
+
+	m.Match(`type $x struct { $*_; sync.RWMutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed sync.RWMutex")
+
+	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed *sync.RWMutex")
+}
