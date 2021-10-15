@@ -126,6 +126,7 @@ func TestStableList(t *testing.T) {
 		"regexpMust",
 		"singleCaseSwitch",
 		"sloppyLen",
+		"sloppyTypeAssert",
 		"stringXbytes",
 		"switchTrue",
 		"typeSwitchVar",
