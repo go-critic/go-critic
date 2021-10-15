@@ -659,3 +659,24 @@ func exposedSyncMutex(m dsl.Matcher) {
 		Where(m["x"].Text.Matches(`^\p{Lu}`)).
 		Report("don't embed *sync.RWMutex")
 }
+
+//doc:summary Detects bad usage of sort package
+//doc:tags    diagnostic experimental
+//doc:before  xs = sort.StringSlice(xs)
+//doc:after   sort.Strings(xs)
+func suspiciousSorting(m dsl.Matcher) {
+	m.Match(`$x = sort.IntSlice($x)`).
+		Where(m["x"].Type.Is(`[]int`)).
+		Suggest(`sort.Ints($x)`).
+		Report(`suspicious sort.IntSlice usage, maybe sort.Ints was intended?`)
+
+	m.Match(`$x = sort.Float64Slice($x)`).
+		Where(m["x"].Type.Is(`[]float64`)).
+		Suggest(`sort.Float64s($x)`).
+		Report(`suspicious sort.Float64s usage, maybe sort.Float64s was intended?`)
+
+	m.Match(`$x = sort.StringSlice($x)`).
+		Where(m["x"].Type.Is(`[]string`)).
+		Suggest(`sort.Strings($x)`).
+		Report(`suspicious sort.StringSlice usage, maybe sort.Strings was intended?`)
+}

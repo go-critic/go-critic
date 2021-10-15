@@ -2493,6 +2493,71 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        667,
+			Name:        "suspiciousSorting",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects bad usage of sort package",
+			DocBefore:  "xs = sort.StringSlice(xs)",
+			DocAfter:   "sort.Strings(xs)",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 668,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 668, Value: "$x = sort.IntSlice($x)"},
+					},
+					ReportTemplate:  "suspicious sort.IntSlice usage, maybe sort.Ints was intended?",
+					SuggestTemplate: "sort.Ints($x)",
+					WhereExpr: ir.FilterExpr{
+						Line:  669,
+						Op:    ir.FilterVarTypeIsOp,
+						Src:   "m[\"x\"].Type.Is(`[]int`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 669, Op: ir.FilterStringOp, Src: "`[]int`", Value: "[]int"},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 673,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 673, Value: "$x = sort.Float64Slice($x)"},
+					},
+					ReportTemplate:  "suspicious sort.Float64s usage, maybe sort.Float64s was intended?",
+					SuggestTemplate: "sort.Float64s($x)",
+					WhereExpr: ir.FilterExpr{
+						Line:  674,
+						Op:    ir.FilterVarTypeIsOp,
+						Src:   "m[\"x\"].Type.Is(`[]float64`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 674, Op: ir.FilterStringOp, Src: "`[]float64`", Value: "[]float64"},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 678,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 678, Value: "$x = sort.StringSlice($x)"},
+					},
+					ReportTemplate:  "suspicious sort.StringSlice usage, maybe sort.Strings was intended?",
+					SuggestTemplate: "sort.Strings($x)",
+					WhereExpr: ir.FilterExpr{
+						Line:  679,
+						Op:    ir.FilterVarTypeIsOp,
+						Src:   "m[\"x\"].Type.Is(`[]string`)",
+						Value: "x",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{Line: 679, Op: ir.FilterStringOp, Src: "`[]string`", Value: "[]string"},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
