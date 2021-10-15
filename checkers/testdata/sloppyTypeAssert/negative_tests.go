@@ -10,4 +10,14 @@ func noWarnings(eface interface{}, r io.Reader, rc io.ReadCloser) {
 
 	// assertion to a wider interface.
 	_ = r.(io.ReadCloser)
+
+	_ = r.(interface{})
+
+	_ = rc.(io.Reader)
+
+	var ur underlyingReader
+
+	_ = ur.(io.Reader)
+
+	_ = r.(underlyingReader)
 }
