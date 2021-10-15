@@ -54,14 +54,14 @@ func (c *dupCaseChecker) checkSwitch(stmt *ast.SwitchStmt) {
 		}
 	}
 }
+
 func (c *dupCaseChecker) checkSelect(stmt *ast.SelectStmt) {
 	c.astSet.Clear()
+	println("in checkSelect")
 	for i := range stmt.Body.List {
-		cc := stmt.Body.List[i].(*ast.CaseClause)
-		for _, x := range cc.List {
-			if !c.astSet.Insert(x) {
-				c.warn(x)
-			}
+		x := stmt.Body.List[i].(*ast.CommClause).Comm
+		if !c.astSet.Insert(x) {
+			c.warn(x)
 		}
 	}
 }
