@@ -2366,7 +2366,7 @@ var PrecompiledRules = &ir.File{
 			},
 		},
 		ir.RuleGroup{
-			Line:        498,
+			Line:        617,
 			Name:        "exposedSyncMutex",
 			MatcherName: "m",
 			DocTags: []string{
@@ -2378,66 +2378,66 @@ var PrecompiledRules = &ir.File{
 			DocAfter:   "type Foo struct{ ...; mu sync.Mutex; ... }",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line: 600,
+					Line: 618,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 600, Value: "type $x struct { $*_; sync.Mutex; $*_ }"},
+						ir.PatternString{Line: 618, Value: "type $x struct { $*_; sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.Mutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  601,
+						Line:  619,
 						Op:    ir.FilterVarTextMatchesOp,
 						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 601, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 619, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 604,
+					Line: 622,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 604, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
+						ir.PatternString{Line: 622, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.Mutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  605,
+						Line:  623,
 						Op:    ir.FilterVarTextMatchesOp,
 						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 605, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 623, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 608,
+					Line: 626,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 608, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 626, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.RWMutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  609,
+						Line:  627,
 						Op:    ir.FilterVarTextMatchesOp,
 						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 609, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 627, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 612,
+					Line: 630,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 612, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 630, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.RWMutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  613,
+						Line:  631,
 						Op:    ir.FilterVarTextMatchesOp,
 						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 613, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 631, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
@@ -2445,3 +2445,4 @@ var PrecompiledRules = &ir.File{
 		},
 	},
 }
+
