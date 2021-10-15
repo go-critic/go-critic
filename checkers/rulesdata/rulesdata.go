@@ -2495,7 +2495,7 @@ var PrecompiledRules = &ir.File{
 		},
 		ir.RuleGroup{
 			Line:        667,
-			Name:        "badSortCall",
+			Name:        "suspiciousSorting",
 			MatcherName: "m",
 			DocTags: []string{
 				"diagnostic",
@@ -2510,7 +2510,7 @@ var PrecompiledRules = &ir.File{
 					SyntaxPatterns: []ir.PatternString{
 						ir.PatternString{Line: 668, Value: "$x = sort.IntSlice($x)"},
 					},
-					ReportTemplate:  "bad sort.IntSlice usage",
+					ReportTemplate:  "suspicious sort.IntSlice usage, maybe sort.Ints was intended?",
 					SuggestTemplate: "sort.Ints($x)",
 					WhereExpr: ir.FilterExpr{
 						Line:  669,
@@ -2527,7 +2527,7 @@ var PrecompiledRules = &ir.File{
 					SyntaxPatterns: []ir.PatternString{
 						ir.PatternString{Line: 673, Value: "$x = sort.Float64Slice($x)"},
 					},
-					ReportTemplate:  "bad sort.Float64Slice usage",
+					ReportTemplate:  "suspicious sort.Float64s usage, maybe sort.Float64s was intended?",
 					SuggestTemplate: "sort.Float64s($x)",
 					WhereExpr: ir.FilterExpr{
 						Line:  674,
@@ -2544,7 +2544,7 @@ var PrecompiledRules = &ir.File{
 					SyntaxPatterns: []ir.PatternString{
 						ir.PatternString{Line: 678, Value: "$x = sort.StringSlice($x)"},
 					},
-					ReportTemplate:  "bad sort.StringSlice usage",
+					ReportTemplate:  "suspicious sort.StringSlice usage, maybe sort.Strings was intended?",
 					SuggestTemplate: "sort.Strings($x)",
 					WhereExpr: ir.FilterExpr{
 						Line:  679,

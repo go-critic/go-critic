@@ -664,19 +664,19 @@ func exposedSyncMutex(m dsl.Matcher) {
 //doc:tags    diagnostic experimental
 //doc:before  xs = sort.StringSlice(xs)
 //doc:after   sort.Strings(xs)
-func badSortCall(m dsl.Matcher) {
+func suspiciousSorting(m dsl.Matcher) {
 	m.Match(`$x = sort.IntSlice($x)`).
 		Where(m["x"].Type.Is(`[]int`)).
 		Suggest(`sort.Ints($x)`).
-		Report(`bad sort.IntSlice usage`)
+		Report(`suspicious sort.IntSlice usage, maybe sort.Ints was intended?`)
 
 	m.Match(`$x = sort.Float64Slice($x)`).
 		Where(m["x"].Type.Is(`[]float64`)).
 		Suggest(`sort.Float64s($x)`).
-		Report(`bad sort.Float64Slice usage`)
+		Report(`suspicious sort.Float64s usage, maybe sort.Float64s was intended?`)
 
 	m.Match(`$x = sort.StringSlice($x)`).
 		Where(m["x"].Type.Is(`[]string`)).
 		Suggest(`sort.Strings($x)`).
-		Report(`bad sort.StringSlice usage`)
+		Report(`suspicious sort.StringSlice usage, maybe sort.Strings was intended?`)
 }
