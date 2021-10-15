@@ -18,3 +18,7 @@ var Cache struct {
 	sync.RWMutex
 	data map[string]interface{}
 }
+
+type Global struct {
+	sync.Locker
+}
