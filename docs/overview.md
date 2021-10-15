@@ -6,6 +6,8 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
+Total number of checks is 98 :rocket:
+
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
 
@@ -131,11 +133,6 @@ They also detect code that may be correct, but looks suspicious.
   </td>
   <td>Detects return statements those results evaluate to nil</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
-    <a href="#octalLiteral-ref">octalLiteral</a>
-  </td>
-  <td>Detects octal literals passed to functions</td>
-</tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#offBy1-ref">offBy1</a>
   </td>
@@ -156,7 +153,7 @@ They also detect code that may be correct, but looks suspicious.
   </td>
   <td>Detects suspicious/confusing re-assignments</td>
 </tr><tr>
-  <td nowrap>:white_check_mark:
+  <td nowrap>:heavy_check_mark:
     <a href="#sloppyTypeAssert-ref">sloppyTypeAssert</a>
   </td>
   <td>Detects redundant type assertions</td>
@@ -175,6 +172,11 @@ They also detect code that may be correct, but looks suspicious.
     <a href="#sqlQuery-ref">sqlQuery</a>
   </td>
   <td>Detects issue in Query() and Exec() calls</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#suspiciousSorting-ref">suspiciousSorting</a>
+  </td>
+  <td>Detects bad usage of sort package</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#syncMapLoadAndDelete-ref">syncMapLoadAndDelete</a>
@@ -276,6 +278,11 @@ with another one that is considered more idiomatic or simple.
   <td>Detects empty string checks that can be written more idiomatically</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#exposedSyncMutex-ref">exposedSyncMutex</a>
+  </td>
+  <td>Detects exposed methods from sync.Mutex and sync.RWMutex</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#hexLiteral-ref">hexLiteral</a>
   </td>
   <td>Detects hex literals that have mixed case letter digits</td>
@@ -319,6 +326,11 @@ with another one that is considered more idiomatic or simple.
     <a href="#newDeref-ref">newDeref</a>
   </td>
   <td>Detects immediate dereferencing of `new` expressions</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#octalLiteral-ref">octalLiteral</a>
+  </td>
+  <td>Detects old-style octal literals</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#paramTypeCombine-ref">paramTypeCombine</a>
@@ -365,15 +377,20 @@ with another one that is considered more idiomatic or simple.
   </td>
   <td>Detects usage of `len` when result is obvious or doesn't make sense</td>
 </tr><tr>
-  <td nowrap>:heavy_check_mark:
-    <a href="#stringXbytes-ref">stringXbytes</a>
+  <td nowrap>:white_check_mark:
+    <a href="#stringConcatSimplify-ref">stringConcatSimplify</a>
   </td>
-  <td>Detects redundant conversions between string and []byte</td>
+  <td>Detects string concat operations that can be simplified</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#switchTrue-ref">switchTrue</a>
   </td>
   <td>Detects switch-over-bool statements that use explicit `true` tag value</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#timeExprSimplify-ref">timeExprSimplify</a>
+  </td>
+  <td>Detects manual conversion to milli- or microseconds</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#tooManyResultsChecker-ref">tooManyResultsChecker</a>
@@ -518,6 +535,11 @@ can make your code run slower than it could be.
     <a href="#sliceClear-ref">sliceClear</a>
   </td>
   <td>Detects slice clear loops, suggests an idiom that is recognized by the Go compiler</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#stringXbytes-ref">stringXbytes</a>
+  </td>
+  <td>Detects redundant conversions between string and []byte</td>
 </tr>
 </table>
 
@@ -1414,6 +1436,31 @@ if bad {
 
 
 
+  <a name="exposedSyncMutex-ref"></a>
+## exposedSyncMutex
+
+[
+  **style**
+  **experimental** ]
+
+Detects exposed methods from sync.Mutex and sync.RWMutex.
+
+
+
+
+
+**Before:**
+```go
+type Foo struct{ ...; sync.Mutex; ... }
+```
+
+**After:**
+```go
+type Foo struct{ ...; mu sync.Mutex; ... }
+```
+
+
+
   <a name="filepathJoin-ref"></a>
 ## filepathJoin
 
@@ -1886,10 +1933,11 @@ if err != nil {
 ## octalLiteral
 
 [
-  **diagnostic**
-  **experimental** ]
+  **style**
+  **experimental**
+  **opinionated** ]
 
-Detects octal literals passed to functions.
+Detects old-style octal literals.
 
 
 
@@ -1902,7 +1950,7 @@ foo(02)
 
 **After:**
 ```go
-foo(2)
+foo(0o2)
 ```
 
 
@@ -2482,8 +2530,7 @@ if err := f(); err != nil { return err }
 ## sloppyTypeAssert
 
 [
-  **diagnostic**
-  **experimental** ]
+  **diagnostic** ]
 
 Detects redundant type assertions.
 
@@ -2582,11 +2629,36 @@ _, err := db.Exec("UPDATE ...")
 
 
 
+  <a name="stringConcatSimplify-ref"></a>
+## stringConcatSimplify
+
+[
+  **style**
+  **experimental** ]
+
+Detects string concat operations that can be simplified.
+
+
+
+
+
+**Before:**
+```go
+strings.Join([]string{x, y}, "_")
+```
+
+**After:**
+```go
+x + "_" + y
+```
+
+
+
   <a name="stringXbytes-ref"></a>
 ## stringXbytes
 
 [
-  **style** ]
+  **performance** ]
 
 Detects redundant conversions between string and []byte.
 
@@ -2602,6 +2674,31 @@ copy(b, []byte(s))
 **After:**
 ```go
 copy(b, s)
+```
+
+
+
+  <a name="suspiciousSorting-ref"></a>
+## suspiciousSorting
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects bad usage of sort package.
+
+
+
+
+
+**Before:**
+```go
+xs = sort.StringSlice(xs)
+```
+
+**After:**
+```go
+sort.Strings(xs)
 ```
 
 
@@ -2651,6 +2748,31 @@ v, ok := m.Load(k); if ok { m.Delete($k); f(v); }
 **After:**
 ```go
 v, deleted := m.LoadAndDelete(k); if deleted { f(v) }
+```
+
+
+
+  <a name="timeExprSimplify-ref"></a>
+## timeExprSimplify
+
+[
+  **style**
+  **experimental** ]
+
+Detects manual conversion to milli- or microseconds.
+
+
+
+
+
+**Before:**
+```go
+t.Unix() / 1000
+```
+
+**After:**
+```go
+t.UnixMilli()
 ```
 
 
