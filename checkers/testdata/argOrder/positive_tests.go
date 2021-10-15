@@ -6,32 +6,32 @@ import (
 )
 
 func badArgOrder(s string, b []byte) {
-	/*! probably meant `strings.HasPrefix(s, "http://")` */
+	/*! "http://" and s arguments order looks reversed */
 	_ = strings.HasPrefix("http://", s)
 
-	/*! probably meant `bytes.HasPrefix(b, []byte("http://"))` */
+	/*! []byte("http://") and b arguments order looks reversed */
 	_ = bytes.HasPrefix([]byte("http://"), b)
-	/*! probably meant `bytes.HasPrefix(b, []byte{'h', 't', 't', 'p', ':', '/', '/'})` */
+	/*! []byte{'h', 't', 't', 'p', ':', '/', '/'} and b arguments order looks reversed */
 	_ = bytes.HasPrefix([]byte{'h', 't', 't', 'p', ':', '/', '/'}, b)
 
-	/*! probably meant `strings.Contains(s, ":")` */
+	/*! ":" and s arguments order looks reversed */
 	_ = strings.Contains(":", s)
-	/*! probably meant `bytes.Contains(b, []byte(":"))` */
+	/*! []byte(":") and b arguments order looks reversed */
 	_ = bytes.Contains([]byte(":"), b)
 
-	/*! probably meant `strings.TrimPrefix(s, ":")` */
+	/*! ":" and s arguments order looks reversed */
 	_ = strings.TrimPrefix(":", s)
-	/*! probably meant `bytes.TrimPrefix(b, []byte(":"))` */
+	/*! []byte(":") and b arguments order looks reversed */
 	_ = bytes.TrimPrefix([]byte(":"), b)
 
-	/*! probably meant `strings.TrimSuffix(s, ":")` */
+	/*! ":" and s arguments order looks reversed */
 	_ = strings.TrimSuffix(":", s)
-	/*! probably meant `bytes.TrimSuffix(b, []byte(":"))` */
+	/*! []byte(":") and b arguments order looks reversed */
 	_ = bytes.TrimSuffix([]byte(":"), b)
 
-	/*! probably meant `strings.Split(s, "/")` */
+	/*! "/" and s arguments order looks reversed */
 	_ = strings.Split("/", s)
-	/*! probably meant `bytes.Split(b, []byte("/"))` */
+	/*! []byte("/") and b arguments order looks reversed */
 	_ = bytes.Split([]byte("/"), b)
 }
 
@@ -40,7 +40,7 @@ func argubleCases(s string) {
 	// But that usage is somewhat rare and can be implemented via sorted []string
 	// search or a map[string]bool/map[string]struct{}.
 
-	/*! probably meant `strings.Contains(s, "uint uint8 uint16 uint32")` */
+	/*! "uint uint8 uint16 uint32" and s arguments order looks reversed */
 	_ = strings.Contains("uint uint8 uint16 uint32", s)
 
 	// Code below removes "optional " prefix if s="optional ".
@@ -48,6 +48,6 @@ func argubleCases(s string) {
 	// We accept this false positive as it can be fixed
 	// by assigning a string literal to a variable, for example.
 
-	/*! probably meant `strings.TrimPrefix(s, "optional foo bar")` */
+	/*! "optional foo bar" and s arguments order looks reversed */
 	_ = strings.TrimPrefix("optional foo bar", s)
 }
