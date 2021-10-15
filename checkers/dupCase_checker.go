@@ -12,7 +12,7 @@ func init() {
 	var info linter.CheckerInfo
 	info.Name = "dupCase"
 	info.Tags = []string{"diagnostic"}
-	info.Summary = "Detects duplicated case clauses inside switch statements"
+	info.Summary = "Detects duplicated case clauses inside switch or select statements"
 	info.Before = `
 switch x {
 case ys[0], ys[1], ys[2], ys[0], ys[4]:
@@ -35,12 +35,26 @@ type dupCaseChecker struct {
 }
 
 func (c *dupCaseChecker) VisitStmt(stmt ast.Stmt) {
-	if stmt, ok := stmt.(*ast.SwitchStmt); ok {
+	switch stmt := stmt.(type) {
+	case *ast.SwitchStmt:
 		c.checkSwitch(stmt)
+	case *ast.SelectStmt:
+		c.checkSelect(stmt)
 	}
 }
 
 func (c *dupCaseChecker) checkSwitch(stmt *ast.SwitchStmt) {
+	c.astSet.Clear()
+	for i := range stmt.Body.List {
+		cc := stmt.Body.List[i].(*ast.CaseClause)
+		for _, x := range cc.List {
+			if !c.astSet.Insert(x) {
+				c.warn(x)
+			}
+		}
+	}
+}
+func (c *dupCaseChecker) checkSelect(stmt *ast.SelectStmt) {
 	c.astSet.Clear()
 	for i := range stmt.Body.List {
 		cc := stmt.Body.List[i].(*ast.CaseClause)
