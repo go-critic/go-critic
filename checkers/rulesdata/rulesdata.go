@@ -2386,10 +2386,10 @@ var PrecompiledRules = &ir.File{
 					WhereExpr: ir.FilterExpr{
 						Line:  601,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 601, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+							ir.FilterExpr{Line: 601, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
@@ -2402,10 +2402,10 @@ var PrecompiledRules = &ir.File{
 					WhereExpr: ir.FilterExpr{
 						Line:  605,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 605, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+							ir.FilterExpr{Line: 605, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
@@ -2418,10 +2418,10 @@ var PrecompiledRules = &ir.File{
 					WhereExpr: ir.FilterExpr{
 						Line:  609,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 609, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+							ir.FilterExpr{Line: 609, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
@@ -2434,10 +2434,10 @@ var PrecompiledRules = &ir.File{
 					WhereExpr: ir.FilterExpr{
 						Line:  613,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^[A-Z]`)",
+						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 613, Op: ir.FilterStringOp, Src: "`^[A-Z]`", Value: "^[A-Z]"},
+							ir.FilterExpr{Line: 613, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},

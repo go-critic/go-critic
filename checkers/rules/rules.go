@@ -616,18 +616,18 @@ func timeExprSimplify(m dsl.Matcher) {
 //doc:after   type Foo struct{ ...; mu sync.Mutex; ... }
 func exposedSyncMutex(m dsl.Matcher) {
 	m.Match(`type $x struct { $*_; sync.Mutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^[A-Z]`)).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
 		Report("don't embed sync.Mutex")
 
 	m.Match(`type $x struct { $*_; *sync.Mutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^[A-Z]`)).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
 		Report("don't embed *sync.Mutex")
 
 	m.Match(`type $x struct { $*_; sync.RWMutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^[A-Z]`)).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
 		Report("don't embed sync.RWMutex")
 
 	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^[A-Z]`)).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
 		Report("don't embed *sync.RWMutex")
 }
