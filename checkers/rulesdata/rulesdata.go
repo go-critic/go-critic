@@ -2558,6 +2558,52 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        688,
+			Name:        "suspiciousErrorReassign",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects suspicious reassigment of error from another package",
+			DocBefore:  "io.EOF = nil",
+			DocAfter:   "-",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 689,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 689, Value: "$pkg.$err = $x"},
+					},
+					ReportTemplate: "suspicious reassigment of error from another package",
+					WhereExpr: ir.FilterExpr{
+						Line: 690,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"err\"].Type.Is(`error`) && m[\"pkg\"].Object.Is(`PkgName`)",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  690,
+								Op:    ir.FilterVarTypeIsOp,
+								Src:   "m[\"err\"].Type.Is(`error`)",
+								Value: "err",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 690, Op: ir.FilterStringOp, Src: "`error`", Value: "error"},
+								},
+							},
+							ir.FilterExpr{
+								Line:  690,
+								Op:    ir.FilterVarObjectIsOp,
+								Src:   "m[\"pkg\"].Object.Is(`PkgName`)",
+								Value: "pkg",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 690, Op: ir.FilterStringOp, Src: "`PkgName`", Value: "PkgName"},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
