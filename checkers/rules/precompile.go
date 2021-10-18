@@ -12,8 +12,8 @@ import (
 	"go/parser"
 	"go/token"
 	"go/types"
-	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"text/template"
 
