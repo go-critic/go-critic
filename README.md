@@ -28,7 +28,7 @@ There is never too much static code analysis. Try it out.
 
 ## Documentation
 
-The latest documentation is available at [go-critic.github.io](https://go-critic.github.io/overview).
+The latest documentation is available at [go-critic.com](https://go-critic.com/overview).
 
 ## Installation
 
