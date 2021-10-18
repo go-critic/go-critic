@@ -680,3 +680,13 @@ func suspiciousSorting(m dsl.Matcher) {
 		Suggest(`sort.Strings($x)`).
 		Report(`suspicious sort.StringSlice usage, maybe sort.Strings was intended?`)
 }
+
+//doc:summary Detects suspicious reassigment of error from another package
+//doc:tags    diagnostic experimental
+//doc:before  io.EOF = nil
+//doc:after   -
+func suspiciousErrorReassign(m dsl.Matcher) {
+	m.Match(`$pkg.$err = $x`).
+		Where(m["err"].Type.Is(`error`) && m["pkg"].Object.Is(`PkgName`)).
+		Report(`suspicious reassigment of error from another package`)
+}
