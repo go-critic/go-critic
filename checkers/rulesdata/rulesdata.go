@@ -2604,6 +2604,41 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        698,
+			Name:        "emptyDecl",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects suspicious empty declarations blocks",
+			DocBefore:  "var()",
+			DocAfter:   "/* nothing */",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 699,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 699, Value: "var()"},
+					},
+					ReportTemplate: "empty var() block",
+				},
+				ir.Rule{
+					Line: 700,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 700, Value: "const()"},
+					},
+					ReportTemplate: "empty const() block",
+				},
+				ir.Rule{
+					Line: 701,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 701, Value: "type()"},
+					},
+					ReportTemplate: "empty type() block",
+				},
+			},
+		},
 	},
 }
 
