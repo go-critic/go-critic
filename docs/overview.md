@@ -6,7 +6,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
-Total number of checks is 98 :rocket:
+Total number of checks is 100 :rocket:
 
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
@@ -91,12 +91,17 @@ They also detect code that may be correct, but looks suspicious.
   <td nowrap>:heavy_check_mark:
     <a href="#dupCase-ref">dupCase</a>
   </td>
-  <td>Detects duplicated case clauses inside switch statements</td>
+  <td>Detects duplicated case clauses inside switch or select statements</td>
 </tr><tr>
   <td nowrap>:heavy_check_mark:
     <a href="#dupSubExpr-ref">dupSubExpr</a>
   </td>
   <td>Detects suspicious duplicated sub-expressions</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#emptyDecl-ref">emptyDecl</a>
+  </td>
+  <td>Detects suspicious empty declarations blocks</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#evalOrder-ref">evalOrder</a>
@@ -107,6 +112,11 @@ They also detect code that may be correct, but looks suspicious.
     <a href="#exitAfterDefer-ref">exitAfterDefer</a>
   </td>
   <td>Detects calls to exit/fatal inside functions that use defer</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
+    <a href="#externalErrorReassign-ref">externalErrorReassign</a>
+  </td>
+  <td>Detects suspicious reassigment of error from another package</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#filepathJoin-ref">filepathJoin</a>
@@ -1176,7 +1186,7 @@ if cond {
 [
   **diagnostic** ]
 
-Detects duplicated case clauses inside switch statements.
+Detects duplicated case clauses inside switch or select statements.
 
 
 
@@ -1294,6 +1304,31 @@ Checker parameters:
 </li>
 
 </ul>
+
+
+  <a name="emptyDecl-ref"></a>
+## emptyDecl
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious empty declarations blocks.
+
+
+
+
+
+**Before:**
+```go
+var()
+```
+
+**After:**
+```go
+/* nothing */
+```
+
 
 
   <a name="emptyFallthrough-ref"></a>
@@ -1457,6 +1492,31 @@ type Foo struct{ ...; sync.Mutex; ... }
 **After:**
 ```go
 type Foo struct{ ...; mu sync.Mutex; ... }
+```
+
+
+
+  <a name="externalErrorReassign-ref"></a>
+## externalErrorReassign
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious reassigment of error from another package.
+
+
+
+
+
+**Before:**
+```go
+io.EOF = nil
+```
+
+**After:**
+```go
+/* don't do it */
 ```
 
 
