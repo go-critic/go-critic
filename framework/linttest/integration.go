@@ -3,7 +3,6 @@ package linttest
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -25,7 +24,7 @@ func (cfg *IntegrationTest) Run(t *testing.T) {
 		t.Fatalf("build linter: %v", err)
 	}
 
-	files, err := ioutil.ReadDir(absDir)
+	files, err := os.ReadDir(absDir)
 	if err != nil {
 		t.Fatalf("list test files: %v", err)
 	}
@@ -46,7 +45,7 @@ func (cfg *IntegrationTest) Run(t *testing.T) {
 }
 
 func (cfg *IntegrationTest) runTest(t *testing.T, gocritic, gopath string) {
-	data, err := ioutil.ReadFile("linttest.params")
+	data, err := os.ReadFile("linttest.params")
 	if err != nil {
 		t.Fatalf("reading linter run params: %v", err)
 	}
@@ -71,7 +70,7 @@ func (cfg *IntegrationTest) runTest(t *testing.T, gocritic, gopath string) {
 		if data, ok := goldenDataCache[goldenFile]; ok {
 			want = data
 		} else {
-			data, err := ioutil.ReadFile(goldenFile)
+			data, err := os.ReadFile(goldenFile)
 			if err != nil {
 				t.Errorf("read golden file: %v", err)
 			}
