@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
 	"log"
+	"os"
 	"text/template"
 
 	_ "github.com/go-critic/go-critic/checkers"
@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("render template: %v", err)
 	}
-	if err := ioutil.WriteFile(docsPath+"overview.md", buf.Bytes(), 0o600); err != nil {
+	if err := os.WriteFile(docsPath+"overview.md", buf.Bytes(), 0o600); err != nil {
 		log.Fatalf("write output file: %v", err)
 	}
 }

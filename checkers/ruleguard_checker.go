@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -130,7 +129,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 			return nil, fmt.Errorf("ruleguard init error: no file matching '%s'", strings.TrimSpace(filePattern))
 		}
 		for _, filename := range filenames {
-			data, err := ioutil.ReadFile(filename)
+			data, err := os.ReadFile(filename)
 			if err != nil {
 				if h.failOnParseError(err) {
 					return nil, fmt.Errorf("ruleguard init error: %+v", err)
