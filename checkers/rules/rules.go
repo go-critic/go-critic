@@ -690,3 +690,13 @@ func externalErrorReassign(m dsl.Matcher) {
 		Where(m["err"].Type.Is(`error`) && m["pkg"].Object.Is(`PkgName`)).
 		Report(`suspicious reassigment of error from another package`)
 }
+
+//doc:summary Detects suspicious empty declarations blocks
+//doc:tags    diagnostic experimental
+//doc:before  var()
+//doc:after   /* nothing */
+func emptyDecl(m dsl.Matcher) {
+	m.Match(`var()`).Report(`empty var() block`)
+	m.Match(`const()`).Report(`empty const() block`)
+	m.Match(`type()`).Report(`empty type() block`)
+}
