@@ -684,8 +684,8 @@ func suspiciousSorting(m dsl.Matcher) {
 //doc:summary Detects suspicious reassigment of error from another package
 //doc:tags    diagnostic experimental
 //doc:before  io.EOF = nil
-//doc:after   -
-func suspiciousErrorReassign(m dsl.Matcher) {
+//doc:after   /* don't do it */
+func externalErrorReassign(m dsl.Matcher) {
 	m.Match(`$pkg.$err = $x`).
 		Where(m["err"].Type.Is(`error`) && m["pkg"].Object.Is(`PkgName`)).
 		Report(`suspicious reassigment of error from another package`)

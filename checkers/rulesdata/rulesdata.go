@@ -2560,7 +2560,7 @@ var PrecompiledRules = &ir.File{
 		},
 		ir.RuleGroup{
 			Line:        688,
-			Name:        "suspiciousErrorReassign",
+			Name:        "externalErrorReassign",
 			MatcherName: "m",
 			DocTags: []string{
 				"diagnostic",
@@ -2568,7 +2568,7 @@ var PrecompiledRules = &ir.File{
 			},
 			DocSummary: "Detects suspicious reassigment of error from another package",
 			DocBefore:  "io.EOF = nil",
-			DocAfter:   "-",
+			DocAfter:   "/* don't do it */",
 			Rules: []ir.Rule{
 				ir.Rule{
 					Line: 689,
