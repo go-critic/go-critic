@@ -58,3 +58,25 @@ func structSwitch() {
 	default:
 	}
 }
+
+func dupSelect(ch chan int) {
+	select {
+	case <-ch:
+	/*! 'case <-ch' is duplicated */
+	case <-ch:
+	}
+
+	select {
+	case ch <- 1:
+	/*! 'case ch <- 1' is duplicated */
+	case ch <- 1:
+	}
+
+	for {
+		select {
+		case ch <- 1 + 2:
+		/*! 'case ch <- 1 + 2' is duplicated */
+		case ch <- 1 + 2:
+		}
+	}
+}

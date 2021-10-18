@@ -49,3 +49,11 @@ func goodStructSwitch() {
 	default:
 	}
 }
+
+// currently not supported
+func goodSelect(ch chan int) {
+	select {
+	case ch <- 1 + 2:
+	case ch <- 2 + 1:
+	}
+}
