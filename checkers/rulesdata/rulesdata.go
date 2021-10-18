@@ -2495,7 +2495,7 @@ var PrecompiledRules = &ir.File{
 		},
 		ir.RuleGroup{
 			Line:        667,
-			Name:        "suspiciousSorting",
+			Name:        "badSorting",
 			MatcherName: "m",
 			DocTags: []string{
 				"diagnostic",

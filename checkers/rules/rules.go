@@ -664,7 +664,7 @@ func exposedSyncMutex(m dsl.Matcher) {
 //doc:tags    diagnostic experimental
 //doc:before  xs = sort.StringSlice(xs)
 //doc:after   sort.Strings(xs)
-func suspiciousSorting(m dsl.Matcher) {
+func badSorting(m dsl.Matcher) {
 	m.Match(`$x = sort.IntSlice($x)`).
 		Where(m["x"].Type.Is(`[]int`)).
 		Suggest(`sort.Ints($x)`).
