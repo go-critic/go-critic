@@ -30,6 +30,10 @@ func init() {
 			Usage: "enable debug for the specified named rules group",
 		},
 		"failOnError": {
+			Value: false,
+			Usage: "deprecated, use failOn param; if set to true, identical to failOn='all', otherwise failOn=''",
+		},
+		"failOn": {
 			Value: "",
 			Usage: `Determines the behavior when an error occurs while parsing ruleguard files.
 If flag is not set, log error and skip rule files that contain an error.
@@ -104,7 +108,13 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	if rulesFlag == "" {
 		return c, nil
 	}
-	h, err := newErrorHandler(info.Params.String("failOnError"))
+	failOn := info.Params.String("failOn")
+	if failOn == "" {
+		if info.Params.Bool("failOnError") {
+			failOn = "all"
+		}
+	}
+	h, err := newErrorHandler(failOn)
 	if err != nil {
 		return nil, err
 	}
