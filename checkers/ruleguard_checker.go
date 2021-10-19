@@ -124,8 +124,14 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	fset := token.NewFileSet()
 	filePatterns := strings.Split(rulesFlag, ",")
 
+	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
+
 	loadContext := &ruleguard.LoadContext{
-		Fset: fset,
+		Fset:         fset,
+		DebugImports: ruleguardDebug,
+		DebugPrint: func(s string) {
+			fmt.Println("debug:", s)
+		},
 	}
 
 	loaded := 0
