@@ -1564,8 +1564,8 @@ var PrecompiledRules = &ir.File{
 				"experimental",
 			},
 			DocSummary: "Detects suspicious http.Error call without following return",
-			DocBefore:  "x + string(os.PathSeparator) + y",
-			DocAfter:   "filepath.Join(x, y)",
+			DocBefore:  "if err != nil { http.Error(...); }",
+			DocAfter:   "if err != nil { http.Error(...); return; }",
 			Rules: []ir.Rule{
 				ir.Rule{
 					Line: 416,
