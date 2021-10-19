@@ -410,8 +410,8 @@ func dupArg(m dsl.Matcher) {
 
 //doc:summary Detects suspicious http.Error call without following return
 //doc:tags    diagnostic experimental
-//doc:before  x + string(os.PathSeparator) + y
-//doc:after   filepath.Join(x, y)
+//doc:before  if err != nil { http.Error(...); }
+//doc:after   if err != nil { http.Error(...); return; }
 func returnAfterHttpError(m dsl.Matcher) {
 	m.Match(`if $_ { $*_; http.Error($w, $err, $code) }`).
 		Report("Possibly return is missed after the http.Error call").
