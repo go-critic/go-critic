@@ -110,6 +110,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	}
 
 	engine := ruleguard.NewEngine()
+	engine.InferBuildContext()
 	fset := token.NewFileSet()
 	filePatterns := strings.Split(rulesFlag, ",")
 
