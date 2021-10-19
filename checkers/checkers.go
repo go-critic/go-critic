@@ -34,6 +34,8 @@ func init() {
 
 	var buildContext *build.Context
 
+	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
+
 	// First we create an Engine to parse all rules.
 	// We need it to get the structured info about our rules
 	// that will be used to generate checkers.
@@ -46,7 +48,11 @@ func init() {
 		buildContext = rootEngine.BuildContext
 
 		loadContext := &ruleguard.LoadContext{
-			Fset: fset,
+			Fset:         fset,
+			DebugImports: ruleguardDebug,
+			DebugPrint: func(s string) {
+				fmt.Println("debug:", s)
+			},
 		}
 		if err := rootEngine.LoadFromIR(loadContext, filename, rulesdata.PrecompiledRules); err != nil {
 			panic(fmt.Sprintf("load embedded ruleguard rules: %v", err))
@@ -73,6 +79,10 @@ func init() {
 				Fset: fset,
 				GroupFilter: func(name string) bool {
 					return name == g.Name
+				},
+				DebugImports: ruleguardDebug,
+				DebugPrint: func(s string) {
+					fmt.Println("debug:", s)
 				},
 			}
 			engine := ruleguard.NewEngine()
