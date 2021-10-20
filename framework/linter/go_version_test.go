@@ -18,7 +18,10 @@ func TestGoVersionParse(t *testing.T) {
 	}
 
 	runTest := func(x string, wantMajor, wantMinor int) {
-		have := parseGoVersion(x)
+		have, err := ParseGoVersion(x)
+		if err != nil {
+			t.Fatalf("parse %q: %v", x, err)
+		}
 		if have.Major != wantMajor {
 			t.Errorf("parseGoVersion(%s); major: want %d, have %d", x, wantMajor, have.Major)
 		}
@@ -57,6 +60,14 @@ func TestGoVersionCompare(t *testing.T) {
 		{"2.0", "1.254", true},
 		{"2.0", "2.0", true},
 		{"2.0", "2.1", false},
+	}
+
+	parseGoVersion := func(s string) GoVersion {
+		v, err := ParseGoVersion(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		return v
 	}
 
 	runTest := func(x, y string, want bool) {
