@@ -54,6 +54,11 @@ They also detect code that may be correct, but looks suspicious.
   <td>Detects suspicious regexp patterns</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
+    <a href="#badSorting-ref">badSorting</a>
+  </td>
+  <td>Detects bad usage of sort package</td>
+</tr><tr>
+  <td nowrap>:white_check_mark:
     <a href="#builtinShadowDecl-ref">builtinShadowDecl</a>
   </td>
   <td>Detects top-level declarations that shadow the predeclared identifiers</td>
@@ -182,11 +187,6 @@ They also detect code that may be correct, but looks suspicious.
     <a href="#sqlQuery-ref">sqlQuery</a>
   </td>
   <td>Detects issue in Query() and Exec() calls</td>
-</tr><tr>
-  <td nowrap>:white_check_mark:
-    <a href="#suspiciousSorting-ref">suspiciousSorting</a>
-  </td>
-  <td>Detects bad usage of sort package</td>
 </tr><tr>
   <td nowrap>:white_check_mark:
     <a href="#syncMapLoadAndDelete-ref">syncMapLoadAndDelete</a>
@@ -751,6 +751,31 @@ regexp.MustCompile(`(?:^aa|bb|cc)foo[aba]`)
 **After:**
 ```go
 regexp.MustCompile(`^(?:aa|bb|cc)foo[ab]`)
+```
+
+
+
+  <a name="badSorting-ref"></a>
+## badSorting
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects bad usage of sort package.
+
+
+
+
+
+**Before:**
+```go
+xs = sort.StringSlice(xs)
+```
+
+**After:**
+```go
+sort.Strings(xs)
 ```
 
 
@@ -2423,12 +2448,12 @@ Detects suspicious http.Error call without following return.
 
 **Before:**
 ```go
-x + string(os.PathSeparator) + y
+if err != nil { http.Error(...); }
 ```
 
 **After:**
 ```go
-filepath.Join(x, y)
+if err != nil { http.Error(...); return; }
 ```
 
 
@@ -2467,11 +2492,16 @@ Checker parameters:
 </li>
 <li>
 
-  `@ruleguard.failOnError` Determines the behavior when an error occurs while parsing ruleguard files.
+  `@ruleguard.failOn` Determines the behavior when an error occurs while parsing ruleguard files.
 If flag is not set, log error and skip rule files that contain an error.
 If flag is set, the value must be a comma-separated list of error conditions.
 * 'import': rule refers to a package that cannot be loaded.
 * 'dsl':    gorule file does not comply with the ruleguard DSL. (default )
+
+</li>
+<li>
+
+  `@ruleguard.failOnError` deprecated, use failOn param; if set to true, identical to failOn='all', otherwise failOn='' (default false)
 
 </li>
 <li>
@@ -2734,31 +2764,6 @@ copy(b, []byte(s))
 **After:**
 ```go
 copy(b, s)
-```
-
-
-
-  <a name="suspiciousSorting-ref"></a>
-## suspiciousSorting
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects bad usage of sort package.
-
-
-
-
-
-**Before:**
-```go
-xs = sort.StringSlice(xs)
-```
-
-**After:**
-```go
-sort.Strings(xs)
 ```
 
 

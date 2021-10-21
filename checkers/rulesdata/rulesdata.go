@@ -1432,7 +1432,7 @@ var PrecompiledRules = &ir.File{
 				"performance",
 				"experimental",
 			},
-			DocSummary: "Detects fmt.Sprint(f|ln) calls which can be replaced with fmt.Fprint(f|ln)",
+			DocSummary: "Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln)",
 			DocBefore:  "w.Write([]byte(fmt.Sprintf(\"%x\", 10)))",
 			DocAfter:   "fmt.Fprintf(w, \"%x\", 10)",
 			Rules: []ir.Rule{
