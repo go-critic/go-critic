@@ -339,7 +339,7 @@ func preferWriteByte(m dsl.Matcher) {
 	).Report(`consider replacing $$ with $w.WriteByte($c)`)
 }
 
-//doc:summary Detects fmt.Sprint(f|ln) calls which can be replaced with fmt.Fprint(f|ln)
+//doc:summary Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln)
 //doc:tags    performance experimental
 //doc:before  w.Write([]byte(fmt.Sprintf("%x", 10)))
 //doc:after   fmt.Fprintf(w, "%x", 10)
