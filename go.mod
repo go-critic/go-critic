@@ -1,6 +1,6 @@
 module github.com/go-critic/go-critic
 
-go 1.17
+go 1.16
 
 require (
 	github.com/go-toolsmith/astcast v1.0.0
@@ -20,11 +20,4 @@ require (
 	github.com/quasilyte/go-ruleguard/dsl v0.3.10
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
 	golang.org/x/tools v0.0.0-20201230224404-63754364767c
-)
-
-require (
-	github.com/go-toolsmith/astinfo v0.0.0-20180906194353-9809ff7efb21 // indirect
-	github.com/kisielk/gotool v1.0.0 // indirect
-	golang.org/x/mod v0.3.0 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )
