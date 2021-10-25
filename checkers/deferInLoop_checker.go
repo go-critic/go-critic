@@ -15,7 +15,7 @@ func init() {
 	info.Tags = []string{"diagnostic", "experimental"}
 	info.Summary = "Detects loops inside functions that use defer"
 	info.Before = `
-for _, filename := range []string{"kek", "shrek"} {
+for _, filename := range []string{"foo", "bar"} {
 	 f, err := os.Open(filename)
 	
 	defer f.Close()
