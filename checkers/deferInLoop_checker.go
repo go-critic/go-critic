@@ -12,8 +12,8 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "deferInLoop"
-	info.Tags = []string{"diagnostic"}
-	info.Summary = "Detects cycles inside functions that use defer"
+	info.Tags = []string{"diagnostic", "experimental"}
+	info.Summary = "Detects loops inside functions that use defer"
 	info.Before = `
 for _, filename := range []string{"kek", "shrek"} {
 	 f, err := os.Open(filename)
@@ -27,9 +27,8 @@ func process(filename string) {
 	
 	defer f.Close()
 }
-...
-...
-for _, filename := range []string{"kek", "shrek"} {
+/* ... */
+for _, filename := range []string{"foo", "bar"} {
 	process(filename)
 }`
 

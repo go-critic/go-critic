@@ -136,7 +136,6 @@ func TestStableList(t *testing.T) {
 		"unslice",
 		"valSwap",
 		"wrapperFunc",
-		"deferInLoop",
 	}
 
 	m := make(map[string]bool)
