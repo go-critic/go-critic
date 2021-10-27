@@ -208,7 +208,21 @@ func assignStmt() {
 		}
 	}
 
-	go func() { f(); ff(); fff(); t(); tt() }()
+	var ttt = (func() {
+		for x := 0; x < 5; x++ {
+			/*! Possible resource leak, 'defer' is called in the 'for' loop */
+			defer println("ok")
+		}
+	})
+
+	go func() {
+		f()
+		ff()
+		fff()
+		t()
+		tt()
+		ttt()
+	}()
 }
 
 func contextBlock() {
