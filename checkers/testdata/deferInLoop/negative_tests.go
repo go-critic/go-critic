@@ -117,9 +117,7 @@ func negativeAssign() {
 	x := func() {
 		defer println(123)
 		for {
-			{
-				break
-			}
+			break
 		}
 		defer println(123)
 	}
@@ -127,9 +125,7 @@ func negativeAssign() {
 	var xx = func() {
 		defer println(123)
 		for {
-			{
-				break
-			}
+			break
 		}
 		defer println(123)
 	}
@@ -137,9 +133,7 @@ func negativeAssign() {
 	var xxx func() = func() {
 		defer println(123)
 		for {
-			{
-				break
-			}
+			break
 		}
 		defer println(123)
 	}
@@ -147,9 +141,7 @@ func negativeAssign() {
 	_ = func() {
 		defer println(123)
 		for {
-			{
-				break
-			}
+			break
 		}
 		defer println(123)
 	}
@@ -158,9 +150,7 @@ func negativeAssign() {
 		{
 			defer println(123)
 			for {
-				{
-					break
-				}
+				break
 			}
 			defer println(123)
 		}
@@ -169,13 +159,9 @@ func negativeAssign() {
 	var _ func() = func() {
 		{
 			defer println(123)
-		}
-		for {
-			{
+			for {
 				break
 			}
-		}
-		{
 			defer println(123)
 		}
 	}
@@ -198,9 +184,7 @@ func negativeFuncArgs() {
 		time.AfterFunc(time.Second, func() {
 			{
 				for {
-					{
-						break
-					}
+					break
 				}
 				defer println(123)
 			}

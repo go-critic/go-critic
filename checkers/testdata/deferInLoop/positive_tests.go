@@ -1,20 +1,19 @@
 package checker_test
 
 import (
-	"fmt"
 	"time"
 )
 
 func deferWithCall() {
 	for {
 		/*! Possible resource leak, 'defer' is called in the 'for' loop */
-		defer fmt.Println("test")
+		defer println("test")
 		break
 	}
 
 	for range []int{1, 2, 3, 4} {
 		/*! Possible resource leak, 'defer' is called in the 'for' loop */
-		defer fmt.Println("test")
+		defer println("test")
 	}
 }
 
@@ -46,7 +45,7 @@ func innerLoops() {
 	for {
 		for {
 			/*! Possible resource leak, 'defer' is called in the 'for' loop */
-			defer fmt.Println(123)
+			defer println(123)
 
 			break
 		}
