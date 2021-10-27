@@ -43,8 +43,6 @@ type deferInLoopChecker struct {
 }
 
 func (c *deferInLoopChecker) VisitFuncDecl(fn *ast.FuncDecl) {
-	// TODO: add func args check
-	// example: t.Run(123, func() { for { defer println(); break } })
 	var blockParser func(*ast.BlockStmt, bool)
 	blockParser = func(block *ast.BlockStmt, inFor bool) {
 		for _, cur := range block.List {
@@ -61,10 +59,40 @@ func (c *deferInLoopChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 				if f, ok := n.Call.Fun.(*ast.FuncLit); ok {
 					blockParser(f.Body, false)
 				}
+
+				for _, arg := range n.Call.Args {
+					if anon, ok := arg.(*ast.FuncLit); ok {
+						blockParser(anon.Body, false)
+					}
+				}
 			case *ast.ExprStmt:
 				if f, ok := n.X.(*ast.CallExpr); ok {
 					if anon, ok := f.Fun.(*ast.FuncLit); ok {
 						blockParser(anon.Body, false)
+					}
+
+					for _, arg := range f.Args {
+						if anon, ok := arg.(*ast.FuncLit); ok {
+							blockParser(anon.Body, false)
+						}
+					}
+				}
+			case *ast.AssignStmt:
+				for _, r := range n.Rhs {
+					if f, ok := r.(*ast.FuncLit); ok {
+						blockParser(f.Body, false)
+					}
+				}
+			case *ast.DeclStmt:
+				if n, ok := n.Decl.(*ast.GenDecl); ok {
+					for _, spec := range n.Specs {
+						if specValue, ok := spec.(*ast.ValueSpec); ok {
+							for _, v := range specValue.Values {
+								if f, ok := v.(*ast.FuncLit); ok {
+									blockParser(f.Body, false)
+								}
+							}
+						}
 					}
 				}
 			case *ast.BlockStmt:

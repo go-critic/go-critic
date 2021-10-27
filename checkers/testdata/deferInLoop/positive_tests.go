@@ -1,6 +1,9 @@
 package checker_test
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func deferWithCall() {
 	for {
@@ -109,6 +112,106 @@ func anonFunc() {
 	}()
 }
 
+func assignStmt() {
+	f, ff := func() {
+		{
+			defer println(123)
+			{
+				defer println(123)
+				for range []int{1, 2, 3} {
+					/*! Possible resource leak, 'defer' is called in the 'for' loop */
+					defer println(123)
+				}
+				defer println(123)
+			}
+		}
+	}, func() {
+		{
+			defer println(123)
+			{
+				defer println(123)
+				for range []int{1, 2, 3} {
+					/*! Possible resource leak, 'defer' is called in the 'for' loop */
+					defer println(123)
+				}
+				defer println(123)
+			}
+		}
+	}
+
+	fff := func() {
+		{
+			defer println(123)
+			{
+				defer println(123)
+				for range []int{1, 2, 3} {
+					/*! Possible resource leak, 'defer' is called in the 'for' loop */
+					defer println(123)
+				}
+				defer println(123)
+			}
+		}
+	}
+
+	var t = func() {
+		{
+			defer println(123)
+			{
+				defer println(123)
+				for range []int{1, 2, 3} {
+					/*! Possible resource leak, 'defer' is called in the 'for' loop */
+					defer println(123)
+				}
+				defer println(123)
+			}
+		}
+	}
+
+	var tt func() = func() {
+		{
+			defer println(123)
+			{
+				defer println(123)
+				for range []int{1, 2, 3} {
+					/*! Possible resource leak, 'defer' is called in the 'for' loop */
+					defer println(123)
+				}
+				defer println(123)
+			}
+		}
+	}
+
+	var _ = func() {
+		{
+			defer println(123)
+			{
+				defer println(123)
+				for range []int{1, 2, 3} {
+					/*! Possible resource leak, 'defer' is called in the 'for' loop */
+					defer println(123)
+				}
+				defer println(123)
+			}
+		}
+	}
+
+	_ = func() {
+		{
+			defer println(123)
+			{
+				defer println(123)
+				for range []int{1, 2, 3} {
+					/*! Possible resource leak, 'defer' is called in the 'for' loop */
+					defer println(123)
+				}
+				defer println(123)
+			}
+		}
+	}
+
+	go func() { f(); ff(); fff(); t(); tt() }()
+}
+
 func contextBlock() {
 	{
 		go func() {
@@ -178,3 +281,58 @@ func contextBlock() {
 		}
 	}()
 }
+
+type x string
+
+func funcArgs() {
+	time.AfterFunc(time.Second, func() {
+		for {
+			/*! Possible resource leak, 'defer' is called in the 'for' loop */
+			defer println(123)
+		}
+	})
+
+	{
+		time.AfterFunc(time.Second, func() {
+			{
+				for {
+					{
+						/*! Possible resource leak, 'defer' is called in the 'for' loop */
+						defer println(123)
+						break
+					}
+				}
+				defer println(123)
+			}
+		})
+	}
+
+	x("").closureExec(func() {
+		defer println(123)
+		for {
+			/*! Possible resource leak, 'defer' is called in the 'for' loop */
+			defer println(123)
+			break
+		}
+		defer println(123)
+	})
+
+	h := x("")
+	{
+		go h.closureExec(func() {
+			{
+				defer println(123)
+				{
+					defer println(123)
+					for range []int{1, 2, 3} {
+						/*! Possible resource leak, 'defer' is called in the 'for' loop */
+						defer println(123)
+					}
+					defer println(123)
+				}
+			}
+		})
+	}
+}
+
+func (x x) closureExec(f func()) { f() }

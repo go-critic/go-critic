@@ -24,6 +24,15 @@ func saneCheckersList(t *testing.T, checkers []*linter.CheckerInfo) []*linter.Ch
 	for _, info := range checkers {
 		pkgPath := "github.com/go-critic/go-critic/framework/linttest/testdata/sanity"
 		t.Run(info.Name+"/sanity", func(t *testing.T) {
+			defer func() {
+				r := recover()
+				if r != nil {
+					t.Errorf("unexpected panic: %v\n%s", r, debug.Stack())
+				} else {
+					saneList = append(saneList, info)
+				}
+			}()
+
 			fset := token.NewFileSet()
 			pkgs := newPackages(t, pkgPath, fset)
 			for _, pkg := range pkgs {
@@ -37,14 +46,6 @@ func saneCheckersList(t *testing.T, checkers []*linter.CheckerInfo) []*linter.Ch
 				if err != nil {
 					t.Errorf("Unexpected error: %v\n%s", err, debug.Stack())
 				}
-				defer func() {
-					r := recover()
-					if r != nil {
-						t.Errorf("unexpected panic: %v\n%s", r, debug.Stack())
-					} else {
-						saneList = append(saneList, info)
-					}
-				}()
 				for _, f := range pkg.Syntax {
 					ctx.SetFileInfo(getFilename(fset, f), f)
 					_ = c.Check(f)
