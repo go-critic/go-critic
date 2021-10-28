@@ -20,17 +20,13 @@ They also detect code that may be correct, but looks suspicious.
 
 > All diagnostics are enabled by default (unless it has "experimental" tag).
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Short description</th>
-  </tr>
+| Name                                                                  | Short description                                                               |
+|-----------------------------------------------------------------------|---------------------------------------------------------------------------------|
   {{- range .Checkers }}
     {{- if .HasTag "diagnostic" -}}
       {{ template "checker_tr" . }}
     {{- end -}}
   {{- end }}
-</table>
 
 ### Checkers from the "style" group
 
@@ -39,17 +35,13 @@ with another one that is considered more idiomatic or simple.
 
 > Only non-opinionated style checks are enabled by default.
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Short description</th>
-  </tr>
+| Name                                                                  | Short description                                                               |
+|-----------------------------------------------------------------------|---------------------------------------------------------------------------------|
   {{- range .Checkers }}
     {{- if .HasTag "style" -}}
       {{ template "checker_tr" . }}
     {{- end -}}
   {{- end }}
-</table>
 
 ### Checkers from the "performance" group
 
@@ -58,17 +50,13 @@ can make your code run slower than it could be.
 
 > All performance checks are disabled by default.
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Short description</th>
-  </tr>
+| Name                                                                  | Short description                                                               |
+|-----------------------------------------------------------------------|---------------------------------------------------------------------------------|
   {{- range .Checkers }}
     {{- if .HasTag "performance" -}}
       {{ template "checker_tr" . }}
     {{- end -}}
   {{- end }}
-</table>
 
 {{ range .Checkers }}
   {{ template "checker" . }}
