@@ -1,9 +1,9 @@
 {{ define "checker_tr" }}
 |
     {{- if not (or (.HasTag "experimental") (.HasTag "opinionated") (.HasTag "performance")) -}}
-          :heavy_check_mark:
+      :heavy_check_mark:
     {{- else -}}
-          :white_check_mark:
+      :white_check_mark:
     {{- end -}}
     [{{.Name}}](#{{.Name | ToLower}})|{{.Summary}}|
 {{- end -}}
