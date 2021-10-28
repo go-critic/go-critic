@@ -5,5 +5,5 @@
     {{- else -}}
           :white_check_mark:
     {{- end -}}
-    <a href="#{{.Name}}-ref">{{.Name}}</a>|{{.Summary}}|
+    [{{.Name}}](#{{.Name | ToLower}})|{{.Summary}}|
 {{- end -}}

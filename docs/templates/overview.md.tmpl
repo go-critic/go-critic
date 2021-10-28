@@ -20,8 +20,8 @@ They also detect code that may be correct, but looks suspicious.
 
 > All diagnostics are enabled by default (unless it has "experimental" tag).
 
-| Name                                                                  | Short description                                                               |
-|-----------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| Name | Short description |
+|------|-------------------|
   {{- range .Checkers }}
     {{- if .HasTag "diagnostic" -}}
       {{ template "checker_tr" . }}
@@ -35,8 +35,8 @@ with another one that is considered more idiomatic or simple.
 
 > Only non-opinionated style checks are enabled by default.
 
-| Name                                                                  | Short description                                                               |
-|-----------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| Name | Short description |
+|------|-------------------|
   {{- range .Checkers }}
     {{- if .HasTag "style" -}}
       {{ template "checker_tr" . }}
@@ -50,8 +50,8 @@ can make your code run slower than it could be.
 
 > All performance checks are disabled by default.
 
-| Name                                                                  | Short description                                                               |
-|-----------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| Name | Short description |
+|------|-------------------|
   {{- range .Checkers }}
     {{- if .HasTag "performance" -}}
       {{ template "checker_tr" . }}
@@ -59,7 +59,7 @@ can make your code run slower than it could be.
   {{- end }}
 
 {{ range .Checkers }}
-  {{ template "checker" . }}
+  {{- template "checker" . }}
 {{ end }}
 
 {{- end }}

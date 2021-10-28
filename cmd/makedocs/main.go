@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"log"
 	"os"
+	"strings"
 	"text/template"
 
 	_ "github.com/go-critic/go-critic/checkers"
@@ -40,5 +41,8 @@ func parseTemplate(names ...string) *template.Template {
 	for i := range names {
 		paths[i] = templatesPath + names[i]
 	}
-	return template.Must(template.ParseFiles(paths...))
+	funcMap := template.FuncMap{
+		"ToLower": strings.ToLower,
+	}
+	return template.Must(template.New("overview").Funcs(funcMap).ParseFiles(paths...))
 }
