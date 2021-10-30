@@ -166,6 +166,15 @@ func negativeAssign() {
 		}
 	}
 
+	var _ = (func() {
+		{
+			defer println(123)
+			for range []int{1, 2, 3} {
+			}
+			defer println(123)
+		}
+	})
+
 	x()
 	xx()
 	xxx()
@@ -179,6 +188,14 @@ func negativeFuncArgs() {
 		}
 		defer println(123)
 	})
+
+	time.AfterFunc(time.Second, (func() {
+		defer println(123)
+		for {
+			break
+		}
+		defer println(123)
+	}))
 
 	{
 		time.AfterFunc(time.Second, func() {

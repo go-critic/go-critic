@@ -209,20 +209,33 @@ func assignStmt() {
 	}
 
 	var ttt = (func() {
-		for x := 0; x < 5; x++ {
-			/*! Possible resource leak, 'defer' is called in the 'for' loop */
-			defer println("ok")
+		{
+			defer println(123)
+			for x := 0; x < 5; x++ {
+				/*! Possible resource leak, 'defer' is called in the 'for' loop */
+				defer println(123)
+			}
+			defer println(123)
 		}
 	})
 
-	go func() {
-		f()
-		ff()
-		fff()
-		t()
-		tt()
-		ttt()
-	}()
+	var _ = (func() {
+		{
+			defer println(123)
+			for range []int{1, 2, 3, 4} {
+				/*! Possible resource leak, 'defer' is called in the 'for' loop */
+				defer println(123)
+			}
+			defer println(123)
+		}
+	})
+
+	f()
+	ff()
+	fff()
+	t()
+	tt()
+	ttt()
 }
 
 func contextBlock() {
@@ -235,6 +248,14 @@ func contextBlock() {
 			}
 		}()
 	}
+
+	go (func() {
+		for {
+			/*! Possible resource leak, 'defer' is called in the 'for' loop */
+			defer println(123)
+			break
+		}
+	})()
 
 	{
 		func() {
