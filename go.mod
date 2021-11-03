@@ -19,5 +19,5 @@ require (
 	github.com/quasilyte/go-ruleguard v0.3.13
 	github.com/quasilyte/go-ruleguard/dsl v0.3.10
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
-	golang.org/x/tools v0.0.0-20201230224404-63754364767c
+	golang.org/x/tools v0.1.8-0.20211102225717-714668c9f9a3
 )
