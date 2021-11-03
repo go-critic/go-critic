@@ -3,8 +3,6 @@ package checkers
 import (
 	"go/ast"
 
-	"golang.org/x/tools/go/ast/astutil"
-
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
 )
@@ -39,47 +37,32 @@ for _, filename := range []string{"foo", "bar"} {
 
 type deferInLoopChecker struct {
 	astwalk.WalkHandler
-	ctx *linter.CheckerContext
+	ctx   *linter.CheckerContext
+	inFor bool
 }
 
 func (c *deferInLoopChecker) VisitFuncDecl(fn *ast.FuncDecl) {
-	// TODO: add func args check
-	// example: t.Run(123, func() { for { defer println(); break } })
-	var blockParser func(*ast.BlockStmt, bool)
-	blockParser = func(block *ast.BlockStmt, inFor bool) {
-		for _, cur := range block.List {
-			switch n := cur.(type) {
-			case *ast.DeferStmt:
-				if inFor {
-					c.warn(n)
-				}
-			case *ast.RangeStmt:
-				blockParser(n.Body, true)
-			case *ast.ForStmt:
-				blockParser(n.Body, true)
-			case *ast.GoStmt:
-				if f, ok := n.Call.Fun.(*ast.FuncLit); ok {
-					blockParser(f.Body, false)
-				}
-			case *ast.ExprStmt:
-				if f, ok := n.X.(*ast.CallExpr); ok {
-					if anon, ok := f.Fun.(*ast.FuncLit); ok {
-						blockParser(anon.Body, false)
-					}
-				}
-			case *ast.BlockStmt:
-				blockParser(n, inFor)
-			}
+	ast.Inspect(fn.Body, c.traversalFunc)
+}
+
+func (c deferInLoopChecker) traversalFunc(cur ast.Node) bool {
+	switch n := cur.(type) {
+	case *ast.DeferStmt:
+		if c.inFor {
+			c.warn(n)
 		}
-	}
-	pre := func(cur *astutil.Cursor) bool {
-		if n, ok := cur.Node().(*ast.BlockStmt); ok {
-			blockParser(n, false)
+	case *ast.RangeStmt, *ast.ForStmt:
+		if !c.inFor {
+			ast.Inspect(cur, deferInLoopChecker{ctx: c.ctx, inFor: true}.traversalFunc)
+			return false
 		}
+	case *ast.FuncLit:
+		ast.Inspect(n.Body, deferInLoopChecker{ctx: c.ctx, inFor: false}.traversalFunc)
+		return false
+	case nil:
 		return false
 	}
-
-	astutil.Apply(fn.Body, pre, nil)
+	return true
 }
 
 func (c *deferInLoopChecker) warn(cause *ast.DeferStmt) {
