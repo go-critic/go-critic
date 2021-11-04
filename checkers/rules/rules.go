@@ -329,14 +329,17 @@ func assignOp(m dsl.Matcher) {
 	m.Match(`$x = $x &^ $y`).Where(m["x"].Pure).Report("replace `$$` with `$x &^= $y`")
 }
 
-//doc:summary Detects WriteRune calls with byte literal argument and reports to use WriteByte instead
-//doc:tags    performance experimental
+//doc:summary Detects WriteRune calls with rune literal argument that is single byte and reports to use WriteByte instead
+//doc:tags    performance experimental opinionated
 //doc:before  w.WriteRune('\n')
 //doc:after   w.WriteByte('\n')
 func preferWriteByte(m dsl.Matcher) {
+	// utf8.RuneSelf:
+	// characters below RuneSelf are represented as themselves in a single byte.
+	const runeSelf = 0x80
 	m.Match(`$w.WriteRune($c)`).Where(
-		m["w"].Type.Implements("io.ByteWriter") && (m["c"].Const && m["c"].Value.Int() < 256),
-	).Report(`consider replacing $$ with $w.WriteByte($c)`)
+		m["w"].Type.Implements("io.ByteWriter") && (m["c"].Const && m["c"].Value.Int() < runeSelf),
+	).Report(`consider writing single byte rune $$ with $w.WriteByte($c)`)
 }
 
 //doc:summary Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln)
