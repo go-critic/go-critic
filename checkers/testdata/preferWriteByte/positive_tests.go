@@ -5,6 +5,6 @@ import (
 )
 
 func _(b *strings.Builder) {
-	/*! consider replacing b.WriteRune('\n') with b.WriteByte('\n') */
+	/*! consider writing single byte rune '\n' with b.WriteByte('\n') */
 	b.WriteRune('\n')
 }
