@@ -1373,7 +1373,7 @@ var PrecompiledRules = &ir.File{
 					SyntaxPatterns: []ir.PatternString{
 						ir.PatternString{Line: 340, Value: "$w.WriteRune($c)"},
 					},
-					ReportTemplate: "consider writing single byte rune $$ with $w.WriteByte($c)",
+					ReportTemplate: "consider writing single byte rune $c with $w.WriteByte($c)",
 					WhereExpr: ir.FilterExpr{
 						Line: 341,
 						Op:   ir.FilterAndOp,
@@ -2678,4 +2678,3 @@ var PrecompiledRules = &ir.File{
 		},
 	},
 }
-

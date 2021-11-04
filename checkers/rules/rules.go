@@ -339,7 +339,7 @@ func preferWriteByte(m dsl.Matcher) {
 	const runeSelf = 0x80
 	m.Match(`$w.WriteRune($c)`).Where(
 		m["w"].Type.Implements("io.ByteWriter") && (m["c"].Const && m["c"].Value.Int() < runeSelf),
-	).Report(`consider writing single byte rune $$ with $w.WriteByte($c)`)
+	).Report(`consider writing single byte rune $c with $w.WriteByte($c)`)
 }
 
 //doc:summary Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln)
