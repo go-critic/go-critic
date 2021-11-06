@@ -371,6 +371,16 @@ func preferFprint(m dsl.Matcher) {
 	m.Match(`io.WriteString($w, fmt.Sprint($*args))`).Suggest(`fmt.Fprint($w, $args)`)
 	m.Match(`io.WriteString($w, fmt.Sprintf($*args))`).Suggest(`fmt.Fprintf($w, $args)`)
 	m.Match(`io.WriteString($w, fmt.Sprintln($*args))`).Suggest(`fmt.Fprintln($w, $args)`)
+
+	m.Match("$w.WriteString(fmt.Sprint($*args))").
+		Where(m["w"].Type.Implements("io.Writer") && m["w"].Type.Implements("io.StringWriter")).
+		Suggest("fmt.Fprint($w, $args)")
+	m.Match("$w.WriteString(fmt.Sprintf($*args))").
+		Where(m["w"].Type.Implements("io.Writer") && m["w"].Type.Implements("io.StringWriter")).
+		Suggest("fmt.Fprintf($w, $args)")
+	m.Match("$w.WriteString(fmt.Sprintln($*args))").
+		Where(m["w"].Type.Implements("io.Writer") && m["w"].Type.Implements("io.StringWriter")).
+		Suggest(`fmt.Fprintln($w, $args)`)
 }
 
 //doc:summary Detects suspicious duplicated arguments
