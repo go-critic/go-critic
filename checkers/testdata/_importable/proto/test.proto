@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+message Test {
+  string s = 1;
+  Embedded embedded = 2;
+}
+
+message Embedded {
+  string s = 1;
+  Embedded embedded = 2;
+}
+
+service Testing {
+  rpc Call(Test) returns (Test);
+}
