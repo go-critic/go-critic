@@ -96,3 +96,7 @@ func namedPointers2() (**namedInt, *namedStruct) {
 func namedPointers3() (**namedInt, ***namedStruct) {
 	return nil, nil
 }
+
+func named2() (f1, f2 float64) { 
+	return 0, 0
+}
