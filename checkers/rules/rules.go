@@ -45,21 +45,27 @@ func deferUnlambda(m dsl.Matcher) {
 //doc:after   io.ReadAll(r)
 func ioutilDeprecated(m dsl.Matcher) {
 	m.Match(`ioutil.ReadAll($_)`).
+		Where(m.GoVersion().GreaterEqThan("1.16")).
 		Report(`ioutil.ReadAll is deprecated, use io.ReadAll instead`)
 
 	m.Match(`ioutil.ReadFile($_)`).
+		Where(m.GoVersion().GreaterEqThan("1.16")).
 		Report(`ioutil.ReadFile is deprecated, use os.ReadFile instead`)
 
 	m.Match(`ioutil.WriteFile($_, $_, $_)`).
+		Where(m.GoVersion().GreaterEqThan("1.16")).
 		Report(`ioutil.WriteFile is deprecated, use os.WriteFile instead`)
 
 	m.Match(`ioutil.ReadDir($_)`).
+		Where(m.GoVersion().GreaterEqThan("1.16")).
 		Report(`ioutil.ReadDir is deprecated, use os.ReadDir instead`)
 
 	m.Match(`ioutil.NopCloser($_)`).
+		Where(m.GoVersion().GreaterEqThan("1.16")).
 		Report(`ioutil.NopCloser is deprecated, use io.NopCloser instead`)
 
 	m.Match(`ioutil.Discard`).
+		Where(m.GoVersion().GreaterEqThan("1.16")).
 		Report(`ioutil.Discard is deprecated, use io.Discard instead`)
 }
 
@@ -112,12 +118,14 @@ func httpNoBody(m dsl.Matcher) {
 	m.Match("http.NewRequest($method, $url, $nil)").
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequest($method, $url, http.NoBody)").
-		Report("http.NoBody should be preferred to the nil request body")
+		Report("http.NoBody should be preferred to the nil request body").
+		At(m["nil"])
 
 	m.Match("http.NewRequestWithContext($ctx, $method, $url, $nil)").
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequestWithContext($ctx, $method, $url, http.NoBody)").
-		Report("http.NoBody should be preferred to the nil request body")
+		Report("http.NoBody should be preferred to the nil request body").
+		At(m["nil"])
 }
 
 //doc:summary Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation
@@ -323,17 +331,20 @@ func assignOp(m dsl.Matcher) {
 	m.Match(`$x = $x &^ $y`).Where(m["x"].Pure).Report("replace `$$` with `$x &^= $y`")
 }
 
-//doc:summary Detects WriteRune calls with byte literal argument and reports to use WriteByte instead
-//doc:tags    performance experimental
+//doc:summary Detects WriteRune calls with rune literal argument that is single byte and reports to use WriteByte instead
+//doc:tags    performance experimental opinionated
 //doc:before  w.WriteRune('\n')
 //doc:after   w.WriteByte('\n')
 func preferWriteByte(m dsl.Matcher) {
+	// utf8.RuneSelf:
+	// characters below RuneSelf are represented as themselves in a single byte.
+	const runeSelf = 0x80
 	m.Match(`$w.WriteRune($c)`).Where(
-		m["w"].Type.Implements("io.ByteWriter") && (m["c"].Const && m["c"].Value.Int() < 256),
-	).Report(`consider replacing $$ with $w.WriteByte($c)`)
+		m["w"].Type.Implements("io.ByteWriter") && (m["c"].Const && m["c"].Value.Int() < runeSelf),
+	).Report(`consider writing single byte rune $c with $w.WriteByte($c)`)
 }
 
-//doc:summary Detects fmt.Sprint(f|ln) calls which can be replaced with fmt.Fprint(f|ln)
+//doc:summary Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln)
 //doc:tags    performance experimental
 //doc:before  w.Write([]byte(fmt.Sprintf("%x", 10)))
 //doc:after   fmt.Fprintf(w, "%x", 10)
@@ -404,8 +415,8 @@ func dupArg(m dsl.Matcher) {
 
 //doc:summary Detects suspicious http.Error call without following return
 //doc:tags    diagnostic experimental
-//doc:before  x + string(os.PathSeparator) + y
-//doc:after   filepath.Join(x, y)
+//doc:before  if err != nil { http.Error(...); }
+//doc:after   if err != nil { http.Error(...); return; }
 func returnAfterHttpError(m dsl.Matcher) {
 	m.Match(`if $_ { $*_; http.Error($w, $err, $code) }`).
 		Report("Possibly return is missed after the http.Error call").
@@ -480,6 +491,34 @@ func offBy1(m dsl.Matcher) {
 		Where(m["x"].Pure && m["x"].Type.Is(`[]$_`)).
 		Suggest(`$x[len($x)-1]`).
 		Report(`index expr always panics; maybe you wanted $x[len($x)-1]?`)
+
+	// TODO: use $slicing[$i:$*_] form when we'll update go-ruleguard
+	// version so it includes https://github.com/quasilyte/go-ruleguard/pull/284
+
+	m.Match(
+		`$i := strings.Index($s, $_); $_ := $slicing[$i:]`,
+		`$i := strings.Index($s, $_); $_ = $slicing[$i:]`,
+		`$i := bytes.Index($s, $_); $_ := $slicing[$i:]`,
+		`$i := bytes.Index($s, $_); $_ = $slicing[$i:]`).
+		Where(m["s"].Text == m["slicing"].Text).
+		Report(`Index() can return -1; maybe you wanted to do $s[$i+1:]`).
+		At(m["slicing"])
+
+	m.Match(
+		`$i := strings.Index($s, $_); $_ := $slicing[:$i]`,
+		`$i := strings.Index($s, $_); $_ = $slicing[:$i]`,
+		`$i := bytes.Index($s, $_); $_ := $slicing[:$i]`,
+		`$i := bytes.Index($s, $_); $_ = $slicing[:$i]`).
+		Where(m["s"].Text == m["slicing"].Text).
+		Report(`Index() can return -1; maybe you wanted to do $s[:$i+1]`).
+		At(m["slicing"])
+
+	m.Match(
+		`$s[strings.Index($s, $_):]`,
+		`$s[:strings.Index($s, $_)]`,
+		`$s[bytes.Index($s, $_):]`,
+		`$s[:bytes.Index($s, $_)]`).
+		Report(`Index() can return -1; maybe you wanted to do Index()+1`)
 }
 
 //doc:summary Detects slice expressions that can be simplified to sliced expression itself
@@ -590,4 +629,85 @@ func stringConcatSimplify(m dsl.Matcher) {
 	m.Match(`strings.Join([]string{$x, $y}, "")`).Suggest(`$x + $y`)
 	m.Match(`strings.Join([]string{$x, $y, $z}, "")`).Suggest(`$x + $y + $z`)
 	m.Match(`strings.Join([]string{$x, $y}, $glue)`).Suggest(`$x + $glue + $y`)
+}
+
+//doc:summary Detects manual conversion to milli- or microseconds
+//doc:tags    style experimental
+//doc:before  t.Unix() / 1000
+//doc:after   t.UnixMilli()
+func timeExprSimplify(m dsl.Matcher) {
+	m.Match(`$t.Unix() / 1000`).
+		Where(m.GoVersion().GreaterEqThan("1.17") &&
+			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Suggest("$t.UnixMilli()").
+		Report(`use $t.UnixMilli() instead of $$`)
+
+	m.Match(`$t.UnixNano() * 1000`).
+		Where(m.GoVersion().GreaterEqThan("1.17") &&
+			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Suggest("$t.UnixMicro()").
+		Report(`use $t.UnixMicro() instead of $$`)
+}
+
+//doc:summary Detects exposed methods from sync.Mutex and sync.RWMutex
+//doc:tags    style experimental
+//doc:before  type Foo struct{ ...; sync.Mutex; ... }
+//doc:after   type Foo struct{ ...; mu sync.Mutex; ... }
+func exposedSyncMutex(m dsl.Matcher) {
+	m.Match(`type $x struct { $*_; sync.Mutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed sync.Mutex")
+
+	m.Match(`type $x struct { $*_; *sync.Mutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed *sync.Mutex")
+
+	m.Match(`type $x struct { $*_; sync.RWMutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed sync.RWMutex")
+
+	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
+		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Report("don't embed *sync.RWMutex")
+}
+
+//doc:summary Detects bad usage of sort package
+//doc:tags    diagnostic experimental
+//doc:before  xs = sort.StringSlice(xs)
+//doc:after   sort.Strings(xs)
+func badSorting(m dsl.Matcher) {
+	m.Match(`$x = sort.IntSlice($x)`).
+		Where(m["x"].Type.Is(`[]int`)).
+		Suggest(`sort.Ints($x)`).
+		Report(`suspicious sort.IntSlice usage, maybe sort.Ints was intended?`)
+
+	m.Match(`$x = sort.Float64Slice($x)`).
+		Where(m["x"].Type.Is(`[]float64`)).
+		Suggest(`sort.Float64s($x)`).
+		Report(`suspicious sort.Float64s usage, maybe sort.Float64s was intended?`)
+
+	m.Match(`$x = sort.StringSlice($x)`).
+		Where(m["x"].Type.Is(`[]string`)).
+		Suggest(`sort.Strings($x)`).
+		Report(`suspicious sort.StringSlice usage, maybe sort.Strings was intended?`)
+}
+
+//doc:summary Detects suspicious reassigment of error from another package
+//doc:tags    diagnostic experimental
+//doc:before  io.EOF = nil
+//doc:after   /* don't do it */
+func externalErrorReassign(m dsl.Matcher) {
+	m.Match(`$pkg.$err = $x`).
+		Where(m["err"].Type.Is(`error`) && m["pkg"].Object.Is(`PkgName`)).
+		Report(`suspicious reassigment of error from another package`)
+}
+
+//doc:summary Detects suspicious empty declarations blocks
+//doc:tags    diagnostic experimental
+//doc:before  var()
+//doc:after   /* nothing */
+func emptyDecl(m dsl.Matcher) {
+	m.Match(`var()`).Report(`empty var() block`)
+	m.Match(`const()`).Report(`empty const() block`)
+	m.Match(`type()`).Report(`empty type() block`)
 }

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -31,6 +30,10 @@ func init() {
 			Usage: "enable debug for the specified named rules group",
 		},
 		"failOnError": {
+			Value: false,
+			Usage: "deprecated, use failOn param; if set to true, identical to failOn='all', otherwise failOn=''",
+		},
+		"failOn": {
 			Value: "",
 			Usage: `Determines the behavior when an error occurs while parsing ruleguard files.
 If flag is not set, log error and skip rule files that contain an error.
@@ -105,17 +108,30 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	if rulesFlag == "" {
 		return c, nil
 	}
-	h, err := newErrorHandler(info.Params.String("failOnError"))
+	failOn := info.Params.String("failOn")
+	if failOn == "" {
+		if info.Params.Bool("failOnError") {
+			failOn = "all"
+		}
+	}
+	h, err := newErrorHandler(failOn)
 	if err != nil {
 		return nil, err
 	}
 
 	engine := ruleguard.NewEngine()
+	engine.InferBuildContext()
 	fset := token.NewFileSet()
 	filePatterns := strings.Split(rulesFlag, ",")
 
+	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
+
 	loadContext := &ruleguard.LoadContext{
-		Fset: fset,
+		Fset:         fset,
+		DebugImports: ruleguardDebug,
+		DebugPrint: func(s string) {
+			fmt.Println("debug:", s)
+		},
 	}
 
 	loaded := 0
@@ -130,7 +146,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 			return nil, fmt.Errorf("ruleguard init error: no file matching '%s'", strings.TrimSpace(filePattern))
 		}
 		for _, filename := range filenames {
-			data, err := ioutil.ReadFile(filename)
+			data, err := os.ReadFile(filename)
 			if err != nil {
 				if h.failOnParseError(err) {
 					return nil, fmt.Errorf("ruleguard init error: %+v", err)

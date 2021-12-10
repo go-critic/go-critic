@@ -126,6 +126,7 @@ func TestStableList(t *testing.T) {
 		"regexpMust",
 		"singleCaseSwitch",
 		"sloppyLen",
+		"sloppyTypeAssert",
 		"stringXbytes",
 		"switchTrue",
 		"typeSwitchVar",
@@ -198,7 +199,7 @@ func TestExternal(t *testing.T) {
 			continue
 		}
 		if diff := cmp.Diff(want, have); diff != "" {
-			t.Errorf("%s output mismatches:\n%s", proj.Name(), diff)
+			t.Errorf("%s output mismatches (+have -want):\n%s", proj.Name(), diff)
 			continue
 		}
 	}

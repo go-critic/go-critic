@@ -4,6 +4,7 @@ package checkers
 import (
 	"fmt"
 	"go/ast"
+	"go/build"
 	"go/token"
 	"os"
 
@@ -31,6 +32,10 @@ func init() {
 	fset := token.NewFileSet()
 	var groups []ruleguard.GoRuleGroup
 
+	var buildContext *build.Context
+
+	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
+
 	// First we create an Engine to parse all rules.
 	// We need it to get the structured info about our rules
 	// that will be used to generate checkers.
@@ -39,9 +44,15 @@ func init() {
 	// LoadedGroups() returns a slice copy and that's all what we need.
 	{
 		rootEngine := ruleguard.NewEngine()
+		rootEngine.InferBuildContext()
+		buildContext = rootEngine.BuildContext
 
 		loadContext := &ruleguard.LoadContext{
-			Fset: fset,
+			Fset:         fset,
+			DebugImports: ruleguardDebug,
+			DebugPrint: func(s string) {
+				fmt.Println("debug:", s)
+			},
 		}
 		if err := rootEngine.LoadFromIR(loadContext, filename, rulesdata.PrecompiledRules); err != nil {
 			panic(fmt.Sprintf("load embedded ruleguard rules: %v", err))
@@ -69,8 +80,13 @@ func init() {
 				GroupFilter: func(name string) bool {
 					return name == g.Name
 				},
+				DebugImports: ruleguardDebug,
+				DebugPrint: func(s string) {
+					fmt.Println("debug:", s)
+				},
 			}
 			engine := ruleguard.NewEngine()
+			engine.BuildContext = buildContext
 			err := engine.LoadFromIR(parseContext, filename, rulesdata.PrecompiledRules)
 			if err != nil {
 				return nil, err

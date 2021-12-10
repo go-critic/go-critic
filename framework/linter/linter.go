@@ -232,7 +232,11 @@ func NewContext(fset *token.FileSet, sizes types.Sizes) *Context {
 // like all features are available. To make gocritic
 // more conservative, the upper Go version level should be adjusted.
 func (c *Context) SetGoVersion(version string) {
-	c.GoVersion = parseGoVersion(version)
+	v, err := ParseGoVersion(version)
+	if err != nil {
+		panic(err)
+	}
+	c.GoVersion = v
 }
 
 // SetPackageInfo sets package-related metadata.

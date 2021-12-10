@@ -52,6 +52,10 @@ func NoWarningsCalc() {
 	_, _ = calculateIntPair(-1, 2)
 	_, _ = calculateIntPair(0, 2)
 
+	_ = 0b00
+	_ = 0b1
+	_ = 0b_0000_0101
+
 	_ = math.Exp(12)
 	_ = math.Exp(0x12)
 	_ = math.Max(12, 0xd)

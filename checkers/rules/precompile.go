@@ -1,4 +1,5 @@
-//+build generate
+//go:build generate
+// +build generate
 
 package main
 
@@ -11,8 +12,8 @@ import (
 	"go/parser"
 	"go/token"
 	"go/types"
-	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"text/template"
 
@@ -38,7 +39,7 @@ func precompile() error {
 
 	fset := token.NewFileSet()
 	filename := strings.TrimSpace(*flagRules)
-	fileData, err := ioutil.ReadFile(filename)
+	fileData, err := os.ReadFile(filename)
 	if err != nil {
 		return fmt.Errorf("read %s: %v", filename, err)
 	}
@@ -90,7 +91,7 @@ var PrecompiledRules = &{{$.RulesText}}
 		return err
 	}
 
-	if err := ioutil.WriteFile(*flagOutput, generated.Bytes(), 0644); err != nil {
+	if err := os.WriteFile(*flagOutput, generated.Bytes(), 0644); err != nil {
 		return err
 	}
 

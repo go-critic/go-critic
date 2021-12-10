@@ -32,6 +32,7 @@ func main() {
 		{"darwin", "amd64"},
 		{"darwin", "arm64"},
 		{"windows", "amd64"},
+		{"windows", "arm64"},
 	}
 
 	for _, platform := range platforms {
