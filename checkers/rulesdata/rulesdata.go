@@ -2712,9 +2712,9 @@ var PrecompiledRules = &ir.File{
 				ir.Rule{
 					Line: 723,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 723, Value: "fmt.Errorf($f($*_))"},
+						ir.PatternString{Line: 723, Value: "fmt.Errorf($f($*args))"},
 					},
-					ReportTemplate:  "use errors.New($f($args)) or fmt.Errorf(\"%s\",$f($args)) instead",
+					ReportTemplate:  "use errors.New($f($*args)) or fmt.Errorf(\"%s\",$f($*args)) instead",
 					SuggestTemplate: "errors.New($f($*args))",
 				},
 			},

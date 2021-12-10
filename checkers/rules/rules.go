@@ -711,7 +711,7 @@ func emptyDecl(m dsl.Matcher) {
 }
 
 //doc:summary Detects bad usage of fmt.Errorf
-//doc:tags    diagnostic experimental
+//doc:tags    diagnostic experimental opinionated
 //doc:before  fmt.Errorf(xs)
 //doc:after   fmt.Errorf("%s", xs)
 func undefinedFormatting(m dsl.Matcher) {
@@ -720,7 +720,7 @@ func undefinedFormatting(m dsl.Matcher) {
 		Suggest("errors.New($f)").
 		Report(`use errors.New($f) or fmt.Errorf("%s", $f) instead`)
 
-	m.Match(`fmt.Errorf($f($*_))`).
+	m.Match(`fmt.Errorf($f($*args))`).
 		Suggest("errors.New($f($*args))").
-		Report(`use errors.New($f($args)) or fmt.Errorf("%s",$f($args)) instead`)
+		Report(`use errors.New($f($*args)) or fmt.Errorf("%s",$f($*args)) instead`)
 }
