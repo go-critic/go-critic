@@ -1,11 +1,12 @@
 package checkers
 
 import (
-	"github.com/go-critic/go-critic/checkers/internal/astwalk"
-	"github.com/go-critic/go-critic/framework/linter"
 	"go/ast"
 	"regexp"
 	"strings"
+
+	"github.com/go-critic/go-critic/checkers/internal/astwalk"
+	"github.com/go-critic/go-critic/framework/linter"
 )
 
 func init() {
@@ -37,7 +38,7 @@ type todoCommentWithoutCodeChecker struct {
 }
 
 func (c *todoCommentWithoutCodeChecker) VisitComment(cg *ast.CommentGroup) {
-	comment := cg.Text()
+	comment := strings.TrimSpace(cg.Text())
 	if strings.Contains(comment, "\n") {
 		return
 	}
