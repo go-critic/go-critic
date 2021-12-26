@@ -2679,31 +2679,31 @@ var PrecompiledRules = &ir.File{
 			},
 		},
 		ir.RuleGroup{
-			Line:        717,
-			Name:        "undefinedFormatting",
+			Line:        725,
+			Name:        "dynamicFmtString",
 			MatcherName: "m",
 			DocTags: []string{
 				"diagnostic",
 				"experimental",
 			},
-			DocSummary: "Detects bad usage of fmt.Errorf",
-			DocBefore:  "fmt.Errorf(xs)",
-			DocAfter:   "fmt.Errorf(\"%s\", xs)",
+			DocSummary: "Detects suspicious formatting strings usage",
+			DocBefore:  "fmt.Errorf(msg)",
+			DocAfter:   "fmt.Errorf(\"%s\", msg)",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line: 718,
+					Line: 726,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 718, Value: "fmt.Errorf($f)"},
+						ir.PatternString{Line: 726, Value: "fmt.Errorf($f)"},
 					},
 					ReportTemplate:  "use errors.New($f) or fmt.Errorf(\"%s\", $f) instead",
 					SuggestTemplate: "errors.New($f)",
 					WhereExpr: ir.FilterExpr{
-						Line: 719,
+						Line: 727,
 						Op:   ir.FilterNotOp,
 						Src:  "!m[\"f\"].Const",
 						Args: []ir.FilterExpr{
 							ir.FilterExpr{
-								Line:  719,
+								Line:  727,
 								Op:    ir.FilterVarConstOp,
 								Src:   "m[\"f\"].Const",
 								Value: "f",
@@ -2712,11 +2712,11 @@ var PrecompiledRules = &ir.File{
 					},
 				},
 				ir.Rule{
-					Line: 723,
+					Line: 731,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 723, Value: "fmt.Errorf($f($*args))"},
+						ir.PatternString{Line: 731, Value: "fmt.Errorf($f($*args))"},
 					},
-					ReportTemplate:  "use errors.New($f($*args)) or fmt.Errorf(\"%s\",$f($*args)) instead",
+					ReportTemplate:  "use errors.New($f($*args)) or fmt.Errorf(\"%s\", $f($*args)) instead",
 					SuggestTemplate: "errors.New($f($*args))",
 				},
 			},
