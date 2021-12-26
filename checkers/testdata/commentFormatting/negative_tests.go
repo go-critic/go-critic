@@ -3,6 +3,9 @@ package checker_test
 
 //nolint reason
 
+//noinspection this is ignored
+//noinspection ALL
+
 /*
 multi-line comments
 are ignored

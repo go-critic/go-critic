@@ -38,13 +38,13 @@ ci-tests:
 ci-linter:
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.30.0
 	@$(GOPATH_DIR)/bin/golangci-lint run -v
-	go install github.com/quasilyte/go-consistent
+	cd tools && go install github.com/quasilyte/go-consistent
 	@$(GOPATH_DIR)/bin/go-consistent ./...
 	go build -o gocritic ./cmd/gocritic
 	./gocritic check -enableAll ./...
 
 cover:
-	go install github.com/mattn/goveralls
+	cd tools && go install github.com/mattn/goveralls
 	goveralls -package github.com/go-critic/go-critic/checkers -coverprofile=coverage.out -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
 gocritic:

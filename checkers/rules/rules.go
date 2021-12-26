@@ -118,12 +118,14 @@ func httpNoBody(m dsl.Matcher) {
 	m.Match("http.NewRequest($method, $url, $nil)").
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequest($method, $url, http.NoBody)").
-		Report("http.NoBody should be preferred to the nil request body")
+		Report("http.NoBody should be preferred to the nil request body").
+		At(m["nil"])
 
 	m.Match("http.NewRequestWithContext($ctx, $method, $url, $nil)").
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequestWithContext($ctx, $method, $url, http.NoBody)").
-		Report("http.NoBody should be preferred to the nil request body")
+		Report("http.NoBody should be preferred to the nil request body").
+		At(m["nil"])
 }
 
 //doc:summary Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation
@@ -634,15 +636,17 @@ func stringConcatSimplify(m dsl.Matcher) {
 //doc:before  t.Unix() / 1000
 //doc:after   t.UnixMilli()
 func timeExprSimplify(m dsl.Matcher) {
+	isTime := func(v dsl.Var) bool {
+		return v.Type.Is(`time.Time`) || v.Type.Is(`*time.Time`)
+	}
+
 	m.Match(`$t.Unix() / 1000`).
-		Where(m.GoVersion().GreaterEqThan("1.17") &&
-			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Where(m.GoVersion().GreaterEqThan("1.17") && isTime(m["t"])).
 		Suggest("$t.UnixMilli()").
 		Report(`use $t.UnixMilli() instead of $$`)
 
 	m.Match(`$t.UnixNano() * 1000`).
-		Where(m.GoVersion().GreaterEqThan("1.17") &&
-			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Where(m.GoVersion().GreaterEqThan("1.17") && isTime(m["t"])).
 		Suggest("$t.UnixMicro()").
 		Report(`use $t.UnixMicro() instead of $$`)
 }
@@ -652,20 +656,24 @@ func timeExprSimplify(m dsl.Matcher) {
 //doc:before  type Foo struct{ ...; sync.Mutex; ... }
 //doc:after   type Foo struct{ ...; mu sync.Mutex; ... }
 func exposedSyncMutex(m dsl.Matcher) {
+	isExported := func(v dsl.Var) bool {
+		return v.Text.Matches(`^\p{Lu}`)
+	}
+
 	m.Match(`type $x struct { $*_; sync.Mutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed sync.Mutex")
 
 	m.Match(`type $x struct { $*_; *sync.Mutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed *sync.Mutex")
 
 	m.Match(`type $x struct { $*_; sync.RWMutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed sync.RWMutex")
 
 	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed *sync.RWMutex")
 }
 
