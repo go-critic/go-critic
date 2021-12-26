@@ -2678,6 +2678,49 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        717,
+			Name:        "undefinedFormatting",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects bad usage of fmt.Errorf",
+			DocBefore:  "fmt.Errorf(xs)",
+			DocAfter:   "fmt.Errorf(\"%s\", xs)",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 718,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 718, Value: "fmt.Errorf($f)"},
+					},
+					ReportTemplate:  "use errors.New($f) or fmt.Errorf(\"%s\", $f) instead",
+					SuggestTemplate: "errors.New($f)",
+					WhereExpr: ir.FilterExpr{
+						Line: 719,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"f\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  719,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"f\"].Const",
+								Value: "f",
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 723,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 723, Value: "fmt.Errorf($f($*args))"},
+					},
+					ReportTemplate:  "use errors.New($f($*args)) or fmt.Errorf(\"%s\",$f($*args)) instead",
+					SuggestTemplate: "errors.New($f($*args))",
+				},
+			},
+		},
 	},
 }
 

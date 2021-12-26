@@ -717,3 +717,18 @@ func emptyDecl(m dsl.Matcher) {
 	m.Match(`const()`).Report(`empty const() block`)
 	m.Match(`type()`).Report(`empty type() block`)
 }
+
+//doc:summary Detects bad usage of fmt.Errorf
+//doc:tags    diagnostic experimental opinionated
+//doc:before  fmt.Errorf(xs)
+//doc:after   fmt.Errorf("%s", xs)
+func undefinedFormatting(m dsl.Matcher) {
+	m.Match(`fmt.Errorf($f)`).
+		Where(!m["f"].Const).
+		Suggest("errors.New($f)").
+		Report(`use errors.New($f) or fmt.Errorf("%s", $f) instead`)
+
+	m.Match(`fmt.Errorf($f($*args))`).
+		Suggest("errors.New($f($*args))").
+		Report(`use errors.New($f($*args)) or fmt.Errorf("%s",$f($*args)) instead`)
+}
