@@ -7,7 +7,7 @@ import (
 	"github.com/go-critic/go-critic/framework/linter"
 )
 
-// CheckersFromDylib loads checkers provided by a dynamic lybrary found under path.
+// CheckersFromDylib loads checkers provided by a dynamic library found under path.
 //
 // The returned info slice must be re-assigned to the original info slice,
 // since there will be new entries there.

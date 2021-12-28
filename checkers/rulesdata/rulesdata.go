@@ -2361,44 +2361,44 @@ var PrecompiledRules = &ir.File{
 			DocAfter:   "t.UnixMilli()",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line: 639,
+					Line: 643,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 639, Value: "$t.Unix() / 1000"},
+						ir.PatternString{Line: 643, Value: "$t.Unix() / 1000"},
 					},
 					ReportTemplate:  "use $t.UnixMilli() instead of $$",
 					SuggestTemplate: "$t.UnixMilli()",
 					WhereExpr: ir.FilterExpr{
-						Line: 640,
+						Line: 644,
 						Op:   ir.FilterAndOp,
-						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") &&\n\t(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") && isTime(m[\"t\"])",
 						Args: []ir.FilterExpr{
 							ir.FilterExpr{
-								Line:  640,
+								Line:  644,
 								Op:    ir.FilterGoVersionGreaterEqThanOp,
 								Src:   "m.GoVersion().GreaterEqThan(\"1.17\")",
 								Value: "1.17",
 							},
 							ir.FilterExpr{
-								Line: 641,
+								Line: 644,
 								Op:   ir.FilterOrOp,
-								Src:  "(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+								Src:  "isTime(m[\"t\"])",
 								Args: []ir.FilterExpr{
 									ir.FilterExpr{
-										Line:  641,
+										Line:  644,
 										Op:    ir.FilterVarTypeIsOp,
 										Src:   "m[\"t\"].Type.Is(`time.Time`)",
 										Value: "t",
 										Args: []ir.FilterExpr{
-											ir.FilterExpr{Line: 641, Op: ir.FilterStringOp, Src: "`time.Time`", Value: "time.Time"},
+											ir.FilterExpr{Line: 640, Op: ir.FilterStringOp, Src: "`time.Time`", Value: "time.Time"},
 										},
 									},
 									ir.FilterExpr{
-										Line:  641,
+										Line:  644,
 										Op:    ir.FilterVarTypeIsOp,
 										Src:   "m[\"t\"].Type.Is(`*time.Time`)",
 										Value: "t",
 										Args: []ir.FilterExpr{
-											ir.FilterExpr{Line: 641, Op: ir.FilterStringOp, Src: "`*time.Time`", Value: "*time.Time"},
+											ir.FilterExpr{Line: 640, Op: ir.FilterStringOp, Src: "`*time.Time`", Value: "*time.Time"},
 										},
 									},
 								},
@@ -2407,44 +2407,44 @@ var PrecompiledRules = &ir.File{
 					},
 				},
 				ir.Rule{
-					Line: 645,
+					Line: 648,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 645, Value: "$t.UnixNano() * 1000"},
+						ir.PatternString{Line: 648, Value: "$t.UnixNano() * 1000"},
 					},
 					ReportTemplate:  "use $t.UnixMicro() instead of $$",
 					SuggestTemplate: "$t.UnixMicro()",
 					WhereExpr: ir.FilterExpr{
-						Line: 646,
+						Line: 649,
 						Op:   ir.FilterAndOp,
-						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") &&\n\t(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+						Src:  "m.GoVersion().GreaterEqThan(\"1.17\") && isTime(m[\"t\"])",
 						Args: []ir.FilterExpr{
 							ir.FilterExpr{
-								Line:  646,
+								Line:  649,
 								Op:    ir.FilterGoVersionGreaterEqThanOp,
 								Src:   "m.GoVersion().GreaterEqThan(\"1.17\")",
 								Value: "1.17",
 							},
 							ir.FilterExpr{
-								Line: 647,
+								Line: 649,
 								Op:   ir.FilterOrOp,
-								Src:  "(m[\"t\"].Type.Is(`time.Time`) || m[\"t\"].Type.Is(`*time.Time`))",
+								Src:  "isTime(m[\"t\"])",
 								Args: []ir.FilterExpr{
 									ir.FilterExpr{
-										Line:  647,
+										Line:  649,
 										Op:    ir.FilterVarTypeIsOp,
 										Src:   "m[\"t\"].Type.Is(`time.Time`)",
 										Value: "t",
 										Args: []ir.FilterExpr{
-											ir.FilterExpr{Line: 647, Op: ir.FilterStringOp, Src: "`time.Time`", Value: "time.Time"},
+											ir.FilterExpr{Line: 640, Op: ir.FilterStringOp, Src: "`time.Time`", Value: "time.Time"},
 										},
 									},
 									ir.FilterExpr{
-										Line:  647,
+										Line:  649,
 										Op:    ir.FilterVarTypeIsOp,
 										Src:   "m[\"t\"].Type.Is(`*time.Time`)",
 										Value: "t",
 										Args: []ir.FilterExpr{
-											ir.FilterExpr{Line: 647, Op: ir.FilterStringOp, Src: "`*time.Time`", Value: "*time.Time"},
+											ir.FilterExpr{Line: 640, Op: ir.FilterStringOp, Src: "`*time.Time`", Value: "*time.Time"},
 										},
 									},
 								},
@@ -2455,7 +2455,7 @@ var PrecompiledRules = &ir.File{
 			},
 		},
 		ir.RuleGroup{
-			Line:        656,
+			Line:        658,
 			Name:        "exposedSyncMutex",
 			MatcherName: "m",
 			DocTags: []string{
@@ -2467,73 +2467,73 @@ var PrecompiledRules = &ir.File{
 			DocAfter:   "type Foo struct{ ...; mu sync.Mutex; ... }",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line: 657,
+					Line: 663,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 657, Value: "type $x struct { $*_; sync.Mutex; $*_ }"},
+						ir.PatternString{Line: 663, Value: "type $x struct { $*_; sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.Mutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  658,
+						Line:  664,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Src:   "isExported(m[\"x\"])",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 658, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 660, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 661,
+					Line: 667,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 661, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
+						ir.PatternString{Line: 667, Value: "type $x struct { $*_; *sync.Mutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.Mutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  662,
+						Line:  668,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Src:   "isExported(m[\"x\"])",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 662, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 660, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 665,
+					Line: 671,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 665, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 671, Value: "type $x struct { $*_; sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed sync.RWMutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  666,
+						Line:  672,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Src:   "isExported(m[\"x\"])",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 666, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 660, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 669,
+					Line: 675,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 669, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
+						ir.PatternString{Line: 675, Value: "type $x struct { $*_; *sync.RWMutex; $*_ }"},
 					},
 					ReportTemplate: "don't embed *sync.RWMutex",
 					WhereExpr: ir.FilterExpr{
-						Line:  670,
+						Line:  676,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"x\"].Text.Matches(`^\\p{Lu}`)",
+						Src:   "isExported(m[\"x\"])",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 670, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
+							ir.FilterExpr{Line: 660, Op: ir.FilterStringOp, Src: "`^\\p{Lu}`", Value: "^\\p{Lu}"},
 						},
 					},
 				},
 			},
 		},
 		ir.RuleGroup{
-			Line:        678,
+			Line:        684,
 			Name:        "badSorting",
 			MatcherName: "m",
 			DocTags: []string{
@@ -2545,60 +2545,60 @@ var PrecompiledRules = &ir.File{
 			DocAfter:   "sort.Strings(xs)",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line: 679,
+					Line: 685,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 679, Value: "$x = sort.IntSlice($x)"},
+						ir.PatternString{Line: 685, Value: "$x = sort.IntSlice($x)"},
 					},
 					ReportTemplate:  "suspicious sort.IntSlice usage, maybe sort.Ints was intended?",
 					SuggestTemplate: "sort.Ints($x)",
 					WhereExpr: ir.FilterExpr{
-						Line:  680,
+						Line:  686,
 						Op:    ir.FilterVarTypeIsOp,
 						Src:   "m[\"x\"].Type.Is(`[]int`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 680, Op: ir.FilterStringOp, Src: "`[]int`", Value: "[]int"},
+							ir.FilterExpr{Line: 686, Op: ir.FilterStringOp, Src: "`[]int`", Value: "[]int"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 684,
+					Line: 690,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 684, Value: "$x = sort.Float64Slice($x)"},
+						ir.PatternString{Line: 690, Value: "$x = sort.Float64Slice($x)"},
 					},
 					ReportTemplate:  "suspicious sort.Float64s usage, maybe sort.Float64s was intended?",
 					SuggestTemplate: "sort.Float64s($x)",
 					WhereExpr: ir.FilterExpr{
-						Line:  685,
+						Line:  691,
 						Op:    ir.FilterVarTypeIsOp,
 						Src:   "m[\"x\"].Type.Is(`[]float64`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 685, Op: ir.FilterStringOp, Src: "`[]float64`", Value: "[]float64"},
+							ir.FilterExpr{Line: 691, Op: ir.FilterStringOp, Src: "`[]float64`", Value: "[]float64"},
 						},
 					},
 				},
 				ir.Rule{
-					Line: 689,
+					Line: 695,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 689, Value: "$x = sort.StringSlice($x)"},
+						ir.PatternString{Line: 695, Value: "$x = sort.StringSlice($x)"},
 					},
 					ReportTemplate:  "suspicious sort.StringSlice usage, maybe sort.Strings was intended?",
 					SuggestTemplate: "sort.Strings($x)",
 					WhereExpr: ir.FilterExpr{
-						Line:  690,
+						Line:  696,
 						Op:    ir.FilterVarTypeIsOp,
 						Src:   "m[\"x\"].Type.Is(`[]string`)",
 						Value: "x",
 						Args: []ir.FilterExpr{
-							ir.FilterExpr{Line: 690, Op: ir.FilterStringOp, Src: "`[]string`", Value: "[]string"},
+							ir.FilterExpr{Line: 696, Op: ir.FilterStringOp, Src: "`[]string`", Value: "[]string"},
 						},
 					},
 				},
 			},
 		},
 		ir.RuleGroup{
-			Line:        699,
+			Line:        705,
 			Name:        "externalErrorReassign",
 			MatcherName: "m",
 			DocTags: []string{
@@ -2610,32 +2610,32 @@ var PrecompiledRules = &ir.File{
 			DocAfter:   "/* don't do it */",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line: 700,
+					Line: 706,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 700, Value: "$pkg.$err = $x"},
+						ir.PatternString{Line: 706, Value: "$pkg.$err = $x"},
 					},
 					ReportTemplate: "suspicious reassigment of error from another package",
 					WhereExpr: ir.FilterExpr{
-						Line: 701,
+						Line: 707,
 						Op:   ir.FilterAndOp,
 						Src:  "m[\"err\"].Type.Is(`error`) && m[\"pkg\"].Object.Is(`PkgName`)",
 						Args: []ir.FilterExpr{
 							ir.FilterExpr{
-								Line:  701,
+								Line:  707,
 								Op:    ir.FilterVarTypeIsOp,
 								Src:   "m[\"err\"].Type.Is(`error`)",
 								Value: "err",
 								Args: []ir.FilterExpr{
-									ir.FilterExpr{Line: 701, Op: ir.FilterStringOp, Src: "`error`", Value: "error"},
+									ir.FilterExpr{Line: 707, Op: ir.FilterStringOp, Src: "`error`", Value: "error"},
 								},
 							},
 							ir.FilterExpr{
-								Line:  701,
+								Line:  707,
 								Op:    ir.FilterVarObjectIsOp,
 								Src:   "m[\"pkg\"].Object.Is(`PkgName`)",
 								Value: "pkg",
 								Args: []ir.FilterExpr{
-									ir.FilterExpr{Line: 701, Op: ir.FilterStringOp, Src: "`PkgName`", Value: "PkgName"},
+									ir.FilterExpr{Line: 707, Op: ir.FilterStringOp, Src: "`PkgName`", Value: "PkgName"},
 								},
 							},
 						},
@@ -2644,7 +2644,7 @@ var PrecompiledRules = &ir.File{
 			},
 		},
 		ir.RuleGroup{
-			Line:        709,
+			Line:        715,
 			Name:        "emptyDecl",
 			MatcherName: "m",
 			DocTags: []string{
@@ -2656,25 +2656,68 @@ var PrecompiledRules = &ir.File{
 			DocAfter:   "/* nothing */",
 			Rules: []ir.Rule{
 				ir.Rule{
-					Line: 710,
+					Line: 716,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 710, Value: "var()"},
+						ir.PatternString{Line: 716, Value: "var()"},
 					},
 					ReportTemplate: "empty var() block",
 				},
 				ir.Rule{
-					Line: 711,
+					Line: 717,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 711, Value: "const()"},
+						ir.PatternString{Line: 717, Value: "const()"},
 					},
 					ReportTemplate: "empty const() block",
 				},
 				ir.Rule{
-					Line: 712,
+					Line: 718,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 712, Value: "type()"},
+						ir.PatternString{Line: 718, Value: "type()"},
 					},
 					ReportTemplate: "empty type() block",
+				},
+			},
+		},
+		ir.RuleGroup{
+			Line:        725,
+			Name:        "dynamicFmtString",
+			MatcherName: "m",
+			DocTags: []string{
+				"diagnostic",
+				"experimental",
+			},
+			DocSummary: "Detects suspicious formatting strings usage",
+			DocBefore:  "fmt.Errorf(msg)",
+			DocAfter:   "fmt.Errorf(\"%s\", msg)",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 726,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 726, Value: "fmt.Errorf($f)"},
+					},
+					ReportTemplate:  "use errors.New($f) or fmt.Errorf(\"%s\", $f) instead",
+					SuggestTemplate: "errors.New($f)",
+					WhereExpr: ir.FilterExpr{
+						Line: 727,
+						Op:   ir.FilterNotOp,
+						Src:  "!m[\"f\"].Const",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line:  727,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"f\"].Const",
+								Value: "f",
+							},
+						},
+					},
+				},
+				ir.Rule{
+					Line: 731,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 731, Value: "fmt.Errorf($f($*args))"},
+					},
+					ReportTemplate:  "use errors.New($f($*args)) or fmt.Errorf(\"%s\", $f($*args)) instead",
+					SuggestTemplate: "errors.New($f($*args))",
 				},
 			},
 		},

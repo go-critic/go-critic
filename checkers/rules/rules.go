@@ -636,15 +636,17 @@ func stringConcatSimplify(m dsl.Matcher) {
 //doc:before  t.Unix() / 1000
 //doc:after   t.UnixMilli()
 func timeExprSimplify(m dsl.Matcher) {
+	isTime := func(v dsl.Var) bool {
+		return v.Type.Is(`time.Time`) || v.Type.Is(`*time.Time`)
+	}
+
 	m.Match(`$t.Unix() / 1000`).
-		Where(m.GoVersion().GreaterEqThan("1.17") &&
-			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Where(m.GoVersion().GreaterEqThan("1.17") && isTime(m["t"])).
 		Suggest("$t.UnixMilli()").
 		Report(`use $t.UnixMilli() instead of $$`)
 
 	m.Match(`$t.UnixNano() * 1000`).
-		Where(m.GoVersion().GreaterEqThan("1.17") &&
-			(m["t"].Type.Is(`time.Time`) || m["t"].Type.Is(`*time.Time`))).
+		Where(m.GoVersion().GreaterEqThan("1.17") && isTime(m["t"])).
 		Suggest("$t.UnixMicro()").
 		Report(`use $t.UnixMicro() instead of $$`)
 }
@@ -654,20 +656,24 @@ func timeExprSimplify(m dsl.Matcher) {
 //doc:before  type Foo struct{ ...; sync.Mutex; ... }
 //doc:after   type Foo struct{ ...; mu sync.Mutex; ... }
 func exposedSyncMutex(m dsl.Matcher) {
+	isExported := func(v dsl.Var) bool {
+		return v.Text.Matches(`^\p{Lu}`)
+	}
+
 	m.Match(`type $x struct { $*_; sync.Mutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed sync.Mutex")
 
 	m.Match(`type $x struct { $*_; *sync.Mutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed *sync.Mutex")
 
 	m.Match(`type $x struct { $*_; sync.RWMutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed sync.RWMutex")
 
 	m.Match(`type $x struct { $*_; *sync.RWMutex; $*_ }`).
-		Where(m["x"].Text.Matches(`^\p{Lu}`)).
+		Where(isExported(m["x"])).
 		Report("don't embed *sync.RWMutex")
 }
 
@@ -710,4 +716,19 @@ func emptyDecl(m dsl.Matcher) {
 	m.Match(`var()`).Report(`empty var() block`)
 	m.Match(`const()`).Report(`empty const() block`)
 	m.Match(`type()`).Report(`empty type() block`)
+}
+
+//doc:summary Detects suspicious formatting strings usage
+//doc:tags    diagnostic experimental
+//doc:before  fmt.Errorf(msg)
+//doc:after   fmt.Errorf("%s", msg)
+func dynamicFmtString(m dsl.Matcher) {
+	m.Match(`fmt.Errorf($f)`).
+		Where(!m["f"].Const).
+		Suggest("errors.New($f)").
+		Report(`use errors.New($f) or fmt.Errorf("%s", $f) instead`)
+
+	m.Match(`fmt.Errorf($f($*args))`).
+		Suggest("errors.New($f($*args))").
+		Report(`use errors.New($f($*args)) or fmt.Errorf("%s", $f($*args)) instead`)
 }
