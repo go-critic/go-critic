@@ -2099,7 +2099,7 @@ var PrecompiledRules = &ir.File{
 						ir.PatternString{Line: 570, Value: "$x == strings.ToUpper($y)"},
 					},
 					ReportTemplate:  "consider replacing with strings.EqualFold($x, $y)",
-					SuggestTemplate: "strings.EqualFold($x, $y)]",
+					SuggestTemplate: "strings.EqualFold($x, $y)",
 					WhereExpr: ir.FilterExpr{
 						Line: 571,
 						Op:   ir.FilterAndOp,
@@ -2137,7 +2137,7 @@ var PrecompiledRules = &ir.File{
 						ir.PatternString{Line: 582, Value: "$x != strings.ToUpper($y)"},
 					},
 					ReportTemplate:  "consider replacing with !strings.EqualFold($x, $y)",
-					SuggestTemplate: "!strings.EqualFold($x, $y)]",
+					SuggestTemplate: "!strings.EqualFold($x, $y)",
 					WhereExpr: ir.FilterExpr{
 						Line: 583,
 						Op:   ir.FilterAndOp,
@@ -2175,7 +2175,7 @@ var PrecompiledRules = &ir.File{
 						ir.PatternString{Line: 594, Value: "bytes.Equal($x, bytes.ToUpper($y))"},
 					},
 					ReportTemplate:  "consider replacing with bytes.EqualFold($x, $y)",
-					SuggestTemplate: "bytes.EqualFold($x, $y)]",
+					SuggestTemplate: "bytes.EqualFold($x, $y)",
 					WhereExpr: ir.FilterExpr{
 						Line: 595,
 						Op:   ir.FilterAndOp,

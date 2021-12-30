@@ -569,7 +569,7 @@ func equalFold(m dsl.Matcher) {
 		`strings.ToUpper($x) == strings.ToUpper($y)`,
 		`$x == strings.ToUpper($y)`).
 		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
-		Suggest(`strings.EqualFold($x, $y)]`).
+		Suggest(`strings.EqualFold($x, $y)`).
 		Report(`consider replacing with strings.EqualFold($x, $y)`)
 
 	// string != patterns
@@ -581,7 +581,7 @@ func equalFold(m dsl.Matcher) {
 		`strings.ToUpper($x) != strings.ToUpper($y)`,
 		`$x != strings.ToUpper($y)`).
 		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
-		Suggest(`!strings.EqualFold($x, $y)]`).
+		Suggest(`!strings.EqualFold($x, $y)`).
 		Report(`consider replacing with !strings.EqualFold($x, $y)`)
 
 	// bytes.Equal patterns
@@ -593,7 +593,7 @@ func equalFold(m dsl.Matcher) {
 		`bytes.Equal(bytes.ToUpper($x), bytes.ToUpper($y))`,
 		`bytes.Equal($x, bytes.ToUpper($y))`).
 		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
-		Suggest(`bytes.EqualFold($x, $y)]`).
+		Suggest(`bytes.EqualFold($x, $y)`).
 		Report(`consider replacing with bytes.EqualFold($x, $y)`)
 }
 
