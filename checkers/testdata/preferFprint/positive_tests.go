@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"os"
 )
 
 func _(w io.Writer) {
@@ -21,4 +22,18 @@ func _(w io.Writer) {
 	buf.Write([]byte(fmt.Sprint(1, 2, 3, 4)))
 	/*! fmt.Fprintln(buf, 1, 2, 3, 4) should be preferred to the buf.Write([]byte(fmt.Sprintln(1, 2, 3, 4))) */
 	buf.Write([]byte(fmt.Sprintln(1, 2, 3, 4)))
+
+	var i int
+
+	/*! suggestion: fmt.Fprint(buf, i) */
+	io.WriteString(buf, fmt.Sprint(i))
+
+	/*! suggestion: fmt.Fprintf(buf, "<%4d>", i) */
+	io.WriteString(buf, fmt.Sprintf("<%4d>", i))
+
+	/*! suggestion: fmt.Fprintln(buf, i, i) */
+	io.WriteString(buf, fmt.Sprintln(i, i))
+
+	/*! suggestion: fmt.Fprint(os.Stdout, i, i) */
+	io.WriteString(os.Stdout, fmt.Sprint(i, i))
 }

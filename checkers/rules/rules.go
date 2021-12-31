@@ -363,6 +363,10 @@ func preferFprint(m dsl.Matcher) {
 		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprintln($w, $args)").
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
+
+	m.Match(`io.WriteString($w, fmt.Sprint($*args))`).Suggest(`fmt.Fprint($w, $args)`)
+	m.Match(`io.WriteString($w, fmt.Sprintf($*args))`).Suggest(`fmt.Fprintf($w, $args)`)
+	m.Match(`io.WriteString($w, fmt.Sprintln($*args))`).Suggest(`fmt.Fprintln($w, $args)`)
 }
 
 //doc:summary Detects suspicious duplicated arguments
