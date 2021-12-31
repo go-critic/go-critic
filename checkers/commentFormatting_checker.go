@@ -78,4 +78,5 @@ func (c *commentFormattingChecker) specialChar(r rune) bool {
 
 func (c *commentFormattingChecker) warn(comment *ast.Comment) {
 	c.ctx.Warn(comment, "put a space between `//` and comment text")
+	c.ctx.WarnFixable()
 }
