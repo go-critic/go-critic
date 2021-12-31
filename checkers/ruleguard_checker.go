@@ -136,11 +136,11 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	enabledGroups := make(map[string]bool)
 	disabledGroups := make(map[string]bool)
 
-	for _, g := range strings.Split(info.Params.String("disabled"), ",") {
+	for _, g := range strings.Split(info.Params.String("disable"), ",") {
 		g = strings.TrimSpace(g)
 		disabledGroups[g] = true
 	}
-	flagEnable := info.Params.String("enabled")
+	flagEnable := info.Params.String("enable")
 	if flagEnable != "<all>" {
 		for _, g := range strings.Split(flagEnable, ",") {
 			g = strings.TrimSpace(g)
