@@ -2,8 +2,9 @@
 package checkers
 
 import (
-	"github.com/go-critic/go-critic/framework/linter"
 	"os"
+
+	"github.com/go-critic/go-critic/framework/linter"
 )
 
 var collection = &linter.CheckerCollection{

@@ -2,13 +2,14 @@ package checkers
 
 import (
 	"fmt"
-	"github.com/go-critic/go-critic/checkers/rulesdata"
-	"github.com/go-critic/go-critic/framework/linter"
-	"github.com/quasilyte/go-ruleguard/ruleguard"
 	"go/ast"
 	"go/build"
 	"go/token"
 	"os"
+
+	"github.com/go-critic/go-critic/checkers/rulesdata"
+	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/quasilyte/go-ruleguard/ruleguard"
 )
 
 //go:generate go run ./rules/precompile.go -rules ./rules/rules.go -o ./rulesdata/rulesdata.go
