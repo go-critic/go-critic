@@ -240,13 +240,14 @@ func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.En
 	}
 	var reports []ruleguardReport
 
-	runCtx.Report = func(_ ruleguard.GoRuleInfo, n ast.Node, msg string, fix *ruleguard.Suggestion) {
+	runCtx.Report = func(data *ruleguard.ReportData) {
 		// TODO(quasilyte): investigate whether we should add a rule name as
 		// a message prefix here.
 		r := ruleguardReport{
-			node:    n,
-			message: msg,
+			node:    data.Node,
+			message: data.Message,
 		}
+		fix := data.Suggestion
 		if fix != nil {
 			r.fix = linter.QuickFix{
 				From:        fix.From,
