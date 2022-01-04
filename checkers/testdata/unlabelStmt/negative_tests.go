@@ -147,3 +147,16 @@ outer2:
 		_ = x
 	}
 }
+
+func twoLoopsWithSelect(c chan int) {
+outer2:
+	for {
+		println("foo")
+		for {
+			select {
+			case <-c:
+				continue outer2
+			}
+		}
+	}
+}
