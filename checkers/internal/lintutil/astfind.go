@@ -11,7 +11,7 @@ import (
 // followFunc has to return true in order to continuing traversing the node and return false otherwise.
 // Matched node is returned.
 // If none of the nodes matched predicate, nil is returned.
-func FindNode(root ast.Node, followFunc func(ast.Node) bool, pred func(ast.Node) bool) ast.Node {
+func FindNode(root ast.Node, followFunc, pred func(ast.Node) bool) ast.Node {
 	var (
 		found   ast.Node
 		preFunc func(*astutil.Cursor) bool
