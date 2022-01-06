@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
+	"unicode"
 )
 
 func init() {
@@ -121,9 +122,15 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 				continue
 			}
 
-			if strings.EqualFold(l[:len(pat)], pat) {
-				c.warnPattern(comment)
-				return
+			for _, s := range strings.FieldsFunc(l, isNewLine) {
+				if len(s) < len(pat) {
+					continue
+				}
+
+				if strings.EqualFold(s[:len(pat)], pat) {
+					c.warnPattern(comment)
+					return
+				}
 			}
 		}
 
@@ -135,6 +142,18 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 			}
 		}
 	}
+}
+
+func isNewLine(r rune) bool {
+	if uint32(r) <= unicode.MaxLatin1 {
+		switch r {
+		case '\t', '\n', '\v', '\f', '\r':
+			return true
+		default:
+			return false
+		}
+	}
+	return false
 }
 
 func (c *deprecatedCommentChecker) warnCasing(cause ast.Node, line string) {

@@ -181,3 +181,15 @@ type foo3 string
 /*! the proper format is `Deprecated: <text>` */
 // deprecated in 1.11: use f instead.
 type foo4 string
+
+// ComponentStatusBad (and ComponentStatusList) holds the cluster validation info.
+/*! use `Deprecated: ` (note the casing) instead of `DeprecaTEd: ` */
+// DeprecaTEd: This API is deprecated in v1.19+
+type ComponentStatusBad struct {
+	foo string
+	// +optional
+	bar string
+
+	// +optional
+	fooBard []string
+}

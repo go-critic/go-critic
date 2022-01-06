@@ -31,3 +31,14 @@ var (
 	// dePreca
 	_ = 0
 )
+
+// ComponentStatus (and ComponentStatusList) holds the cluster validation info.
+// Deprecated: This API is deprecated in v1.19+
+type ComponentStatus struct {
+	foo string
+	// +optional
+	bar string
+
+	// +optional
+	fooBard []string
+}
