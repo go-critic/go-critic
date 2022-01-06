@@ -31,3 +31,26 @@ var (
 	// dePreca
 	_ = 0
 )
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// ComponentStatus (and ComponentStatus) holds the cluster validation info.
+// Deprecated: This API is deprecated in v1.19+
+type ComponentStatus struct {
+	foo string
+	// +optional
+	bar string
+
+	// +optional
+	fooBard []string
+}
+
+// ComponentStatusList represents the list of component statuses
+// Deprecated: This API is deprecated in v1.19+
+type ComponentStatusList struct {
+	string
+	// +optional
+	int
+
+	Items []ComponentStatus
+}
