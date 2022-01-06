@@ -2,7 +2,6 @@ package checkers
 
 import (
 	"go/ast"
-	"regexp"
 	"strings"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
@@ -24,12 +23,15 @@ func FuncOld() int`
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		c := &deprecatedCommentChecker{ctx: ctx}
 
-		c.commonPatterns = []*regexp.Regexp{
-			regexp.MustCompile(`(?i)this (?:function|type) is deprecated`),
-			regexp.MustCompile(`(?i)deprecated[.!]? use \S* instead`),
-			regexp.MustCompile(`(?i)\[\[deprecated\]\].*`),
-			regexp.MustCompile(`(?i)note: deprecated\b.*`),
-			regexp.MustCompile(`(?i)deprecated in.*`),
+		c.commonPatterns = []string{
+			"this type is deprecated",
+			"this function is deprecated",
+			"[[deprecated]]",
+			"note: deprecated",
+			"deprecated in",
+			"deprecated. use",
+			"deprecated! use",
+			"deprecated use",
 			// TODO(quasilyte): more of these?
 		}
 
@@ -63,7 +65,7 @@ type deprecatedCommentChecker struct {
 	astwalk.WalkHandler
 	ctx *linter.CheckerContext
 
-	commonPatterns []*regexp.Regexp
+	commonPatterns []string
 	commonTypos    []string
 }
 
@@ -114,7 +116,7 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 
 		// Check for other commonly used patterns.
 		for _, pat := range c.commonPatterns {
-			if pat.MatchString(l) {
+			if strings.HasPrefix(strings.ToLower(l), pat) {
 				c.warnPattern(comment)
 				return
 			}
