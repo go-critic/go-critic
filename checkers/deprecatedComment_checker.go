@@ -43,6 +43,7 @@ func FuncOld() int`
 			"Dprecated: ",
 			"Derecated: ",
 			"Depecated: ",
+			"Depekated: ",
 			"Deprcated: ",
 			"Depreated: ",
 			"Deprected: ",
