@@ -116,7 +116,11 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 
 		// Check for other commonly used patterns.
 		for _, pat := range c.commonPatterns {
-			if strings.HasPrefix(strings.ToLower(l), pat) {
+			if len(l) < len(pat) {
+				continue
+			}
+
+			if strings.EqualFold(l[:len(pat)], pat) {
 				c.warnPattern(comment)
 				return
 			}
