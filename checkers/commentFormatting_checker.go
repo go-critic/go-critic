@@ -2,7 +2,6 @@ package checkers
 
 import (
 	"go/ast"
-	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -21,19 +20,34 @@ func init() {
 
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		parts := []string{
-			`^//go:generate .*$`, // e.g.: go:generate value
-			`^//[\w-]+:.*$`,      // e.g.: key: value
-			`^//nolint\b`,        // e.g.: nolint
-			`^//line /.*:\d+`,    // e.g.: line /path/to/file:123
-			`^//export \w+$`,     // e.g.: export Foo
-			`^//[/+#-]+.*$`,      // e.g.: vertical breaker /////////////
-			`^//noinspection `,   // e.g.: noinspection ALL, some GoLand and friends versions
+			//`^//go:generate .*$`, // e.g.: go:generate value
+			`^//[\w-]+:.*$`, // e.g.: key: value
+			//`^//nolint\b`,        // e.g.: nolint
+			//`^//line /.*:\d+`,  // e.g.: line /path/to/file:123
+			//`^//export \w+$`, // e.g.: export Foo
+			//`^//[/+#-]+.*$`, // e.g.: vertical breaker /////////////
+			//`^//noinspection `, // e.g.: noinspection ALL, some GoLand and friends versions
 		}
-		pat := "(?m)" + strings.Join(parts, "|")
-		pragmaRE := regexp.MustCompile(pat)
+
+		equalPatterns := []string{
+			"//nolint",
+		}
+		parts = []string{
+			"//go:generate ",
+			"//line /",
+			"//nolint ",
+			"//noinspection ",
+			"//export ",
+			"///",
+			"//+",
+			"//#",
+			"//-",
+			"//!",
+		}
 		return astwalk.WalkerForComment(&commentFormattingChecker{
-			ctx:      ctx,
-			pragmaRE: pragmaRE,
+			ctx:           ctx,
+			partPatterns:  parts,
+			equalPatterns: equalPatterns,
 		}), nil
 	})
 }
@@ -42,19 +56,36 @@ type commentFormattingChecker struct {
 	astwalk.WalkHandler
 	ctx *linter.CheckerContext
 
-	pragmaRE *regexp.Regexp
+	partPatterns  []string
+	equalPatterns []string
 }
 
 func (c *commentFormattingChecker) VisitComment(cg *ast.CommentGroup) {
 	if strings.HasPrefix(cg.List[0].Text, "/*") {
 		return
 	}
+
+outerLoop:
 	for _, comment := range cg.List {
-		if len(comment.Text) <= len("// ") {
+		l := len(comment.Text)
+		if l <= len("// ") {
 			continue
 		}
-		if c.pragmaRE.MatchString(comment.Text) {
-			continue
+
+		for _, p := range c.partPatterns {
+			if l < len(p) {
+				continue
+			}
+
+			if strings.EqualFold(comment.Text[:len(p)], p) {
+				continue outerLoop
+			}
+		}
+
+		for _, p := range c.equalPatterns {
+			if strings.EqualFold(comment.Text, p) {
+				continue outerLoop
+			}
 		}
 
 		// Make a decision based on a first comment text rune.
