@@ -182,6 +182,8 @@ type foo3 string
 // deprecated in 1.11: use f instead.
 type foo4 string
 
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
 // ComponentStatusBad (and ComponentStatusList) holds the cluster validation info.
 /*! use `Deprecated: ` (note the casing) instead of `DeprecaTEd: ` */
 // DeprecaTEd: This API is deprecated in v1.19+
@@ -192,4 +194,15 @@ type ComponentStatusBad struct {
 
 	// +optional
 	fooBard []string
+}
+
+// ComponentStatusList represents the list of component statuses
+/*! use `Deprecated: ` (note the casing) instead of `DeprecaTed: ` */
+// DeprecaTed: This API is deprecated in v1.19+
+type ComponentStatusListBad struct {
+	string
+	// +optional
+	int
+
+	Items []int
 }
