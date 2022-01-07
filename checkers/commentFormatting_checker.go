@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
+	"regexp"
 )
 
 func init() {
@@ -19,20 +20,14 @@ func init() {
 	info.After = `// This is a comment`
 
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
-		parts := []string{
-			//`^//go:generate .*$`, // e.g.: go:generate value
-			`^//[\w-]+:.*$`, // e.g.: key: value
-			//`^//nolint\b`,        // e.g.: nolint
-			//`^//line /.*:\d+`,  // e.g.: line /path/to/file:123
-			//`^//export \w+$`, // e.g.: export Foo
-			//`^//[/+#-]+.*$`, // e.g.: vertical breaker /////////////
-			//`^//noinspection `, // e.g.: noinspection ALL, some GoLand and friends versions
+		regexpPatterns := []*regexp.Regexp{
+			regexp.MustCompile(`^//[\w-]+:.*$`), // e.g.: key: value
 		}
 
 		equalPatterns := []string{
 			"//nolint",
 		}
-		parts = []string{
+		parts := []string{
 			"//go:generate ",
 			"//line /",
 			"//nolint ",
@@ -45,9 +40,10 @@ func init() {
 			"//!",
 		}
 		return astwalk.WalkerForComment(&commentFormattingChecker{
-			ctx:           ctx,
-			partPatterns:  parts,
-			equalPatterns: equalPatterns,
+			ctx:            ctx,
+			partPatterns:   parts,
+			equalPatterns:  equalPatterns,
+			regexpPatterns: regexpPatterns,
 		}), nil
 	})
 }
@@ -56,8 +52,9 @@ type commentFormattingChecker struct {
 	astwalk.WalkHandler
 	ctx *linter.CheckerContext
 
-	partPatterns  []string
-	equalPatterns []string
+	partPatterns   []string
+	equalPatterns  []string
+	regexpPatterns []*regexp.Regexp
 }
 
 func (c *commentFormattingChecker) VisitComment(cg *ast.CommentGroup) {
@@ -84,6 +81,12 @@ outerLoop:
 
 		for _, p := range c.equalPatterns {
 			if strings.EqualFold(comment.Text, p) {
+				continue outerLoop
+			}
+		}
+
+		for _, p := range c.regexpPatterns {
+			if p.MatchString(comment.Text) {
 				continue outerLoop
 			}
 		}
