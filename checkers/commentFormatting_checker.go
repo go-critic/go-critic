@@ -77,5 +77,9 @@ func (c *commentFormattingChecker) specialChar(r rune) bool {
 }
 
 func (c *commentFormattingChecker) warn(comment *ast.Comment) {
-	c.ctx.Warn(comment, "put a space between `//` and comment text")
+	c.ctx.WarnFixable(comment, linter.QuickFix{
+		From:        comment.Pos(),
+		To:          comment.End(),
+		Replacement: []byte(strings.Replace(comment.Text, "//", "// ", 1)),
+	}, "put a space between `//` and comment text")
 }
