@@ -23,22 +23,22 @@ func init() {
 		regexpPatterns := []*regexp.Regexp{
 			regexp.MustCompile(`^//[\w-]+:.*$`), // e.g.: key: value
 		}
-
 		equalPatterns := []string{
 			"//nolint",
 		}
 		parts := []string{
-			"//go:generate ",
-			"//line /",
-			"//nolint ",
-			"//noinspection ",
-			"//export ",
-			"///",
+			"//go:generate ",  // e.g.: go:generate value
+			"//line /",        // e.g.: line /path/to/file:123
+			"//nolint ",       // e.g.: nolint
+			"//noinspection ", // e.g.: noinspection ALL, some GoLand and friends versions
+			"//export ",       // e.g.: export Foo
+			"///",             // e.g.: vertical breaker /////////////
 			"//+",
 			"//#",
 			"//-",
 			"//!",
 		}
+
 		return astwalk.WalkerForComment(&commentFormattingChecker{
 			ctx:            ctx,
 			partPatterns:   parts,
