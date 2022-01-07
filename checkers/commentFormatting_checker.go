@@ -2,13 +2,13 @@ package checkers
 
 import (
 	"go/ast"
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
-	"regexp"
 )
 
 func init() {
@@ -64,13 +64,13 @@ func (c *commentFormattingChecker) VisitComment(cg *ast.CommentGroup) {
 
 outerLoop:
 	for _, comment := range cg.List {
-		l := len(comment.Text)
-		if l <= len("// ") {
+		commentLen := len(comment.Text)
+		if commentLen <= len("// ") {
 			continue
 		}
 
 		for _, p := range c.partPatterns {
-			if l < len(p) {
+			if commentLen < len(p) {
 				continue
 			}
 
