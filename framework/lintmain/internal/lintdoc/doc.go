@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"text/template"
 
 	"github.com/go-critic/go-critic/framework/linter"
@@ -71,7 +72,7 @@ Checker parameters:
 	templateData.Checker = info
 	templateData.ParamTypes = make(map[string]string)
 	for pname, p := range info.Params {
-		templateData.ParamTypes[pname] = fmt.Sprintf("%T", p.Value)
+		templateData.ParamTypes[pname] = reflect.TypeOf(p.Value).String()
 	}
 
 	tmpl := template.Must(template.New("doc").Parse(tmplString))
