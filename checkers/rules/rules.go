@@ -759,8 +759,7 @@ func stringsCompare(m dsl.Matcher) {
 		Suggest(`$s1 > $s2`).
 		At(m["s1"])
 
-	m.Match(`$_($*_,strings.Compare($s1, $_), $*_)`,
-		`$_ = strings.Compare($s1, $_)`,
+	m.Match(`$_ = strings.Compare($s1, $_)`,
 		`$_ := strings.Compare($s1, $_)`,
 		`var $_ = strings.Compare($s1, $_)`,
 		`var $_ $_ = strings.Compare($s1, $_)`,

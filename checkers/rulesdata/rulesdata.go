@@ -2789,12 +2789,11 @@ var PrecompiledRules = &ir.File{
 				ir.Rule{
 					Line: 762,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 762, Value: "$_($*_,strings.Compare($s1, $_), $*_)"},
-						ir.PatternString{Line: 763, Value: "$_ = strings.Compare($s1, $_)"},
-						ir.PatternString{Line: 764, Value: "$_ := strings.Compare($s1, $_)"},
-						ir.PatternString{Line: 765, Value: "var $_ = strings.Compare($s1, $_)"},
-						ir.PatternString{Line: 766, Value: "var $_ $_ = strings.Compare($s1, $_)"},
-						ir.PatternString{Line: 767, Value: "switch strings.Compare($s1, $_) { $*_ }"},
+						ir.PatternString{Line: 762, Value: "$_ = strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 763, Value: "$_ := strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 764, Value: "var $_ = strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 765, Value: "var $_ $_ = strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 766, Value: "switch strings.Compare($s1, $_) { $*_ }"},
 					},
 					ReportTemplate: "don't use strings.Compare on hot path, change it to built-in operators",
 					LocationVar:    "s1",
