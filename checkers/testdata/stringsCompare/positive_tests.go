@@ -4,10 +4,6 @@ import (
 	"strings"
 )
 
-type aliasInt struct {
-	int
-}
-
 func foo() {
 	f, b := "aaa", "bbb"
 
@@ -34,12 +30,7 @@ func foo() {
 	case -1:
 		print(-1)
 	}
-}
 
-func kk(b ...int) { print(b) }
-
-func bar() {
 	/*! don't use strings.Compare on hot path, change it to built-in operators */
-	kk := strings.Compare("s", "ww")
-	print(kk)
+	_ = strings.Compare("s", "ww")
 }
