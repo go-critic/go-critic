@@ -2745,6 +2745,62 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        744,
+			Name:        "stringsCompare",
+			MatcherName: "m",
+			DocTags: []string{
+				"performance",
+				"experimental",
+			},
+			DocSummary: "Detects strings.Compare usage",
+			DocBefore:  "strings.Compare(x, y)",
+			DocAfter:   "x < y",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 745,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 745, Value: "strings.Compare($s1, $s2) == 0"},
+					},
+					ReportTemplate:  "don't use strings.Compare on hot path, change it to built-in operators",
+					SuggestTemplate: "$s1 == $s2",
+					LocationVar:     "s1",
+				},
+				ir.Rule{
+					Line: 750,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 750, Value: "strings.Compare($s1, $s2) < 0"},
+						ir.PatternString{Line: 751, Value: "strings.Compare($s1, $s2) == -1"},
+					},
+					ReportTemplate:  "don't use strings.Compare on hot path, change it to built-in operators",
+					SuggestTemplate: "$s1 < $s2",
+					LocationVar:     "s1",
+				},
+				ir.Rule{
+					Line: 756,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 756, Value: "strings.Compare($s1, $s2) > 0"},
+						ir.PatternString{Line: 757, Value: "strings.Compare($s1, $s2) == 1"},
+					},
+					ReportTemplate:  "don't use strings.Compare on hot path, change it to built-in operators",
+					SuggestTemplate: "$s1 > $s2",
+					LocationVar:     "s1",
+				},
+				ir.Rule{
+					Line: 762,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 762, Value: "$_($*_,strings.Compare($s1, $_), $*_)"},
+						ir.PatternString{Line: 763, Value: "$_ = strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 764, Value: "$_ := strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 765, Value: "var $_ = strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 766, Value: "var $_ $_ = strings.Compare($s1, $_)"},
+						ir.PatternString{Line: 767, Value: "switch strings.Compare($s1, $_) { $*_ }"},
+					},
+					ReportTemplate: "don't use strings.Compare on hot path, change it to built-in operators",
+					LocationVar:    "s1",
+				},
+			},
+		},
 	},
 }
 

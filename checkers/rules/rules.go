@@ -736,3 +736,35 @@ func dynamicFmtString(m dsl.Matcher) {
 		Suggest("errors.New($f($*args))").
 		Report(`use errors.New($f($*args)) or fmt.Errorf("%s", $f($*args)) instead`)
 }
+
+//doc:summary Detects strings.Compare usage
+//doc:tags    performance experimental
+//doc:before  strings.Compare(x, y)
+//doc:after   x < y
+func stringsCompare(m dsl.Matcher) {
+	m.Match(`strings.Compare($s1, $s2) == 0`).
+		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
+		Suggest(`$s1 == $s2`).
+		At(m["s1"])
+
+	m.Match(`strings.Compare($s1, $s2) < 0`,
+		`strings.Compare($s1, $s2) == -1`).
+		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
+		Suggest(`$s1 < $s2`).
+		At(m["s1"])
+
+	m.Match(`strings.Compare($s1, $s2) > 0`,
+		`strings.Compare($s1, $s2) == 1`).
+		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
+		Suggest(`$s1 > $s2`).
+		At(m["s1"])
+
+	m.Match(`$_($*_,strings.Compare($s1, $_), $*_)`,
+		`$_ = strings.Compare($s1, $_)`,
+		`$_ := strings.Compare($s1, $_)`,
+		`var $_ = strings.Compare($s1, $_)`,
+		`var $_ $_ = strings.Compare($s1, $_)`,
+		`switch strings.Compare($s1, $_) { $*_ }`).
+		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
+		At(m["s1"])
+}
