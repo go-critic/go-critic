@@ -6,11 +6,16 @@ import (
 
 type s []string
 
-func (s) Compare(x, y string) bool { return x > y }
+func (s) Compare(x, y string) int {
+	if x < y {
+		return 1
+	}
+	return 0
+}
 
 func negative() {
 	bytes.Compare([]byte{}, []byte{})
 
 	strings := s{}
-	print(strings.Compare("1", "3"))
+	_ = strings.Compare("1", "3") == 0
 }
