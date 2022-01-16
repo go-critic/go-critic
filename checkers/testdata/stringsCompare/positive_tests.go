@@ -7,30 +7,25 @@ import (
 func foo() {
 	f, b := "aaa", "bbb"
 
-	/*! don't use strings.Compare on hot path, change it to built-in operators */
+	/*! suggestion: f == b */
 	if strings.Compare(f, b) == 0 {
 	}
 
-	/*! don't use strings.Compare on hot path, change it to built-in operators */
-	switch strings.Compare(f, b) {
-	case 0:
-		print(0)
-	case 1:
-		print(1)
-	case -1:
-		print(-1)
+	/*! suggestion: f == b */
+	if 0 == strings.Compare(f, b) {
 	}
 
-	/*! don't use strings.Compare on hot path, change it to built-in operators */
-	switch dd := strings.Compare(f, b); dd {
-	case 0:
+	/*! suggestion: f > b */
+	switch dd := strings.Compare(f, b) > 100; dd {
+	case true:
 		print(0)
-	case 1:
+	case false:
 		print(1)
-	case -1:
-		print(-1)
 	}
 
-	/*! don't use strings.Compare on hot path, change it to built-in operators */
-	_ = strings.Compare("s", "ww")
+	_ = strings.Compare("s", "ww") < 10
+	_ = 10 > strings.Compare("s", "ww")
+
+	_ = strings.Compare(f, b) < 10
+	_ = 10 > strings.Compare(f, b)
 }

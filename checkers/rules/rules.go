@@ -742,28 +742,23 @@ func dynamicFmtString(m dsl.Matcher) {
 //doc:before  strings.Compare(x, y)
 //doc:after   x < y
 func stringsCompare(m dsl.Matcher) {
-	m.Match(`strings.Compare($s1, $s2) == 0`).
-		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
+	m.Match(`strings.Compare($s1, $s2) == 0`, `0 == strings.Compare($s1, $s2)`).
 		Suggest(`$s1 == $s2`).
 		At(m["s1"])
 
-	m.Match(`strings.Compare($s1, $s2) < 0`,
-		`strings.Compare($s1, $s2) == -1`).
-		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
+	m.Match(`strings.Compare($s1, $s2) < $i`,
+		`$i > strings.Compare($s1, $s2)`,
+		`strings.Compare($s1, $s2) == -1`,
+		`-1 == strings.Compare($s1, $s2)`).
+		Where(m["i"].Value.Int() < 0).
 		Suggest(`$s1 < $s2`).
 		At(m["s1"])
 
-	m.Match(`strings.Compare($s1, $s2) > 0`,
-		`strings.Compare($s1, $s2) == 1`).
-		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
+	m.Match(`strings.Compare($s1, $s2) > $i`,
+		`$i < strings.Compare($s1, $s2)`,
+		`strings.Compare($s1, $s2) == 1`,
+		`1 == strings.Compare($s1, $s2)`).
+		Where(m["i"].Value.Int() > 0).
 		Suggest(`$s1 > $s2`).
-		At(m["s1"])
-
-	m.Match(`$_ = strings.Compare($s1, $_)`,
-		`$_ := strings.Compare($s1, $_)`,
-		`var $_ = strings.Compare($s1, $_)`,
-		`var $_ $_ = strings.Compare($s1, $_)`,
-		`switch strings.Compare($s1, $_) { $*_ }`).
-		Report(`don't use strings.Compare on hot path, change it to built-in operators`).
 		At(m["s1"])
 }
