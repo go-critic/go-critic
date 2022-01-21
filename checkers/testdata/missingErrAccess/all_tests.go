@@ -166,7 +166,6 @@ func testFunc() {
 	switch a {
 	}
 
-	// TODO fix error
 	t1, err = recvT1()
 	/*! switch, missing error check accessing [t1] */
 	switch t1.any.(type) {
@@ -190,7 +189,6 @@ func testFunc2() {
 		/*! switch, missing error check accessing [a] */
 		switch a {
 		case 1:
-			// TODO fix
 			a, err = recv1()
 			/*! expr, missing error check accessing [a] */
 			send(a)
@@ -199,7 +197,6 @@ func testFunc2() {
 		if a == 1 {
 		} else if a == 2 {
 
-			// TODO fix
 			a, err = recv1()
 			/*! expr, missing error check accessing [a] */
 			send(a)
