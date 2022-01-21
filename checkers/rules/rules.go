@@ -743,20 +743,17 @@ func dynamicFmtString(m dsl.Matcher) {
 //doc:after   x < y
 func stringsCompare(m dsl.Matcher) {
 	m.Match(`strings.Compare($s1, $s2) == 0`, `0 == strings.Compare($s1, $s2)`).
-		Suggest(`$s1 == $s2`).
-		At(m["s1"])
+		Suggest(`$s1 == $s2`)
 
 	m.Match(`strings.Compare($s1, $s2) == -1`,
 		`-1 == strings.Compare($s1, $s2)`,
 		`strings.Compare($s1, $s2) < 0`,
 		`0 > strings.Compare($s1, $s2)`).
-		Suggest(`$s1 < $s2`).
-		At(m["s1"])
+		Suggest(`$s1 < $s2`)
 
 	m.Match(`strings.Compare($s1, $s2) == 1`,
 		`1 == strings.Compare($s1, $s2)`,
 		`strings.Compare($s1, $s2) > 0`,
 		`0 < strings.Compare($s1, $s2)`).
-		Suggest(`$s1 > $s2`).
-		At(m["s1"])
+		Suggest(`$s1 > $s2`)
 }
