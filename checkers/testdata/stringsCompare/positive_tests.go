@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func foo() {
+func warning() {
 	f, b := "aaa", "bbb"
 
 	/*! suggestion: f == b */
@@ -16,16 +16,24 @@ func foo() {
 	}
 
 	/*! suggestion: f > b */
-	switch dd := strings.Compare(f, b) > 100; dd {
+	switch foo := strings.Compare(f, b) > 0; foo {
 	case true:
 		print(0)
 	case false:
 		print(1)
 	}
 
-	_ = strings.Compare("s", "ww") < 10
-	_ = 10 > strings.Compare("s", "ww")
+	/*! suggestion: "s" < "ww" */
+	_ = strings.Compare("s", "ww") < 0
+	/*! suggestion: "s" == "ww" */
+	_ = strings.Compare("s", "ww") == 0
+	/*! suggestion: "s" > "ww" */
+	_ = strings.Compare("s", "ww") > 0
 
-	_ = strings.Compare(f, b) < 10
-	_ = 10 > strings.Compare(f, b)
+	/*! suggestion: "s" < "ww" */
+	_ = 0 > strings.Compare("s", "ww")
+	/*! suggestion: "s" == "ww" */
+	_ = 0 == strings.Compare("s", "ww")
+	/*! suggestion: "s" > "ww" */
+	_ = 0 < strings.Compare("s", "ww")
 }
