@@ -738,7 +738,7 @@ func dynamicFmtString(m dsl.Matcher) {
 }
 
 //doc:summary Detects strings.Compare usage
-//doc:tags    performance experimental
+//doc:tags    style experimental
 //doc:before  strings.Compare(x, y)
 //doc:after   x < y
 func stringsCompare(m dsl.Matcher) {
