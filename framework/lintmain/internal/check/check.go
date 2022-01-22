@@ -2,6 +2,7 @@ package check
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -27,7 +28,7 @@ import (
 )
 
 // Main implements sub-command entry point.
-func Main() {
+func Main(_ context.Context, _ []string) error {
 	var p program
 	p.infoList = linter.GetCheckersInfo()
 
@@ -53,6 +54,7 @@ func Main() {
 			log.Fatalf("%s: %v", step.name, err)
 		}
 	}
+	return nil
 }
 
 type program struct {

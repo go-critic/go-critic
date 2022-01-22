@@ -1,6 +1,7 @@
 package lintdoc
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -12,10 +13,13 @@ import (
 )
 
 // Main implements sub-command entry point.
-func Main() {
-	flag.Parse()
+func Main(_ context.Context, args []string) error {
+	fs := flag.NewFlagSet("gocritic", flag.ContinueOnError)
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
 
-	switch args := flag.Args(); len(args) {
+	switch args := fs.Args(); len(args) {
 	case 0:
 		printShortDoc()
 	case 1:
@@ -23,6 +27,7 @@ func Main() {
 	default:
 		log.Fatalf("expected 0 or 1 positional arguments")
 	}
+	return nil
 }
 
 func printShortDoc() {
