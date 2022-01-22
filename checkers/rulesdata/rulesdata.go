@@ -2761,7 +2761,6 @@ var PrecompiledRules = &ir.File{
 					Line: 745,
 					SyntaxPatterns: []ir.PatternString{
 						ir.PatternString{Line: 745, Value: "strings.Compare($s1, $s2) == 0"},
-						ir.PatternString{Line: 745, Value: "0 == strings.Compare($s1, $s2)"},
 					},
 					ReportTemplate:  "suggestion: $s1 == $s2",
 					SuggestTemplate: "$s1 == $s2",
@@ -2770,20 +2769,16 @@ var PrecompiledRules = &ir.File{
 					Line: 748,
 					SyntaxPatterns: []ir.PatternString{
 						ir.PatternString{Line: 748, Value: "strings.Compare($s1, $s2) == -1"},
-						ir.PatternString{Line: 749, Value: "-1 == strings.Compare($s1, $s2)"},
-						ir.PatternString{Line: 750, Value: "strings.Compare($s1, $s2) < 0"},
-						ir.PatternString{Line: 751, Value: "0 > strings.Compare($s1, $s2)"},
+						ir.PatternString{Line: 749, Value: "strings.Compare($s1, $s2) < 0"},
 					},
 					ReportTemplate:  "suggestion: $s1 < $s2",
 					SuggestTemplate: "$s1 < $s2",
 				},
 				ir.Rule{
-					Line: 754,
+					Line: 752,
 					SyntaxPatterns: []ir.PatternString{
-						ir.PatternString{Line: 754, Value: "strings.Compare($s1, $s2) == 1"},
-						ir.PatternString{Line: 755, Value: "1 == strings.Compare($s1, $s2)"},
-						ir.PatternString{Line: 756, Value: "strings.Compare($s1, $s2) > 0"},
-						ir.PatternString{Line: 757, Value: "0 < strings.Compare($s1, $s2)"},
+						ir.PatternString{Line: 752, Value: "strings.Compare($s1, $s2) == 1"},
+						ir.PatternString{Line: 753, Value: "strings.Compare($s1, $s2) > 0"},
 					},
 					ReportTemplate:  "suggestion: $s1 > $s2",
 					SuggestTemplate: "$s1 > $s2",

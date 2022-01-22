@@ -11,10 +11,6 @@ func warning() {
 	if strings.Compare(f, b) == 0 {
 	}
 
-	/*! suggestion: f == b */
-	if 0 == strings.Compare(f, b) {
-	}
-
 	/*! suggestion: f > b */
 	switch foo := strings.Compare(f, b) > 0; foo {
 	case true:
@@ -30,10 +26,6 @@ func warning() {
 	/*! suggestion: "s" > "ww" */
 	_ = strings.Compare("s", "ww") > 0
 
-	/*! suggestion: "s" < "ww" */
-	_ = 0 > strings.Compare("s", "ww")
-	/*! suggestion: "s" == "ww" */
-	_ = 0 == strings.Compare("s", "ww")
 	/*! suggestion: "s" > "ww" */
-	_ = 0 < strings.Compare("s", "ww")
+	_ = strings.Compare("s", "ww") > 0
 }
