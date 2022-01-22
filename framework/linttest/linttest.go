@@ -240,7 +240,7 @@ func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package,
 		if u.Test != nil {
 			// Prefer tests to the base package, if present.
 			result = append(result, u.Test)
-		} else {
+		} else if u.Base != nil {
 			result = append(result, u.Base)
 		}
 	})

@@ -8,13 +8,14 @@ require (
 	github.com/go-toolsmith/astequal v1.0.1
 	github.com/go-toolsmith/astfmt v1.0.0
 	github.com/go-toolsmith/astp v1.0.0
-	github.com/go-toolsmith/pkgload v1.0.0
+	github.com/go-toolsmith/pkgload v1.0.2-0.20220101231613-e814995d17c5
 	github.com/go-toolsmith/strparse v1.0.0
 	github.com/go-toolsmith/typep v1.0.2
 	github.com/google/go-cmp v0.5.6
 	github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
-	github.com/quasilyte/go-ruleguard v0.3.14
-	github.com/quasilyte/go-ruleguard/dsl v0.3.10
+	github.com/quasilyte/go-ruleguard v0.3.15
+	github.com/quasilyte/go-ruleguard/dsl v0.3.12
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
-	golang.org/x/tools v0.1.8-0.20211102225717-714668c9f9a3
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/tools v0.1.9-0.20211228192929-ee1ca4ffc4da
 )

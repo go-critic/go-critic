@@ -62,6 +62,16 @@ const BadFormat8 = 10
 // [[deprecated]]
 const BadFormat9 = 10
 
+// BadFormat10 is an example, too.
+//
+/*! the proper format is `Deprecated: <text>` */
+// ThIs TyPe iS DepRecateD, use foo instead.
+type BadFormat10 int
+
+/*! use `Deprecated: ` (note the casing) instead of `DEPRECATED: ` */
+// DEPRECATED: part of the old API; use API v2
+func BadFormat11() {}
+
 type badNestedDoc struct {
 	/*! use `Deprecated: ` (note the casing) instead of `deprecated: ` */
 	// deprecated: ha-ha
@@ -121,6 +131,26 @@ var (
 	// Deprecate: ...
 	_ = 0
 
+	/*! typo in `DeprEcate`; should be `Deprecated` */
+	// DeprEcate: ...
+	_ = 0
+
+	/*! typo in `deprecate`; should be `Deprecated` */
+	// deprecate: ...
+	_ = 0
+
+	/*! typo in `dePrecate`; should be `Deprecated` */
+	// dePrecate: ...
+	_ = 0
+
+	/*! typo in `Depekated`; should be `Deprecated` */
+	// Depekated: ...
+	_ = 0
+
+	/*! typo in `DepeKated`; should be `Deprecated` */
+	// DepeKated: ...
+	_ = 0
+
 	/*! typo in `Derpecate`; should be `Deprecated` */
 	// Derpecate: ...
 	_ = 0
@@ -147,3 +177,32 @@ func foo2() {
 /*! the proper format is `Deprecated: <text>` */
 // deprecated in 1.8: use bar instead.
 type foo3 string
+
+/*! the proper format is `Deprecated: <text>` */
+// deprecated in 1.11: use f instead.
+type foo4 string
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// ComponentStatusBad (and ComponentStatusList) holds the cluster validation info.
+/*! use `Deprecated: ` (note the casing) instead of `DeprecaTEd: ` */
+// DeprecaTEd: This API is deprecated in v1.19+
+type ComponentStatusBad struct {
+	foo string
+	// +optional
+	bar string
+
+	// +optional
+	fooBard []string
+}
+
+// ComponentStatusList represents the list of component statuses
+/*! use `Deprecated: ` (note the casing) instead of `DeprecaTed: ` */
+// DeprecaTed: This API is deprecated in v1.19+
+type ComponentStatusListBad struct {
+	string
+	// +optional
+	int
+
+	Items []int
+}
