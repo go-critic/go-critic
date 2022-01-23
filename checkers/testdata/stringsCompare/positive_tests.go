@@ -28,4 +28,9 @@ func warning() {
 
 	/*! suggestion: "s" > "ww" */
 	_ = strings.Compare("s", "ww") > 0
+
+	/*! suggestion: "s" > "ww" */
+	_ = strings.Compare("s", "ww") == 1
+	/*! suggestion: "s" < "ww" */
+	_ = strings.Compare("s", "ww") == -1
 }
