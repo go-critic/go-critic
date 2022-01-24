@@ -24,7 +24,7 @@ docs:
 	cd ./cmd/makedocs && go run main.go
 
 ci:
-	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tidy; make ci-tests; fi
+	@if [ "$(TEST_SUITE)" = "linter" ]; then make ci-linter; else make ci-tidy; make ci-generate; make ci-tests; fi
 
 ci-tidy:
 	go mod tidy
@@ -34,6 +34,10 @@ ci-tidy:
 
 ci-tests:
 	GOCRITIC_EXTERNAL_TESTS=1 go test -v -race -count=1 -coverprofile=coverage.out ./...
+
+ci-generate:
+	go generate ./...
+	git diff --exit-code --quiet || (echo "Please run 'go generate ./...' to update precompiled rules."; false)
 
 ci-linter:
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.30.0
