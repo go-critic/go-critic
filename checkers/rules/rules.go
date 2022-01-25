@@ -363,6 +363,10 @@ func preferFprint(m dsl.Matcher) {
 		Where(m["w"].Type.Implements("io.Writer")).
 		Suggest("fmt.Fprintln($w, $args)").
 		Report(`fmt.Fprintln($w, $args) should be preferred to the $$`)
+
+	m.Match(`io.WriteString($w, fmt.Sprint($*args))`).Suggest(`fmt.Fprint($w, $args)`)
+	m.Match(`io.WriteString($w, fmt.Sprintf($*args))`).Suggest(`fmt.Fprintf($w, $args)`)
+	m.Match(`io.WriteString($w, fmt.Sprintln($*args))`).Suggest(`fmt.Fprintln($w, $args)`)
 }
 
 //doc:summary Detects suspicious duplicated arguments
@@ -569,7 +573,7 @@ func equalFold(m dsl.Matcher) {
 		`strings.ToUpper($x) == strings.ToUpper($y)`,
 		`$x == strings.ToUpper($y)`).
 		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
-		Suggest(`strings.EqualFold($x, $y)]`).
+		Suggest(`strings.EqualFold($x, $y)`).
 		Report(`consider replacing with strings.EqualFold($x, $y)`)
 
 	// string != patterns
@@ -581,7 +585,7 @@ func equalFold(m dsl.Matcher) {
 		`strings.ToUpper($x) != strings.ToUpper($y)`,
 		`$x != strings.ToUpper($y)`).
 		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
-		Suggest(`!strings.EqualFold($x, $y)]`).
+		Suggest(`!strings.EqualFold($x, $y)`).
 		Report(`consider replacing with !strings.EqualFold($x, $y)`)
 
 	// bytes.Equal patterns
@@ -593,7 +597,7 @@ func equalFold(m dsl.Matcher) {
 		`bytes.Equal(bytes.ToUpper($x), bytes.ToUpper($y))`,
 		`bytes.Equal($x, bytes.ToUpper($y))`).
 		Where(m["x"].Pure && m["y"].Pure && m["x"].Text != m["y"].Text).
-		Suggest(`bytes.EqualFold($x, $y)]`).
+		Suggest(`bytes.EqualFold($x, $y)`).
 		Report(`consider replacing with bytes.EqualFold($x, $y)`)
 }
 

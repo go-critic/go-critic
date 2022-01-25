@@ -1,6 +1,7 @@
 package check
 
 import (
+	"bytes"
 	"errors"
 	"flag"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"runtime/pprof"
 	"sort"
 	"strings"
 	"sync"
@@ -37,10 +39,12 @@ func Main() {
 		{"bind checker params", p.bindCheckerParams},
 		{"bind default enabled list", p.bindDefaultEnabledList},
 		{"parse args", p.parseArgs},
+		{"start profiling", p.startProfiling},
 		{"assign checker params", p.assignCheckerParams},
 		{"load program", p.loadProgram},
 		{"init checkers", p.initCheckers},
 		{"run checkers", p.runCheckers},
+		{"finish profiling", p.finishProfiling},
 		{"exit if found issues", p.exit},
 	}
 
@@ -78,6 +82,11 @@ type program struct {
 	workDir string
 	gopath  string
 	goroot  string
+
+	cpuProfile string
+	memProfile string
+
+	cpuProfileData bytes.Buffer
 
 	goVersion          string
 	exitCode           int
@@ -363,6 +372,11 @@ func (p *program) parseArgs() error {
 	flag.StringVar(&p.goVersion, "go", "",
 		`select the Go version to target. Leave as string for the latest`)
 
+	flag.StringVar(&p.memProfile, "memprofile", "",
+		`write memory profile to the specified file`)
+	flag.StringVar(&p.cpuProfile, "cpuprofile", "",
+		`write CPU profile to the specified file`)
+
 	flag.Parse()
 
 	p.packages = flag.Args()
@@ -387,6 +401,46 @@ func addTrailingSlash(s string) string {
 		return s
 	}
 	return s + string(os.PathSeparator)
+}
+
+func (p *program) startProfiling() error {
+	if p.memProfile != "" {
+		runtime.MemProfileRate = 2048
+	}
+
+	if p.cpuProfile == "" {
+		return nil
+	}
+
+	if err := pprof.StartCPUProfile(&p.cpuProfileData); err != nil {
+		return fmt.Errorf("could not start CPU profile: %v", err)
+	}
+
+	return nil
+}
+
+func (p *program) finishProfiling() error {
+	if p.cpuProfile != "" {
+		pprof.StopCPUProfile()
+		err := os.WriteFile(p.cpuProfile, p.cpuProfileData.Bytes(), 0o666)
+		if err != nil {
+			return fmt.Errorf("write CPU profile: %v", err)
+		}
+	}
+
+	if p.memProfile != "" {
+		f, err := os.Create(p.memProfile)
+		if err != nil {
+			return fmt.Errorf("create mem profile: %v", err)
+		}
+		defer f.Close()
+		runtime.GC() // get up-to-date statistics
+		if err := pprof.WriteHeapProfile(f); err != nil {
+			return fmt.Errorf("write mem profile: %v", err)
+		}
+	}
+
+	return nil
 }
 
 // assignCheckerParams initializes checker parameter values using
