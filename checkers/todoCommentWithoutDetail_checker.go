@@ -3,7 +3,6 @@ package checkers
 import (
 	"go/ast"
 	"regexp"
-	"strings"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
@@ -25,7 +24,7 @@ fiiWithCtx(nil, a, b)
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 		visitor := &todoCommentWithoutCodeChecker{
 			ctx:   ctx,
-			regex: regexp.MustCompile(`^\s*(TODO|FIX|FIXME|BUG)\s*$`),
+			regex: regexp.MustCompile(`^(//|/\*)?\s*(TODO|FIX|FIXME|BUG)\s*(\*/)?$`),
 		}
 		return astwalk.WalkerForComment(visitor), nil
 	})
@@ -38,12 +37,11 @@ type todoCommentWithoutCodeChecker struct {
 }
 
 func (c *todoCommentWithoutCodeChecker) VisitComment(cg *ast.CommentGroup) {
-	comment := strings.TrimSpace(cg.Text())
-	if strings.Contains(comment, "\n") {
-		return
-	}
-	if c.regex.MatchString(comment) {
-		c.warn(cg)
+	for _, comment := range cg.List {
+		if c.regex.MatchString(comment.Text) {
+			c.warn(cg)
+			break
+		}
 	}
 }
 
