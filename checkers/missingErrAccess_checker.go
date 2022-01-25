@@ -273,7 +273,7 @@ func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 			}
 
 			if nextErrOnLine != -1 {
-				nextValues = map[string]struct{}{}
+				nextValues = make(map[string]struct{})
 				for _, exp := range assign.Lhs {
 					switch v := exp.(type) {
 					case *ast.Ident:
