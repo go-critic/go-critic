@@ -11,7 +11,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "todoCommentWithoutDetail"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{"opinionated", "experimental"}
 	info.Summary = "Detects TODO comments without detail/assignee"
 	info.Before = `
 // TODO
