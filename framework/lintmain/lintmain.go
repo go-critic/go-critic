@@ -20,7 +20,7 @@ type Config struct {
 func Run(cfg Config) {
 	log.SetFlags(0)
 
-	r := acmd.RunnerOf(nil, acmd.Config{
+	r := acmd.RunnerOf(cmds, acmd.Config{
 		AppName: cfg.Name,
 		Version: cfg.Version,
 	})
