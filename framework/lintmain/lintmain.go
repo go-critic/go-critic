@@ -24,7 +24,9 @@ func Run(cfg Config) {
 		AppName: cfg.Name,
 		Version: cfg.Version,
 	})
-	_ = r.Run()
+	if err := r.Run(); err != nil {
+		log.Print(err.Error())
+	}
 }
 
 var cmds = []acmd.Command{
