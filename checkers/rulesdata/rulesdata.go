@@ -2745,6 +2745,81 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		ir.RuleGroup{
+			Line:        740,
+			Name:        "unassignedError",
+			MatcherName: "m",
+			DocTags: []string{
+				"style",
+				"experimental",
+			},
+			DocSummary: "Detects unassigned errors",
+			DocBefore:  "if rows.Err() != nil { ... }",
+			DocAfter:   "if err := rows.Err(); err != nil { ... }",
+			Rules: []ir.Rule{
+				ir.Rule{
+					Line: 741,
+					SyntaxPatterns: []ir.PatternString{
+						ir.PatternString{Line: 741, Value: "$err != nil"},
+						ir.PatternString{Line: 741, Value: "$err == nil"},
+					},
+					ReportTemplate: "assign $err to a variable and check it afterwards",
+					WhereExpr: ir.FilterExpr{
+						Line: 742,
+						Op:   ir.FilterAndOp,
+						Src:  "!m[\"err\"].Pure && (m[\"$$\"].Node.Parent().Is(`IfStmt`) ||\n\tm[\"$$\"].Node.Parent().Is(`ForStmt`) ||\n\tm[\"$$\"].Node.Parent().Is(`CaseClause`))",
+						Args: []ir.FilterExpr{
+							ir.FilterExpr{
+								Line: 742,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"err\"].Pure",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{Line: 742, Op: ir.FilterVarPureOp, Src: "m[\"err\"].Pure", Value: "err"},
+								},
+							},
+							ir.FilterExpr{
+								Line: 742,
+								Op:   ir.FilterOrOp,
+								Src:  "(m[\"$$\"].Node.Parent().Is(`IfStmt`) ||\n\tm[\"$$\"].Node.Parent().Is(`ForStmt`) ||\n\tm[\"$$\"].Node.Parent().Is(`CaseClause`))",
+								Args: []ir.FilterExpr{
+									ir.FilterExpr{
+										Line: 742,
+										Op:   ir.FilterOrOp,
+										Src:  "m[\"$$\"].Node.Parent().Is(`IfStmt`) ||\n\tm[\"$$\"].Node.Parent().Is(`ForStmt`)",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{
+												Line: 742,
+												Op:   ir.FilterRootNodeParentIsOp,
+												Src:  "m[\"$$\"].Node.Parent().Is(`IfStmt`)",
+												Args: []ir.FilterExpr{
+													ir.FilterExpr{Line: 742, Op: ir.FilterStringOp, Src: "`IfStmt`", Value: "IfStmt"},
+												},
+											},
+											ir.FilterExpr{
+												Line: 743,
+												Op:   ir.FilterRootNodeParentIsOp,
+												Src:  "m[\"$$\"].Node.Parent().Is(`ForStmt`)",
+												Args: []ir.FilterExpr{
+													ir.FilterExpr{Line: 743, Op: ir.FilterStringOp, Src: "`ForStmt`", Value: "ForStmt"},
+												},
+											},
+										},
+									},
+									ir.FilterExpr{
+										Line: 744,
+										Op:   ir.FilterRootNodeParentIsOp,
+										Src:  "m[\"$$\"].Node.Parent().Is(`CaseClause`)",
+										Args: []ir.FilterExpr{
+											ir.FilterExpr{Line: 744, Op: ir.FilterStringOp, Src: "`CaseClause`", Value: "CaseClause"},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
