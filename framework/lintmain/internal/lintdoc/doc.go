@@ -14,12 +14,12 @@ import (
 
 // Main implements sub-command entry point.
 func Main(_ context.Context, args []string) error {
-	fs := flag.NewFlagSet("gocritic", flag.ContinueOnError)
-	if err := fs.Parse(args); err != nil {
+	flagSet := flag.NewFlagSet("gocritic", flag.ContinueOnError)
+	if err := flagSet.Parse(args); err != nil {
 		return err
 	}
 
-	switch args := fs.Args(); len(args) {
+	switch args := flagSet.Args(); len(args) {
 	case 0:
 		printShortDoc()
 	case 1:

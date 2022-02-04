@@ -40,4 +40,9 @@ var cmds = []acmd.Command{
 		Description: "get installed checkers documentation",
 		Do:          lintdoc.Main,
 	},
+	{
+		Name:        "__complete",
+		Description: "get installed checkers documentation",
+		Do:          acmd.AutocompleteFor,
+	},
 }
