@@ -736,3 +736,20 @@ func dynamicFmtString(m dsl.Matcher) {
 		Suggest("errors.New($f($*args))").
 		Report(`use errors.New($f($*args)) or fmt.Errorf("%s", $f($*args)) instead`)
 }
+
+//doc:summary Detects strings.Compare usage
+//doc:tags    style experimental
+//doc:before  strings.Compare(x, y)
+//doc:after   x < y
+func stringsCompare(m dsl.Matcher) {
+	m.Match(`strings.Compare($s1, $s2) == 0`).
+		Suggest(`$s1 == $s2`)
+
+	m.Match(`strings.Compare($s1, $s2) == -1`,
+		`strings.Compare($s1, $s2) < 0`).
+		Suggest(`$s1 < $s2`)
+
+	m.Match(`strings.Compare($s1, $s2) == 1`,
+		`strings.Compare($s1, $s2) > 0`).
+		Suggest(`$s1 > $s2`)
+}
