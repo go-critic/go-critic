@@ -7,9 +7,10 @@ import (
 	"go/token"
 	"os"
 
+	"github.com/quasilyte/go-ruleguard/ruleguard"
+
 	"github.com/go-critic/go-critic/checkers/rulesdata"
 	"github.com/go-critic/go-critic/framework/linter"
-	"github.com/quasilyte/go-ruleguard/ruleguard"
 )
 
 //go:generate go run ./rules/precompile.go -rules ./rules/rules.go -o ./rulesdata/rulesdata.go
@@ -65,8 +66,8 @@ func init() {
 		collection.AddChecker(info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
 			parseContext := &ruleguard.LoadContext{
 				Fset: fset,
-				GroupFilter: func(name string) bool {
-					return name == g.Name
+				GroupFilter: func(gr *ruleguard.GoRuleGroup) bool {
+					return gr.Name == g.Name
 				},
 				DebugImports: ruleguardDebug,
 				DebugPrint: func(s string) {

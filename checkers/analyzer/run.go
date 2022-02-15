@@ -7,9 +7,10 @@ import (
 	"strings"
 	"sync"
 
+	"golang.org/x/tools/go/analysis"
+
 	_ "github.com/go-critic/go-critic/checkers" // Register go-critic checkers
 	"github.com/go-critic/go-critic/framework/linter"
-	"golang.org/x/tools/go/analysis"
 )
 
 type gocritic struct {
