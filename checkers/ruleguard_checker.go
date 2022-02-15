@@ -135,38 +135,71 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 
 	enabledGroups := make(map[string]bool)
 	disabledGroups := make(map[string]bool)
+	enabledTags := make(map[string]bool)
+	disabledTags := make(map[string]bool)
 
 	for _, g := range strings.Split(info.Params.String("disable"), ",") {
 		g = strings.TrimSpace(g)
+		if t := strings.Split(g, "#"); len(t) == 2 {
+			disabledTags[t[1]] = true
+			continue
+		}
+
 		disabledGroups[g] = true
 	}
 	flagEnable := info.Params.String("enable")
 	if flagEnable != "<all>" {
 		for _, g := range strings.Split(flagEnable, ",") {
 			g = strings.TrimSpace(g)
+			if t := strings.Split(g, "#"); len(t) == 2 {
+				enabledTags[t[1]] = true
+				continue
+			}
+
 			enabledGroups[g] = true
 		}
 	}
 	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
 
+	inDisabledByTags := func(g *ruleguard.GoRuleGroup) bool {
+		for _, t := range g.DocTags {
+			if disabledTags[t] {
+				return true
+			}
+		}
+		return false
+	}
+	inEnabledByTags := func(g *ruleguard.GoRuleGroup) bool {
+		for _, t := range g.DocTags {
+			if enabledTags[t] {
+				return true
+			}
+		}
+		return false
+	}
+
 	loadContext := &ruleguard.LoadContext{
 		Fset:         fset,
 		DebugImports: ruleguardDebug,
 		DebugPrint:   debugPrint,
-		GroupFilter: func(g string) bool {
+		GroupFilter: func(g *ruleguard.GoRuleGroup) bool {
 			whyDisabled := ""
-			enabled := flagEnable == "<all>" || enabledGroups[g]
+			enabled := len(enabledGroups) == 0 || enabledGroups[g.Name]
 			switch {
 			case !enabled:
 				whyDisabled = "not enabled by -enabled flag"
-			case disabledGroups[g]:
+			case disabledGroups[g.Name]:
 				whyDisabled = "disabled by -disable flag"
+			case len(enabledTags) != 0 && !inEnabledByTags(g):
+				whyDisabled = "not enabled by tags in -enable flag"
+			case inDisabledByTags(g):
+				whyDisabled = "disabled by tags in -disable flag"
 			}
 			if ruleguardDebug {
 				if whyDisabled != "" {
-					debugPrint(fmt.Sprintf("(-) %s is %s", g, whyDisabled))
+					debugPrint(fmt.Sprintf("(-) %s is %s", g.Name, whyDisabled))
 				} else {
-					debugPrint(fmt.Sprintf("(+) %s is enabled", g))
+					debugPrint(fmt.Sprintf("(+) %s is enabled", g.Name))
 				}
 			}
 			return whyDisabled == ""
