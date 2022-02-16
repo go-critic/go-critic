@@ -22,7 +22,6 @@ import (
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-critic/go-critic/framework/lintmain/internal/hotload"
 	"github.com/go-toolsmith/pkgload"
-	"github.com/logrusorgru/aurora"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -505,10 +504,7 @@ func (p *program) shortenLocation(loc string) string {
 func printWarning(p *program, rule, loc, warn string) {
 	switch {
 	case p.coloredOutput:
-		log.Printf("%v: %v: %v\n",
-			aurora.Magenta(aurora.Bold(loc)),
-			aurora.Red(rule),
-			warn)
+		log.Printf("%v: %v: %v\n", loc, rule, warn)
 
 	default:
 		log.Printf("%s: %s: %s\n", loc, rule, warn)
