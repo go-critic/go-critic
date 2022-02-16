@@ -22,7 +22,6 @@ import (
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-critic/go-critic/framework/lintmain/internal/hotload"
 	"github.com/go-toolsmith/pkgload"
-	"github.com/logrusorgru/aurora"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -93,7 +92,6 @@ type program struct {
 	checkTests         bool
 	checkGenerated     bool
 	shorterErrLocation bool
-	coloredOutput      bool
 	verbose            bool
 }
 
@@ -169,7 +167,7 @@ func (p *program) checkFile(f *ast.File) {
 			if p.shorterErrLocation {
 				loc = p.shortenLocation(loc)
 			}
-			printWarning(p, c.Info.Name, loc, warn.Text)
+			log.Printf("%s: %s: %s\n", loc, c.Info.Name, warn.Text)
 		}
 	}
 }
@@ -365,8 +363,6 @@ func (p *program) parseArgs() error {
 		`whether to check test files`)
 	flag.BoolVar(&p.shorterErrLocation, `shorterErrLocation`, true,
 		`whether to replace error location prefix with $GOROOT and $GOPATH`)
-	flag.BoolVar(&p.coloredOutput, `coloredOutput`, false,
-		`whether to use colored output`)
 	flag.BoolVar(&p.verbose, "v", false,
 		`whether to print output useful during linter debugging`)
 	flag.StringVar(&p.goVersion, "go", "",
@@ -500,19 +496,6 @@ func (p *program) shortenLocation(loc string) string {
 		return relLoc
 	}
 	return loc
-}
-
-func printWarning(p *program, rule, loc, warn string) {
-	switch {
-	case p.coloredOutput:
-		log.Printf("%v: %v: %v\n",
-			aurora.Magenta(aurora.Bold(loc)),
-			aurora.Red(rule),
-			warn)
-
-	default:
-		log.Printf("%s: %s: %s\n", loc, rule, warn)
-	}
 }
 
 func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {
