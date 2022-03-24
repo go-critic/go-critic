@@ -40,7 +40,7 @@ func deferUnlambda(m dsl.Matcher) {
 }
 
 //doc:summary Detects deprecated io/ioutil package usages
-//doc:tags    style experimental
+//doc:tags    style
 //doc:before  ioutil.ReadAll(r)
 //doc:after   io.ReadAll(r)
 func ioutilDeprecated(m dsl.Matcher) {

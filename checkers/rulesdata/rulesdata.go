@@ -206,7 +206,6 @@ var PrecompiledRules = &ir.File{
 			MatcherName: "m",
 			DocTags: []string{
 				"style",
-				"experimental",
 			},
 			DocSummary: "Detects deprecated io/ioutil package usages",
 			DocBefore:  "ioutil.ReadAll(r)",
@@ -2787,4 +2786,3 @@ var PrecompiledRules = &ir.File{
 		},
 	},
 }
-
