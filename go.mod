@@ -12,7 +12,6 @@ require (
 	github.com/go-toolsmith/strparse v1.0.0
 	github.com/go-toolsmith/typep v1.0.2
 	github.com/google/go-cmp v0.5.6
-	github.com/logrusorgru/aurora v0.0.0-20181002194514-a7b3b318ed4e
 	github.com/quasilyte/go-ruleguard v0.3.16-0.20220213074421-6aa060fab41a
 	github.com/quasilyte/go-ruleguard/dsl v0.3.16
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
