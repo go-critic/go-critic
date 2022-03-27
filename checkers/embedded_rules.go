@@ -96,9 +96,10 @@ type embeddedRuleguardChecker struct {
 
 func (c *embeddedRuleguardChecker) WalkFile(f *ast.File) {
 	runRuleguardEngine(c.ctx, f, c.engine, &ruleguard.RunContext{
-		Pkg:   c.ctx.Pkg,
-		Types: c.ctx.TypesInfo,
-		Sizes: c.ctx.SizesInfo,
-		Fset:  c.ctx.FileSet,
+		Pkg:         c.ctx.Pkg,
+		Types:       c.ctx.TypesInfo,
+		Sizes:       c.ctx.SizesInfo,
+		Fset:        c.ctx.FileSet,
+		TruncateLen: 100,
 	})
 }

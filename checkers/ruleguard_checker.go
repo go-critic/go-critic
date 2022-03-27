@@ -258,10 +258,11 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		DebugPrint: func(s string) {
 			fmt.Fprintln(os.Stderr, s)
 		},
-		Pkg:   c.ctx.Pkg,
-		Types: c.ctx.TypesInfo,
-		Sizes: c.ctx.SizesInfo,
-		Fset:  c.ctx.FileSet,
+		Pkg:         c.ctx.Pkg,
+		Types:       c.ctx.TypesInfo,
+		Sizes:       c.ctx.SizesInfo,
+		Fset:        c.ctx.FileSet,
+		TruncateLen: 100,
 	})
 }
 
