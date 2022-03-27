@@ -153,20 +153,20 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 		Fset:         fset,
 		DebugImports: ruleguardDebug,
 		DebugPrint:   debugPrint,
-		GroupFilter: func(g string) bool {
+		GroupFilter: func(g *ruleguard.GoRuleGroup) bool {
 			whyDisabled := ""
-			enabled := flagEnable == "<all>" || enabledGroups[g]
+			enabled := flagEnable == "<all>" || enabledGroups[g.Name]
 			switch {
 			case !enabled:
 				whyDisabled = "not enabled by -enabled flag"
-			case disabledGroups[g]:
+			case disabledGroups[g.Name]:
 				whyDisabled = "disabled by -disable flag"
 			}
 			if ruleguardDebug {
 				if whyDisabled != "" {
-					debugPrint(fmt.Sprintf("(-) %s is %s", g, whyDisabled))
+					debugPrint(fmt.Sprintf("(-) %s is %s", g.Name, whyDisabled))
 				} else {
-					debugPrint(fmt.Sprintf("(+) %s is enabled", g))
+					debugPrint(fmt.Sprintf("(+) %s is enabled", g.Name))
 				}
 			}
 			return whyDisabled == ""
@@ -225,10 +225,11 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 		DebugPrint: func(s string) {
 			fmt.Fprintln(os.Stderr, s)
 		},
-		Pkg:   c.ctx.Pkg,
-		Types: c.ctx.TypesInfo,
-		Sizes: c.ctx.SizesInfo,
-		Fset:  c.ctx.FileSet,
+		Pkg:         c.ctx.Pkg,
+		Types:       c.ctx.TypesInfo,
+		Sizes:       c.ctx.SizesInfo,
+		Fset:        c.ctx.FileSet,
+		TruncateLen: 100,
 	})
 }
 
