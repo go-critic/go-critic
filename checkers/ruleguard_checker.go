@@ -161,13 +161,21 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	}
 	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
 
-	inTags := func(g *ruleguard.GoRuleGroup, tags map[string]bool) bool {
+	inEnabledTags := func(g *ruleguard.GoRuleGroup) bool {
 		for _, t := range g.DocTags {
-			if tags[t] {
+			if enabledTags[t] {
 				return true
 			}
 		}
 		return false
+	}
+	inDisabledTags := func(g *ruleguard.GoRuleGroup) string {
+		for _, t := range g.DocTags {
+			if disabledTags[t] {
+				return t
+			}
+		}
+		return ""
 	}
 
 	loadContext := &ruleguard.LoadContext{
@@ -175,18 +183,20 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 		DebugImports: ruleguardDebug,
 		DebugPrint:   debugPrint,
 		GroupFilter: func(g *ruleguard.GoRuleGroup) bool {
+			enabled := flagEnable == "<all>" || enabledGroups[g.Name] || inEnabledTags(g)
 			whyDisabled := ""
-			enabled := len(enabledGroups) == 0 || enabledGroups[g.Name]
+
 			switch {
 			case !enabled:
-				whyDisabled = "not enabled by -enabled flag"
+				whyDisabled = "not enabled by name or tag (-enable flag)"
 			case disabledGroups[g.Name]:
-				whyDisabled = "disabled by -disable flag"
-			case len(enabledTags) != 0 && !inTags(g, enabledTags):
-				whyDisabled = "not enabled by tags in -enable flag"
-			case len(disabledTags) != 0 && inTags(g, disabledTags):
-				whyDisabled = "disabled by tags in -disable flag"
+				whyDisabled = "disabled by name (-disable flag)"
+			default:
+				if tag := inDisabledTags(g); tag != "" {
+					whyDisabled = fmt.Sprintf("disabled by %s tag (-disable flag)", tag)
+				}
 			}
+
 			if ruleguardDebug {
 				if whyDisabled != "" {
 					debugPrint(fmt.Sprintf("(-) %s is %s", g.Name, whyDisabled))
