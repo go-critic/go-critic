@@ -182,7 +182,7 @@ var PrecompiledRules = &ir.File{
 			Line:        46,
 			Name:        "ioutilDeprecated",
 			MatcherName: "m",
-			DocTags:     []string{"style", "experimental"},
+			DocTags:     []string{"style"},
 			DocSummary:  "Detects deprecated io/ioutil package usages",
 			DocBefore:   "ioutil.ReadAll(r)",
 			DocAfter:    "io.ReadAll(r)",

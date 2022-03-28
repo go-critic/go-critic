@@ -87,7 +87,7 @@ with another one that is considered more idiomatic or simple.
 |:heavy_check_mark:[ifElseChain](#ifelsechain)|Detects repeated if-else statements and suggests to replace them with switch statement|
 |:white_check_mark:[importShadow](#importshadow)|Detects when imported package names shadowed in the assignments|
 |:white_check_mark:[initClause](#initclause)|Detects non-assignment statements inside if/switch init clause|
-|:white_check_mark:[ioutilDeprecated](#ioutildeprecated)|Detects deprecated io/ioutil package usages|
+|:heavy_check_mark:[ioutilDeprecated](#ioutildeprecated)|Detects deprecated io/ioutil package usages|
 |:white_check_mark:[methodExprCall](#methodexprcall)|Detects method expression call that can be replaced with a method call|
 |:white_check_mark:[nestingReduce](#nestingreduce)|Finds where nesting level could be reduced|
 |:heavy_check_mark:[newDeref](#newderef)|Detects immediate dereferencing of `new` expressions|
@@ -1363,8 +1363,7 @@ if cond {
 ## ioutilDeprecated
 
 [
-  **style**
-  **experimental** ]
+  **style** ]
 
 Detects deprecated io/ioutil package usages.
 
@@ -2802,5 +2801,3 @@ return nil != ptr
 ```go
 return ptr != nil
 ```
-
-
