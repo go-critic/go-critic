@@ -1,0 +1,3 @@
+exit status 1
+./f1.go:14:2: ruleguard: may be simplified to one if
+./f1.go:25:6: ruleguard: use errors.New(k()) or fmt.Errorf("%s", k()) instead

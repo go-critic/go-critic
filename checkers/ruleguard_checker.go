@@ -135,33 +135,68 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 
 	enabledGroups := make(map[string]bool)
 	disabledGroups := make(map[string]bool)
+	enabledTags := make(map[string]bool)
+	disabledTags := make(map[string]bool)
 
 	for _, g := range strings.Split(info.Params.String("disable"), ",") {
 		g = strings.TrimSpace(g)
+		if strings.HasPrefix(g, "#") {
+			disabledTags[strings.TrimPrefix(g, "#")] = true
+			continue
+		}
+
 		disabledGroups[g] = true
 	}
 	flagEnable := info.Params.String("enable")
 	if flagEnable != "<all>" {
 		for _, g := range strings.Split(flagEnable, ",") {
 			g = strings.TrimSpace(g)
+			if strings.HasPrefix(g, "#") {
+				enabledTags[strings.TrimPrefix(g, "#")] = true
+				continue
+			}
+
 			enabledGroups[g] = true
 		}
 	}
 	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
+
+	inEnabledTags := func(g *ruleguard.GoRuleGroup) bool {
+		for _, t := range g.DocTags {
+			if enabledTags[t] {
+				return true
+			}
+		}
+		return false
+	}
+	inDisabledTags := func(g *ruleguard.GoRuleGroup) string {
+		for _, t := range g.DocTags {
+			if disabledTags[t] {
+				return t
+			}
+		}
+		return ""
+	}
 
 	loadContext := &ruleguard.LoadContext{
 		Fset:         fset,
 		DebugImports: ruleguardDebug,
 		DebugPrint:   debugPrint,
 		GroupFilter: func(g *ruleguard.GoRuleGroup) bool {
+			enabled := flagEnable == "<all>" || enabledGroups[g.Name] || inEnabledTags(g)
 			whyDisabled := ""
-			enabled := flagEnable == "<all>" || enabledGroups[g.Name]
+
 			switch {
 			case !enabled:
-				whyDisabled = "not enabled by -enabled flag"
+				whyDisabled = "not enabled by name or tag (-enable flag)"
 			case disabledGroups[g.Name]:
-				whyDisabled = "disabled by -disable flag"
+				whyDisabled = "disabled by name (-disable flag)"
+			default:
+				if tag := inDisabledTags(g); tag != "" {
+					whyDisabled = fmt.Sprintf("disabled by %s tag (-disable flag)", tag)
+				}
 			}
+
 			if ruleguardDebug {
 				if whyDisabled != "" {
 					debugPrint(fmt.Sprintf("(-) %s is %s", g.Name, whyDisabled))

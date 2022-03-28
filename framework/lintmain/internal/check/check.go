@@ -19,10 +19,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/go-critic/go-critic/framework/linter"
-	"github.com/go-critic/go-critic/framework/lintmain/internal/hotload"
 	"github.com/go-toolsmith/pkgload"
 	"golang.org/x/tools/go/packages"
+
+	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/framework/lintmain/internal/hotload"
 )
 
 // Main implements sub-command entry point.
