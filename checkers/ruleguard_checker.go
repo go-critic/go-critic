@@ -176,7 +176,7 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 		DebugPrint:   debugPrint,
 		GroupFilter: func(g *ruleguard.GoRuleGroup) bool {
 			whyDisabled := ""
-			enabled := flagEnable == "<all>" || enabledGroups[g.Name]
+			enabled := len(enabledGroups) == 0 || enabledGroups[g.Name]
 			switch {
 			case !enabled:
 				whyDisabled = "not enabled by -enabled flag"

@@ -22,3 +22,10 @@ func stackedIf(m dsl.Matcher) {
 	m.Match(`if $*_ { if $*_ { $*_ } }`).
 		Report(`may be simplified to one if`)
 }
+
+//doc:tags style
+func dynamicFmtString(m dsl.Matcher) {
+	m.Match(`fmt.Errorf($f($*args))`).
+		Suggest("errors.New($f($args))").
+		Report(`use errors.New($f($args)) or fmt.Errorf("%s", $f($args)) instead`)
+}

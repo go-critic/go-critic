@@ -1,3 +1,4 @@
 exit status 1
 ./f1.go:5:1: ruleguard: error as an underlying type is probably a mistake
 ./f1.go:9:10: ruleguard: suggestion: s1+s2
+./f1.go:25:6: ruleguard: use errors.New(k()) or fmt.Errorf("%s", k()) instead

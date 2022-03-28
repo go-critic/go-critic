@@ -17,3 +17,10 @@ func _() {
 		}
 	}
 }
+
+func _() {
+	k := func() string {
+		return "test"
+	}
+	_ = fmt.Errorf(k())
+}
