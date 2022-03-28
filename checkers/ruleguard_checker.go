@@ -140,8 +140,8 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 
 	for _, g := range strings.Split(info.Params.String("disable"), ",") {
 		g = strings.TrimSpace(g)
-		if t := strings.Split(g, "#"); len(t) == 2 {
-			disabledTags[t[1]] = true
+		if strings.HasPrefix(g, "#") {
+			disabledTags[strings.TrimPrefix(g, "#")] = true
 			continue
 		}
 
@@ -151,8 +151,8 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	if flagEnable != "<all>" {
 		for _, g := range strings.Split(flagEnable, ",") {
 			g = strings.TrimSpace(g)
-			if t := strings.Split(g, "#"); len(t) == 2 {
-				enabledTags[t[1]] = true
+			if strings.HasPrefix(g, "#") {
+				enabledTags[strings.TrimPrefix(g, "#")] = true
 				continue
 			}
 

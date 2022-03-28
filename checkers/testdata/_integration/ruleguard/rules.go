@@ -1,3 +1,4 @@
+//go:build ignore
 // +build ignore
 
 package gorules
@@ -14,4 +15,10 @@ func sprintfConcat(m dsl.Matcher) {
 	m.Match(`fmt.Sprintf("%s%s", $a, $b)`).
 		Where(m["a"].Type.Is(`string`) && m["b"].Type.Is(`string`)).
 		Suggest(`$a+$b`)
+}
+
+//doc:tags test
+func stackedIf(m dsl.Matcher) {
+	m.Match(`if $*_ { if $*_ { $*_ } }`).
+		Report(`may be simplified to one if`)
 }
