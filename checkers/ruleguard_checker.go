@@ -161,17 +161,9 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 	}
 	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
 
-	inDisabledByTags := func(g *ruleguard.GoRuleGroup) bool {
+	inTags := func(g *ruleguard.GoRuleGroup, tags map[string]bool) bool {
 		for _, t := range g.DocTags {
-			if disabledTags[t] {
-				return true
-			}
-		}
-		return false
-	}
-	inEnabledByTags := func(g *ruleguard.GoRuleGroup) bool {
-		for _, t := range g.DocTags {
-			if enabledTags[t] {
+			if tags[t] {
 				return true
 			}
 		}
@@ -190,9 +182,9 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 				whyDisabled = "not enabled by -enabled flag"
 			case disabledGroups[g.Name]:
 				whyDisabled = "disabled by -disable flag"
-			case len(enabledTags) != 0 && !inEnabledByTags(g):
+			case len(enabledTags) != 0 && !inTags(g, enabledTags):
 				whyDisabled = "not enabled by tags in -enable flag"
-			case len(disabledTags) != 0 && inDisabledByTags(g):
+			case len(disabledTags) != 0 && inTags(g, disabledTags):
 				whyDisabled = "disabled by tags in -disable flag"
 			}
 			if ruleguardDebug {
