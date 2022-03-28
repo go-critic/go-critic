@@ -29,3 +29,11 @@ func dynamicFmtString(m dsl.Matcher) {
 		Suggest("errors.New($f($args))").
 		Report(`use errors.New($f($args)) or fmt.Errorf("%s", $f($args)) instead`)
 }
+
+//doc:tags experimental
+func regexpCompile(m dsl.Matcher) {
+	m.Match(`regexp.Match($*_)`,
+		`regexp.MatchString($*_)`,
+		`regexp.MatchReader($*_)`,
+	).Report(`regexp compilation should be avoided on the hot paths`)
+}
