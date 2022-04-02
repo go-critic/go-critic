@@ -159,6 +159,10 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) (
 			enabledGroups[g] = true
 		}
 	}
+
+	if !enabledTags["experimental"] {
+		disabledTags["experimental"] = true
+	}
 	ruleguardDebug := os.Getenv("GOCRITIC_RULEGUARD_DEBUG") != ""
 
 	inEnabledTags := func(g *ruleguard.GoRuleGroup) bool {
