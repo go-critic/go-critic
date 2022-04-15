@@ -655,6 +655,24 @@ func timeExprSimplify(m dsl.Matcher) {
 		Report(`use $t.UnixMicro() instead of $$`)
 }
 
+//doc:summary Detects Before/After call of time.Time that can be simplified.
+//doc:tags    style experimental
+//doc:before  !t.Before(tt)
+//doc:after   t.After(tt)
+func timeRangeExprSimplify(m dsl.Matcher) {
+	isTime := func(v dsl.Var) bool {
+		return v.Type.Is(`time.Time`) || v.Type.Is(`*time.Time`)
+	}
+
+	m.Match(`!$t.Before($tt)`).
+		Where(isTime(m["t"])).
+		Suggest("$t.After($tt)")
+
+	m.Match(`!$t.After($tt)`).
+		Where(isTime(m["t"])).
+		Suggest("$t.Before($tt)")
+}
+
 //doc:summary Detects exposed methods from sync.Mutex and sync.RWMutex
 //doc:tags    style experimental
 //doc:before  type Foo struct{ ...; sync.Mutex; ... }
