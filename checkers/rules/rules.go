@@ -659,7 +659,7 @@ func timeExprSimplify(m dsl.Matcher) {
 //doc:tags    style experimental
 //doc:before  !t.Before(tt)
 //doc:after   t.After(tt)
-func timeRangeExprSimplify(m dsl.Matcher) {
+func timeComparisonSimplify(m dsl.Matcher) {
 	isTime := func(v dsl.Var) bool {
 		return v.Type.Is(`time.Time`) || v.Type.Is(`*time.Time`)
 	}

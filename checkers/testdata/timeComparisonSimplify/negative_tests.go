@@ -1,4 +1,4 @@
-package timeRangeExprSimplify
+package timeComparisonSimplify
 
 import (
 	"time"
