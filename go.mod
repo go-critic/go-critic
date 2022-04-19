@@ -3,7 +3,7 @@ module github.com/go-critic/go-critic
 go 1.16
 
 require (
-	github.com/cristalhq/acmd v0.5.3
+	github.com/cristalhq/acmd v0.5.7
 	github.com/go-toolsmith/astcast v1.0.0
 	github.com/go-toolsmith/astcopy v1.0.0
 	github.com/go-toolsmith/astequal v1.0.1
@@ -19,5 +19,3 @@ require (
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/tools v0.1.9-0.20211228192929-ee1ca4ffc4da
 )
-
-replace github.com/cristalhq/acmd => /Users/olegkovalov/code/hq/acmd
