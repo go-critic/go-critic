@@ -5,7 +5,7 @@ import (
 	"github.com/go-critic/go-critic/framework/lintmain"
 )
 
-var Version string
+var Version = "v0.0.0-SNAPSHOT"
 
 func main() {
 	lintmain.Run(lintmain.Config{
