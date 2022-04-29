@@ -2063,7 +2063,7 @@ var PrecompiledRules = &ir.File{
 			Name:        "timeCmpSimplify",
 			MatcherName: "m",
 			DocTags:     []string{"style", "experimental"},
-			DocSummary:  "Detects Before/After call of time.Time that can be simplified.",
+			DocSummary:  "Detects Before/After call of time.Time that can be simplified",
 			DocBefore:   "!t.Before(tt)",
 			DocAfter:    "t.After(tt)",
 			Rules: []ir.Rule{
