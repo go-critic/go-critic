@@ -655,7 +655,7 @@ func timeExprSimplify(m dsl.Matcher) {
 		Report(`use $t.UnixMicro() instead of $$`)
 }
 
-//doc:summary Detects Before/After call of time.Time that can be simplified.
+//doc:summary Detects Before/After call of time.Time that can be simplified
 //doc:tags    style experimental
 //doc:before  !t.Before(tt)
 //doc:after   t.After(tt)
