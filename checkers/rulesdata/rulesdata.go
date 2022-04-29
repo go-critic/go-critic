@@ -2060,7 +2060,7 @@ var PrecompiledRules = &ir.File{
 		},
 		{
 			Line:        662,
-			Name:        "timeComparisonSimplify",
+			Name:        "timeCmpSimplify",
 			MatcherName: "m",
 			DocTags:     []string{"style", "experimental"},
 			DocSummary:  "Detects Before/After call of time.Time that can be simplified.",

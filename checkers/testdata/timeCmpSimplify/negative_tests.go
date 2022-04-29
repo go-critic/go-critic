@@ -1,4 +1,4 @@
-package timeComparisonSimplify
+package timeCmpSimplify
 
 import (
 	"time"
