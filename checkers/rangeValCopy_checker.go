@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/framework/linter"
+	"golang.org/x/exp/typeparams"
 )
 
 func init() {
@@ -63,6 +64,9 @@ func (c *rangeValCopyChecker) VisitStmt(stmt ast.Stmt) {
 	}
 	typ := c.ctx.TypeOf(rng.Value)
 	if typ == nil {
+		return
+	}
+	if _, ok := typ.(*typeparams.TypeParam); ok {
 		return
 	}
 	if size := c.ctx.SizesInfo.Sizeof(typ); size >= c.sizeThreshold {
