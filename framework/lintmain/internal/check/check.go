@@ -426,7 +426,7 @@ func (p *program) startProfiling() error {
 func (p *program) finishProfiling() error {
 	if p.cpuProfile != "" {
 		pprof.StopCPUProfile()
-		err := os.WriteFile(p.cpuProfile, p.cpuProfileData.Bytes(), 0o666)
+		err := os.WriteFile(p.cpuProfile, p.cpuProfileData.Bytes(), 0o666) //nolint:gosec // 0o666 is okay
 		if err != nil {
 			return fmt.Errorf("write CPU profile: %v", err)
 		}
