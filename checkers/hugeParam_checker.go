@@ -53,8 +53,8 @@ func (c *hugeParamChecker) checkParams(params []*ast.Field) {
 			if _, ok := typ.(*typeparams.TypeParam); ok {
 				continue
 			}
-			size := c.ctx.SizesInfo.Sizeof(typ)
-			if size >= c.sizeThreshold {
+			size, ok := c.ctx.SizeOf(typ)
+			if ok && size >= c.sizeThreshold {
 				c.warn(id, size)
 			}
 		}
