@@ -33,11 +33,11 @@ var cmds = []acmd.Command{
 	{
 		Name:        "check",
 		Description: "run linter over specified targets",
-		Do:          check.Main,
+		ExecFunc:    check.Main,
 	},
 	{
 		Name:        "doc",
 		Description: "get installed checkers documentation",
-		Do:          lintdoc.Main,
+		ExecFunc:    lintdoc.Main,
 	},
 }
