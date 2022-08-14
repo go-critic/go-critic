@@ -8,7 +8,11 @@ import (
 var Version = "v0.0.0-SNAPSHOT"
 
 func main() {
-	checkers.InitEmbeddedRules()
+	err := checkers.InitEmbeddedRules()
+	if err != nil {
+		panic(err)
+	}
+
 	lintmain.Run(lintmain.Config{
 		Name:    "gocritic",
 		Version: Version,
