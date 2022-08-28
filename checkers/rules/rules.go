@@ -10,7 +10,7 @@ import (
 //doc:after   x.String()
 func redundantSprint(m dsl.Matcher) {
 	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
-		Where(m["x"].Type.Implements(`fmt.Stringer`)).
+		Where(!m["x"].Type.Is(`reflect.Value`) && m["x"].Type.Implements(`fmt.Stringer`)).
 		Suggest(`$x.String()`).
 		Report(`use $x.String() instead`)
 
