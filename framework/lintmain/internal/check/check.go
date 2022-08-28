@@ -2,6 +2,7 @@ package check
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -19,16 +20,17 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/go-toolsmith/pkgload"
+	"golang.org/x/tools/go/packages"
+
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/go-critic/go-critic/framework/lintmain/internal/hotload"
-	"github.com/go-toolsmith/pkgload"
-	"github.com/logrusorgru/aurora"
-	"golang.org/x/tools/go/packages"
 )
 
 // Main implements sub-command entry point.
-func Main() {
+func Main(_ context.Context, args []string) error {
 	var p program
+	p.flagSet = flag.NewFlagSet("gocritic", flag.ContinueOnError)
 	p.infoList = linter.GetCheckersInfo()
 
 	steps := []struct {
@@ -38,7 +40,7 @@ func Main() {
 		{"load plugin", p.loadPlugin},
 		{"bind checker params", p.bindCheckerParams},
 		{"bind default enabled list", p.bindDefaultEnabledList},
-		{"parse args", p.parseArgs},
+		{"parse args", func() error { return p.parseArgs(args) }},
 		{"start profiling", p.startProfiling},
 		{"assign checker params", p.assignCheckerParams},
 		{"load program", p.loadProgram},
@@ -53,10 +55,13 @@ func Main() {
 			log.Fatalf("%s: %v", step.name, err)
 		}
 	}
+	return nil
 }
 
 type program struct {
 	ctx *linter.Context
+
+	flagSet *flag.FlagSet
 
 	fset *token.FileSet
 
@@ -93,7 +98,6 @@ type program struct {
 	checkTests         bool
 	checkGenerated     bool
 	shorterErrLocation bool
-	coloredOutput      bool
 	verbose            bool
 }
 
@@ -169,7 +173,7 @@ func (p *program) checkFile(f *ast.File) {
 			if p.shorterErrLocation {
 				loc = p.shortenLocation(loc)
 			}
-			printWarning(p, c.Info.Name, loc, warn.Text)
+			log.Printf("%s: %s: %s\n", loc, c.Info.Name, warn.Text)
 		}
 	}
 }
@@ -314,11 +318,11 @@ func (p *program) bindCheckerParams() error {
 			key := p.checkerParamKey(info, pname)
 			switch v := param.Value.(type) {
 			case int:
-				intParams[key] = flag.Int(key, v, param.Usage)
+				intParams[key] = p.flagSet.Int(key, v, param.Usage)
 			case bool:
-				boolParams[key] = flag.Bool(key, v, param.Usage)
+				boolParams[key] = p.flagSet.Bool(key, v, param.Usage)
 			case string:
-				stringParams[key] = flag.String(key, v, param.Usage)
+				stringParams[key] = p.flagSet.String(key, v, param.Usage)
 			default:
 				panic("unreachable") // Checked in AddChecker
 			}
@@ -352,34 +356,34 @@ func (p *program) bindDefaultEnabledList() error {
 	return nil
 }
 
-func (p *program) parseArgs() error {
-	flag.BoolVar(&p.filters.enableAll, "enableAll", false,
+func (p *program) parseArgs(args []string) error {
+	p.flagSet.BoolVar(&p.filters.enableAll, "enableAll", false,
 		`identical to -enable with all checkers listed. If true, -enable is ignored`)
-	enable := flag.String("enable", strings.Join(p.filters.defaultCheckers, ","),
+	enable := p.flagSet.String("enable", strings.Join(p.filters.defaultCheckers, ","),
 		`comma-separated list of enabled checkers. Can include #tags`)
-	disable := flag.String("disable", "",
+	disable := p.flagSet.String("disable", "",
 		`comma-separated list of checkers to be disabled. Can include #tags`)
-	flag.IntVar(&p.exitCode, "exitCode", 1,
+	p.flagSet.IntVar(&p.exitCode, "exitCode", 1,
 		`exit code to be used when lint issues are found`)
-	flag.BoolVar(&p.checkTests, "checkTests", true,
+	p.flagSet.BoolVar(&p.checkTests, "checkTests", true,
 		`whether to check test files`)
-	flag.BoolVar(&p.shorterErrLocation, `shorterErrLocation`, true,
+	p.flagSet.BoolVar(&p.shorterErrLocation, `shorterErrLocation`, true,
 		`whether to replace error location prefix with $GOROOT and $GOPATH`)
-	flag.BoolVar(&p.coloredOutput, `coloredOutput`, false,
-		`whether to use colored output`)
-	flag.BoolVar(&p.verbose, "v", false,
+	p.flagSet.BoolVar(&p.verbose, "v", false,
 		`whether to print output useful during linter debugging`)
-	flag.StringVar(&p.goVersion, "go", "",
+	p.flagSet.StringVar(&p.goVersion, "go", "",
 		`select the Go version to target. Leave as string for the latest`)
 
-	flag.StringVar(&p.memProfile, "memprofile", "",
+	p.flagSet.StringVar(&p.memProfile, "memprofile", "",
 		`write memory profile to the specified file`)
-	flag.StringVar(&p.cpuProfile, "cpuprofile", "",
+	p.flagSet.StringVar(&p.cpuProfile, "cpuprofile", "",
 		`write CPU profile to the specified file`)
 
-	flag.Parse()
+	if err := p.flagSet.Parse(args); err != nil {
+		return err
+	}
 
-	p.packages = flag.Args()
+	p.packages = p.flagSet.Args()
 	p.filters.enable = strings.Split(*enable, ",")
 	p.filters.disable = strings.Split(*disable, ",")
 
@@ -422,7 +426,7 @@ func (p *program) startProfiling() error {
 func (p *program) finishProfiling() error {
 	if p.cpuProfile != "" {
 		pprof.StopCPUProfile()
-		err := os.WriteFile(p.cpuProfile, p.cpuProfileData.Bytes(), 0o666)
+		err := os.WriteFile(p.cpuProfile, p.cpuProfileData.Bytes(), 0o666) //nolint:gosec // 0o666 is okay
 		if err != nil {
 			return fmt.Errorf("write CPU profile: %v", err)
 		}
@@ -500,19 +504,6 @@ func (p *program) shortenLocation(loc string) string {
 		return relLoc
 	}
 	return loc
-}
-
-func printWarning(p *program, rule, loc, warn string) {
-	switch {
-	case p.coloredOutput:
-		log.Printf("%v: %v: %v\n",
-			aurora.Magenta(aurora.Bold(loc)),
-			aurora.Red(rule),
-			warn)
-
-	default:
-		log.Printf("%s: %s: %s\n", loc, rule, warn)
-	}
 }
 
 func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {

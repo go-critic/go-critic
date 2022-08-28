@@ -12,6 +12,12 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
+func init() {
+	if err := InitEmbeddedRules(); err != nil {
+		panic(err) // Should never happen
+	}
+}
+
 func TestCheckers(t *testing.T) {
 	allParams := map[string]map[string]interface{}{
 		"captLocal": {"paramsOnly": false},

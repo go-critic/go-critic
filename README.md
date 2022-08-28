@@ -42,6 +42,11 @@ Instructions below show how to build `go-critic` from sources.
 GO111MODULE=on go get -v -u github.com/go-critic/go-critic/cmd/gocritic
 ```
 
+as of go 1.18, use go install instead
+```bash
+go install -v github.com/go-critic/go-critic/cmd/gocritic@latest
+```
+
 If the command above does not work, you can try cloning this repository
 under your `GOPATH` and run `make gocritic`.
 

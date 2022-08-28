@@ -1,12 +1,12 @@
 package lintmain
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/go-critic/go-critic/framework/cmdutil"
 	"github.com/go-critic/go-critic/framework/lintmain/internal/check"
 	"github.com/go-critic/go-critic/framework/lintmain/internal/lintdoc"
+
+	"github.com/cristalhq/acmd"
 )
 
 // Config is used to parametrize the linter.
@@ -20,44 +20,24 @@ type Config struct {
 func Run(cfg Config) {
 	log.SetFlags(0)
 
-	printVersion := func() {
-		log.Println(cfg.Version)
+	r := acmd.RunnerOf(cmds, acmd.Config{
+		AppName: cfg.Name,
+		Version: cfg.Version,
+	})
+	if err := r.Run(); err != nil {
+		log.Print(err.Error())
 	}
+}
 
-	// makeExample replaces all ${linter} placeholders to a bound linter name.
-	makeExamples := func(examples ...string) []string {
-		for i := range examples {
-			examples[i] = fmt.Sprintf(examples[i], cfg.Name)
-		}
-		return examples
-	}
-
-	subCommands := []*cmdutil.SubCommand{
-		{
-			Main:  check.Main,
-			Name:  "check",
-			Short: "run linter over specified targets",
-			Examples: makeExamples(
-				"%s check -help",
-				"%s check -enable='paramTypeCombine,unslice' strings bytes",
-				"%s check -v -enable='#diagnostic' -disable='#experimental,#opinionated' ./..."),
-		},
-		{
-			Main:     printVersion,
-			Name:     "version",
-			Short:    "print linter version",
-			Examples: makeExamples("%s version"),
-		},
-		{
-			Main:  lintdoc.Main,
-			Name:  "doc",
-			Short: "get installed checkers documentation",
-			Examples: makeExamples(
-				"%s doc -help",
-				"%s doc",
-				"%s doc checkerName"),
-		},
-	}
-
-	cmdutil.DispatchCommand(subCommands)
+var cmds = []acmd.Command{
+	{
+		Name:        "check",
+		Description: "run linter over specified targets",
+		ExecFunc:    check.Main,
+	},
+	{
+		Name:        "doc",
+		Description: "get installed checkers documentation",
+		ExecFunc:    lintdoc.Main,
+	},
 }

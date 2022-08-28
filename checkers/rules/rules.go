@@ -10,7 +10,7 @@ import (
 //doc:after   x.String()
 func redundantSprint(m dsl.Matcher) {
 	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
-		Where(m["x"].Type.Implements(`fmt.Stringer`)).
+		Where(!m["x"].Type.Is(`reflect.Value`) && m["x"].Type.Implements(`fmt.Stringer`)).
 		Suggest(`$x.String()`).
 		Report(`use $x.String() instead`)
 
@@ -653,6 +653,24 @@ func timeExprSimplify(m dsl.Matcher) {
 		Report(`use $t.UnixMicro() instead of $$`)
 }
 
+//doc:summary Detects Before/After call of time.Time that can be simplified
+//doc:tags    style experimental
+//doc:before  !t.Before(tt)
+//doc:after   t.After(tt)
+func timeCmpSimplify(m dsl.Matcher) {
+	isTime := func(v dsl.Var) bool {
+		return v.Type.Is(`time.Time`) || v.Type.Is(`*time.Time`)
+	}
+
+	m.Match(`!$t.Before($tt)`).
+		Where(isTime(m["t"])).
+		Suggest("$t.After($tt)")
+
+	m.Match(`!$t.After($tt)`).
+		Where(isTime(m["t"])).
+		Suggest("$t.Before($tt)")
+}
+
 //doc:summary Detects exposed methods from sync.Mutex and sync.RWMutex
 //doc:tags    style experimental
 //doc:before  type Foo struct{ ...; sync.Mutex; ... }
@@ -733,4 +751,21 @@ func dynamicFmtString(m dsl.Matcher) {
 	m.Match(`fmt.Errorf($f($*args))`).
 		Suggest("errors.New($f($*args))").
 		Report(`use errors.New($f($*args)) or fmt.Errorf("%s", $f($*args)) instead`)
+}
+
+//doc:summary Detects strings.Compare usage
+//doc:tags    style experimental
+//doc:before  strings.Compare(x, y)
+//doc:after   x < y
+func stringsCompare(m dsl.Matcher) {
+	m.Match(`strings.Compare($s1, $s2) == 0`).
+		Suggest(`$s1 == $s2`)
+
+	m.Match(`strings.Compare($s1, $s2) == -1`,
+		`strings.Compare($s1, $s2) < 0`).
+		Suggest(`$s1 < $s2`)
+
+	m.Match(`strings.Compare($s1, $s2) == 1`,
+		`strings.Compare($s1, $s2) > 0`).
+		Suggest(`$s1 > $s2`)
 }

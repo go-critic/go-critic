@@ -1,1 +1,4 @@
-check -@ruleguard.rules ./rules.go -enable ruleguard ./... | linttest.golden
+check -@ruleguard.rules ./rules.go -enable ruleguard -@ruleguard.disable=#test ./... | linttest.golden
+check -@ruleguard.rules ./rules.go -enable ruleguard -@ruleguard.enable=#style -@ruleguard.disable=#test ./... | linttest.golden2
+check -@ruleguard.rules ./rules.go -enable ruleguard -@ruleguard.enable=#style,#test,#experimental ./... | linttest.golden3
+check -@ruleguard.rules ./rules.go -enable ruleguard ./... | linttest.golden4

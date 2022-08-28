@@ -1,0 +1,4 @@
+exit status 1
+./f1.go:18:2: ruleguard: may be simplified to one if
+./f1.go:12:10: ruleguard: regexp compilation should be avoided on the hot paths
+./f1.go:29:6: ruleguard: use errors.New(k()) or fmt.Errorf("%s", k()) instead
