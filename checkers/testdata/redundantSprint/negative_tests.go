@@ -1,5 +1,10 @@
 package checker_test
 
+import (
+	"fmt"
+	"reflect"
+)
+
 func _() {
 	{
 		var foo withStringer
@@ -16,5 +21,12 @@ func _() {
 		_ = s
 
 		_ = "x"
+	}
+
+	{
+		var rv reflect.Value
+		_ = fmt.Sprint(rv)
+		_ = fmt.Sprintf("%s", rv)
+		_ = fmt.Sprintf("%v", rv)
 	}
 }

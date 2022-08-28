@@ -28,11 +28,30 @@ var PrecompiledRules = &ir.File{
 					ReportTemplate:  "use $x.String() instead",
 					SuggestTemplate: "$x.String()",
 					WhereExpr: ir.FilterExpr{
-						Line:  13,
-						Op:    ir.FilterVarTypeImplementsOp,
-						Src:   "m[\"x\"].Type.Implements(`fmt.Stringer`)",
-						Value: "x",
-						Args:  []ir.FilterExpr{{Line: 13, Op: ir.FilterStringOp, Src: "`fmt.Stringer`", Value: "fmt.Stringer"}},
+						Line: 13,
+						Op:   ir.FilterAndOp,
+						Src:  "!m[\"x\"].Type.Is(`reflect.Value`) && m[\"x\"].Type.Implements(`fmt.Stringer`)",
+						Args: []ir.FilterExpr{
+							{
+								Line: 13,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"x\"].Type.Is(`reflect.Value`)",
+								Args: []ir.FilterExpr{{
+									Line:  13,
+									Op:    ir.FilterVarTypeIsOp,
+									Src:   "m[\"x\"].Type.Is(`reflect.Value`)",
+									Value: "x",
+									Args:  []ir.FilterExpr{{Line: 13, Op: ir.FilterStringOp, Src: "`reflect.Value`", Value: "reflect.Value"}},
+								}},
+							},
+							{
+								Line:  13,
+								Op:    ir.FilterVarTypeImplementsOp,
+								Src:   "m[\"x\"].Type.Implements(`fmt.Stringer`)",
+								Value: "x",
+								Args:  []ir.FilterExpr{{Line: 13, Op: ir.FilterStringOp, Src: "`fmt.Stringer`", Value: "fmt.Stringer"}},
+							},
+						},
 					},
 				},
 				{
