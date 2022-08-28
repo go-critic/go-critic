@@ -96,3 +96,7 @@ func channelIssue1035() {
 	var _ chan (<-chan (chan int))
 	var _ chan (<-chan (<-chan int))
 }
+
+func funcIssue1245() {
+	_ = (func())(nil)
+}
