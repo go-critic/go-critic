@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/cristalhq/acmd v0.8.1
 	github.com/go-toolsmith/astcast v1.0.0
-	github.com/go-toolsmith/astcopy v1.0.1
-	github.com/go-toolsmith/astequal v1.0.2
+	github.com/go-toolsmith/astcopy v1.0.2
+	github.com/go-toolsmith/astequal v1.0.3
 	github.com/go-toolsmith/astfmt v1.0.0
 	github.com/go-toolsmith/astp v1.0.0
 	github.com/go-toolsmith/pkgload v1.0.2-0.20220101231613-e814995d17c5
