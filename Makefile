@@ -36,8 +36,8 @@ ci-tests:
 	GOCRITIC_EXTERNAL_TESTS=1 go test -v -race -count=1 -coverprofile=coverage.out ./...
 
 ci-generate:
-	go generate ./...
-	git diff --exit-code --quiet || (echo "Please run 'go generate ./...' to update precompiled rules."; false)
+	@go generate ./...
+	@git diff --exit-code --quiet || (echo "Please run 'go generate ./...' to update precompiled rules."; false)
 
 ci-linter:
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.46.2
