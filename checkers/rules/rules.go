@@ -776,7 +776,7 @@ func stringsCompare(m dsl.Matcher) {
 //doc:tags      diagnostic experimental
 //doc:before    if err := expr(); err2 != nil { /*...*/ }
 //doc:after     if err := expr(); err != nil { /*...*/ }
-func errCheckInIf(m dsl.Matcher) {
+func uncheckedInlineErr(m dsl.Matcher) {
 	m.Match(
 		`if $err := $_($*_); $err2 != nil { $*_ }`,
 		`if $err = $_($*_); $err2 != nil { $*_ }`,

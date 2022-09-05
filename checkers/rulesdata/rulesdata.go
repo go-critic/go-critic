@@ -2364,10 +2364,10 @@ var PrecompiledRules = &ir.File{
 		},
 		{
 			Line:        779,
-			Name:        "errCheckInIf",
+			Name:        "uncheckedInlineErr",
 			MatcherName: "m",
 			DocTags:     []string{"diagnostic", "experimental"},
-			DocSummary:  "Finds unchecked errors in if statements",
+			DocSummary:  "Detects unchecked errors in if statements",
 			DocBefore:   "if err := expr(); err2 != nil { /*...*/ }",
 			DocAfter:    "if err := expr(); err != nil { /*...*/ }",
 			Rules: []ir.Rule{{
@@ -2378,7 +2378,7 @@ var PrecompiledRules = &ir.File{
 					{Line: 783, Value: "if $*_, $err := $_($*_); $err2 != nil { $*_ }"},
 					{Line: 784, Value: "if $*_, $err = $_($*_); $err2 != nil { $*_ }"},
 				},
-				ReportTemplate: "returned error '$err' must be checked",
+				ReportTemplate: "$err error is unchecked, maybe intended to check it instead of $err2",
 				WhereExpr: ir.FilterExpr{
 					Line: 785,
 					Op:   ir.FilterAndOp,
