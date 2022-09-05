@@ -2416,7 +2416,6 @@ var PrecompiledRules = &ir.File{
 						},
 					},
 				},
-				LocationVar: "err",
 			}},
 		},
 	},

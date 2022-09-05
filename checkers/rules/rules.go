@@ -784,6 +784,5 @@ func uncheckedInlineErr(m dsl.Matcher) {
 		`if $*_, $err = $_($*_); $err2 != nil { $*_ }`).
 		Where(m["err"].Type.Implements("error") && m["err2"].Type.Implements("error") &&
 			m["err"].Text != m["err2"].Text).
-		Report("$err error is unchecked, maybe intended to check it instead of $err2").
-		At(m["err"])
+		Report("$err error is unchecked, maybe intended to check it instead of $err2")
 }
