@@ -772,7 +772,7 @@ func stringsCompare(m dsl.Matcher) {
 		Suggest(`$s1 > $s2`)
 }
 
-//doc:summary   Finds unchecked errors in if statements
+//doc:summary   Detects unchecked errors in if statements
 //doc:tags      diagnostic experimental
 //doc:before    if err := expr(); err2 != nil { /*...*/ }
 //doc:after     if err := expr(); err != nil { /*...*/ }
@@ -784,6 +784,6 @@ func errCheckInIf(m dsl.Matcher) {
 		`if $*_, $err = $_($*_); $err2 != nil { $*_ }`).
 		Where(m["err"].Type.Implements("error") && m["err2"].Type.Implements("error") &&
 			m["err"].Text != m["err2"].Text).
-		Report("returned error '$err' must be checked").
+		Report("$err error is unchecked, maybe intended to check it instead of $err2").
 		At(m["err"])
 }
