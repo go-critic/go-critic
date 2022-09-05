@@ -10,7 +10,7 @@ import (
 //doc:after   x.String()
 func redundantSprint(m dsl.Matcher) {
 	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
-		Where(m["x"].Type.Implements(`fmt.Stringer`)).
+		Where(!m["x"].Type.Is(`reflect.Value`) && m["x"].Type.Implements(`fmt.Stringer`)).
 		Suggest(`$x.String()`).
 		Report(`use $x.String() instead`)
 
@@ -118,14 +118,12 @@ func httpNoBody(m dsl.Matcher) {
 	m.Match("http.NewRequest($method, $url, $nil)").
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequest($method, $url, http.NoBody)").
-		Report("http.NoBody should be preferred to the nil request body").
-		At(m["nil"])
+		Report("http.NoBody should be preferred to the nil request body")
 
 	m.Match("http.NewRequestWithContext($ctx, $method, $url, $nil)").
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequestWithContext($ctx, $method, $url, http.NoBody)").
-		Report("http.NoBody should be preferred to the nil request body").
-		At(m["nil"])
+		Report("http.NoBody should be preferred to the nil request body")
 }
 
 //doc:summary Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation
