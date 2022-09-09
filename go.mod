@@ -12,7 +12,7 @@ require (
 	github.com/go-toolsmith/pkgload v1.0.2-0.20220101231613-e814995d17c5
 	github.com/go-toolsmith/strparse v1.0.0
 	github.com/go-toolsmith/typep v1.0.2
-	github.com/google/go-cmp v0.5.8
+	github.com/google/go-cmp v0.5.9
 	github.com/quasilyte/go-ruleguard v0.3.18
 	github.com/quasilyte/go-ruleguard/dsl v0.3.21
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
