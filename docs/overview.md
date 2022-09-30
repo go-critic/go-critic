@@ -6,7 +6,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
-Total number of checks is 101 :rocket:
+Total number of checks is 65 :rocket:
 
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
@@ -21,40 +21,28 @@ They also detect code that may be correct, but looks suspicious.
 | Name | Short description |
 |------|-------------------|
 |:heavy_check_mark:[appendAssign](#appendassign)|Detects suspicious append result assignments|
-|:heavy_check_mark:[argOrder](#argorder)|Detects suspicious arguments order|
-|:heavy_check_mark:[badCall](#badcall)|Detects suspicious function calls|
 |:heavy_check_mark:[badCond](#badcond)|Detects suspicious condition expressions|
-|:white_check_mark:[badLock](#badlock)|Detects suspicious mutex lock/unlock operations|
 |:white_check_mark:[badRegexp](#badregexp)|Detects suspicious regexp patterns|
-|:white_check_mark:[badSorting](#badsorting)|Detects bad usage of sort package|
 |:white_check_mark:[builtinShadowDecl](#builtinshadowdecl)|Detects top-level declarations that shadow the predeclared identifiers|
 |:heavy_check_mark:[caseOrder](#caseorder)|Detects erroneous case order inside switch statements|
 |:heavy_check_mark:[codegenComment](#codegencomment)|Detects malformed 'code generated' file comments|
 |:white_check_mark:[commentedOutCode](#commentedoutcode)|Detects commented-out code inside function bodies|
 |:white_check_mark:[deferInLoop](#deferinloop)|Detects loops inside functions that use defer|
 |:heavy_check_mark:[deprecatedComment](#deprecatedcomment)|Detects malformed 'deprecated' doc-comments|
-|:heavy_check_mark:[dupArg](#duparg)|Detects suspicious duplicated arguments|
 |:heavy_check_mark:[dupBranchBody](#dupbranchbody)|Detects duplicated branch bodies inside conditional statements|
 |:heavy_check_mark:[dupCase](#dupcase)|Detects duplicated case clauses inside switch or select statements|
 |:heavy_check_mark:[dupSubExpr](#dupsubexpr)|Detects suspicious duplicated sub-expressions|
-|:white_check_mark:[emptyDecl](#emptydecl)|Detects suspicious empty declarations blocks|
 |:white_check_mark:[evalOrder](#evalorder)|Detects unwanted dependencies on the evaluation order|
 |:heavy_check_mark:[exitAfterDefer](#exitafterdefer)|Detects calls to exit/fatal inside functions that use defer|
-|:white_check_mark:[externalErrorReassign](#externalerrorreassign)|Detects suspicious reassigment of error from another package|
 |:white_check_mark:[filepathJoin](#filepathjoin)|Detects problems in filepath.Join() function calls|
-|:heavy_check_mark:[flagDeref](#flagderef)|Detects immediate dereferencing of `flag` package pointers|
 |:heavy_check_mark:[flagName](#flagname)|Detects suspicious flag names|
 |:heavy_check_mark:[mapKey](#mapkey)|Detects suspicious map literal keys|
 |:white_check_mark:[nilValReturn](#nilvalreturn)|Detects return statements those results evaluate to nil|
-|:heavy_check_mark:[offBy1](#offby1)|Detects various off-by-one kind of errors|
 |:white_check_mark:[regexpPattern](#regexppattern)|Detects suspicious regexp patterns|
-|:white_check_mark:[returnAfterHttpError](#returnafterhttperror)|Detects suspicious http.Error call without following return|
 |:white_check_mark:[sloppyReassign](#sloppyreassign)|Detects suspicious/confusing re-assignments|
 |:heavy_check_mark:[sloppyTypeAssert](#sloppytypeassert)|Detects redundant type assertions|
 |:white_check_mark:[sortSlice](#sortslice)|Detects suspicious sort.Slice calls|
-|:white_check_mark:[sprintfQuotedString](#sprintfquotedstring)|Detects "%s" formatting directives that can be replaced with %q|
 |:white_check_mark:[sqlQuery](#sqlquery)|Detects issue in Query() and Exec() calls|
-|:white_check_mark:[syncMapLoadAndDelete](#syncmaploadanddelete)|Detects sync.Map load+delete operations that can be replaced with LoadAndDelete|
 |:white_check_mark:[truncateCmp](#truncatecmp)|Detects potential truncation issues when comparing ints of different sizes|
 |:white_check_mark:[unnecessaryDefer](#unnecessarydefer)|Detects redundantly deferred calls|
 |:white_check_mark:[weakCond](#weakcond)|Detects conditions that are unsafe due to not being exhaustive|
@@ -68,22 +56,17 @@ with another one that is considered more idiomatic or simple.
 
 | Name | Short description |
 |------|-------------------|
-|:heavy_check_mark:[assignOp](#assignop)|Detects assignments that can be simplified by using assignment operators|
 |:white_check_mark:[boolExprSimplify](#boolexprsimplify)|Detects bool expressions that can be simplified|
 |:white_check_mark:[builtinShadow](#builtinshadow)|Detects when predeclared identifiers are shadowed in assignments|
 |:heavy_check_mark:[captLocal](#captlocal)|Detects capitalized names for local variables|
 |:heavy_check_mark:[commentFormatting](#commentformatting)|Detects comments with non-idiomatic formatting|
 |:white_check_mark:[commentedOutImport](#commentedoutimport)|Detects commented-out imports|
 |:heavy_check_mark:[defaultCaseOrder](#defaultcaseorder)|Detects when default case in switch isn't on 1st or last position|
-|:white_check_mark:[deferUnlambda](#deferunlambda)|Detects deferred function literals that can be simplified|
 |:white_check_mark:[docStub](#docstub)|Detects comments that silence go lint complaints about doc-comment|
 |:white_check_mark:[dupImport](#dupimport)|Detects multiple imports of the same package under different aliases|
 |:heavy_check_mark:[elseif](#elseif)|Detects else with nested if statement that can be replaced with else-if|
 |:white_check_mark:[emptyFallthrough](#emptyfallthrough)|Detects fallthrough that can be avoided by using multi case values|
-|:white_check_mark:[emptyStringTest](#emptystringtest)|Detects empty string checks that can be written more idiomatically|
-|:white_check_mark:[exposedSyncMutex](#exposedsyncmutex)|Detects exposed methods from sync.Mutex and sync.RWMutex|
 |:white_check_mark:[hexLiteral](#hexliteral)|Detects hex literals that have mixed case letter digits|
-|:white_check_mark:[httpNoBody](#httpnobody)|Detects nil usages in http.NewRequest calls, suggesting http.NoBody as an alternative|
 |:heavy_check_mark:[ifElseChain](#ifelsechain)|Detects repeated if-else statements and suggests to replace them with switch statement|
 |:white_check_mark:[importShadow](#importshadow)|Detects when imported package names shadowed in the assignments|
 |:white_check_mark:[initClause](#initclause)|Detects non-assignment statements inside if/switch init clause|
@@ -92,17 +75,11 @@ with another one that is considered more idiomatic or simple.
 |:heavy_check_mark:[newDeref](#newderef)|Detects immediate dereferencing of `new` expressions|
 |:white_check_mark:[octalLiteral](#octalliteral)|Detects old-style octal literals|
 |:white_check_mark:[paramTypeCombine](#paramtypecombine)|Detects if function parameters could be combined by type and suggest the way to do it|
-|:white_check_mark:[preferFilepathJoin](#preferfilepathjoin)|Detects concatenation with os.PathSeparator which can be replaced with filepath.Join|
 |:white_check_mark:[ptrToRefParam](#ptrtorefparam)|Detects input and output parameters that have a type of pointer to referential type|
-|:white_check_mark:[redundantSprint](#redundantsprint)|Detects redundant fmt.Sprint calls|
-|:heavy_check_mark:[regexpMust](#regexpmust)|Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`|
 |:white_check_mark:[regexpSimplify](#regexpsimplify)|Detects regexp patterns that can be simplified|
 |:white_check_mark:[ruleguard](#ruleguard)|Runs user-defined rules using ruleguard linter|
 |:heavy_check_mark:[singleCaseSwitch](#singlecaseswitch)|Detects switch statements that could be better written as if statement|
-|:heavy_check_mark:[sloppyLen](#sloppylen)|Detects usage of `len` when result is obvious or doesn't make sense|
-|:white_check_mark:[stringConcatSimplify](#stringconcatsimplify)|Detects string concat operations that can be simplified|
-|:heavy_check_mark:[switchTrue](#switchtrue)|Detects switch-over-bool statements that use explicit `true` tag value|
-|:white_check_mark:[timeExprSimplify](#timeexprsimplify)|Detects manual conversion to milli- or microseconds|
+|:white_check_mark:[todoCommentWithoutDetail](#todocommentwithoutdetail)|Detects TODO comments without detail/assignee|
 |:white_check_mark:[tooManyResultsChecker](#toomanyresultschecker)|Detects function with too many results|
 |:white_check_mark:[typeAssertChain](#typeassertchain)|Detects repeated type assertions and suggests to replace them with type switch statement|
 |:white_check_mark:[typeDefFirst](#typedeffirst)|Detects method declarations preceding the type definition itself|
@@ -113,11 +90,7 @@ with another one that is considered more idiomatic or simple.
 |:heavy_check_mark:[unlambda](#unlambda)|Detects function literals that can be simplified|
 |:white_check_mark:[unnamedResult](#unnamedresult)|Detects unnamed results that may benefit from names|
 |:white_check_mark:[unnecessaryBlock](#unnecessaryblock)|Detects unnecessary braced statement blocks|
-|:heavy_check_mark:[unslice](#unslice)|Detects slice expressions that can be simplified to sliced expression itself|
-|:heavy_check_mark:[valSwap](#valswap)|Detects value swapping code that are not using parallel assignment|
 |:white_check_mark:[whyNoLint](#whynolint)|Ensures that `//nolint` comments include an explanation|
-|:heavy_check_mark:[wrapperFunc](#wrapperfunc)|Detects function calls that can be replaced with convenience wrappers|
-|:white_check_mark:[yodaStyleExpr](#yodastyleexpr)|Detects Yoda style expressions and suggests to replace them|
 
 ### Checkers from the "performance" group
 
@@ -129,17 +102,9 @@ can make your code run slower than it could be.
 | Name | Short description |
 |------|-------------------|
 |:white_check_mark:[appendCombine](#appendcombine)|Detects `append` chains to the same slice that can be done in a single `append` call|
-|:white_check_mark:[equalFold](#equalfold)|Detects unoptimal strings/bytes case-insensitive comparison|
 |:white_check_mark:[hugeParam](#hugeparam)|Detects params that incur excessive amount of copying|
-|:white_check_mark:[indexAlloc](#indexalloc)|Detects strings.Index calls that may cause unwanted allocs|
-|:white_check_mark:[preferDecodeRune](#preferdecoderune)|Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation|
-|:white_check_mark:[preferFprint](#preferfprint)|Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln)|
-|:white_check_mark:[preferStringWriter](#preferstringwriter)|Detects w.Write or io.WriteString calls which can be replaced with w.WriteString|
-|:white_check_mark:[preferWriteByte](#preferwritebyte)|Detects WriteRune calls with byte literal argument and reports to use WriteByte instead|
 |:white_check_mark:[rangeExprCopy](#rangeexprcopy)|Detects expensive copies of `for` loop range expressions|
 |:white_check_mark:[rangeValCopy](#rangevalcopy)|Detects loops that copy big objects during each iteration|
-|:white_check_mark:[sliceClear](#sliceclear)|Detects slice clear loops, suggests an idiom that is recognized by the Go compiler|
-|:white_check_mark:[stringXbytes](#stringxbytes)|Detects redundant conversions between string and []byte|
 
 ## appendAssign
 
@@ -188,72 +153,6 @@ xs = append(xs, 1, 2)
 ```
 
 
-## argOrder
-
-[
-  **diagnostic** ]
-
-Detects suspicious arguments order.
-
-
-
-
-
-**Before:**
-```go
-strings.HasPrefix("#", userpass)
-```
-
-**After:**
-```go
-strings.HasPrefix(userpass, "#")
-```
-
-
-## assignOp
-
-[
-  **style** ]
-
-Detects assignments that can be simplified by using assignment operators.
-
-
-
-
-
-**Before:**
-```go
-x = x * 2
-```
-
-**After:**
-```go
-x *= 2
-```
-
-
-## badCall
-
-[
-  **diagnostic** ]
-
-Detects suspicious function calls.
-
-
-
-
-
-**Before:**
-```go
-strings.Replace(s, from, to, 0)
-```
-
-**After:**
-```go
-strings.Replace(s, from, to, -1)
-```
-
-
 ## badCond
 
 [
@@ -280,29 +179,6 @@ for i := 0; i < n; i++ {
 ```
 
 
-## badLock
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects suspicious mutex lock/unlock operations.
-
-
-
-
-
-**Before:**
-```go
-mu.Lock(); mu.Unlock()
-```
-
-**After:**
-```go
-mu.Lock(); defer mu.Unlock()
-```
-
-
 ## badRegexp
 
 [
@@ -323,29 +199,6 @@ regexp.MustCompile(`(?:^aa|bb|cc)foo[aba]`)
 **After:**
 ```go
 regexp.MustCompile(`^(?:aa|bb|cc)foo[ab]`)
-```
-
-
-## badSorting
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects bad usage of sort package.
-
-
-
-
-
-**Before:**
-```go
-xs = sort.StringSlice(xs)
-```
-
-**After:**
-```go
-sort.Strings(xs)
 ```
 
 
@@ -632,7 +485,7 @@ Detects loops inside functions that use defer.
 ```go
 for _, filename := range []string{"foo", "bar"} {
 	 f, err := os.Open(filename)
-
+	
 	defer f.Close()
 }
 ```
@@ -641,36 +494,13 @@ for _, filename := range []string{"foo", "bar"} {
 ```go
 func process(filename string) {
 	 f, err := os.Open(filename)
-
+	
 	defer f.Close()
 }
 /* ... */
 for _, filename := range []string{"foo", "bar"} {
 	process(filename)
 }
-```
-
-
-## deferUnlambda
-
-[
-  **style**
-  **experimental** ]
-
-Detects deferred function literals that can be simplified.
-
-
-
-
-
-**Before:**
-```go
-defer func() { f() }()
-```
-
-**After:**
-```go
-defer f()
 ```
 
 
@@ -724,28 +554,6 @@ func Foo() {}
 // (B) - replace it with meaningful comment
 // Foo is a demonstration-only function.
 func Foo() {}
-```
-
-
-## dupArg
-
-[
-  **diagnostic** ]
-
-Detects suspicious duplicated arguments.
-
-
-
-
-
-**Before:**
-```go
-copy(dst, dst)
-```
-
-**After:**
-```go
-copy(dst, src)
 ```
 
 
@@ -897,29 +705,6 @@ Checker parameters:
 
 </ul>
 
-## emptyDecl
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects suspicious empty declarations blocks.
-
-
-
-
-
-**Before:**
-```go
-var()
-```
-
-**After:**
-```go
-/* nothing */
-```
-
-
 ## emptyFallthrough
 
 [
@@ -948,52 +733,6 @@ switch kind {
 case reflect.Int, reflect.Int32:
 	return Int
 }
-```
-
-
-## emptyStringTest
-
-[
-  **style**
-  **experimental** ]
-
-Detects empty string checks that can be written more idiomatically.
-
-
-
-
-
-**Before:**
-```go
-len(s) == 0
-```
-
-**After:**
-```go
-s == ""
-```
-
-
-## equalFold
-
-[
-  **performance**
-  **experimental** ]
-
-Detects unoptimal strings/bytes case-insensitive comparison.
-
-
-
-
-
-**Before:**
-```go
-strings.ToLower(x) == strings.ToLower(y)
-```
-
-**After:**
-```go
-strings.EqualFold(x, y)
 ```
 
 
@@ -1050,52 +789,6 @@ if bad {
 ```
 
 
-## exposedSyncMutex
-
-[
-  **style**
-  **experimental** ]
-
-Detects exposed methods from sync.Mutex and sync.RWMutex.
-
-
-
-
-
-**Before:**
-```go
-type Foo struct{ ...; sync.Mutex; ... }
-```
-
-**After:**
-```go
-type Foo struct{ ...; mu sync.Mutex; ... }
-```
-
-
-## externalErrorReassign
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects suspicious reassigment of error from another package.
-
-
-
-
-
-**Before:**
-```go
-io.EOF = nil
-```
-
-**After:**
-```go
-/* don't do it */
-```
-
-
 ## filepathJoin
 
 [
@@ -1116,28 +809,6 @@ filepath.Join("dir/", filename)
 **After:**
 ```go
 filepath.Join("dir", filename)
-```
-
-
-## flagDeref
-
-[
-  **diagnostic** ]
-
-Detects immediate dereferencing of `flag` package pointers.
-
-
-
-
-
-**Before:**
-```go
-b := *flag.Bool("b", false, "b docs")
-```
-
-**After:**
-```go
-var b bool; flag.BoolVar(&b, "b", false, "b docs")
 ```
 
 
@@ -1189,29 +860,6 @@ x := 0x12
 y := 0xff
 // (B)
 y := 0xFF
-```
-
-
-## httpNoBody
-
-[
-  **style**
-  **experimental** ]
-
-Detects nil usages in http.NewRequest calls, suggesting http.NoBody as an alternative.
-
-
-
-
-
-**Before:**
-```go
-http.NewRequest("GET", url, nil)
-```
-
-**After:**
-```go
-http.NewRequest("GET", url, http.NoBody)
 ```
 
 
@@ -1306,29 +954,6 @@ filepath := "foo.txt"
 **After:**
 ```go
 filename := "foo.txt"
-```
-
-
-## indexAlloc
-
-[
-  **performance** ]
-
-Detects strings.Index calls that may cause unwanted allocs.
-
-
-
-
-> See Go issue for details: https://github.com/golang/go/issues/25864
-
-**Before:**
-```go
-strings.Index(string(x), y)
-```
-
-**After:**
-```go
-bytes.Index(x, []byte(y))
 ```
 
 
@@ -1533,28 +1158,6 @@ foo(0o2)
 ```
 
 
-## offBy1
-
-[
-  **diagnostic** ]
-
-Detects various off-by-one kind of errors.
-
-
-
-
-
-**Before:**
-```go
-xs[len(xs)]
-```
-
-**After:**
-```go
-xs[len(xs)-1]
-```
-
-
 ## paramTypeCombine
 
 [
@@ -1575,122 +1178,6 @@ func foo(a, b int, c, d int, e, f int, g int) {}
 **After:**
 ```go
 func foo(a, b, c, d, e, f, g int) {}
-```
-
-
-## preferDecodeRune
-
-[
-  **performance**
-  **experimental** ]
-
-Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation.
-
-
-
-
-> See Go issue for details: https://github.com/golang/go/issues/45260
-
-**Before:**
-```go
-r := []rune(s)[0]
-```
-
-**After:**
-```go
-r, _ := utf8.DecodeRuneInString(s)
-```
-
-
-## preferFilepathJoin
-
-[
-  **style**
-  **experimental** ]
-
-Detects concatenation with os.PathSeparator which can be replaced with filepath.Join.
-
-
-
-
-
-**Before:**
-```go
-x + string(os.PathSeparator) + y
-```
-
-**After:**
-```go
-filepath.Join(x, y)
-```
-
-
-## preferFprint
-
-[
-  **performance**
-  **experimental** ]
-
-Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln).
-
-
-
-
-
-**Before:**
-```go
-w.Write([]byte(fmt.Sprintf("%x", 10)))
-```
-
-**After:**
-```go
-fmt.Fprintf(w, "%x", 10)
-```
-
-
-## preferStringWriter
-
-[
-  **performance**
-  **experimental** ]
-
-Detects w.Write or io.WriteString calls which can be replaced with w.WriteString.
-
-
-
-
-
-**Before:**
-```go
-w.Write([]byte("foo"))
-```
-
-**After:**
-```go
-w.WriteString("foo")
-```
-
-
-## preferWriteByte
-
-[
-  **performance**
-  **experimental** ]
-
-Detects WriteRune calls with byte literal argument and reports to use WriteByte instead.
-
-
-
-
-
-**Before:**
-```go
-w.WriteRune('\n')
-```
-
-**After:**
-```go
-w.WriteByte('\n')
 ```
 
 
@@ -1806,51 +1293,6 @@ Checker parameters:
 
 </ul>
 
-## redundantSprint
-
-[
-  **style**
-  **experimental** ]
-
-Detects redundant fmt.Sprint calls.
-
-
-
-
-
-**Before:**
-```go
-fmt.Sprint(x)
-```
-
-**After:**
-```go
-x.String()
-```
-
-
-## regexpMust
-
-[
-  **style** ]
-
-Detects `regexp.Compile*` that can be replaced with `regexp.MustCompile*`.
-
-
-
-
-
-**Before:**
-```go
-re, _ := regexp.Compile("const pattern")
-```
-
-**After:**
-```go
-re := regexp.MustCompile("const pattern")
-```
-
-
 ## regexpPattern
 
 [
@@ -1898,29 +1340,6 @@ regexp.MustCompile(`[abc] {3}[a-z]+`)
 ```
 
 
-## returnAfterHttpError
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects suspicious http.Error call without following return.
-
-
-
-
-
-**Before:**
-```go
-if err != nil { http.Error(...); }
-```
-
-**After:**
-```go
-if err != nil { http.Error(...); return; }
-```
-
-
 ## ruleguard
 
 [
@@ -1950,6 +1369,16 @@ Checker parameters:
 <li>
 
   `@ruleguard.debug` enable debug for the specified named rules group (default )
+
+</li>
+<li>
+
+  `@ruleguard.disable` comma-separated list of disabled groups or skip empty to enable everything (default )
+
+</li>
+<li>
+
+  `@ruleguard.enable` comma-separated list of enabled groups or skip empty to enable everything (default <all>)
 
 </li>
 <li>
@@ -1998,51 +1427,6 @@ case int:
 if x, ok := x.(int); ok {
 	body()
 }
-```
-
-
-## sliceClear
-
-[
-  **performance**
-  **experimental** ]
-
-Detects slice clear loops, suggests an idiom that is recognized by the Go compiler.
-
-
-
-
-
-**Before:**
-```go
-for i := 0; i < len(buf); i++ { buf[i] = 0 }
-```
-
-**After:**
-```go
-for i := range buf { buf[i] = 0 }
-```
-
-
-## sloppyLen
-
-[
-  **style** ]
-
-Detects usage of `len` when result is obvious or doesn't make sense.
-
-
-
-
-
-**Before:**
-```go
-len(arr) <= 0
-```
-
-**After:**
-```go
-len(arr) == 0
 ```
 
 
@@ -2118,29 +1502,6 @@ sort.Slice(kv, func(i, j) bool { return kv[i].key < kv[j].key })
 ```
 
 
-## sprintfQuotedString
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects "%s" formatting directives that can be replaced with %q.
-
-
-
-
-
-**Before:**
-```go
-fmt.Sprintf(`"%s"`, s)
-```
-
-**After:**
-```go
-fmt.Sprintf(`%q`, s)
-```
-
-
 ## sqlQuery
 
 [
@@ -2164,13 +1525,14 @@ _, err := db.Exec("UPDATE ...")
 ```
 
 
-## stringConcatSimplify
+## todoCommentWithoutDetail
 
 [
   **style**
+  **opinionated**
   **experimental** ]
 
-Detects string concat operations that can be simplified.
+Detects TODO comments without detail/assignee.
 
 
 
@@ -2178,102 +1540,14 @@ Detects string concat operations that can be simplified.
 
 **Before:**
 ```go
-strings.Join([]string{x, y}, "_")
+// TODO
+fiiWithCtx(nil, a, b)
 ```
 
 **After:**
 ```go
-x + "_" + y
-```
-
-
-## stringXbytes
-
-[
-  **performance** ]
-
-Detects redundant conversions between string and []byte.
-
-
-
-
-
-**Before:**
-```go
-copy(b, []byte(s))
-```
-
-**After:**
-```go
-copy(b, s)
-```
-
-
-## switchTrue
-
-[
-  **style** ]
-
-Detects switch-over-bool statements that use explicit `true` tag value.
-
-
-
-
-
-**Before:**
-```go
-switch true {...}
-```
-
-**After:**
-```go
-switch {...}
-```
-
-
-## syncMapLoadAndDelete
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects sync.Map load+delete operations that can be replaced with LoadAndDelete.
-
-
-
-
-
-**Before:**
-```go
-v, ok := m.Load(k); if ok { m.Delete($k); f(v); }
-```
-
-**After:**
-```go
-v, deleted := m.LoadAndDelete(k); if deleted { f(v) }
-```
-
-
-## timeExprSimplify
-
-[
-  **style**
-  **experimental** ]
-
-Detects manual conversion to milli- or microseconds.
-
-
-
-
-
-**Before:**
-```go
-t.Unix() / 1000
-```
-
-**After:**
-```go
-t.UnixMilli()
+// TODO(admin): pass context.TODO() instead of nil
+fiiWithCtx(nil, a, b)
 ```
 
 
@@ -2642,50 +1916,6 @@ func() {
 func() {
 	os.Remove(filename)
 }
-```
-
-
-## unslice
-
-[
-  **style** ]
-
-Detects slice expressions that can be simplified to sliced expression itself.
-
-
-
-
-
-**Before:**
-```go
-copy(b[:], values...)
-```
-
-**After:**
-```go
-copy(b, values...)
-```
-
-
-## valSwap
-
-[
-  **style** ]
-
-Detects value swapping code that are not using parallel assignment.
-
-
-
-
-
-**Before:**
-```go
-*tmp = *x; *x = *y; *y = *tmp
-```
-
-**After:**
-```go
-*x, *y = *y, *x
 ```
 
 
