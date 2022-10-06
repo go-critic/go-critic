@@ -147,7 +147,7 @@ func suspiciousAltAnchor() {
 
 func badRegexps() {
 	/*! suspicious char range `=-_` in [/.@!~#$%^&*:";?\\+=-_,{}\[\]<>！￥…（）—=、“”：；？。，《》] */
-	/*! `=` intersects with `=-_` in [/.@!~#$%^&*:";?\\+=-_,{}\[\]<>！￥…（）—=、“”：；？。，《》] */
+	/*! `=-_` intersects with `=` in [/.@!~#$%^&*:";?\\+=-_,{}\[\]<>！￥…（）—=、“”：；？。，《》] */
 	regexp.MustCompile(`[/.@!~#$%^&*:";?\\+=-_,{}\[\]<>！￥…（）—=、“”：；？。，《》]`)
 
 	/*! `e` is duplicated in [com|org|edu|net] */
@@ -165,10 +165,10 @@ func badRegexps() {
 	/*! `_` is duplicated in [a-zA-Z\.\-_0-9_] */
 	regexp.MustCompile(`^[a-zA-Z\.\-_0-9_]+$`)
 
-	/*! `\d` intersects with `\w` in [!\w\d\.\+\-] */
+	/*! `\w` intersects with `\d` in [!\w\d\.\+\-] */
 	regexp.MustCompile(`^https?://itunes.apple.com/(?:(\w+)/)?app/(?:[!\w\d\.\+\-]+/)?id(\d+)`)
 
-	/*! `\d` intersects with `\w` in [_=\w\d\.&;] */
+	/*! `\w` intersects with `\d` in [_=\w\d\.&;] */
 	/*! `\w` intersects with `\d` in [_\w\d\.] */
 	regexp.MustCompile(`^https?://play.google.com/store/apps/details\?(?:[_=\w\d\.&;]*[;|&])?id=([_\w\d\.]+)`)
 
