@@ -50,7 +50,7 @@ func InitEmbeddedRules() error {
 	}
 
 	parseContext := &ruleguard.LoadContext{
-		Fset: fset,
+		Fset:         fset,
 		DebugImports: ruleguardDebug,
 		DebugPrint: func(s string) {
 			fmt.Println("debug:", s)
