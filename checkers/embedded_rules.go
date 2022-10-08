@@ -49,6 +49,20 @@ func InitEmbeddedRules() error {
 		groups = rootEngine.LoadedGroups()
 	}
 
+	parseContext := &ruleguard.LoadContext{
+		Fset: fset,
+		DebugImports: ruleguardDebug,
+		DebugPrint: func(s string) {
+			fmt.Println("debug:", s)
+		},
+	}
+	engine := ruleguard.NewEngine()
+	engine.BuildContext = buildContext
+	err := engine.LoadFromIR(parseContext, filename, rulesdata.PrecompiledRules)
+	if err != nil {
+		return err
+	}
+
 	// For every rules group we create a new checker and a separate engine.
 	// That dedicated ruleguard engine will contain rules only from one group.
 	for i := range groups {
@@ -64,27 +78,10 @@ func InitEmbeddedRules() error {
 			EmbeddedRuleguard: true,
 		}
 		collection.AddChecker(info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
-			parseContext := &ruleguard.LoadContext{
-				Fset: fset,
-				GroupFilter: func(gr *ruleguard.GoRuleGroup) bool {
-					return gr.Name == g.Name
-				},
-				DebugImports: ruleguardDebug,
-				DebugPrint: func(s string) {
-					fmt.Println("debug:", s)
-				},
-			}
-			engine := ruleguard.NewEngine()
-			engine.BuildContext = buildContext
-			err := engine.LoadFromIR(parseContext, filename, rulesdata.PrecompiledRules)
-			if err != nil {
-				return nil, err
-			}
-			c := &embeddedRuleguardChecker{
+			return &embeddedRuleguardChecker{
 				ctx:    ctx,
 				engine: engine,
-			}
-			return c, nil
+			}, nil
 		})
 	}
 
