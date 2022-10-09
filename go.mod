@@ -20,4 +20,4 @@ require (
 	golang.org/x/tools v0.1.12
 )
 
-replace github.com/quasilyte/go-ruleguard v0.3.18 => github.com/peakle/go-ruleguard v0.3.20
+replace github.com/quasilyte/go-ruleguard v0.3.18 => github.com/peakle/go-ruleguard v0.3.21
