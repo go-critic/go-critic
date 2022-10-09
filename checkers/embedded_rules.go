@@ -63,7 +63,7 @@ func InitEmbeddedRules() error {
 		return err
 	}
 
-	// For every rules group we create a new checker and a separate engine.
+	// For every rule's group we create a new checker and a separate engine.
 	// That dedicated ruleguard engine will contain rules only from one group.
 	for i := range groups {
 		g := groups[i]
