@@ -281,9 +281,8 @@ func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.En
 	var reports []ruleguardReport
 
 	runCtx.Report = func(data *ruleguard.ReportData) {
-		var node ast.Node
-		slice, ok := data.Node.(*gogrep.NodeSlice)
-		if ok {
+		node := data.Node
+		if slice, ok := data.Node.(*gogrep.NodeSlice); ok && slice != nil {
 			slice := *slice
 			node = &slice
 		}
