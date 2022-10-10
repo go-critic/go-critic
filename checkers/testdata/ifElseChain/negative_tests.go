@@ -57,4 +57,9 @@ func ifelseWithInit() {
 		}
 	} else if true {
 	}
+
+	if x := 1; x > 0 {
+	} else if false {
+	} else {
+	}
 }

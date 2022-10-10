@@ -85,11 +85,12 @@ func (c *ifElseChainChecker) checkIfStmt(stmt *ast.IfStmt) {
 func (c *ifElseChainChecker) countIfelseLen(stmt *ast.IfStmt) int {
 	count := 0
 	for {
+		if stmt.Init != nil {
+			return 0 // Give up
+		}
+
 		switch e := stmt.Else.(type) {
 		case *ast.IfStmt:
-			if e.Init != nil {
-				return 0 // Give up
-			}
 			// Else if.
 			stmt = e
 			count++
