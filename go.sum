@@ -22,8 +22,8 @@ github.com/google/go-cmp v0.5.2/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.8/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/peakle/go-ruleguard v0.3.21 h1:3JUu2YneewtSc4J5mRSKFbUOZLmVzOWwRUTtZ0WYvao=
-github.com/peakle/go-ruleguard v0.3.21/go.mod h1:gsicJZz0qd7SMIOhJeJKMMYzATDqiWyO1aX6R94sjmU=
+github.com/peakle/go-ruleguard v0.3.22 h1:omtmgbQIOpsvTMdLM6SZERqJZR26D2qw06KLlNWjNFE=
+github.com/peakle/go-ruleguard v0.3.22/go.mod h1:gsicJZz0qd7SMIOhJeJKMMYzATDqiWyO1aX6R94sjmU=
 github.com/quasilyte/go-ruleguard v0.3.1-0.20210203134552-1b5a410e1cc8/go.mod h1:KsAh3x0e7Fkpgs+Q9pNLS5XpFSvYCEVl5gP9Pp1xp30=
 github.com/quasilyte/go-ruleguard/dsl v0.3.0/go.mod h1:KeCP03KrjuSO0H1kTuZQCWlQPulDV6YMIXmpQss17rU=
 github.com/quasilyte/go-ruleguard/dsl v0.3.21 h1:vNkC6fC6qMLzCOGbnIHOd5ixUGgTbp3Z4fGnUgULlDA=
