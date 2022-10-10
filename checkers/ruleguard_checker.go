@@ -12,9 +12,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/quasilyte/go-ruleguard/ruleguard"
-
 	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/quasilyte/go-ruleguard/ruleguard"
+	"github.com/quasilyte/gogrep"
 )
 
 func init() {
@@ -281,10 +281,17 @@ func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.En
 	var reports []ruleguardReport
 
 	runCtx.Report = func(data *ruleguard.ReportData) {
+		var node ast.Node
+		slice, ok := data.Node.(*gogrep.NodeSlice)
+		if ok {
+			slice := *slice
+			node = &slice
+		}
+
 		// TODO(quasilyte): investigate whether we should add a rule name as
 		// a message prefix here.
 		r := ruleguardReport{
-			node:    data.Node,
+			node:    node,
 			message: data.Message,
 		}
 		fix := data.Suggestion
