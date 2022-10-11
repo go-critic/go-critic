@@ -310,9 +310,9 @@ func runRuleguardEngine(ctx *linter.CheckerContext, f *ast.File, e *ruleguard.En
 	})
 	for _, report := range reports {
 		if report.fix.Replacement != nil {
-			ctx.WarnPosFlexible(report.pos, report.fix, "%s", report.message)
+			ctx.WarnFixableWithPos(report.pos, report.fix, "%s", report.message)
 		} else {
-			ctx.WarnPos(report.pos, "%s", report.message)
+			ctx.WarnWithPos(report.pos, "%s", report.message)
 		}
 	}
 }

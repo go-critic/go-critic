@@ -46,7 +46,7 @@ func runAnalyzer(pass *analysis.Pass) (interface{}, error) {
 			warnings := c.Check(f)
 			for _, warning := range warnings {
 				diag := analysis.Diagnostic{
-					Pos:     warning.Pos(),
+					Pos:     warning.Pos,
 					Message: fmt.Sprintf("%s: %s", c.Info.Name, warning.Text),
 				}
 				if warning.HasQuickFix() {

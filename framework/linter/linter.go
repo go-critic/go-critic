@@ -141,11 +141,7 @@ type QuickFix struct {
 
 // Warning represents issue that is found by checker.
 type Warning struct {
-	// Node is an AST node that caused warning to trigger.
-	// Can be used to obtain proper error location.
-	Node ast.Node
-
-	pos token.Pos
+	Pos token.Pos
 
 	// Text is warning message without source location info.
 	Text string
@@ -159,16 +155,8 @@ type Warning struct {
 	Suggestion QuickFix
 }
 
-func (warn *Warning) Pos() token.Pos {
-	if warn.Node != nil {
-		return warn.Node.Pos()
-	}
-
-	return warn.pos
-}
-
 // HasQuickFix reports whether this warning has a suggested fix.
-func (warn *Warning) HasQuickFix() bool {
+func (warn Warning) HasQuickFix() bool {
 	return warn.Suggestion.Replacement != nil
 }
 
@@ -289,34 +277,27 @@ type CheckerContext struct {
 
 // Warn adds a Warning to checker output.
 func (ctx *CheckerContext) Warn(node ast.Node, format string, args ...interface{}) {
-	ctx.warnings = append(ctx.warnings, Warning{
-		Text: ctx.printer.Sprintf(format, args...),
-		Node: node,
-	})
+	ctx.WarnWithPos(node.Pos(), format, args...)
 }
 
 // WarnFixable emits a warning with a fix suggestion provided by the caller.
 func (ctx *CheckerContext) WarnFixable(node ast.Node, fix QuickFix, format string, args ...interface{}) {
-	ctx.warnings = append(ctx.warnings, Warning{
-		Text:       ctx.printer.Sprintf(format, args...),
-		Node:       node,
-		Suggestion: fix,
-	})
+	ctx.WarnFixableWithPos(node.Pos(), fix, format, args...)
 }
 
-// WarnPos adds a Warning to checker output. Useful for ruleguard's Report func.
-func (ctx *CheckerContext) WarnPos(pos token.Pos, format string, args ...interface{}) {
+// WarnWithPos adds a Warning to checker output. Useful for ruleguard's Report func.
+func (ctx *CheckerContext) WarnWithPos(pos token.Pos, format string, args ...interface{}) {
 	ctx.warnings = append(ctx.warnings, Warning{
 		Text: ctx.printer.Sprintf(format, args...),
-		pos:  pos,
+		Pos:  pos,
 	})
 }
 
-// WarnPosFlexible adds a Warning to checker output. Useful for ruleguard's Report func.
-func (ctx *CheckerContext) WarnPosFlexible(pos token.Pos, fix QuickFix, format string, args ...interface{}) {
+// WarnFixableWithPos adds a Warning to checker output. Useful for ruleguard's Report func.
+func (ctx *CheckerContext) WarnFixableWithPos(pos token.Pos, fix QuickFix, format string, args ...interface{}) {
 	ctx.warnings = append(ctx.warnings, Warning{
 		Text:       ctx.printer.Sprintf(format, args...),
-		pos:        pos,
+		Pos:        pos,
 		Suggestion: fix,
 	})
 }

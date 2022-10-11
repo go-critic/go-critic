@@ -158,7 +158,7 @@ func checkFile(t *testing.T, c *linter.Checker, ctx *linter.Context, f *ast.File
 
 	matched := make(map[*string]struct{})
 	for _, warn := range c.Check(f) {
-		line := ctx.FileSet.Position(warn.Pos()).Line
+		line := ctx.FileSet.Position(warn.Pos).Line
 
 		if w := ws.find(line, warn.Text); w != nil {
 			if _, seen := matched[w]; seen {
