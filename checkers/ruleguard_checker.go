@@ -12,9 +12,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/quasilyte/go-ruleguard/ruleguard"
-
 	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/quasilyte/go-ruleguard/ruleguard"
 )
 
 func init() {
