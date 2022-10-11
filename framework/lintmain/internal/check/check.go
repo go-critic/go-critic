@@ -169,7 +169,7 @@ func (p *program) checkFile(f *ast.File) {
 	for i, c := range p.checkers {
 		for _, warn := range warnings[i] {
 			p.foundIssues = true
-			loc := p.ctx.FileSet.Position(warn.Node.Pos()).String()
+			loc := p.ctx.FileSet.Position(warn.Pos).String()
 			if p.shorterErrLocation {
 				loc = p.shortenLocation(loc)
 			}
