@@ -14,7 +14,6 @@ import (
 
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/quasilyte/go-ruleguard/ruleguard"
-	"github.com/quasilyte/gogrep"
 )
 
 func init() {
