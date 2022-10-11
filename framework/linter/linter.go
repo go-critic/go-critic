@@ -141,9 +141,7 @@ type QuickFix struct {
 
 // Warning represents issue that is found by checker.
 type Warning struct {
-	// Node is an AST node that caused warning to trigger.
-	// Can be used to obtain proper error location.
-	Node ast.Node
+	Pos token.Pos
 
 	// Text is warning message without source location info.
 	Text string
@@ -279,17 +277,27 @@ type CheckerContext struct {
 
 // Warn adds a Warning to checker output.
 func (ctx *CheckerContext) Warn(node ast.Node, format string, args ...interface{}) {
-	ctx.warnings = append(ctx.warnings, Warning{
-		Text: ctx.printer.Sprintf(format, args...),
-		Node: node,
-	})
+	ctx.WarnWithPos(node.Pos(), format, args...)
 }
 
 // WarnFixable emits a warning with a fix suggestion provided by the caller.
 func (ctx *CheckerContext) WarnFixable(node ast.Node, fix QuickFix, format string, args ...interface{}) {
+	ctx.WarnFixableWithPos(node.Pos(), fix, format, args...)
+}
+
+// WarnWithPos adds a Warning to checker output. Useful for ruleguard's Report func.
+func (ctx *CheckerContext) WarnWithPos(pos token.Pos, format string, args ...interface{}) {
+	ctx.warnings = append(ctx.warnings, Warning{
+		Text: ctx.printer.Sprintf(format, args...),
+		Pos:  pos,
+	})
+}
+
+// WarnFixableWithPos adds a Warning to checker output. Useful for ruleguard's Report func.
+func (ctx *CheckerContext) WarnFixableWithPos(pos token.Pos, fix QuickFix, format string, args ...interface{}) {
 	ctx.warnings = append(ctx.warnings, Warning{
 		Text:       ctx.printer.Sprintf(format, args...),
-		Node:       node,
+		Pos:        pos,
 		Suggestion: fix,
 	})
 }
