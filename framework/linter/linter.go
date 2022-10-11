@@ -145,6 +145,8 @@ type Warning struct {
 	// Can be used to obtain proper error location.
 	Node ast.Node
 
+	pos token.Pos
+
 	// Text is warning message without source location info.
 	Text string
 
@@ -155,6 +157,14 @@ type Warning struct {
 	// For convenience, there is Warning.HasQuickFix() method
 	// that reports whether Suggestion has something meaningful.
 	Suggestion QuickFix
+}
+
+func (warn Warning) Pos() token.Pos {
+	if warn.Node != nil {
+		return warn.Node.Pos()
+	}
+
+	return warn.pos
 }
 
 // HasQuickFix reports whether this warning has a suggested fix.
@@ -290,6 +300,23 @@ func (ctx *CheckerContext) WarnFixable(node ast.Node, fix QuickFix, format strin
 	ctx.warnings = append(ctx.warnings, Warning{
 		Text:       ctx.printer.Sprintf(format, args...),
 		Node:       node,
+		Suggestion: fix,
+	})
+}
+
+// WarnPos adds a Warning to checker output. Useful for ruleguard's Report func.
+func (ctx *CheckerContext) WarnPos(pos token.Pos, format string, args ...interface{}) {
+	ctx.warnings = append(ctx.warnings, Warning{
+		Text: ctx.printer.Sprintf(format, args...),
+		pos:  pos,
+	})
+}
+
+// WarnPosFlexible adds a Warning to checker output. Useful for ruleguard's Report func.
+func (ctx *CheckerContext) WarnPosFlexible(pos token.Pos, fix QuickFix, format string, args ...interface{}) {
+	ctx.warnings = append(ctx.warnings, Warning{
+		Text:       ctx.printer.Sprintf(format, args...),
+		pos:        pos,
 		Suggestion: fix,
 	})
 }
