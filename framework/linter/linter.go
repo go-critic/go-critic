@@ -159,7 +159,7 @@ type Warning struct {
 	Suggestion QuickFix
 }
 
-func (warn Warning) Pos() token.Pos {
+func (warn *Warning) Pos() token.Pos {
 	if warn.Node != nil {
 		return warn.Node.Pos()
 	}
@@ -168,7 +168,7 @@ func (warn Warning) Pos() token.Pos {
 }
 
 // HasQuickFix reports whether this warning has a suggested fix.
-func (warn Warning) HasQuickFix() bool {
+func (warn *Warning) HasQuickFix() bool {
 	return warn.Suggestion.Replacement != nil
 }
 
