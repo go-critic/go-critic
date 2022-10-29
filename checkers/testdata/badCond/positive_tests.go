@@ -7,6 +7,11 @@ func bad1(retVal []int, start int) {
 	for i := 0; i > start; i++ {
 		retVal[i] = 0
 	}
+
+	/*! `start < i` in loop; probably meant `start > i`? */
+	for i := 0; start < i; i++ {
+		retVal[i] = 0
+	}
 }
 
 func bad2(x int) {
