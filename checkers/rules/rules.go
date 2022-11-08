@@ -259,6 +259,19 @@ func wrapperFunc(m dsl.Matcher) {
 	m.Match(`strings.Replace($_, $_, $_, -1)`).Report("use strings.ReplaceAll method in `$$`")
 	m.Match(`strings.Map(unicode.ToTitle, $_)`).Report("use strings.ToTitle method in `$$`")
 
+	m.Match(`$i := strings.Index($s, $sep); $*_; $x, $y = $s[:$i], $s[$i+1:]`,
+		`$i := strings.Index($s, $sep); $*_; $x = $s[:$i]; $*_; $y = $s[$i+1:]`).
+		Where(m.GoVersion().GreaterEqThan("1.18")).
+		Suggest("$x, $y, _ = strings.Cut($s, $sep)")
+
+	m.Match(
+		`if $i := strings.Index($s, $sep); $i != -1 { $*_; $x, $y = $s[:$i], $s[$i+1:]; $*_ }`,
+		`if $i := strings.Index($s, $sep); $i != -1 { $*_; $x = $s[:$i]; $*_; $y = $s[$i+1:]; $*_ }`,
+		`if $i := strings.Index($s, $sep); $i >= 0 { $*_; $x, $y = $s[:$i], $s[$i+1:]; $*_ }`,
+		`if $i := strings.Index($s, $sep); $i >= 0 { $*_; $x = $s[:$i]; $*_; $y = $s[$i+1:]; $*_ }`).
+		Where(m.GoVersion().GreaterEqThan("1.18")).
+		Suggest("if $x, $y, ok = strings.Cut($s, $sep); ok { ... }")
+
 	m.Match(`bytes.SplitN(b, []byte("."), -1)`).Report("use bytes.Split method in `$$`")
 	m.Match(`bytes.Replace($_, $_, $_, -1)`).Report("use bytes.ReplaceAll method in `$$`")
 	m.Match(`bytes.Map(unicode.ToUpper, $_)`).Report("use bytes.ToUpper method in `$$`")
