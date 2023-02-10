@@ -3,7 +3,7 @@ module github.com/go-critic/go-critic
 go 1.18
 
 require (
-	github.com/cristalhq/acmd v0.8.1
+	github.com/cristalhq/acmd v0.11.0
 	github.com/go-toolsmith/astcast v1.1.0
 	github.com/go-toolsmith/astcopy v1.0.2
 	github.com/go-toolsmith/astequal v1.1.0
