@@ -1,7 +1,7 @@
 package checker_test
 
 /*! func(a int, b int, c int) could be replaced with func(a, b, c int) */
-func extern(a int, b int, c int)
+func extern(a int, b int, c int) {}
 
 /*! func(a int, b int, c int) could be replaced with func(a, b, c int) */
 func simple1(a int, b int, c int) {}

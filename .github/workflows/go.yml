@@ -1,5 +1,7 @@
 name: Go
-on: [push, pull_request]
+
+on: [pull_request]
+
 jobs:
 
   build:
@@ -7,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['1.18', '1.19', '1.20']
+        go: ['1.19.x', '1.20.x']
     steps:
 
     - name: Set up Go 1.x
