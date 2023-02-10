@@ -4,3 +4,9 @@
 package checker_test
 
 func genericFunc[T comparable](x T) {}
+
+type Maybe[V any] struct {
+	value V
+}
+
+func (m Maybe[V]) Fn() {}
