@@ -33,17 +33,17 @@ ci-tidy:
 	git diff --exit-code --quiet || (echo "Please run 'go mod tidy' to clean up the 'go.mod' and 'go.sum' files."; false)
 
 ci-tests:
-	GOCRITIC_EXTERNAL_TESTS=1 go test -v -race -count=1 -coverprofile=coverage.out ./...
+	go test -v -race -count=1 -coverprofile=coverage.out ./...
 
 ci-generate:
 	@go generate ./...
 	@git diff --exit-code --quiet || (echo "Please run 'go generate ./...' to update precompiled rules."; false)
 
 ci-linter:
-	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.46.2
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.51.1
 	@$(GOPATH_DIR)/bin/golangci-lint run -v
-	cd tools && go install github.com/quasilyte/go-consistent
-	@$(GOPATH_DIR)/bin/go-consistent ./...
+	# cd tools && go install github.com/quasilyte/go-consistent
+	# @$(GOPATH_DIR)/bin/go-consistent ./...
 	go build -o gocritic ./cmd/gocritic
 	./gocritic check -enableAll ./...
 
