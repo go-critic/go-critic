@@ -9,3 +9,9 @@ func genericSlice[T any](original []T, f func(T)) {
 		f(v)
 	}
 }
+
+type Maybe[V any] struct {
+	value V
+}
+
+func (m Maybe[V]) Fn() {}

@@ -6,7 +6,6 @@ import (
 	"go/types"
 
 	"github.com/go-toolsmith/astfmt"
-	"golang.org/x/exp/typeparams"
 )
 
 // CheckerCollection provides additional information for a group of checkers.
@@ -327,7 +326,10 @@ func (ctx *CheckerContext) TypeOf(x ast.Expr) types.Type {
 //
 // Unlike SizesInfo.SizeOf, it will not panic on generic types.
 func (ctx *CheckerContext) SizeOf(typ types.Type) (int64, bool) {
-	if _, ok := typ.(*typeparams.TypeParam); ok {
+	if _, ok := typ.(*types.TypeParam); ok {
+		return 0, false
+	}
+	if named, ok := typ.(*types.Named); ok && named.TypeParams() != nil {
 		return 0, false
 	}
 	return ctx.SizesInfo.Sizeof(typ), true
