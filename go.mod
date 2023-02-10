@@ -1,6 +1,6 @@
 module github.com/go-critic/go-critic
 
-go 1.16
+go 1.18
 
 require (
 	github.com/cristalhq/acmd v0.8.1
@@ -18,4 +18,11 @@ require (
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
 	golang.org/x/exp/typeparams v0.0.0-20230203172020-98cc5a0785f9
 	golang.org/x/tools v0.5.0
+)
+
+require (
+	github.com/quasilyte/gogrep v0.0.0-20220828223005-86e4605de09f // indirect
+	github.com/quasilyte/stdinfo v0.0.0-20220114132959-f7386bf02567 // indirect
+	golang.org/x/mod v0.7.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
 )
