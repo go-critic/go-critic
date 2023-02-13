@@ -14,7 +14,7 @@ require (
 	github.com/go-toolsmith/typep v1.1.0
 	github.com/google/go-cmp v0.5.9
 	github.com/quasilyte/go-ruleguard v0.3.18
-	github.com/quasilyte/go-ruleguard/dsl v0.3.21
+	github.com/quasilyte/go-ruleguard/dsl v0.3.22
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
 	golang.org/x/exp/typeparams v0.0.0-20230203172020-98cc5a0785f9
 	golang.org/x/tools v0.6.0
