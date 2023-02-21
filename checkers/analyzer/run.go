@@ -39,36 +39,62 @@ func runAnalyzer(pass *analysis.Pass) (interface{}, error) {
 		return nil, err
 	}
 
+	doneCh := make(chan struct{})
+	diagCh := make(chan analysis.Diagnostic)
+	go func() {
+		for diag := range diagCh {
+			pass.Report(diag)
+		}
+		close(doneCh)
+	}()
+
+	var wg sync.WaitGroup
+	wg.Add(len(pass.Files))
+
 	for _, f := range pass.Files {
+		f := f
 		filename := filepath.Base(pass.Fset.Position(f.Pos()).Filename)
 		ctx.SetFileInfo(filename, f)
-		for _, c := range checkers {
-			warnings := c.Check(f)
-			for _, warning := range warnings {
-				diag := analysis.Diagnostic{
-					Pos:     warning.Pos,
-					Message: fmt.Sprintf("%s: %s", c.Info.Name, warning.Text),
+
+		go func() {
+			defer wg.Done()
+
+			for _, c := range checkers {
+				warnings := c.Check(f)
+				for _, warning := range warnings {
+					diagCh <- asDiag(c, warning)
 				}
-				if warning.HasQuickFix() {
-					diag.SuggestedFixes = []analysis.SuggestedFix{
-						{
-							Message: "suggested replacement",
-							TextEdits: []analysis.TextEdit{
-								{
-									Pos:     warning.Suggestion.From,
-									End:     warning.Suggestion.To,
-									NewText: warning.Suggestion.Replacement,
-								},
-							},
-						},
-					}
-				}
-				pass.Report(diag)
 			}
-		}
+		}()
 	}
 
+	wg.Wait()
+	<-doneCh
+
 	return nil, nil
+}
+
+func asDiag(c *linter.Checker, warning linter.Warning) analysis.Diagnostic {
+	diag := analysis.Diagnostic{
+		Pos:     warning.Pos,
+		Message: fmt.Sprintf("%s: %s", c.Info.Name, warning.Text),
+	}
+
+	if warning.HasQuickFix() {
+		diag.SuggestedFixes = []analysis.SuggestedFix{
+			{
+				Message: "suggested replacement",
+				TextEdits: []analysis.TextEdit{
+					{
+						Pos:     warning.Suggestion.From,
+						End:     warning.Suggestion.To,
+						NewText: warning.Suggestion.Replacement,
+					},
+				},
+			},
+		}
+	}
+	return diag
 }
 
 // prepareGocritic initializes a new gocririt object,
