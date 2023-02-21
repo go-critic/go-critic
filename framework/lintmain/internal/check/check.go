@@ -16,7 +16,6 @@ import (
 	"regexp"
 	"runtime"
 	"runtime/pprof"
-	"sort"
 	"strings"
 	"sync"
 
@@ -24,7 +23,6 @@ import (
 	"golang.org/x/tools/go/packages"
 
 	"github.com/go-critic/go-critic/framework/linter"
-	"github.com/go-critic/go-critic/framework/lintmain/internal/hotload"
 )
 
 // Main implements sub-command entry point.
@@ -37,7 +35,6 @@ func Main(_ context.Context, args []string) error {
 		name string
 		fn   func() error
 	}{
-		{"load plugin", p.loadPlugin},
 		{"bind checker params", p.bindCheckerParams},
 		{"bind default enabled list", p.bindDefaultEnabledList},
 		{"parse args", func() error { return p.parseArgs(args) }},
@@ -276,29 +273,16 @@ func (p *program) loadProgram() error {
 		Tests: true,
 		Fset:  p.fset,
 	}
-	pkgs, err := loadPackages(&cfg, p.packages)
+	pkgs, err := pkgload.LoadPackages(&cfg, p.packages)
 	if err != nil {
 		log.Fatalf("load packages: %v", err)
 	}
-	sort.SliceStable(pkgs, func(i, j int) bool {
-		return pkgs[i].PkgPath < pkgs[j].PkgPath
-	})
 
 	p.loadedPackages = pkgs
 	p.ctx = linter.NewContext(p.fset, sizes)
 	p.ctx.SetGoVersion(p.goVersion)
 
 	return nil
-}
-
-func (p *program) loadPlugin() error {
-	const pluginFilename = "gocritic-plugin.so"
-	if _, err := os.Stat(pluginFilename); os.IsNotExist(err) {
-		return nil
-	}
-	infoList, err := hotload.CheckersFromDylib(p.infoList, pluginFilename)
-	p.infoList = infoList
-	return err
 }
 
 type boundCheckerParams struct {
@@ -504,26 +488,4 @@ func (p *program) shortenLocation(loc string) string {
 		return relLoc
 	}
 	return loc
-}
-
-func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {
-	pkgs, err := packages.Load(cfg, patterns...)
-	if err != nil {
-		return nil, err
-	}
-
-	result := pkgs[:0]
-	pkgload.VisitUnits(pkgs, func(u *pkgload.Unit) {
-		if u.ExternalTest != nil {
-			result = append(result, u.ExternalTest)
-		}
-
-		if u.Test != nil {
-			// Prefer tests to the base package, if present.
-			result = append(result, u.Test)
-		} else {
-			result = append(result, u.Base)
-		}
-	})
-	return result, nil
 }
