@@ -1,4 +1,4 @@
-package lintdoc
+package main
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 )
 
 // Main implements sub-command entry point.
-func Main(_ context.Context, args []string) error {
+func runDocs(_ context.Context, args []string) error {
 	flagSet := flag.NewFlagSet("gocritic", flag.ContinueOnError)
 	if err := flagSet.Parse(args); err != nil {
 		return err
