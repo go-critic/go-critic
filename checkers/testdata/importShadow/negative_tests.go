@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/go-toolsmith/astfmt" // To reproduce #665
 
-	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/linter"
 )
 
 func noWarnings() {

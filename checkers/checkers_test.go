@@ -7,8 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-critic/go-critic/framework/linter"
-	"github.com/go-critic/go-critic/framework/linttest"
+	"github.com/go-critic/go-critic/checkers/internal/linttest"
+	"github.com/go-critic/go-critic/linter"
+
 	"github.com/google/go-cmp/cmp"
 )
 

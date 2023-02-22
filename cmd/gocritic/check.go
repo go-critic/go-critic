@@ -22,7 +22,7 @@ import (
 	"github.com/go-toolsmith/pkgload"
 	"golang.org/x/tools/go/packages"
 
-	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/linter"
 )
 
 // Main implements sub-command entry point.
