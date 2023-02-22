@@ -12,11 +12,15 @@ import (
 	"testing"
 
 	"github.com/go-critic/go-critic/linter"
+
 	"github.com/go-toolsmith/pkgload"
+	"golang.org/x/exp/typeparams"
 	"golang.org/x/tools/go/packages"
 )
 
 var sizes = types.SizesFor("gc", runtime.GOARCH)
+
+var _ = typeparams.IsTypeParam
 
 func saneCheckersList(t *testing.T, checkers []*linter.CheckerInfo) []*linter.CheckerInfo {
 	var saneList []*linter.CheckerInfo

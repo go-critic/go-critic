@@ -6,7 +6,6 @@ import (
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/checkers/internal/lintutil"
-
 	"github.com/go-critic/go-critic/linter"
 )
 
