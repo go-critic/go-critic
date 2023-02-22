@@ -11,7 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/linter"
+
 	"github.com/go-toolsmith/pkgload"
 	"golang.org/x/tools/go/packages"
 )

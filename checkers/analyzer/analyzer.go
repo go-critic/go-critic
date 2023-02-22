@@ -2,7 +2,8 @@
 package analyzer
 
 import (
-	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/linter"
+
 	"golang.org/x/tools/go/analysis"
 )
 

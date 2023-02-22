@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"math"
 
-	_ "github.com/go-toolsmith/astfmt" // To reproduce #665
+	"github.com/go-critic/go-critic/linter"
 
-	"github.com/go-critic/go-critic/framework/linter"
+	_ "github.com/go-toolsmith/astfmt" // To reproduce #665
 )
 
 func noWarnings() {
