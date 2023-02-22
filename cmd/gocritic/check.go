@@ -1,4 +1,4 @@
-package check
+package main
 
 import (
 	"bytes"
@@ -26,7 +26,7 @@ import (
 )
 
 // Main implements sub-command entry point.
-func Main(_ context.Context, args []string) error {
+func runCheck(_ context.Context, args []string) error {
 	var p program
 	p.flagSet = flag.NewFlagSet("gocritic", flag.ContinueOnError)
 	p.infoList = linter.GetCheckersInfo()
