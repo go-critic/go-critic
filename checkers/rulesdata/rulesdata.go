@@ -2492,10 +2492,10 @@ var PrecompiledRules = &ir.File{
 		},
 		{
 			Line:        793,
-			Name:        "badTestFuncName",
+			Name:        "sloppyTestFuncName",
 			MatcherName: "m",
 			DocTags:     []string{"diagnostic", "experimental"},
-			DocSummary:  "Detects test and benchmark funcs with improper names",
+			DocSummary:  "Detects unsupported test and benchmark funcs",
 			DocBefore:   "func TessstUnit(t *testing.T)",
 			DocAfter:    "func TestUnit(t *testing.T)",
 			Rules: []ir.Rule{

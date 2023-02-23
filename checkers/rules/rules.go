@@ -792,11 +792,11 @@ func uncheckedInlineErr(m dsl.Matcher) {
 		At(m["err"])
 }
 
-//doc:summary   Detects test and benchmark funcs with improper names
+//doc:summary   Detects unsupported test and benchmark funcs
 //doc:tags      diagnostic experimental
 //doc:before    func TessstUnit(t *testing.T)
 //doc:after     func TestUnit(t *testing.T)
-func badTestFuncName(m dsl.Matcher) {
+func sloppyTestFuncName(m dsl.Matcher) {
 	m.Match(`func $test($_ *testing.T) { $*_ }`).
 		Where(!m["test"].Text.Matches("Test.*") &&
 			!m["test"].Text.Matches("test.*")).
