@@ -791,3 +791,27 @@ func uncheckedInlineErr(m dsl.Matcher) {
 		Report("$err error is unchecked, maybe intended to check it instead of $err2").
 		At(m["err"])
 }
+
+//doc:summary   Detects test and benchmark funcs with improper names
+//doc:tags      diagnostic experimental
+//doc:before    func TessstUnit(t *testing.T)
+//doc:after     func TestUnit(t *testing.T)
+func badTestFuncName(m dsl.Matcher) {
+	m.Match(`func $test($_ *testing.T) { $*_ }`).
+		Where(!m["test"].Text.Matches("Test.*") &&
+			!m["test"].Text.Matches("test.*")).
+		Report("function $test should be of form TestXXX(t *testing.T)")
+
+	m.Match(`func $bench($_ *testing.B) { $*_ }`).
+		Where(!m["bench"].Text.Matches("Benchmark.*") &&
+			!m["bench"].Text.Matches("bench.*")).
+		Report("function $bench should be of form BenchmarkXXX(b *testing.B)")
+
+	m.Match(`func $test($_ *testing.T) { $*_ }`).
+		Where(m["test"].Text.Matches("test.*")).
+		Report("function $test looks like a test helper, consider to change 1st param to 'tb testing.TB'")
+
+	m.Match(`func $bench($_ *testing.B) { $*_ }`).
+		Where(m["bench"].Text.Matches("bench(mark)?.*")).
+		Report("function $bench looks like a benchmark helper, consider to change 1st param to 'tb testing.TB'")
+}

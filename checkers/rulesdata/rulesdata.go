@@ -2490,6 +2490,113 @@ var PrecompiledRules = &ir.File{
 				LocationVar: "err",
 			}},
 		},
+		{
+			Line:        793,
+			Name:        "badTestFuncName",
+			MatcherName: "m",
+			DocTags:     []string{"diagnostic", "experimental"},
+			DocSummary:  "Detects test and benchmark funcs with improper names",
+			DocBefore:   "func TessstUnit(t *testing.T)",
+			DocAfter:    "func TestUnit(t *testing.T)",
+			Rules: []ir.Rule{
+				{
+					Line:           794,
+					SyntaxPatterns: []ir.PatternString{{Line: 794, Value: "func $test($_ *testing.T) { $*_ }"}},
+					ReportTemplate: "function $test should be of form TestXXX(t *testing.T)",
+					WhereExpr: ir.FilterExpr{
+						Line: 795,
+						Op:   ir.FilterAndOp,
+						Src:  "!m[\"test\"].Text.Matches(\"Test.*\") &&\n\t!m[\"test\"].Text.Matches(\"test.*\")",
+						Args: []ir.FilterExpr{
+							{
+								Line: 795,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"test\"].Text.Matches(\"Test.*\")",
+								Args: []ir.FilterExpr{{
+									Line:  795,
+									Op:    ir.FilterVarTextMatchesOp,
+									Src:   "m[\"test\"].Text.Matches(\"Test.*\")",
+									Value: "test",
+									Args:  []ir.FilterExpr{{Line: 795, Op: ir.FilterStringOp, Src: "\"Test.*\"", Value: "Test.*"}},
+								}},
+							},
+							{
+								Line: 796,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"test\"].Text.Matches(\"test.*\")",
+								Args: []ir.FilterExpr{{
+									Line:  796,
+									Op:    ir.FilterVarTextMatchesOp,
+									Src:   "m[\"test\"].Text.Matches(\"test.*\")",
+									Value: "test",
+									Args:  []ir.FilterExpr{{Line: 796, Op: ir.FilterStringOp, Src: "\"test.*\"", Value: "test.*"}},
+								}},
+							},
+						},
+					},
+				},
+				{
+					Line:           799,
+					SyntaxPatterns: []ir.PatternString{{Line: 799, Value: "func $bench($_ *testing.B) { $*_ }"}},
+					ReportTemplate: "function $bench should be of form BenchmarkXXX(b *testing.B)",
+					WhereExpr: ir.FilterExpr{
+						Line: 800,
+						Op:   ir.FilterAndOp,
+						Src:  "!m[\"bench\"].Text.Matches(\"Benchmark.*\") &&\n\t!m[\"bench\"].Text.Matches(\"bench.*\")",
+						Args: []ir.FilterExpr{
+							{
+								Line: 800,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"bench\"].Text.Matches(\"Benchmark.*\")",
+								Args: []ir.FilterExpr{{
+									Line:  800,
+									Op:    ir.FilterVarTextMatchesOp,
+									Src:   "m[\"bench\"].Text.Matches(\"Benchmark.*\")",
+									Value: "bench",
+									Args:  []ir.FilterExpr{{Line: 800, Op: ir.FilterStringOp, Src: "\"Benchmark.*\"", Value: "Benchmark.*"}},
+								}},
+							},
+							{
+								Line: 801,
+								Op:   ir.FilterNotOp,
+								Src:  "!m[\"bench\"].Text.Matches(\"bench.*\")",
+								Args: []ir.FilterExpr{{
+									Line:  801,
+									Op:    ir.FilterVarTextMatchesOp,
+									Src:   "m[\"bench\"].Text.Matches(\"bench.*\")",
+									Value: "bench",
+									Args:  []ir.FilterExpr{{Line: 801, Op: ir.FilterStringOp, Src: "\"bench.*\"", Value: "bench.*"}},
+								}},
+							},
+						},
+					},
+				},
+				{
+					Line:           804,
+					SyntaxPatterns: []ir.PatternString{{Line: 804, Value: "func $test($_ *testing.T) { $*_ }"}},
+					ReportTemplate: "function $test looks like a test helper, consider to change 1st param to 'tb testing.TB'",
+					WhereExpr: ir.FilterExpr{
+						Line:  805,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"test\"].Text.Matches(\"test.*\")",
+						Value: "test",
+						Args:  []ir.FilterExpr{{Line: 805, Op: ir.FilterStringOp, Src: "\"test.*\"", Value: "test.*"}},
+					},
+				},
+				{
+					Line:           808,
+					SyntaxPatterns: []ir.PatternString{{Line: 808, Value: "func $bench($_ *testing.B) { $*_ }"}},
+					ReportTemplate: "function $bench looks like a benchmark helper, consider to change 1st param to 'tb testing.TB'",
+					WhereExpr: ir.FilterExpr{
+						Line:  809,
+						Op:    ir.FilterVarTextMatchesOp,
+						Src:   "m[\"bench\"].Text.Matches(\"bench(mark)?.*\")",
+						Value: "bench",
+						Args:  []ir.FilterExpr{{Line: 809, Op: ir.FilterStringOp, Src: "\"bench(mark)?.*\"", Value: "bench(mark)?.*"}},
+					},
+				},
+			},
+		},
 	},
 }
 
