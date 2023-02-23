@@ -776,10 +776,10 @@ func stringsCompare(m dsl.Matcher) {
 		Suggest(`$s1 > $s2`)
 }
 
-//doc:summary   Detects unchecked errors in if statements
-//doc:tags      diagnostic experimental
-//doc:before    if err := expr(); err2 != nil { /*...*/ }
-//doc:after     if err := expr(); err != nil { /*...*/ }
+//doc:summary Detects unchecked errors in if statements
+//doc:tags    diagnostic experimental
+//doc:before  if err := expr(); err2 != nil { /*...*/ }
+//doc:after   if err := expr(); err != nil { /*...*/ }
 func uncheckedInlineErr(m dsl.Matcher) {
 	m.Match(
 		`if $err := $_($*_); $err2 != nil { $*_ }`,
@@ -792,10 +792,10 @@ func uncheckedInlineErr(m dsl.Matcher) {
 		At(m["err"])
 }
 
-//doc:summary   Detects unsupported test and benchmark funcs
-//doc:tags      diagnostic experimental
-//doc:before    func TessstUnit(t *testing.T)
-//doc:after     func TestUnit(t *testing.T)
+//doc:summary Detects unsupported test and benchmark funcs
+//doc:tags    diagnostic experimental
+//doc:before  func TessstUnit(t *testing.T)
+//doc:after   func TestUnit(t *testing.T)
 func sloppyTestFuncName(m dsl.Matcher) {
 	m.Match(`func $test($_ *testing.T) { $*_ }`).
 		Where(!m["test"].Text.Matches("Test.*") &&
