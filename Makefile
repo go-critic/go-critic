@@ -37,6 +37,7 @@ ci-tests:
 
 ci-generate:
 	@go generate ./...
+	git diff
 	@git diff --exit-code --quiet || (echo "Please run 'go generate ./...' to update precompiled rules."; false)
 
 ci-linter:
