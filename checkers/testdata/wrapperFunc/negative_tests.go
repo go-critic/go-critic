@@ -42,11 +42,19 @@ func nonMatchingArgs(s string, b []byte, i draw.Image, r image.Rectangle, p imag
 
 	strings.Replace(s, "a", "b", 1)
 
+	strings.Index(s, ":")
+	strings.IndexAny(s, ":")
+	strings.IndexRune(s, ':')
+
 	bytes.Map(nil, b)
 	bytes.Map(nil, b)
 	bytes.Map(nil, b)
 
 	bytes.Replace(b, b, b, 1)
+
+	bytes.Index(b, []byte(":"))
+	bytes.IndexAny(b, ":")
+	bytes.IndexRune(b, ':')
 
 	_ = http.HandlerFunc(nil)
 

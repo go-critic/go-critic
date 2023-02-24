@@ -258,12 +258,18 @@ func wrapperFunc(m dsl.Matcher) {
 	m.Match(`strings.SplitN($_, $_, -1)`).Report("use strings.Split method in `$$`")
 	m.Match(`strings.Replace($_, $_, $_, -1)`).Report("use strings.ReplaceAll method in `$$`")
 	m.Match(`strings.Map(unicode.ToTitle, $_)`).Report("use strings.ToTitle method in `$$`")
+	m.Match(`strings.Index($s1, $s2) >= 0`, `strings.Index($s1, $s2) != -1`).Suggest(`strings.Contains($s1, $s2)`)
+	m.Match(`strings.IndexAny($s1, $s2) >= 0`, `strings.IndexAny($s1, $s2) != -1`).Suggest(`strings.ContainsAny($s1, $s2)`)
+	m.Match(`strings.IndexRune($s1, $s2) >= 0`, `strings.IndexRune($s1, $s2) != -1`).Suggest(`strings.ContainsRune($s1, $s2)`)
 
 	m.Match(`bytes.SplitN(b, []byte("."), -1)`).Report("use bytes.Split method in `$$`")
 	m.Match(`bytes.Replace($_, $_, $_, -1)`).Report("use bytes.ReplaceAll method in `$$`")
 	m.Match(`bytes.Map(unicode.ToUpper, $_)`).Report("use bytes.ToUpper method in `$$`")
 	m.Match(`bytes.Map(unicode.ToLower, $_)`).Report("use bytes.ToLower method in `$$`")
 	m.Match(`bytes.Map(unicode.ToTitle, $_)`).Report("use bytes.ToTitle method in `$$`")
+	m.Match(`bytes.Index($b1, $b2) >= 0`, `bytes.Index($b1, $b2) != -1`).Suggest(`bytes.Contains($b1, $b2)`)
+	m.Match(`bytes.IndexAny($b1, $b2) >= 0`, `bytes.IndexAny($b1, $b2) != -1`).Suggest(`bytes.ContainsAny($b1, $b2)`)
+	m.Match(`bytes.IndexRune($b1, $b2) >= 0`, `bytes.IndexRune($b1, $b2) != -1`).Suggest(`bytes.ContainsRune($b1, $b2)`)
 
 	m.Match(`draw.DrawMask($_, $_, $_, $_, nil, image.Point{}, $_)`).
 		Report("use draw.Draw method in `$$`")
