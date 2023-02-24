@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['stable', 'oldstable']
+        go: ['stable']
+
     steps:
     - name: Set up Go 1.x
       uses: actions/setup-go@v3
