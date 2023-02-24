@@ -40,8 +40,8 @@ ci-generate:
 	@git diff --exit-code --quiet || (echo "Please run 'go generate ./...' to update precompiled rules."; false)
 
 ci-linter:
-	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.51.1
-	@$(GOPATH_DIR)/bin/golangci-lint run -v
+	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH_DIR)/bin v1.51.2
+	@$(GOPATH_DIR)/bin/golangci-lint run
 	# cd tools && go install github.com/quasilyte/go-consistent
 	# @$(GOPATH_DIR)/bin/go-consistent ./...
 	go build -o gocritic ./cmd/gocritic
