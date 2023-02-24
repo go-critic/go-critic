@@ -25,3 +25,7 @@ func benchHelper(b *testing.B, a int) {
 		b.Fatal("really?")
 	}
 }
+
+func skipTestXXX(t *testing.T) {
+	// blabl
+}
