@@ -808,10 +808,10 @@ func sloppyTestFuncName(m dsl.Matcher) {
 		Report("function $bench should be of form BenchmarkXXX(b *testing.B)")
 
 	m.Match(`func $test($_ *testing.T) { $*_ }`).
-		Where(m["test"].Text.Matches("test.*")).
+		Where(m["test"].Text.Matches("^test.*")).
 		Report("function $test looks like a test helper, consider to change 1st param to 'tb testing.TB'")
 
 	m.Match(`func $bench($_ *testing.B) { $*_ }`).
-		Where(m["bench"].Text.Matches("bench(mark)?.*")).
+		Where(m["bench"].Text.Matches("^bench(mark)?.*")).
 		Report("function $bench looks like a benchmark helper, consider to change 1st param to 'tb testing.TB'")
 }

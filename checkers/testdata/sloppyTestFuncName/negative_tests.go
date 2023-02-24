@@ -26,6 +26,10 @@ func benchHelper(b *testing.B, a int) {
 	}
 }
 
-func skipTestXXX(t *testing.T) {
-	// blabl
+func skiptestXXX(t *testing.T) {
+	// blabla
+}
+
+func skipbenchXXX(b *testing.B) {
+	// blabla
 }

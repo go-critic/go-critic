@@ -2578,9 +2578,9 @@ var PrecompiledRules = &ir.File{
 					WhereExpr: ir.FilterExpr{
 						Line:  805,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"test\"].Text.Matches(\"test.*\")",
+						Src:   "m[\"test\"].Text.Matches(\"^test.*\")",
 						Value: "test",
-						Args:  []ir.FilterExpr{{Line: 805, Op: ir.FilterStringOp, Src: "\"test.*\"", Value: "test.*"}},
+						Args:  []ir.FilterExpr{{Line: 805, Op: ir.FilterStringOp, Src: "\"^test.*\"", Value: "^test.*"}},
 					},
 				},
 				{
@@ -2590,9 +2590,9 @@ var PrecompiledRules = &ir.File{
 					WhereExpr: ir.FilterExpr{
 						Line:  809,
 						Op:    ir.FilterVarTextMatchesOp,
-						Src:   "m[\"bench\"].Text.Matches(\"bench(mark)?.*\")",
+						Src:   "m[\"bench\"].Text.Matches(\"^bench(mark)?.*\")",
 						Value: "bench",
-						Args:  []ir.FilterExpr{{Line: 809, Op: ir.FilterStringOp, Src: "\"bench(mark)?.*\"", Value: "bench(mark)?.*"}},
+						Args:  []ir.FilterExpr{{Line: 809, Op: ir.FilterStringOp, Src: "\"^bench(mark)?.*\"", Value: "^bench(mark)?.*"}},
 					},
 				},
 			},
