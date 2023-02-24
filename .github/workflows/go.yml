@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
   schedule:
   - cron: '0 8 * * 1' # run "At 08:00 on Monday"
 
