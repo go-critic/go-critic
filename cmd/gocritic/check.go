@@ -351,6 +351,8 @@ func (p *program) parseArgs(args []string) error {
 		`exit code to be used when lint issues are found`)
 	p.flagSet.BoolVar(&p.checkTests, "checkTests", true,
 		`whether to check test files`)
+	p.flagSet.BoolVar(&p.checkGenerated, "checkGenerated", false,
+		`whether to check generated files`)
 	p.flagSet.BoolVar(&p.shorterErrLocation, `shorterErrLocation`, true,
 		`whether to replace error location prefix with $GOROOT and $GOPATH`)
 	p.flagSet.BoolVar(&p.verbose, "v", false,
