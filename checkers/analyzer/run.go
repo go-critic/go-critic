@@ -48,6 +48,7 @@ func runAnalyzer(pass *analysis.Pass) (interface{}, error) {
 		close(doneCh)
 	}()
 
+	sema := make(chan struct{}, flagConcurrency)
 	var wg sync.WaitGroup
 	wg.Add(len(pass.Files))
 
@@ -56,8 +57,12 @@ func runAnalyzer(pass *analysis.Pass) (interface{}, error) {
 		filename := filepath.Base(pass.Fset.Position(f.Pos()).Filename)
 		ctx.SetFileInfo(filename, f)
 
+		sema <- struct{}{}
 		go func() {
-			defer wg.Done()
+			defer func() {
+				wg.Done()
+				<-sema
+			}()
 
 			for _, c := range checkers {
 				warnings := c.Check(f)
