@@ -7,26 +7,22 @@
   "fast": false,
   "linters": {
     "enable": [
-      "deadcode",
       "errcheck",
       "gas",
       "gocritic",
       "gofmt",
       "goimports",
-      "golint",
-      "govet",
       "gosimple",
+      "govet",
       "ineffassign",
       "megacheck",
       "misspell",
       "nakedret",
+      "revive",
       "staticcheck",
-      "structcheck",
-      "typecheck",
       "unconvert",
       "unparam",
       "unused",
-      "varcheck",
     ],
   },
   "disable": [
@@ -37,6 +33,7 @@
     "lll",
     "maligned",
     "prealloc",
+    "typecheck",
   ],
   "linters-settings": {
     "gocritic": {

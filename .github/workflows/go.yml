@@ -1,5 +1,13 @@
 name: Go
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+  - cron: '0 8 * * 1' # run "At 08:00 on Monday"
+
 jobs:
 
   build:
@@ -7,14 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['1.17', '1.18']
-    steps:
+        go: ['stable', 'oldstable']
 
+    steps:
     - name: Set up Go 1.x
       uses: actions/setup-go@v3
       with:
         go-version: ${{ matrix.go }}
-      id: go
+        check-latest: true
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v3

@@ -32,8 +32,8 @@ are ignored
 func myfunc() {
 }
 
+//go:noinline
 func example() {
-	//go:noinline
 }
 
 //go-sumtype:decl Data

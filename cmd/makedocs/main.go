@@ -8,7 +8,7 @@ import (
 	"text/template"
 
 	_ "github.com/go-critic/go-critic/checkers"
-	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/linter"
 )
 
 const (

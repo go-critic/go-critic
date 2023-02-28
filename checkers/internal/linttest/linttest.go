@@ -11,7 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/linter"
+
 	"github.com/go-toolsmith/pkgload"
 	"golang.org/x/tools/go/packages"
 )
@@ -217,32 +218,9 @@ func newPackages(t *testing.T, pattern string, fset *token.FileSet) []*packages.
 		Tests: true,
 		Fset:  fset,
 	}
-	pkgs, err := loadPackages(&cfg, []string{pattern})
+	pkgs, err := pkgload.LoadPackages(&cfg, []string{pattern})
 	if err != nil {
 		t.Fatalf("load package: %v", err)
 	}
 	return pkgs
-}
-
-// TODO(quasilyte): copied from check.go. Should it be added to pkgload?
-func loadPackages(cfg *packages.Config, patterns []string) ([]*packages.Package, error) {
-	pkgs, err := packages.Load(cfg, patterns...)
-	if err != nil {
-		return nil, err
-	}
-
-	result := pkgs[:0]
-	pkgload.VisitUnits(pkgs, func(u *pkgload.Unit) {
-		if u.ExternalTest != nil {
-			result = append(result, u.ExternalTest)
-		}
-
-		if u.Test != nil {
-			// Prefer tests to the base package, if present.
-			result = append(result, u.Test)
-		} else if u.Base != nil {
-			result = append(result, u.Base)
-		}
-	})
-	return result, nil
 }

@@ -1,4 +1,4 @@
-package lintdoc
+package main
 
 import (
 	"context"
@@ -9,11 +9,11 @@ import (
 	"reflect"
 	"text/template"
 
-	"github.com/go-critic/go-critic/framework/linter"
+	"github.com/go-critic/go-critic/linter"
 )
 
 // Main implements sub-command entry point.
-func Main(_ context.Context, args []string) error {
+func runDocs(_ context.Context, args []string) error {
 	flagSet := flag.NewFlagSet("gocritic", flag.ContinueOnError)
 	if err := flagSet.Parse(args); err != nil {
 		return err

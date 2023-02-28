@@ -258,6 +258,9 @@ func wrapperFunc(m dsl.Matcher) {
 	m.Match(`strings.SplitN($_, $_, -1)`).Report("use strings.Split method in `$$`")
 	m.Match(`strings.Replace($_, $_, $_, -1)`).Report("use strings.ReplaceAll method in `$$`")
 	m.Match(`strings.Map(unicode.ToTitle, $_)`).Report("use strings.ToTitle method in `$$`")
+	m.Match(`strings.Index($s1, $s2) >= 0`, `strings.Index($s1, $s2) != -1`).Suggest(`strings.Contains($s1, $s2)`)
+	m.Match(`strings.IndexAny($s1, $s2) >= 0`, `strings.IndexAny($s1, $s2) != -1`).Suggest(`strings.ContainsAny($s1, $s2)`)
+	m.Match(`strings.IndexRune($s1, $s2) >= 0`, `strings.IndexRune($s1, $s2) != -1`).Suggest(`strings.ContainsRune($s1, $s2)`)
 
 	m.Match(`$i := strings.Index($s, $sep); $*_; $x, $y = $s[:$i], $s[$i+1:]`,
 		`$i := strings.Index($s, $sep); $*_; $x = $s[:$i]; $*_; $y = $s[$i+1:]`).
@@ -277,6 +280,9 @@ func wrapperFunc(m dsl.Matcher) {
 	m.Match(`bytes.Map(unicode.ToUpper, $_)`).Report("use bytes.ToUpper method in `$$`")
 	m.Match(`bytes.Map(unicode.ToLower, $_)`).Report("use bytes.ToLower method in `$$`")
 	m.Match(`bytes.Map(unicode.ToTitle, $_)`).Report("use bytes.ToTitle method in `$$`")
+	m.Match(`bytes.Index($b1, $b2) >= 0`, `bytes.Index($b1, $b2) != -1`).Suggest(`bytes.Contains($b1, $b2)`)
+	m.Match(`bytes.IndexAny($b1, $b2) >= 0`, `bytes.IndexAny($b1, $b2) != -1`).Suggest(`bytes.ContainsAny($b1, $b2)`)
+	m.Match(`bytes.IndexRune($b1, $b2) >= 0`, `bytes.IndexRune($b1, $b2) != -1`).Suggest(`bytes.ContainsRune($b1, $b2)`)
 
 	m.Match(`draw.DrawMask($_, $_, $_, $_, nil, image.Point{}, $_)`).
 		Report("use draw.Draw method in `$$`")
@@ -378,6 +384,16 @@ func preferFprint(m dsl.Matcher) {
 	m.Match(`io.WriteString($w, fmt.Sprint($*args))`).Suggest(`fmt.Fprint($w, $args)`)
 	m.Match(`io.WriteString($w, fmt.Sprintf($*args))`).Suggest(`fmt.Fprintf($w, $args)`)
 	m.Match(`io.WriteString($w, fmt.Sprintln($*args))`).Suggest(`fmt.Fprintln($w, $args)`)
+
+	m.Match("$w.WriteString(fmt.Sprint($*args))").
+		Where(m["w"].Type.Implements("io.Writer") && m["w"].Type.Implements("io.StringWriter")).
+		Suggest("fmt.Fprint($w, $args)")
+	m.Match("$w.WriteString(fmt.Sprintf($*args))").
+		Where(m["w"].Type.Implements("io.Writer") && m["w"].Type.Implements("io.StringWriter")).
+		Suggest("fmt.Fprintf($w, $args)")
+	m.Match("$w.WriteString(fmt.Sprintln($*args))").
+		Where(m["w"].Type.Implements("io.Writer") && m["w"].Type.Implements("io.StringWriter")).
+		Suggest(`fmt.Fprintln($w, $args)`)
 }
 
 //doc:summary Detects suspicious duplicated arguments
@@ -783,10 +799,10 @@ func stringsCompare(m dsl.Matcher) {
 		Suggest(`$s1 > $s2`)
 }
 
-//doc:summary   Detects unchecked errors in if statements
-//doc:tags      diagnostic experimental
-//doc:before    if err := expr(); err2 != nil { /*...*/ }
-//doc:after     if err := expr(); err != nil { /*...*/ }
+//doc:summary Detects unchecked errors in if statements
+//doc:tags    diagnostic experimental
+//doc:before  if err := expr(); err2 != nil { /*...*/ }
+//doc:after   if err := expr(); err != nil { /*...*/ }
 func uncheckedInlineErr(m dsl.Matcher) {
 	m.Match(
 		`if $err := $_($*_); $err2 != nil { $*_ }`,
@@ -797,4 +813,28 @@ func uncheckedInlineErr(m dsl.Matcher) {
 			m["err"].Text != m["err2"].Text).
 		Report("$err error is unchecked, maybe intended to check it instead of $err2").
 		At(m["err"])
+}
+
+//doc:summary Detects unsupported test and benchmark funcs
+//doc:tags    diagnostic experimental
+//doc:before  func TessstUnit(t *testing.T)
+//doc:after   func TestUnit(t *testing.T)
+func sloppyTestFuncName(m dsl.Matcher) {
+	m.Match(`func $test($_ *testing.T) { $*_ }`).
+		Where(!m["test"].Text.Matches("Test.*") &&
+			!m["test"].Text.Matches("test.*")).
+		Report("function $test should be of form TestXXX(t *testing.T)")
+
+	m.Match(`func $bench($_ *testing.B) { $*_ }`).
+		Where(!m["bench"].Text.Matches("Benchmark.*") &&
+			!m["bench"].Text.Matches("bench.*")).
+		Report("function $bench should be of form BenchmarkXXX(b *testing.B)")
+
+	m.Match(`func $test($_ *testing.T) { $*_ }`).
+		Where(m["test"].Text.Matches("^test.*")).
+		Report("function $test looks like a test helper, consider to change 1st param to 'tb testing.TB'")
+
+	m.Match(`func $bench($_ *testing.B) { $*_ }`).
+		Where(m["bench"].Text.Matches("^bench(mark)?.*")).
+		Report("function $bench looks like a benchmark helper, consider to change 1st param to 'tb testing.TB'")
 }

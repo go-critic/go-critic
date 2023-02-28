@@ -1,6 +1,6 @@
 package checker_test
 
-func goodExtern(a, b, c int)
+func goodExtern(a, b, c int) {}
 
 func good1(a, b int)                {}
 func good2(a, b int, c int32)       {}
