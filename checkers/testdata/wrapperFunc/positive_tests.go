@@ -72,3 +72,37 @@ func f(s string, b []byte, i draw.Image, r image.Rectangle, p image.Point, o dra
 	/*! use draw.Draw method in `draw.DrawMask(i, r, i, p, nil, image.Point{}, o)` */
 	draw.DrawMask(i, r, i, p, nil, image.Point{}, o)
 }
+
+func stringsCut(s, sep, host, port string) {
+	{
+		/*! suggestion: host, port, _ = strings.Cut(s, sep) */
+		i := strings.Index(s, sep)
+		host, port = s[:i], s[i+1:]
+	}
+	{
+		/*! suggestion: host, port, _ = strings.Cut(s, sep) */
+		i := strings.Index(s, sep)
+		host = s[:i]
+		port = s[i+1:]
+	}
+	{
+		/*! suggestion: if host, port, ok = strings.Cut(s, sep); ok { ... } */
+		if i := strings.Index(s, sep); i != -1 {
+			host, port = s[:i], s[i+1:]
+		}
+		/*! suggestion: if host, port, ok = strings.Cut(s, sep); ok { ... } */
+		if i := strings.Index(s, sep); i != -1 {
+			host = s[:i]
+			port = s[i+1:]
+		}
+		/*! suggestion: if host, port, ok = strings.Cut(s, sep); ok { ... } */
+		if i := strings.Index(s, sep); i >= 0 {
+			host, port = s[:i], s[i+1:]
+		}
+		/*! suggestion: if host, port, ok = strings.Cut(s, sep); ok { ... } */
+		if i := strings.Index(s, sep); i >= 0 {
+			host = s[:i]
+			port = s[i+1:]
+		}
+	}
+}
