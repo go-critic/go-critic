@@ -36,4 +36,16 @@ func _(w io.Writer) {
 
 	/*! suggestion: fmt.Fprint(os.Stdout, i, i) */
 	io.WriteString(os.Stdout, fmt.Sprint(i, i))
+
+	/*! suggestion: fmt.Fprint(buf, i) */
+	buf.WriteString(fmt.Sprint(i))
+
+	/*! suggestion: fmt.Fprintf(buf, "<%4d>", i) */
+	buf.WriteString(fmt.Sprintf("<%4d>", i))
+
+	/*! suggestion: fmt.Fprintln(buf, i, i) */
+	buf.WriteString(fmt.Sprintln(i, i))
+
+	/*! suggestion: fmt.Fprint(os.Stdout, i, i) */
+	os.Stdout.WriteString(fmt.Sprint(i, i))
 }
