@@ -2,7 +2,6 @@ package checker_test
 
 import (
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -66,7 +65,7 @@ func NoWarningsFs() {
 	_ = fs.FileMode(0o555)
 }
 
-func NoWarningsOs() {
+func NoWarningsOsOpenFile() {
 	f, err := os.OpenFile("notes.txt", os.O_RDWR|os.O_CREATE, 0o755)
 	if err != nil {
 		log.Fatal(err)
@@ -76,6 +75,6 @@ func NoWarningsOs() {
 	}
 }
 
-func NoWarningsIoutil() {
-	_ = ioutil.WriteFile("notes.txt", nil, 0o666)
+func NoWarningsOsWriteFile() {
+	_ = os.WriteFile("notes.txt", nil, 0o666)
 }

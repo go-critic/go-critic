@@ -25,7 +25,7 @@ func multiLineCode() {
 
 	/*! may want to remove commented-out code */
 	/*
-		resp, err := ioutil.ReadAll(c.Request().Body)
+		resp, err := io.ReadAll(c.Request().Body)
 		if err != nil {
 			e := err.Error()
 			return c.JSON(http.StatusNotFound, structs.Response{Ok: false, Reason: &e})

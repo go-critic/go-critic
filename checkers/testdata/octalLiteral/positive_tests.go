@@ -2,7 +2,6 @@ package checker_test
 
 import (
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
@@ -76,7 +75,12 @@ func (os *OpenServer) Init(x int) {
 	os.x = x
 }
 
-func warningsOs() {
+func warningsFs() {
+	/*! use new octal literal style, 0o555 */
+	_ = fs.FileMode(0555)
+}
+
+func warningsOsOpenFile() {
 	/*! use new octal literal style, 0o755 */
 	f, err := os.OpenFile("notes.txt", os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
@@ -87,12 +91,7 @@ func warningsOs() {
 	}
 }
 
-func warningsFs() {
-	/*! use new octal literal style, 0o555 */
-	_ = fs.FileMode(0555)
-}
-
-func warningsIoutil() {
+func warningsOsWriteFile() {
 	/*! use new octal literal style, 0o666 */
-	_ = ioutil.WriteFile("notes.txt", nil, 0666)
+	_ = os.WriteFile("notes.txt", nil, 0666)
 }
