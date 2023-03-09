@@ -9,7 +9,7 @@ require (
 	github.com/go-toolsmith/astequal v1.1.0
 	github.com/go-toolsmith/astfmt v1.1.0
 	github.com/go-toolsmith/astp v1.1.0
-	github.com/go-toolsmith/pkgload v1.2.1
+	github.com/go-toolsmith/pkgload v1.2.2
 	github.com/go-toolsmith/strparse v1.1.0
 	github.com/go-toolsmith/typep v1.1.0
 	github.com/google/go-cmp v0.5.9
