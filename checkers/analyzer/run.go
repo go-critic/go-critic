@@ -74,6 +74,7 @@ func runAnalyzer(pass *analysis.Pass) (interface{}, error) {
 	}
 
 	wg.Wait()
+	close(diagCh)
 	<-doneCh
 
 	return nil, nil
