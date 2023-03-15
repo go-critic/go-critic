@@ -91,6 +91,7 @@ type program struct {
 	cpuProfileData bytes.Buffer
 
 	goVersion          string
+	concurrency        int
 	exitCode           int
 	checkTests         bool
 	checkGenerated     bool
@@ -135,14 +136,24 @@ func (p *program) checkPackage(pkg *packages.Package) {
 func (p *program) checkFile(f *ast.File) {
 	warnings := make([][]linter.Warning, len(p.checkers))
 
+	sema := make(chan struct{}, p.concurrency)
+
 	var wg sync.WaitGroup
 	wg.Add(len(p.checkers))
-	for i, c := range p.checkers {
+
+	for i := range p.checkers {
+		i := i
+		c := p.checkers[i]
+
 		// All checkers are expected to use *lint.Context
 		// as read-only structure, so no copying is required.
-		go func(i int, c *linter.Checker) {
+		sema <- struct{}{}
+
+		go func() {
 			defer func() {
 				wg.Done()
+				<-sema
+
 				// Checker signals unexpected error with panic(error).
 				r := recover()
 				if r == nil {
@@ -159,7 +170,7 @@ func (p *program) checkFile(f *ast.File) {
 			}()
 
 			warnings[i] = append(warnings[i], c.Check(f)...)
-		}(i, c)
+		}()
 	}
 	wg.Wait()
 
@@ -349,6 +360,8 @@ func (p *program) parseArgs(args []string) error {
 		`comma-separated list of checkers to be disabled. Can include #tags`)
 	p.flagSet.IntVar(&p.exitCode, "exitCode", 1,
 		`exit code to be used when lint issues are found`)
+	p.flagSet.IntVar(&p.concurrency, "concurrency", runtime.GOMAXPROCS(0),
+		`how many concurrent checkers to run (default is runtime.GOMAXPROCS(0))`)
 	p.flagSet.BoolVar(&p.checkTests, "checkTests", true,
 		`whether to check test files`)
 	p.flagSet.BoolVar(&p.checkGenerated, "checkGenerated", false,
