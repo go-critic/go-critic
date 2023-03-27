@@ -7,6 +7,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/go-critic/go-critic/checkers"
 	_ "github.com/go-critic/go-critic/checkers"
 	"github.com/go-critic/go-critic/linter"
 )
@@ -17,6 +18,8 @@ const (
 )
 
 func main() {
+	checkers.InitEmbeddedRules()
+
 	tmpl := parseTemplate(
 		"overview.md.tmpl",
 		"checker.partial.tmpl",
