@@ -6,7 +6,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
-Total number of checks is 101 :rocket:
+Total number of checks is 106 :rocket:
 
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
@@ -37,6 +37,7 @@ They also detect code that may be correct, but looks suspicious.
 |:heavy_check_mark:[dupBranchBody](#dupbranchbody)|Detects duplicated branch bodies inside conditional statements|
 |:heavy_check_mark:[dupCase](#dupcase)|Detects duplicated case clauses inside switch or select statements|
 |:heavy_check_mark:[dupSubExpr](#dupsubexpr)|Detects suspicious duplicated sub-expressions|
+|:white_check_mark:[dynamicFmtString](#dynamicfmtstring)|Detects suspicious formatting strings usage|
 |:white_check_mark:[emptyDecl](#emptydecl)|Detects suspicious empty declarations blocks|
 |:white_check_mark:[evalOrder](#evalorder)|Detects unwanted dependencies on the evaluation order|
 |:heavy_check_mark:[exitAfterDefer](#exitafterdefer)|Detects calls to exit/fatal inside functions that use defer|
@@ -50,12 +51,14 @@ They also detect code that may be correct, but looks suspicious.
 |:white_check_mark:[regexpPattern](#regexppattern)|Detects suspicious regexp patterns|
 |:white_check_mark:[returnAfterHttpError](#returnafterhttperror)|Detects suspicious http.Error call without following return|
 |:white_check_mark:[sloppyReassign](#sloppyreassign)|Detects suspicious/confusing re-assignments|
+|:white_check_mark:[sloppyTestFuncName](#sloppytestfuncname)|Detects unsupported test and benchmark funcs|
 |:heavy_check_mark:[sloppyTypeAssert](#sloppytypeassert)|Detects redundant type assertions|
 |:white_check_mark:[sortSlice](#sortslice)|Detects suspicious sort.Slice calls|
 |:white_check_mark:[sprintfQuotedString](#sprintfquotedstring)|Detects "%s" formatting directives that can be replaced with %q|
 |:white_check_mark:[sqlQuery](#sqlquery)|Detects issue in Query() and Exec() calls|
 |:white_check_mark:[syncMapLoadAndDelete](#syncmaploadanddelete)|Detects sync.Map load+delete operations that can be replaced with LoadAndDelete|
 |:white_check_mark:[truncateCmp](#truncatecmp)|Detects potential truncation issues when comparing ints of different sizes|
+|:white_check_mark:[uncheckedInlineErr](#uncheckedinlineerr)|Detects unchecked errors in if statements|
 |:white_check_mark:[unnecessaryDefer](#unnecessarydefer)|Detects redundantly deferred calls|
 |:white_check_mark:[weakCond](#weakcond)|Detects conditions that are unsafe due to not being exhaustive|
 
@@ -101,8 +104,11 @@ with another one that is considered more idiomatic or simple.
 |:heavy_check_mark:[singleCaseSwitch](#singlecaseswitch)|Detects switch statements that could be better written as if statement|
 |:heavy_check_mark:[sloppyLen](#sloppylen)|Detects usage of `len` when result is obvious or doesn't make sense|
 |:white_check_mark:[stringConcatSimplify](#stringconcatsimplify)|Detects string concat operations that can be simplified|
+|:white_check_mark:[stringsCompare](#stringscompare)|Detects strings.Compare usage|
 |:heavy_check_mark:[switchTrue](#switchtrue)|Detects switch-over-bool statements that use explicit `true` tag value|
+|:white_check_mark:[timeCmpSimplify](#timecmpsimplify)|Detects Before/After call of time.Time that can be simplified|
 |:white_check_mark:[timeExprSimplify](#timeexprsimplify)|Detects manual conversion to milli- or microseconds|
+|:white_check_mark:[todoCommentWithoutDetail](#todocommentwithoutdetail)|Detects TODO comments without detail/assignee|
 |:white_check_mark:[tooManyResultsChecker](#toomanyresultschecker)|Detects function with too many results|
 |:white_check_mark:[typeAssertChain](#typeassertchain)|Detects repeated type assertions and suggests to replace them with type switch statement|
 |:white_check_mark:[typeDefFirst](#typedeffirst)|Detects method declarations preceding the type definition itself|
@@ -135,7 +141,7 @@ can make your code run slower than it could be.
 |:white_check_mark:[preferDecodeRune](#preferdecoderune)|Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation|
 |:white_check_mark:[preferFprint](#preferfprint)|Detects fmt.Sprint(f/ln) calls which can be replaced with fmt.Fprint(f/ln)|
 |:white_check_mark:[preferStringWriter](#preferstringwriter)|Detects w.Write or io.WriteString calls which can be replaced with w.WriteString|
-|:white_check_mark:[preferWriteByte](#preferwritebyte)|Detects WriteRune calls with byte literal argument and reports to use WriteByte instead|
+|:white_check_mark:[preferWriteByte](#preferwritebyte)|Detects WriteRune calls with rune literal argument that is single byte and reports to use WriteByte instead|
 |:white_check_mark:[rangeExprCopy](#rangeexprcopy)|Detects expensive copies of `for` loop range expressions|
 |:white_check_mark:[rangeValCopy](#rangevalcopy)|Detects loops that copy big objects during each iteration|
 |:white_check_mark:[sliceClear](#sliceclear)|Detects slice clear loops, suggests an idiom that is recognized by the Go compiler|
@@ -632,7 +638,7 @@ Detects loops inside functions that use defer.
 ```go
 for _, filename := range []string{"foo", "bar"} {
 	 f, err := os.Open(filename)
-
+	
 	defer f.Close()
 }
 ```
@@ -641,7 +647,7 @@ for _, filename := range []string{"foo", "bar"} {
 ```go
 func process(filename string) {
 	 f, err := os.Open(filename)
-
+	
 	defer f.Close()
 }
 /* ... */
@@ -856,6 +862,29 @@ sort.Slice(xs, func(i, j int) bool {
 sort.Slice(xs, func(i, j int) bool {
 	return xs[i].v < xs[j].v
 })
+```
+
+
+## dynamicFmtString
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects suspicious formatting strings usage.
+
+
+
+
+
+**Before:**
+```go
+fmt.Errorf(msg)
+```
+
+**After:**
+```go
+fmt.Errorf("%s", msg)
 ```
 
 
@@ -1285,6 +1314,16 @@ default:
 ```
 
 
+Checker parameters:
+<ul>
+<li>
+
+  `@ifElseChain.minThreshold` min number of if-else blocks that makes the warning trigger (default 2)
+
+</li>
+
+</ul>
+
 ## importShadow
 
 [
@@ -1675,9 +1714,10 @@ w.WriteString("foo")
 
 [
   **performance**
-  **experimental** ]
+  **experimental**
+  **opinionated** ]
 
-Detects WriteRune calls with byte literal argument and reports to use WriteByte instead.
+Detects WriteRune calls with rune literal argument that is single byte and reports to use WriteByte instead.
 
 
 
@@ -1954,6 +1994,16 @@ Checker parameters:
 </li>
 <li>
 
+  `@ruleguard.disable` comma-separated list of disabled groups or skip empty to enable everything (default )
+
+</li>
+<li>
+
+  `@ruleguard.enable` comma-separated list of enabled groups or skip empty to enable everything (default <all>)
+
+</li>
+<li>
+
   `@ruleguard.failOn` Determines the behavior when an error occurs while parsing ruleguard files.
 If flag is not set, log error and skip rule files that contain an error.
 If flag is set, the value must be a comma-separated list of error conditions.
@@ -2066,6 +2116,29 @@ if err = f(); err != nil { return err }
 **After:**
 ```go
 if err := f(); err != nil { return err }
+```
+
+
+## sloppyTestFuncName
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects unsupported test and benchmark funcs.
+
+
+
+
+
+**Before:**
+```go
+func TessstUnit(t *testing.T)
+```
+
+**After:**
+```go
+func TestUnit(t *testing.T)
 ```
 
 
@@ -2209,6 +2282,29 @@ copy(b, s)
 ```
 
 
+## stringsCompare
+
+[
+  **style**
+  **experimental** ]
+
+Detects strings.Compare usage.
+
+
+
+
+
+**Before:**
+```go
+strings.Compare(x, y)
+```
+
+**After:**
+```go
+x < y
+```
+
+
 ## switchTrue
 
 [
@@ -2254,6 +2350,29 @@ v, deleted := m.LoadAndDelete(k); if deleted { f(v) }
 ```
 
 
+## timeCmpSimplify
+
+[
+  **style**
+  **experimental** ]
+
+Detects Before/After call of time.Time that can be simplified.
+
+
+
+
+
+**Before:**
+```go
+!t.Before(tt)
+```
+
+**After:**
+```go
+t.After(tt)
+```
+
+
 ## timeExprSimplify
 
 [
@@ -2274,6 +2393,32 @@ t.Unix() / 1000
 **After:**
 ```go
 t.UnixMilli()
+```
+
+
+## todoCommentWithoutDetail
+
+[
+  **style**
+  **opinionated**
+  **experimental** ]
+
+Detects TODO comments without detail/assignee.
+
+
+
+
+
+**Before:**
+```go
+// TODO
+fiiWithCtx(nil, a, b)
+```
+
+**After:**
+```go
+// TODO(admin): pass context.TODO() instead of nil
+fiiWithCtx(nil, a, b)
 ```
 
 
@@ -2465,6 +2610,29 @@ type foo [](func([](func())))
 **After:**
 ```go
 type foo []func([]func())
+```
+
+
+## uncheckedInlineErr
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects unchecked errors in if statements.
+
+
+
+
+
+**Before:**
+```go
+if err := expr(); err2 != nil { /*...*/ }
+```
+
+**After:**
+```go
+if err := expr(); err != nil { /*...*/ }
 ```
 
 
@@ -2778,3 +2946,5 @@ return nil != ptr
 ```go
 return ptr != nil
 ```
+
+
