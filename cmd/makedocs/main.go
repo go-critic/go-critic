@@ -18,7 +18,9 @@ const (
 )
 
 func main() {
-	checkers.InitEmbeddedRules()
+	if err := checkers.InitEmbeddedRules(); err != nil {
+		panic(err)
+	}
 
 	tmpl := parseTemplate(
 		"overview.md.tmpl",
