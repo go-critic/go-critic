@@ -8,7 +8,6 @@ import (
 	"text/template"
 
 	"github.com/go-critic/go-critic/checkers"
-	_ "github.com/go-critic/go-critic/checkers"
 	"github.com/go-critic/go-critic/linter"
 )
 
