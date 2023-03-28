@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "typeSwitchVar"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Summary = "Detects type switches that can benefit from type guard clause with variable"
 	info.Before = `
 switch v.(type) {

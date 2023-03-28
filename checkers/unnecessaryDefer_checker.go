@@ -12,7 +12,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "unnecessaryDefer"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects redundantly deferred calls"
 	info.Before = `
 func() {

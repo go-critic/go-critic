@@ -11,7 +11,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "dupCase"
-	info.Tags = []string{"diagnostic"}
+	info.Tags = []string{linter.DiagnosticTag}
 	info.Summary = "Detects duplicated case clauses inside switch or select statements"
 	info.Before = `
 switch x {

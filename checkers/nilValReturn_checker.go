@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "nilValReturn"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects return statements those results evaluate to nil"
 	info.Before = `
 if err == nil {

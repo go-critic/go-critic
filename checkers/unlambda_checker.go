@@ -17,7 +17,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "unlambda"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Summary = "Detects function literals that can be simplified"
 	info.Before = `func(x int) int { return fn(x) }`
 	info.After = `fn`

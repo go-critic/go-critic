@@ -13,7 +13,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "filepathJoin"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects problems in filepath.Join() function calls"
 	info.Before = `filepath.Join("dir/", filename)`
 	info.After = `filepath.Join("dir", filename)`

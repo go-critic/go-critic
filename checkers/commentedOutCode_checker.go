@@ -16,7 +16,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "commentedOutCode"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects commented-out code inside function bodies"
 	info.Before = `
 // fmt.Println("Debugging hard")

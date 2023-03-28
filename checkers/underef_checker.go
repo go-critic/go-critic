@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "underef"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Params = linter.CheckerParams{
 		"skipRecvDeref": {
 			Value: true,

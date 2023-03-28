@@ -10,7 +10,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "deferInLoop"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects loops inside functions that use defer"
 	info.Before = `
 for _, filename := range []string{"foo", "bar"} {

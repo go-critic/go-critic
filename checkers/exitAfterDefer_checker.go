@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "exitAfterDefer"
-	info.Tags = []string{"diagnostic"}
+	info.Tags = []string{linter.DiagnosticTag}
 	info.Summary = "Detects calls to exit/fatal inside functions that use defer"
 	info.Before = `
 defer os.Remove(filename)

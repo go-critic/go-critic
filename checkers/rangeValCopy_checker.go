@@ -10,7 +10,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "rangeValCopy"
-	info.Tags = []string{"performance"}
+	info.Tags = []string{linter.PerformanceTag}
 	info.Params = linter.CheckerParams{
 		"sizeThreshold": {
 			Value: 128,

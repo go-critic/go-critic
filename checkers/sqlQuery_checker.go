@@ -13,7 +13,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "sqlQuery"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects issue in Query() and Exec() calls"
 	info.Before = `_, err := db.Query("UPDATE ...")`
 	info.After = `_, err := db.Exec("UPDATE ...")`

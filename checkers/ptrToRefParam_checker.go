@@ -11,7 +11,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "ptrToRefParam"
-	info.Tags = []string{"style", "opinionated", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.OpinionatedTag, linter.ExperimentalTag}
 	info.Summary = "Detects input and output parameters that have a type of pointer to referential type"
 	info.Before = `func f(m *map[string]int) (*chan *int)`
 	info.After = `func f(m map[string]int) (chan *int)`

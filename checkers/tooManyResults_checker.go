@@ -11,7 +11,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "tooManyResultsChecker"
-	info.Tags = []string{"style", "opinionated", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.OpinionatedTag, linter.ExperimentalTag}
 	info.Params = linter.CheckerParams{
 		"maxResults": {
 			Value: 5,

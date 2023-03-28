@@ -15,7 +15,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "octalLiteral"
-	info.Tags = []string{"style", "experimental", "opinionated"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag, linter.OpinionatedTag}
 	info.Summary = "Detects old-style octal literals"
 	info.Before = `foo(02)`
 	info.After = `foo(0o2)`

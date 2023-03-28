@@ -10,7 +10,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "defaultCaseOrder"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Summary = "Detects when default case in switch isn't on 1st or last position"
 	info.Before = `
 switch {

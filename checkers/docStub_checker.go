@@ -13,7 +13,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "docStub"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag}
 	info.Summary = "Detects comments that silence go lint complaints about doc-comment"
 	info.Before = `
 // Foo ...

@@ -15,7 +15,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "truncateCmp"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Params = linter.CheckerParams{
 		"skipArchDependent": {
 			Value: true,

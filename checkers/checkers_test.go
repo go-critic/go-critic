@@ -61,11 +61,10 @@ func TestTags(t *testing.T) {
 		categories := 0
 		for _, tag := range info.Tags {
 			switch tag {
-			case "diagnostic", "style", "performance":
-				// Category tags.
-				// Can only have one of them.
+			case linter.DiagnosticTag, linter.StyleTag, linter.PerformanceTag:
+				// Category tags. Can only have one of them.
 				categories++
-			case "experimental", "opinionated":
+			case linter.ExperimentalTag, linter.OpinionatedTag:
 				// Optional tags.
 			default:
 				t.Errorf("%q checker uses unknown tag %q", info.Name, tag)
@@ -93,7 +92,7 @@ func TestDocs(t *testing.T) {
 }
 
 func TestStableList(t *testing.T) {
-	// Verify that new checker is not added without "experimental"
+	// Verify that new checker is not added without linter.ExperimentalTag
 	// tag by accident. When stable checker is about to be added,
 	// slice above should be modified to include new checker name.
 
@@ -151,7 +150,7 @@ func TestStableList(t *testing.T) {
 	}
 
 	for _, info := range linter.GetCheckersInfo() {
-		if info.HasTag("experimental") {
+		if info.HasTag(linter.ExperimentalTag) {
 			continue
 		}
 		if !m[info.Name] {

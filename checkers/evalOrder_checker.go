@@ -17,7 +17,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "evalOrder"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects unwanted dependencies on the evaluation order"
 	info.Before = `return x, f(&x)`
 	info.After = `

@@ -12,7 +12,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "commentedOutImport"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag}
 	info.Summary = "Detects commented-out imports"
 	info.Before = `
 import (

@@ -12,7 +12,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "dupBranchBody"
-	info.Tags = []string{"diagnostic"}
+	info.Tags = []string{linter.DiagnosticTag}
 	info.Summary = "Detects duplicated branch bodies inside conditional statements"
 	info.Before = `
 if cond {

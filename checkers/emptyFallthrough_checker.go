@@ -11,7 +11,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "emptyFallthrough"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag}
 	info.Summary = "Detects fallthrough that can be avoided by using multi case values"
 	info.Before = `switch kind {
 case reflect.Int:

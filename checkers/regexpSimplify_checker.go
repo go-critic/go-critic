@@ -17,7 +17,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "regexpSimplify"
-	info.Tags = []string{"style", "experimental", "opinionated"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag, linter.OpinionatedTag}
 	info.Summary = "Detects regexp patterns that can be simplified"
 	info.Before = "regexp.MustCompile(`(?:a|b|c)   [a-z][a-z]*`)"
 	info.After = "regexp.MustCompile(`[abc] {3}[a-z]+`)"
