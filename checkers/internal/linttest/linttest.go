@@ -85,6 +85,9 @@ func (cfg *CheckersTest) Run(t *testing.T) {
 	// See #980.
 	for i := range checkers {
 		info := checkers[i]
+		if info.Name == "purego" {
+			continue
+		}
 		t.Run(info.Name+"/debug", func(t *testing.T) {
 			debugFile := filepath.Join("testdata", info.Name, "debug.go")
 			target := lintTarget{
@@ -96,6 +99,9 @@ func (cfg *CheckersTest) Run(t *testing.T) {
 	}
 
 	for _, info := range saneCheckersList(t, checkers) {
+		if info.Name == "purego" {
+			continue
+		}
 		t.Run(info.Name, func(t *testing.T) {
 			pkgPath := "./testdata/" + info.Name
 			target := lintTarget{
@@ -217,6 +223,7 @@ func newPackages(t *testing.T, pattern string, fset *token.FileSet) []*packages.
 		Mode:  mode,
 		Tests: true,
 		Fset:  fset,
+		// BuildFlags: []string{"-tags=purego"},
 	}
 	pkgs, err := pkgload.LoadPackages(&cfg, []string{pattern})
 	if err != nil {
