@@ -20,7 +20,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "boolExprSimplify"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag}
 	info.Summary = "Detects bool expressions that can be simplified"
 	info.Before = `
 a := !(elapsed >= expectElapsedMin)

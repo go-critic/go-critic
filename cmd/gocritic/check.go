@@ -339,10 +339,10 @@ func (p *program) checkerParamKey(info *linter.CheckerInfo, pname string) string
 func (p *program) bindDefaultEnabledList() error {
 	var enabled []string
 	for _, info := range p.infoList {
-		enable := !info.HasTag("experimental") &&
-			!info.HasTag("opinionated") &&
-			!info.HasTag("performance") &&
-			!info.HasTag("security")
+		enable := !info.HasTag(linter.ExperimentalTag) &&
+			!info.HasTag(linter.OpinionatedTag) &&
+			!info.HasTag(linter.PerformanceTag) &&
+			!info.HasTag(linter.SecurityTag)
 		if enable {
 			enabled = append(enabled, info.Name)
 		}

@@ -10,7 +10,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "ifElseChain"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Params = linter.CheckerParams{
 		"minThreshold": {
 			Value: 2,

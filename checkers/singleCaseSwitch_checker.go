@@ -13,7 +13,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "singleCaseSwitch"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Summary = "Detects switch statements that could be better written as if statement"
 	info.Before = `
 switch x := x.(type) {

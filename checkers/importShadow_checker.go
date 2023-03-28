@@ -11,7 +11,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "importShadow"
-	info.Tags = []string{"style", "opinionated"}
+	info.Tags = []string{linter.StyleTag, linter.OpinionatedTag}
 	info.Summary = "Detects when imported package names shadowed in the assignments"
 	info.Before = `
 // "path/filepath" is imported.

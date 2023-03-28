@@ -10,7 +10,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "nestingReduce"
-	info.Tags = []string{"style", "opinionated", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.OpinionatedTag, linter.ExperimentalTag}
 	info.Params = linter.CheckerParams{
 		"bodyWidth": {
 			Value: 5,

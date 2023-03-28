@@ -12,7 +12,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "initClause"
-	info.Tags = []string{"style", "opinionated", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.OpinionatedTag, linter.ExperimentalTag}
 	info.Summary = "Detects non-assignment statements inside if/switch init clause"
 	info.Before = `if sideEffect(); cond {
 }`

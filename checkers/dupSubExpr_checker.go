@@ -15,7 +15,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "dupSubExpr"
-	info.Tags = []string{"diagnostic"}
+	info.Tags = []string{linter.DiagnosticTag}
 	info.Summary = "Detects suspicious duplicated sub-expressions"
 	info.Before = `
 sort.Slice(xs, func(i, j int) bool {

@@ -16,7 +16,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "appendAssign"
-	info.Tags = []string{"diagnostic"}
+	info.Tags = []string{linter.DiagnosticTag}
 	info.Summary = "Detects suspicious append result assignments"
 	info.Before = `
 p.positives = append(p.negatives, x)

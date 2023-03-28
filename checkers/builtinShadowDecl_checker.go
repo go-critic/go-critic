@@ -10,7 +10,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "builtinShadowDecl"
-	info.Tags = []string{"diagnostic", "experimental"}
+	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects top-level declarations that shadow the predeclared identifiers"
 	info.Before = `type int struct {}`
 	info.After = `type myInt struct {}`

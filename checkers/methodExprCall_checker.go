@@ -15,7 +15,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "methodExprCall"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag}
 	info.Summary = "Detects method expression call that can be replaced with a method call"
 	info.Before = `f := foo{}
 foo.bar(f)`

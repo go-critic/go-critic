@@ -14,7 +14,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "appendCombine"
-	info.Tags = []string{"performance"}
+	info.Tags = []string{linter.PerformanceTag}
 	info.Summary = "Detects `append` chains to the same slice that can be done in a single `append` call"
 	info.Before = `
 xs = append(xs, 1)

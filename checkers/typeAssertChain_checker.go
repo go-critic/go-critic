@@ -16,7 +16,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "typeAssertChain"
-	info.Tags = []string{"style", "experimental"}
+	info.Tags = []string{linter.StyleTag, linter.ExperimentalTag}
 	info.Summary = "Detects repeated type assertions and suggests to replace them with type switch statement"
 	info.Before = `
 if x, ok := v.(T1); ok {

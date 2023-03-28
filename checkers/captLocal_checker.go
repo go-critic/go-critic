@@ -10,7 +10,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "captLocal"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Params = linter.CheckerParams{
 		"paramsOnly": {
 			Value: true,

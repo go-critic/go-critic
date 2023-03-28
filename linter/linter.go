@@ -9,6 +9,15 @@ import (
 	"github.com/go-toolsmith/astfmt"
 )
 
+const (
+	DiagnosticTag   = "diagnostic"
+	ExperimentalTag = "experimental"
+	OpinionatedTag  = "opinionated"
+	PerformanceTag  = "performance"
+	SecurityTag     = "security"
+	StyleTag        = "style"
+)
+
 // UnknownType is a special sentinel value that is returned from the CheckerContext.TypeOf
 // method instead of the nil type.
 var UnknownType types.Type = types.Typ[types.Invalid]

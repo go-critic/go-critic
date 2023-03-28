@@ -12,7 +12,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "elseif"
-	info.Tags = []string{"style"}
+	info.Tags = []string{linter.StyleTag}
 	info.Params = linter.CheckerParams{
 		"skipBalanced": {
 			Value: true,

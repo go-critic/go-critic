@@ -15,7 +15,7 @@ import (
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "flagName"
-	info.Tags = []string{"diagnostic"}
+	info.Tags = []string{linter.DiagnosticTag}
 	info.Summary = "Detects suspicious flag names"
 	info.Before = `b := flag.Bool(" foo ", false, "description")`
 	info.After = `b := flag.Bool("foo", false, "description")`
