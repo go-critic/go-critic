@@ -31,6 +31,9 @@ type octalLiteralChecker struct {
 }
 
 func (c *octalLiteralChecker) VisitExpr(expr ast.Expr) {
+	if !c.ctx.GoVersion.GreaterOrEqual(linter.GoVersion{Major: 1, Minor: 13}) {
+		return
+	}
 	lit := astcast.ToBasicLit(expr)
 	if lit.Kind != token.INT {
 		return
