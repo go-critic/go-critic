@@ -161,6 +161,16 @@ func emptyStringTest(m dsl.Matcher) {
 		Report("replace `$$` with `$s == \"\"`")
 }
 
+//doc:summary Detects empty slice declaration
+//doc:tags    style experimental
+//doc:before  x := []int{}
+//doc:after   var x []int
+func emptySlice(m dsl.Matcher) {
+	m.Match(`var $n = make([]$t, 0)`, `$n := []$t{}`, `$n := make([]$t, 0, 0)`, `$n := make([]$t, 0)`).
+		Report(`zero-length slice declaring nil slice is better`).
+		Suggest(`var $n []$t`)
+}
+
 //doc:summary Detects redundant conversions between string and []byte
 //doc:tags    performance
 //doc:before  copy(b, []byte(s))

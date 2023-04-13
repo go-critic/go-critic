@@ -6,7 +6,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
-Total number of checks is 106 :rocket:
+Total number of checks is 107 :rocket:
 
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
@@ -83,6 +83,7 @@ with another one that is considered more idiomatic or simple.
 |:white_check_mark:[dupImport](#dupimport)|Detects multiple imports of the same package under different aliases|
 |:heavy_check_mark:[elseif](#elseif)|Detects else with nested if statement that can be replaced with else-if|
 |:white_check_mark:[emptyFallthrough](#emptyfallthrough)|Detects fallthrough that can be avoided by using multi case values|
+|:white_check_mark:[emptySlice](#emptyslice)|Detects empty slice declaration|
 |:white_check_mark:[emptyStringTest](#emptystringtest)|Detects empty string checks that can be written more idiomatically|
 |:white_check_mark:[exposedSyncMutex](#exposedsyncmutex)|Detects exposed methods from sync.Mutex and sync.RWMutex|
 |:white_check_mark:[hexLiteral](#hexliteral)|Detects hex literals that have mixed case letter digits|
@@ -977,6 +978,29 @@ switch kind {
 case reflect.Int, reflect.Int32:
 	return Int
 }
+```
+
+
+## emptySlice
+
+[
+  **style**
+  **experimental** ]
+
+Detects empty slice declaration.
+
+
+
+
+
+**Before:**
+```go
+x := []int{}
+```
+
+**After:**
+```go
+var x []int
 ```
 
 
