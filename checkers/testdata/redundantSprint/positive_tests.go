@@ -18,16 +18,6 @@ func _() {
 	}
 
 	{
-		var err error
-		/*! use err.Error() instead */
-		_ = fmt.Sprint(err)
-		/*! use err.Error() instead */
-		_ = fmt.Sprintf("%s", err)
-		/*! use err.Error() instead */
-		_ = fmt.Sprintf("%v", err)
-	}
-
-	{
 		var s string
 		/*! s is already string */
 		_ = fmt.Sprint(s)
