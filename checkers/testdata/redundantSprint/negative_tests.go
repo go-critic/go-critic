@@ -14,6 +14,9 @@ func _() {
 	{
 		var err error
 		_ = err.Error()
+		_ = fmt.Sprint(err)
+		_ = fmt.Sprintf("%s", err)
+		_ = fmt.Sprintf("%v", err)
 	}
 
 	{

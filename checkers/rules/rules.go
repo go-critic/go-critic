@@ -15,11 +15,6 @@ func redundantSprint(m dsl.Matcher) {
 		Report(`use $x.String() instead`)
 
 	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
-		Where(m["x"].Type.Implements(`error`)).
-		Suggest(`$x.Error()`).
-		Report(`use $x.Error() instead`)
-
-	m.Match(`fmt.Sprint($x)`, `fmt.Sprintf("%s", $x)`, `fmt.Sprintf("%v", $x)`).
 		Where(m["x"].Type.Is(`string`)).
 		Suggest(`$x`).
 		Report(`$x is already string`)
