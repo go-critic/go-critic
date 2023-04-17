@@ -101,6 +101,7 @@ func (c *embeddedRuleguardChecker) WalkFile(f *ast.File) {
 		Pkg:         c.ctx.Pkg,
 		Types:       c.ctx.TypesInfo,
 		Sizes:       c.ctx.SizesInfo,
+		GoVersion:   ruleguard.GoVersion(c.ctx.GoVersion),
 		Fset:        c.ctx.FileSet,
 		TruncateLen: 100,
 	})
