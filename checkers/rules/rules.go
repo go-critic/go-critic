@@ -166,9 +166,10 @@ func emptyStringTest(m dsl.Matcher) {
 //doc:before  x := []int{}
 //doc:after   var x []int
 func emptySlice(m dsl.Matcher) {
-	m.Match(`var $n = make([]$t, 0)`, `var $n = []$t{}`, `$n := []$t{}`, `$n := make([]$t, 0, 0)`, `$n := make([]$t, 0)`).
-		Report(`zero-length slice declaring nil slice is better`).
-		Suggest(`var $n []$t`)
+	m.Match(
+		`var $n = []$t{}`, `var $n = make([]$t, 0)`, `var $n = make([]$t, 0, 0)`,
+		`$n := []$t{}`, `$n := make([]$t, 0)`, `$n := make([]$t, 0, 0)`,
+	).Report(`zero-length slice declaring nil slice is better`).Suggest(`var $n []$t`)
 }
 
 //doc:summary Detects redundant conversions between string and []byte
