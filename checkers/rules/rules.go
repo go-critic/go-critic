@@ -166,7 +166,7 @@ func emptyStringTest(m dsl.Matcher) {
 //doc:before  x := []int{}
 //doc:after   var x []int
 func emptySlice(m dsl.Matcher) {
-	m.Match(`var $n = make([]$t, 0)`, `$n := []$t{}`, `$n := make([]$t, 0, 0)`, `$n := make([]$t, 0)`).
+	m.Match(`var $n = make([]$t, 0)`, `var $n = []$t{}`, `$n := []$t{}`, `$n := make([]$t, 0, 0)`, `$n := make([]$t, 0)`).
 		Report(`zero-length slice declaring nil slice is better`).
 		Suggest(`var $n []$t`)
 }
