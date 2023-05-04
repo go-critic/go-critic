@@ -41,18 +41,48 @@ func send(args ...interface{}) interface{} {
 	return nil
 }
 
+type custErr struct{}
+
+func (custErr) Error() string {
+	return `error`
+}
+
+func custErrFunc() error {
+	return custErr{}
+}
+
 func testFunc() {
 
 	var err error
 	_ = err
 
+	var xerr error
+	_ = xerr
+
 	/*! no error access */
-	a, b, c, err := recv4()
+	f, xerr := recvFunc()
+	/*! expr, missing error check accessing [f] */
+	f()
+
+	f, xerr = recvFunc()
+	if xerr != nil {
+
+	}
+	f()
+
+	a, b, c, _ := recv4()
+	send(a, b, c)
+
+	/*! no error access */
+	xerr = custErrFunc()
+
+	/*! no error access */
+	a, b, c, err = recv4()
 	/*! expr, missing error check accessing [a b c] */
 	send(a, b, c)
 
 	/*! no error access */
-	f, err := recvFunc()
+	f, err = recvFunc()
 	/*! expr, missing error check accessing [f] */
 	f()
 

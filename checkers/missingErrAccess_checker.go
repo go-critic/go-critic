@@ -15,10 +15,6 @@ import (
 
 const recLimit = 20
 
-type logger interface {
-	Warn(node ast.Node, format string, args ...interface{})
-}
-
 var errRecLimit = fmt.Errorf(`recursion-limit-reached`)
 
 func init() {
@@ -46,13 +42,13 @@ func processFileContent(path string) error {
 }
 `
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
-		return astwalk.WalkerForFuncDecl(&missingErrAccess{logger: ctx}), nil
+		return astwalk.WalkerForFuncDecl(&missingErrAccess{ctx: ctx}), nil
 	})
 }
 
 type missingErrAccess struct {
+	ctx *linter.CheckerContext
 	astwalk.WalkHandler
-	logger logger
 }
 
 func (m *missingErrAccess) VisitFuncDecl(fnc *ast.FuncDecl) {
@@ -85,6 +81,7 @@ func impAstSelectorExprToString(selector *ast.SelectorExpr, buf *bytes.Buffer, r
 
 func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 	currErrOnLine := -1
+	var currErrName string
 	var currAssignStmt *ast.AssignStmt
 	var currValues map[string]struct{}
 	for _, stmt := range stmts {
@@ -239,7 +236,7 @@ func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 				*ast.ReturnStmt:
 				currErrOnLine = -1
 			default:
-				m.logger.Warn(stmt, `statement not found`)
+				m.ctx.Warn(stmt, `statement not found`)
 				currErrOnLine = -1
 			}
 		}
@@ -248,7 +245,7 @@ func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 		if errors.Is(err, errRecLimit) {
 			m.logRecFailed(stmt, `top-stmts`, err)
 		} else if err != nil {
-			m.logger.Warn(stmt, fmt.Sprintf(`recursion failed %v`, err))
+			m.ctx.Warn(stmt, fmt.Sprintf(`recursion failed %v`, err))
 		}
 
 		if err == nil {
@@ -264,10 +261,17 @@ func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 		var nextValues map[string]struct{}
 		if assign, ok := stmt.(*ast.AssignStmt); ok {
 			for _, exp := range assign.Lhs {
-				if ident, ok := exp.(*ast.Ident); ok {
-					if ident.Name == `err` {
-						nextErrOnLine = int(assign.TokPos)
-						nextAssignStmt = assign
+				if id, ok := exp.(*ast.Ident); ok {
+					obj := m.ctx.TypesInfo.ObjectOf(id)
+					if obj != nil {
+						typeName := obj.Type().String()
+						if typeName == `error` {
+							if id.Name != `_` {
+								nextErrOnLine = int(assign.TokPos)
+								nextAssignStmt = assign
+								currErrName = id.Name
+							}
+						}
 					}
 				}
 			}
@@ -277,7 +281,7 @@ func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 				for _, exp := range assign.Lhs {
 					switch v := exp.(type) {
 					case *ast.Ident:
-						if v.Name != `err` {
+						if v.Name != currErrName {
 							nextValues[v.Name] = struct{}{}
 						}
 
@@ -290,7 +294,7 @@ func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 
 		if nextErrOnLine != -1 {
 			if currErrOnLine != -1 {
-				m.logger.Warn(currAssignStmt, `no error access`)
+				m.ctx.Warn(currAssignStmt, `no error access`)
 			}
 
 			currErrOnLine = nextErrOnLine
@@ -301,12 +305,11 @@ func (m *missingErrAccess) checkStmts(stmts []ast.Stmt) {
 }
 
 func (m missingErrAccess) log(stmt ast.Stmt, msg string, accessedValues []string) {
-	m.logger.Warn(stmt,
-		fmt.Sprintf(`%v, missing error check accessing %v`, msg, accessedValues))
+	m.ctx.Warn(stmt, fmt.Sprintf(`%v, missing error check accessing %v`, msg, accessedValues))
 }
 
 func (m missingErrAccess) logRecFailed(stmt ast.Stmt, msg string, err error) {
-	m.logger.Warn(stmt, fmt.Sprintf(`%v recursion failed %v`, msg, err))
+	m.ctx.Warn(stmt, fmt.Sprintf(`%v recursion failed %v`, msg, err))
 }
 
 func checkAccess(node interface{},
