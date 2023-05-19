@@ -89,6 +89,11 @@ func httpNoBody(m dsl.Matcher) {
 		Where(m["nil"].Text == "nil").
 		Suggest("http.NewRequestWithContext($ctx, $method, $url, http.NoBody)").
 		Report("http.NoBody should be preferred to the nil request body")
+
+	m.Match("httptest.NewRequest($method, $url, $nil)").
+		Where(m["nil"].Text == "nil").
+		Suggest("httptest.NewRequest($method, $url, http.NoBody)").
+		Report("http.NoBody should be preferred to the nil request body")
 }
 
 //doc:summary Detects expressions like []rune(s)[0] that may cause unwanted rune slice allocation
