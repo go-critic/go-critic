@@ -360,7 +360,7 @@ func (ctx *CheckerContext) safeSizesInfoSizeof(typ types.Type) (size int64, ok b
 	ok = true
 	defer func() {
 		if r := recover(); r != nil {
-			if strings.Contains(string(r.(string)), "assertion failed") {
+			if strings.Contains(r.(string), "assertion failed") {
 				size, ok = 0, false
 			} else {
 				panic(r)
