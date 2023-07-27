@@ -39,3 +39,32 @@ func bigPointers(xs []*bigObject) int32 {
 	}
 	return v
 }
+
+func genericSlice[T any](original []T, f func(T)) {
+	for _, v := range original {
+		// OK: v is a type parameter.
+		f(v)
+	}
+}
+
+type Maybe[V any] struct {
+	value V
+}
+
+func (m Maybe[V]) Fn() {}
+
+type ID interface {
+	IsUnique() bool
+}
+
+func testID[T ID](id T) {
+	testCases := []struct {
+		id T // problematic line for https://github.com/go-critic/go-critic/issues/1354
+	}{
+		{id},
+	}
+
+	for _, tc := range testCases {
+		_ = tc.id.IsUnique()
+	}
+}
