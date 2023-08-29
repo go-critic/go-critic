@@ -103,7 +103,7 @@ func asDiag(c *linter.Checker, warning linter.Warning) analysis.Diagnostic {
 	return diag
 }
 
-// prepareGocritic initializes a new gocririt object,
+// prepareGocritic initializes a new gocritic object,
 // but unlike newGocritic() it could use a cached version.
 func prepareGocritic() (*gocritic, error) {
 	if DisableCache {

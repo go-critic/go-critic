@@ -1,6 +1,6 @@
 package checker_test
 
-func noWarnigs() {
+func noWarnings() {
 	var foo struct {
 		len int
 		cap int

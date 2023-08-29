@@ -15,7 +15,7 @@ package checker_test
 func f1() {
 	/*! put a space between `//` and comment text */
 	//block with
-	//sevaral lines
+	//several lines
 	//without leading space
 }
 
