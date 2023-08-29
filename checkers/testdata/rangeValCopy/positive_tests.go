@@ -5,7 +5,7 @@ import (
 )
 
 type bigObject struct {
-	// Fields are carefuly selected to get equal struct size
+	// Fields are carefully selected to get equal struct size
 	// for both AMD64 and 386.
 
 	body [1024]byte

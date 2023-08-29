@@ -22,7 +22,7 @@ func (o object) cantMutate() int {
 	return o.val
 }
 
-func returnDepencency() {
+func returnDependency() {
 	var x int
 	var y int
 

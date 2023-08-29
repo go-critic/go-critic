@@ -5,7 +5,7 @@ import (
 )
 
 func fmtUndefinedFormatting() {
-	foo := "foo happend"
+	foo := "foo happened"
 	fooFunc := func(k string) (string, string) { return "", "123" }
 	var barFunc = func() string { return "123" }
 	/*! use errors.New(foo) or fmt.Errorf("%s", foo) instead */
