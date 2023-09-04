@@ -815,8 +815,10 @@ func sloppyTestFuncName(m dsl.Matcher) {
 //doc:after   fooOnce := sync.OnceFunc(foo); ...; fooOnce()
 func badSyncOnceFunc(m dsl.Matcher) {
 	m.Match(`$*_; sync.OnceFunc($x); $*_;`).
-		Suggest("sync.OnceFunc($x)()")
+		Suggest("sync.OnceFunc($x)()").
+		Where(m.GoVersion().GreaterEqThan("1.21"))
 
 	m.Match(`sync.OnceFunc($x)()`).
-		Report("possible sync.OnceFunc misuse, consider to assign sync.OnceFunc($x) to a variable")
+		Report("possible sync.OnceFunc misuse, consider to assign sync.OnceFunc($x) to a variable").
+		Where(m.GoVersion().GreaterEqThan("1.21"))
 }
