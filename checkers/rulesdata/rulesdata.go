@@ -2631,6 +2631,28 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		{
+			Line:        816,
+			Name:        "badSyncOnceFunc",
+			MatcherName: "m",
+			DocTags:     []string{"diagnostic", "experimental"},
+			DocSummary:  "Detects bad usage of sync.OnceFunc",
+			DocBefore:   "sync.OnceFunc(foo)()",
+			DocAfter:    "fooOnce := sync.OnceFunc(foo); ...; fooOnce()",
+			Rules: []ir.Rule{
+				{
+					Line:            817,
+					SyntaxPatterns:  []ir.PatternString{{Line: 817, Value: "$*_; sync.OnceFunc($x); $*_;"}},
+					ReportTemplate:  "suggestion: sync.OnceFunc($x)()",
+					SuggestTemplate: "sync.OnceFunc($x)()",
+				},
+				{
+					Line:           820,
+					SyntaxPatterns: []ir.PatternString{{Line: 820, Value: "sync.OnceFunc($x)()"}},
+					ReportTemplate: "possible sync.OnceFunc misuse, consider to assign sync.OnceFunc($x) to a variable",
+				},
+			},
+		},
 	},
 }
 
