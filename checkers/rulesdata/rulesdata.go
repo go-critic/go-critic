@@ -2641,10 +2641,9 @@ var PrecompiledRules = &ir.File{
 			DocAfter:    "fooOnce := sync.OnceFunc(foo); ...; fooOnce()",
 			Rules: []ir.Rule{
 				{
-					Line:            817,
-					SyntaxPatterns:  []ir.PatternString{{Line: 817, Value: "$*_; sync.OnceFunc($x); $*_;"}},
-					ReportTemplate:  "suggestion: sync.OnceFunc($x)()",
-					SuggestTemplate: "sync.OnceFunc($x)()",
+					Line:           817,
+					SyntaxPatterns: []ir.PatternString{{Line: 817, Value: "$*_; sync.OnceFunc($x); $*_;"}},
+					ReportTemplate: "possible sync.OnceFunc misuse, sync.OnceFunc($x) result is not used",
 					WhereExpr: ir.FilterExpr{
 						Line:  819,
 						Op:    ir.FilterGoVersionGreaterEqThanOp,

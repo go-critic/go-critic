@@ -7,7 +7,7 @@ import (
 )
 
 func notInvoked() {
-	/*! suggestion: sync.OnceFunc(foo)() */
+	/*! possible sync.OnceFunc misuse, sync.OnceFunc(foo) result is not used */
 	sync.OnceFunc(foo)
 }
 
