@@ -808,3 +808,17 @@ func sloppyTestFuncName(m dsl.Matcher) {
 		Where(m["bench"].Text.Matches("^bench(mark)?.*")).
 		Report("function $bench looks like a benchmark helper, consider to change 1st param to 'tb testing.TB'")
 }
+
+//doc:summary Detects bad usage of sync.OnceFunc
+//doc:tags    diagnostic experimental
+//doc:before  sync.OnceFunc(foo)()
+//doc:after   fooOnce := sync.OnceFunc(foo); ...; fooOnce()
+func badSyncOnceFunc(m dsl.Matcher) {
+	m.Match(`$*_; sync.OnceFunc($x); $*_;`).
+		Report("possible sync.OnceFunc misuse, sync.OnceFunc($x) result is not used").
+		Where(m.GoVersion().GreaterEqThan("1.21"))
+
+	m.Match(`sync.OnceFunc($x)()`).
+		Report("possible sync.OnceFunc misuse, consider to assign sync.OnceFunc($x) to a variable").
+		Where(m.GoVersion().GreaterEqThan("1.21"))
+}
