@@ -2,7 +2,7 @@ package checker_test
 
 func suspiciousWhitespace() {
 	_ = map[string]int{
-		/*! suspucious whitespace in `foo ` key */
+		/*! suspicious whitespace in `foo ` key */
 		`foo `: 1,
 		`bar`:  2,
 		`baz`:  3,
@@ -11,7 +11,7 @@ func suspiciousWhitespace() {
 	_ = map[string]int{
 		"foo": 1,
 		"bar": 2,
-		/*! suspucious whitespace in " baz" key */
+		/*! suspicious whitespace in " baz" key */
 		" baz": 3,
 	}
 
@@ -19,7 +19,7 @@ func suspiciousWhitespace() {
 
 	_ = myMap{
 		"foo": 1,
-		/*! suspucious whitespace in "bar " key */
+		/*! suspicious whitespace in "bar " key */
 		"bar ": 2,
 		"baz":  3,
 	}
