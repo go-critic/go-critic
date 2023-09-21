@@ -2342,13 +2342,13 @@ var PrecompiledRules = &ir.File{
 			Name:        "externalErrorReassign",
 			MatcherName: "m",
 			DocTags:     []string{"diagnostic", "experimental"},
-			DocSummary:  "Detects suspicious reassigment of error from another package",
+			DocSummary:  "Detects suspicious reassignment of error from another package",
 			DocBefore:   "io.EOF = nil",
 			DocAfter:    "/* don't do it */",
 			Rules: []ir.Rule{{
 				Line:           725,
 				SyntaxPatterns: []ir.PatternString{{Line: 725, Value: "$pkg.$err = $x"}},
-				ReportTemplate: "suspicious reassigment of error from another package",
+				ReportTemplate: "suspicious reassignment of error from another package",
 				WhereExpr: ir.FilterExpr{
 					Line: 726,
 					Op:   ir.FilterAndOp,

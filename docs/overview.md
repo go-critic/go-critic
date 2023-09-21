@@ -42,7 +42,7 @@ They also detect code that may be correct, but looks suspicious.
 |:white_check_mark:[emptyDecl](#emptydecl)|Detects suspicious empty declarations blocks|
 |:white_check_mark:[evalOrder](#evalorder)|Detects unwanted dependencies on the evaluation order|
 |:heavy_check_mark:[exitAfterDefer](#exitafterdefer)|Detects calls to exit/fatal inside functions that use defer|
-|:white_check_mark:[externalErrorReassign](#externalerrorreassign)|Detects suspicious reassigment of error from another package|
+|:white_check_mark:[externalErrorReassign](#externalerrorreassign)|Detects suspicious reassignment of error from another package|
 |:white_check_mark:[filepathJoin](#filepathjoin)|Detects problems in filepath.Join() function calls|
 |:heavy_check_mark:[flagDeref](#flagderef)|Detects immediate dereferencing of `flag` package pointers|
 |:heavy_check_mark:[flagName](#flagname)|Detects suspicious flag names|
@@ -1132,7 +1132,7 @@ type Foo struct{ ...; mu sync.Mutex; ... }
   **diagnostic**
   **experimental** ]
 
-Detects suspicious reassigment of error from another package.
+Detects suspicious reassignment of error from another package.
 
 
 

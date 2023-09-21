@@ -717,14 +717,14 @@ func badSorting(m dsl.Matcher) {
 		Report(`suspicious sort.StringSlice usage, maybe sort.Strings was intended?`)
 }
 
-//doc:summary Detects suspicious reassigment of error from another package
+//doc:summary Detects suspicious reassignment of error from another package
 //doc:tags    diagnostic experimental
 //doc:before  io.EOF = nil
 //doc:after   /* don't do it */
 func externalErrorReassign(m dsl.Matcher) {
 	m.Match(`$pkg.$err = $x`).
 		Where(m["err"].Type.Is(`error`) && m["pkg"].Object.Is(`PkgName`)).
-		Report(`suspicious reassigment of error from another package`)
+		Report(`suspicious reassignment of error from another package`)
 }
 
 //doc:summary Detects suspicious empty declarations blocks

@@ -8,9 +8,9 @@ import (
 )
 
 func _() {
-	/*! suspicious reassigment of error from another package */
+	/*! suspicious reassignment of error from another package */
 	examplepkg.FooError = nil
 
-	/*! suspicious reassigment of error from another package */
+	/*! suspicious reassignment of error from another package */
 	examplepkg.FooError = fmt.Errorf("your error is: %w", io.EOF)
 }
