@@ -38,4 +38,7 @@ func multiLineCode() {
 	//rulebases.POST("/", postRsHandler)                                //create a rulebase
 	//rulebases.DELETE("/:id", deleteRsHandler)                         //delete a rulebase
 	//rulebases.PUT("/:setid", putRsHandler)                            //update a rulebase
+
+	/*! may want to remove commented-out code */
+	// v := 781
 }

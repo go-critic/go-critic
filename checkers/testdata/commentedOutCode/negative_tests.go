@@ -77,4 +77,6 @@ func permittedComments() {
 	// //line directives with omitted filenames lead to empty filenames
 
 	/* CINC/CINV/CNEG */
+
+	// v := 世界
 }

@@ -582,6 +582,16 @@ foo(1, 2)
 ```
 
 
+Checker parameters:
+<ul>
+<li>
+
+  `@commentedOutCode.minLength` min length of the comment that triggers a warning (default 15)
+
+</li>
+
+</ul>
+
 ## commentedOutImport
 
 [
