@@ -17,3 +17,6 @@ func bigStructPtr2(x, y *bigStruct) {}
 func mixedBigObjectsPtr(x *bigStruct, y *[20][]int) {}
 
 func (x *bigStruct) bigRecvPtr(y *[2]bigStruct) {}
+
+// String must be ignored #1168.
+func (x bigStruct) String() string { return "" }
