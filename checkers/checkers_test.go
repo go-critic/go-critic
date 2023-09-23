@@ -21,7 +21,8 @@ func init() {
 
 func TestCheckers(t *testing.T) {
 	allParams := map[string]map[string]interface{}{
-		"captLocal": {"paramsOnly": false},
+		"captLocal":        {"paramsOnly": false},
+		"commentedOutCode": {"minLength": 9},
 	}
 
 	for _, info := range linter.GetCheckersInfo() {
