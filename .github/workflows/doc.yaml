@@ -22,6 +22,7 @@ jobs:
       - name: Set up Go 1.x
         uses: actions/setup-go@v4
         with:
+          ref: ${{ github.head_ref }}
           go-version: stable
           check-latest: true
 
@@ -33,7 +34,17 @@ jobs:
           make docs
 
       - uses: stefanzweifel/git-auto-commit-action@v5
-        if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        id: auto-commit-action
         with:
-          commit_message: generate docs.
+          commit_message: auto generate doc
+          file_pattern: ./docs/overview.md
 
+      - name: "Run if changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        run: |
+          file=$(xz -z --stdout ./docs/overview.md | base64) 
+          curl -XPOST -u "${{ secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}"\
+            -H "Accept: application/vnd.github.everest-preview+json" \
+            -H "Content-Type: application/json" \
+             https://api.github.com/repos/Lasiar/go-critic.github.io/dispatches \
+             --data $(printf '{"event_type":"update_doc","client_payload":{"content":"%s"}}' ${file})
