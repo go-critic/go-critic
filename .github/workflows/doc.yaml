@@ -41,10 +41,10 @@ jobs:
 
       - name: "Run if changes have been detected"
         if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           file=$(xz -z --stdout ./docs/overview.md | base64) 
-          curl -XPOST -u "${{ secrets.PAT_USERNAME}}:${{secrets.PAT_TOKEN}}"\
-            -H "Accept: application/vnd.github.everest-preview+json" \
-            -H "Content-Type: application/json" \
-             https://api.github.com/repos/Lasiar/go-critic.github.io/dispatches \
-             --data $(printf '{"event_type":"update_doc","client_payload":{"content":"%s"}}' ${file})
+          gh api repos/Lasiar/go-critic.github.io/dispatches \
+            --field event_type='update_doc' \
+            --field 'client_payload[content]=test'
