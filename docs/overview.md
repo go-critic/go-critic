@@ -1,6 +1,5 @@
 ## Checks overview
 
-TEEEEEESTTEEEST
 This page describes checks supported by [go-critic](https://github.com/go-critic/go-critic) linter.
 
 [//]: # (This is generated file, please don't edit it yourself.)
@@ -2074,6 +2073,7 @@ Detects switch statements that could be better written as if statement.
 ```go
 switch x := x.(type) {
 case int:
+	V5_test
 	body()
 }
 ```
