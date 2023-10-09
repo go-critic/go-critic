@@ -18,7 +18,7 @@ func init() {
 	info.Before = `
 switch x := x.(type) {
 case int:
-	TEST_HERE_SEARCH_VTEST
+	V5_test
 	body()
 }`
 	info.After = `

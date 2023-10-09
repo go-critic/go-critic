@@ -3,20 +3,15 @@ name: Doc
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
 
 jobs:
   generate_doc:
     name: generate_doc
     runs-on: ubuntu-latest
-
+    env:
+      PATH_OVERVIEW: './docs/overview.md'
     permissions:
       contents: write
-
-    strategy:
-      matrix:
-        go: ['stable']
 
     steps:
       - name: Set up Go 1.x
@@ -29,22 +24,24 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
-      - name: Make docs
+      - name: Generate docs
         run: |
           make docs
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Commit into master
+        uses: stefanzweifel/git-auto-commit-action@v5
         id: auto-commit-action
         with:
           commit_message: auto generate doc
-          file_pattern: ./docs/overview.md
+          file_pattern: ${{ env.PATH_OVERVIEW }}
 
-      - name: "Run if changes have been detected"
+      - name: Call of hook if doc changed
         if: steps.auto-commit-action.outputs.changes_detected == 'true'
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          file=$(xz -z --stdout ./docs/overview.md | base64) 
+          overview=$(xz -z --stdout "${{ env.PATH_OVERVIEW }}" | base64) 
+          gh auth login --with-token <<< "${TOKEN}"
           gh api repos/Lasiar/go-critic.github.io/dispatches \
-            --field event_type='update_doc' \
-            --field 'client_payload[content]=test'
+            --field "event_type='update_doc'" \
+            --field "client_payload[content]="${overview}""
