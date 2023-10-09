@@ -128,3 +128,13 @@ func varFunc() {
 	var varfunc func(x int) int
 	_ = func(x int) int { return varfunc(x) }
 }
+
+func wrap(options ...string) error { return nil }
+
+var _ = func(options ...string) error {
+	return wrap(append(options, "timeout")...)
+}
+
+var _ = func(options ...string) error {
+	return wrap(append(append(append(options, "timeout")))...)
+}

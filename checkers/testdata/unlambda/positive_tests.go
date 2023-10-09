@@ -48,6 +48,9 @@ func variadicTest() {
 
 	_ = func(x int, ys ...int) int { return variadicInt(1, 2) }
 	_ = func(x int, y int, _ ...int) int { return variadicInt(x, y) }
+
+	/*! replace `func(options ...string) error { return wrap(append(append(append(options)))...) }` with `wrap` */
+	_ = func(options ...string) error { return wrap(append(append(append(options)))...) }
 }
 
 func variadicInterfaces(x int, y interface{}, ys ...interface{}) int { return 0 }
