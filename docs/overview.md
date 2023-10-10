@@ -6,7 +6,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
-Total number of checks is 107 :rocket:
+Total number of checks is 106 :rocket:
 
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
@@ -52,7 +52,6 @@ They also detect code that may be correct, but looks suspicious.
 |:white_check_mark:[regexpPattern](#regexppattern)|Detects suspicious regexp patterns|
 |:white_check_mark:[returnAfterHttpError](#returnafterhttperror)|Detects suspicious http.Error call without following return|
 |:white_check_mark:[sloppyReassign](#sloppyreassign)|Detects suspicious/confusing re-assignments|
-|:white_check_mark:[sloppyTestFuncName](#sloppytestfuncname)|Detects unsupported test and benchmark funcs|
 |:heavy_check_mark:[sloppyTypeAssert](#sloppytypeassert)|Detects redundant type assertions|
 |:white_check_mark:[sortSlice](#sortslice)|Detects suspicious sort.Slice calls|
 |:white_check_mark:[sprintfQuotedString](#sprintfquotedstring)|Detects "%s" formatting directives that can be replaced with %q|
@@ -2150,29 +2149,6 @@ if err = f(); err != nil { return err }
 **After:**
 ```go
 if err := f(); err != nil { return err }
-```
-
-
-## sloppyTestFuncName
-
-[
-  **diagnostic**
-  **experimental** ]
-
-Detects unsupported test and benchmark funcs.
-
-
-
-
-
-**Before:**
-```go
-func TessstUnit(t *testing.T)
-```
-
-**After:**
-```go
-func TestUnit(t *testing.T)
 ```
 
 
