@@ -36,19 +36,12 @@ For most users, using `go-critic` under [golangci-lint](https://github.com/golan
 
 Precompiled `go-critic` binaries can be found at [releases](https://github.com/go-critic/go-critic/releases) page.
 
-Instructions below show how to build `go-critic` from sources.
-
-```bash
-GO111MODULE=on go get -v -u github.com/go-critic/go-critic/cmd/gocritic
-```
-
-as of go 1.18, use go install instead
+It can be installed in the usual Go way by running:
 ```bash
 go install -v github.com/go-critic/go-critic/cmd/gocritic@latest
 ```
 
-If the command above does not work, you can try cloning this repository
-under your `GOPATH` and run `make gocritic`.
+To build `go-critic` from sources, clone this repository and run `make gocritic`.
 
 On macOS, you can also install `go-critic` using [MacPorts](https://www.macports.org): `sudo port install go-critic`
 
