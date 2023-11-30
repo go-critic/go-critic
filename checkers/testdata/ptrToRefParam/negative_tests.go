@@ -11,7 +11,7 @@ func ok2(ch chan string) {}
 // OK: primitive type pointer + regular chan.
 func ok3(a *int, ch chan string) {}
 
-// OK: pointers to underlaying types are acceptable.
+// OK: pointers to underlying types are acceptable.
 func ok4(ch chan *string) chan *int {
 	return nil
 }

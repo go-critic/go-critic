@@ -9,10 +9,10 @@ func flagsWithEmptyName() {
 	_ = flag.Bool("", false, "")
 }
 
-func flagsWithHypenPrefix() {
-	/*! flag name "-name" should not start with a hypen */
+func flagsWithHyphenPrefix() {
+	/*! flag name "-name" should not start with a hyphen */
 	_ = flag.Bool("-name", false, "")
-	/*! flag name "--name" should not start with a hypen */
+	/*! flag name "--name" should not start with a hyphen */
 	_ = flag.Bool("--name", false, "")
 }
 
