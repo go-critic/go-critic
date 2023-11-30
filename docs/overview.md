@@ -113,7 +113,7 @@ with another one that is considered more idiomatic or simple.
 |:white_check_mark:[typeAssertChain](#typeassertchain)|Detects repeated type assertions and suggests to replace them with type switch statement|
 |:white_check_mark:[typeDefFirst](#typedeffirst)|Detects method declarations preceding the type definition itself|
 |:heavy_check_mark:[typeSwitchVar](#typeswitchvar)|Detects type switches that can benefit from type guard clause with variable|
-|:white_check_mark:[typeUnparen](#typeunparen)|Detects unneded parenthesis inside type expressions and suggests to remove them|
+|:white_check_mark:[typeUnparen](#typeunparen)|Detects unneeded parenthesis inside type expressions and suggests to remove them|
 |:heavy_check_mark:[underef](#underef)|Detects dereference expressions that can be omitted|
 |:white_check_mark:[unlabelStmt](#unlabelstmt)|Detects redundant statement labels|
 |:heavy_check_mark:[unlambda](#unlambda)|Detects function literals that can be simplified|
@@ -860,7 +860,7 @@ Detects multiple imports of the same package under different aliases.
 ```go
 import (
 	"fmt"
-	priting "fmt" // Imported the second time
+	printing "fmt" // Imported the second time
 )
 ```
 
@@ -2606,7 +2606,7 @@ default:
   **style**
   **opinionated** ]
 
-Detects unneded parenthesis inside type expressions and suggests to remove them.
+Detects unneeded parenthesis inside type expressions and suggests to remove them.
 
 
 

@@ -5,7 +5,7 @@ func returnArray() [20]int {
 }
 
 func noWarnings() {
-	// OK: returned valus is not addressible, can't take address.
+	// OK: returned values is not addressable, can't take address.
 	for _, x := range returnArray() {
 		_ = x
 	}
