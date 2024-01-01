@@ -5,8 +5,6 @@ func badEmptyStringChecks(s string) {
 
 	/*! replace `len(s) != 0` with `s != ""` */
 	_ = len(s) != 0
-	/*! replace `len(s) >= 0` with `s != ""` */
-	_ = len(s) >= 0
 	/*! replace `len(s) > 0` with `s != ""` */
 	_ = len(s) > 0
 
