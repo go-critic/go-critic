@@ -108,7 +108,7 @@ func preferDecodeRune(m dsl.Matcher) {
 }
 
 //doc:summary Detects usage of `len` when result is obvious or doesn't make sense
-//doc:tags    style
+//doc:tags    diagnostic
 //doc:before  len(arr) <= 0
 //doc:after   len(arr) == 0
 func sloppyLen(m dsl.Matcher) {

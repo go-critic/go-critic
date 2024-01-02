@@ -363,7 +363,7 @@ var PrecompiledRules = &ir.File{
 			Line:        114,
 			Name:        "sloppyLen",
 			MatcherName: "m",
-			DocTags:     []string{"style"},
+			DocTags:     []string{"diagnostic"},
 			DocSummary:  "Detects usage of `len` when result is obvious or doesn't make sense",
 			DocBefore:   "len(arr) <= 0",
 			DocAfter:    "len(arr) == 0",
