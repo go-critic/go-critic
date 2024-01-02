@@ -108,7 +108,7 @@ func preferDecodeRune(m dsl.Matcher) {
 }
 
 //doc:summary Detects usage of `len` when result is obvious or doesn't make sense
-//doc:tags    style
+//doc:tags    diagnostic
 //doc:before  len(arr) <= 0
 //doc:after   len(arr) == 0
 func sloppyLen(m dsl.Matcher) {
@@ -160,8 +160,14 @@ func emptyStringTest(m dsl.Matcher) {
 	m.Match(`len($s) != 0`).
 		Where(m["s"].Type.Is(`string`)).
 		Report("replace `$$` with `$s != \"\"`")
+	m.Match(`len($s) > 0`).
+		Where(m["s"].Type.Is(`string`)).
+		Report("replace `$$` with `$s != \"\"`")
 
 	m.Match(`len($s) == 0`).
+		Where(m["s"].Type.Is(`string`)).
+		Report("replace `$$` with `$s == \"\"`")
+	m.Match(`len($s) <= 0`).
 		Where(m["s"].Type.Is(`string`)).
 		Report("replace `$$` with `$s == \"\"`")
 }

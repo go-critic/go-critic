@@ -51,6 +51,7 @@ They also detect code that may be correct, but looks suspicious.
 |:heavy_check_mark:[offBy1](#offby1)|Detects various off-by-one kind of errors|
 |:white_check_mark:[regexpPattern](#regexppattern)|Detects suspicious regexp patterns|
 |:white_check_mark:[returnAfterHttpError](#returnafterhttperror)|Detects suspicious http.Error call without following return|
+|:heavy_check_mark:[sloppyLen](#sloppylen)|Detects usage of `len` when result is obvious or doesn't make sense|
 |:white_check_mark:[sloppyReassign](#sloppyreassign)|Detects suspicious/confusing re-assignments|
 |:heavy_check_mark:[sloppyTypeAssert](#sloppytypeassert)|Detects redundant type assertions|
 |:white_check_mark:[sortSlice](#sortslice)|Detects suspicious sort.Slice calls|
@@ -102,7 +103,6 @@ with another one that is considered more idiomatic or simple.
 |:white_check_mark:[regexpSimplify](#regexpsimplify)|Detects regexp patterns that can be simplified|
 |:white_check_mark:[ruleguard](#ruleguard)|Runs user-defined rules using ruleguard linter|
 |:heavy_check_mark:[singleCaseSwitch](#singlecaseswitch)|Detects switch statements that could be better written as if statement|
-|:heavy_check_mark:[sloppyLen](#sloppylen)|Detects usage of `len` when result is obvious or doesn't make sense|
 |:white_check_mark:[stringConcatSimplify](#stringconcatsimplify)|Detects string concat operations that can be simplified|
 |:white_check_mark:[stringsCompare](#stringscompare)|Detects strings.Compare usage|
 |:heavy_check_mark:[switchTrue](#switchtrue)|Detects switch-over-bool statements that use explicit `true` tag value|
@@ -2110,7 +2110,7 @@ for i := range buf { buf[i] = 0 }
 ## sloppyLen
 
 [
-  **style** ]
+  **diagnostic** ]
 
 Detects usage of `len` when result is obvious or doesn't make sense.
 
