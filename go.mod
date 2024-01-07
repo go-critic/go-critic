@@ -6,7 +6,7 @@ require (
 	github.com/cristalhq/acmd v0.11.2
 	github.com/go-toolsmith/astcast v1.1.0
 	github.com/go-toolsmith/astcopy v1.1.0
-	github.com/go-toolsmith/astequal v1.1.0
+	github.com/go-toolsmith/astequal v1.2.0
 	github.com/go-toolsmith/astfmt v1.1.0
 	github.com/go-toolsmith/astp v1.1.0
 	github.com/go-toolsmith/pkgload v1.2.2
