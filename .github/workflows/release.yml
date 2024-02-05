@@ -7,26 +7,9 @@ jobs:
   update_draft_release:
     runs-on: ubuntu-latest
     steps:
-      # Drafts your next Release notes as Pull Requests are merged into "master"
-      - uses: toolmantim/release-drafter@v5.23.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
 
       - name: Docs
         run: |
           make docs
-      
-      # - name: Daily update
-      #   uses: drud/action-cross-commit@13266270ee2da98f1d16425f6ce21c235a7f33dd
-      #   with:
-      #     source-folder: ./docs/overview.md
-      #     destination-repository: https://cristaloleg:${{ secrets.GITHUB_TOKEN }}@github.com/go-critic/go-critic.github.io
-      #     destination-folder: .
-      #     destination-branch: master
-      #     git-user: auto-updater
-      #     git-user-email: auto-updater@users.noreply.github.com
-      #     git-commit-message: "update docs"
-      #     excludes: templates:manifest.md
