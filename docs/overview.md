@@ -6,7 +6,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
-Total number of checks is 106 :rocket:
+Total number of checks is 105 :rocket:
 
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
@@ -106,7 +106,6 @@ with another one that is considered more idiomatic or simple.
 |:white_check_mark:[stringConcatSimplify](#stringconcatsimplify)|Detects string concat operations that can be simplified|
 |:white_check_mark:[stringsCompare](#stringscompare)|Detects strings.Compare usage|
 |:heavy_check_mark:[switchTrue](#switchtrue)|Detects switch-over-bool statements that use explicit `true` tag value|
-|:white_check_mark:[timeCmpSimplify](#timecmpsimplify)|Detects Before/After call of time.Time that can be simplified|
 |:white_check_mark:[timeExprSimplify](#timeexprsimplify)|Detects manual conversion to milli- or microseconds|
 |:white_check_mark:[todoCommentWithoutDetail](#todocommentwithoutdetail)|Detects TODO comments without detail/assignee|
 |:white_check_mark:[tooManyResultsChecker](#toomanyresultschecker)|Detects function with too many results|
@@ -2357,29 +2356,6 @@ v, ok := m.Load(k); if ok { m.Delete($k); f(v); }
 **After:**
 ```go
 v, deleted := m.LoadAndDelete(k); if deleted { f(v) }
-```
-
-
-## timeCmpSimplify
-
-[
-  **style**
-  **experimental** ]
-
-Detects Before/After call of time.Time that can be simplified.
-
-
-
-
-
-**Before:**
-```go
-!t.Before(tt)
-```
-
-**After:**
-```go
-t.After(tt)
 ```
 
 
