@@ -2031,7 +2031,7 @@ Checker parameters:
 </li>
 <li>
 
-  `@ruleguard.enable` comma-separated list of enabled groups or skip empty to enable everything (default &lt;all&gt;)
+  `@ruleguard.enable` comma-separated list of enabled groups or skip empty to enable everything (default <all>)
 
 </li>
 <li>
