@@ -35,7 +35,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("render template: %v", err)
 	}
-	if err := os.WriteFile(docsPath+"overview.md", buf.Bytes(), 0o600); err != nil {
+	
+	// A bit hacky but works, see https://github.com/go-critic/go-critic/pull/1403.
+	buff := bytes.ReplaceAll(buf.Bytes(), []byte("<all>"), []byte("&lt;all&gt;"))
+
+	if err := os.WriteFile(docsPath+"overview.md", buff, 0o600); err != nil {
 		log.Fatalf("write output file: %v", err)
 	}
 }
