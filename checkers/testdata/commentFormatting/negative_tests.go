@@ -63,3 +63,13 @@ func f2() {
 
 // Comment in a comment is //OK
 // path */*//with asterisk
+
+//region GoLand custom folding region
+func goland() {
+}
+//endregion
+
+//<editor-fold desc="VSCode custom folding region">
+func vscode() {
+}
+//</editor-fold>
