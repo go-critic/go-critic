@@ -39,43 +39,18 @@ func runAnalyzer(pass *analysis.Pass) (interface{}, error) {
 		return nil, err
 	}
 
-	doneCh := make(chan struct{})
-	diagCh := make(chan analysis.Diagnostic)
-	go func() {
-		for diag := range diagCh {
-			pass.Report(diag)
-		}
-		close(doneCh)
-	}()
-
-	sema := make(chan struct{}, flagConcurrency)
-	var wg sync.WaitGroup
-	wg.Add(len(pass.Files))
-
 	for _, f := range pass.Files {
 		f := f
 		filename := filepath.Base(pass.Fset.Position(f.Pos()).Filename)
 		ctx.SetFileInfo(filename, f)
 
-		sema <- struct{}{}
-		go func() {
-			defer func() {
-				wg.Done()
-				<-sema
-			}()
-
-			for _, c := range checkers {
-				warnings := c.Check(f)
-				for _, warning := range warnings {
-					diagCh <- asDiag(c, warning)
-				}
+		for _, c := range checkers {
+			warnings := c.Check(f)
+			for _, warning := range warnings {
+				pass.Report(asDiag(c, warning))
 			}
-		}()
+		}
 	}
-
-	wg.Wait()
-	close(diagCh)
-	<-doneCh
 
 	return nil, nil
 }
