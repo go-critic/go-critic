@@ -2,8 +2,6 @@
 package analyzer
 
 import (
-	"runtime"
-
 	"github.com/go-critic/go-critic/linter"
 
 	"golang.org/x/tools/go/analysis"
@@ -23,12 +21,11 @@ var Analyzer = &analysis.Analyzer{
 var DisableCache = false
 
 var (
-	flagGoVersion   string
-	flagEnable      string
-	flagDisable     string
-	flagEnableAll   bool
-	flagDebugInit   bool
-	flagConcurrency int
+	flagGoVersion string
+	flagEnable    string
+	flagDisable   string
+	flagEnableAll bool
+	flagDebugInit bool
 )
 
 var (
@@ -50,8 +47,6 @@ func init() {
 		`comma-separated list of checkers to be disabled. Can include #tags`)
 	Analyzer.Flags.StringVar(&flagGoVersion, "go", "",
 		`select the Go version to target. Leave as string for the latest`)
-	Analyzer.Flags.IntVar(&flagConcurrency, "concurrency", runtime.GOMAXPROCS(0),
-		`how many checks to run concurrently (defaults to runtime.GOMAXPROCS(0))`)
 
 	for _, info := range registeredCheckers {
 		for pname, param := range info.Params {
