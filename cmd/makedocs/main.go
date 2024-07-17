@@ -35,7 +35,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("render template: %v", err)
 	}
-	
+
 	// A bit hacky but works, see https://github.com/go-critic/go-critic/pull/1403.
 	buff := bytes.ReplaceAll(buf.Bytes(), []byte("<all>"), []byte("&lt;all&gt;"))
 

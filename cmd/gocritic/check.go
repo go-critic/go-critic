@@ -162,11 +162,10 @@ func (p *program) checkFile(f *ast.File) {
 				if err, ok := r.(error); ok {
 					log.Printf("%s: error: %v\n", c.Info.Name, err)
 					panic(err)
-				} else {
-					// Some other kind of run-time panic.
-					// Undo the recover and resume panic.
-					panic(r)
 				}
+				// Some other kind of run-time panic.
+				// Undo the recover and resume panic.
+				panic(r)
 			}()
 
 			warnings[i] = append(warnings[i], c.Check(f)...)
