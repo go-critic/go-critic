@@ -35,7 +35,7 @@ a typo or missing doc comment. You can also filter issues by using
 
 **s/foo/bar/g** — replace foo with bar throughout your entire change
 
-See [CodeReview](https://github.com/golang/go/wiki/CodeReview).
+See [CodeReview](https://go.dev/wiki/CodeReview).
 
 ### Code review: main rules
 
