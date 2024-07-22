@@ -88,9 +88,7 @@ func (c *rangeAppendAllChecker) isFirstArgInitSlice(arg ast.Expr) bool {
 	case *ast.CallExpr:
 		if astcast.ToArrayType(v.Fun) != astcast.NilArrayType && len(v.Args) == 1 {
 			id := astcast.ToIdent(v.Args[0])
-			if id.Name == "nil" && id.Obj == nil {
-				return true
-			}
+			return id.Name == "nil" && id.Obj == nil
 		}
 	}
 	return false
