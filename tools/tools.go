@@ -3,7 +3,7 @@
 
 package critic
 
-// See https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module.
+// See https://go.dev/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module.
 
 import (
 	// Used for CI linting.
