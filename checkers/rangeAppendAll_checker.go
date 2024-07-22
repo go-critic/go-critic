@@ -95,6 +95,5 @@ func (c *rangeAppendAllChecker) isFirstArgInitSlice(arg ast.Expr) bool {
 }
 
 func (c *rangeAppendAllChecker) warn(appendFrom *ast.Ident) {
-	c.ctx.Warn(appendFrom, "append all `%s` data while range it",
-		appendFrom)
+	c.ctx.Warn(appendFrom, "append all `%s` data while range it", appendFrom)
 }
