@@ -1,21 +1,19 @@
 {
   "run": {
     # timeout for analysis, e.g. 30s, 5m, default is 1m
-    "deadline": "3m",
-    "skip-dirs": ["checkers/rules"],
+    "timeout": "3m",
   },
-  "fast": false,
   "linters": {
+    "fast": false,
     "enable": [
       "errcheck",
-      "gas",
+      "gosec",
       "gocritic",
       "gofmt",
       "goimports",
       "gosimple",
       "govet",
       "ineffassign",
-      "megacheck",
       "misspell",
       "nakedret",
       "revive",
@@ -47,4 +45,7 @@
       },
     },
   },
+  "issues": {
+    "exclude-dirs": ["checkers/rules"],
+  }
 }
