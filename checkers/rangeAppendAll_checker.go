@@ -15,7 +15,6 @@ func init() {
 	info.Name = "rangeAppendAll"
 	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
 	info.Summary = "Detects append all its data while range it"
-	info.Summary = "Detects suspicious sort.Slice calls"
 	info.Before = `for _, n := range ns {
 	...
 		rs = append(rs, ns...) // append all slice data
