@@ -90,8 +90,10 @@ func (c *rangeAppendAllChecker) isFirstArgInitSlice(arg ast.Expr) bool {
 			id := astcast.ToIdent(v.Args[0])
 			return id.Name == "nil" && id.Obj == nil
 		}
+		return false
+	default:
+		return false
 	}
-	return false
 }
 
 func (c *rangeAppendAllChecker) warn(appendFrom *ast.Ident) {

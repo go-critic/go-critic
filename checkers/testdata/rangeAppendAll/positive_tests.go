@@ -22,6 +22,19 @@ func collectLong(ns []string, k int) []string {
 	return rs
 }
 
+func someFuncCall(n int) {
+}
+
+func collectBasic(ns []int, k int) []int {
+	rs := make([]int, 0)
+	for _, n := range ns {
+		someFuncCall(n)
+		/*! append all `ns` data while range it */
+		rs = append(rs, ns...)
+	}
+	return rs
+}
+
 func collectLongCorrect(ns []string, k int) []string {
 	rs := make([]string, 0)
 	n := ns[0]
