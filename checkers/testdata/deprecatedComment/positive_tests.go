@@ -72,6 +72,11 @@ type BadFormat10 int
 // DEPRECATED: part of the old API; use API v2
 func BadFormat11() {}
 
+// BadFormat12 is another example.
+/*! deprecation notices should be separated from existing docs by an empty comment line */
+// Deprecated: do not use.
+func BadFormat12() {}
+
 type badNestedDoc struct {
 	/*! use `Deprecated: ` (note the casing) instead of `deprecated: ` */
 	// deprecated: ha-ha
