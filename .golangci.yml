@@ -22,17 +22,14 @@
       "unparam",
       "unused",
     ],
+    "disable": [
+      "depguard",
+      "dupl",
+      "gocyclo",
+      "lll",
+      "prealloc",
+    ],
   },
-  "disable": [
-    "depguard",
-    "dupl",
-    "gocyclo",
-    "interfacer",
-    "lll",
-    "maligned",
-    "prealloc",
-    "typecheck",
-  ],
   "linters-settings": {
     "gocritic": {
       "enabled-checks": [
@@ -44,6 +41,9 @@
         },
       },
     },
+    "gosec": {
+      "excludes": ["G115"]
+    }
   },
   "issues": {
     "exclude-dirs": ["checkers/rules"],
