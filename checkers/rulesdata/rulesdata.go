@@ -2518,4 +2518,3 @@ var PrecompiledRules = &ir.File{
 		},
 	},
 }
-

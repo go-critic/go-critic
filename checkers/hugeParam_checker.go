@@ -56,9 +56,8 @@ func (*hugeParamChecker) isImplementStringer(decl *ast.FuncDecl) bool {
 	if decl.Recv != nil &&
 		decl.Name.Name == "String" &&
 		decl.Type != nil &&
-		decl.Type.Params.List != nil && decl.Type.Results.List != nil &&
 		len(decl.Type.Params.List) == 0 &&
-		decl.Type.Results.List != nil && //
+		decl.Type.Results != nil &&
 		len(decl.Type.Results.List) == 1 &&
 		astcast.ToIdent(decl.Type.Results.List[0].Type).Name == "string" {
 		return true
@@ -66,7 +65,6 @@ func (*hugeParamChecker) isImplementStringer(decl *ast.FuncDecl) bool {
 
 	return false
 }
-
 func (c *hugeParamChecker) checkParams(params []*ast.Field) {
 	for _, p := range params {
 		for _, id := range p.Names {
