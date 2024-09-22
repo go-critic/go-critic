@@ -65,6 +65,7 @@ func (*hugeParamChecker) isImplementStringer(decl *ast.FuncDecl) bool {
 
 	return false
 }
+
 func (c *hugeParamChecker) checkParams(params []*ast.Field) {
 	for _, p := range params {
 		for _, id := range p.Names {
