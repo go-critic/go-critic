@@ -58,6 +58,7 @@ func (*hugeParamChecker) isImplementStringer(decl *ast.FuncDecl) bool {
 		decl.Type != nil &&
 		decl.Type.Params.List != nil && decl.Type.Results.List != nil &&
 		len(decl.Type.Params.List) == 0 &&
+		decl.Type.Results.List != nil && //
 		len(decl.Type.Results.List) == 1 &&
 		astcast.ToIdent(decl.Type.Results.List[0].Type).Name == "string" {
 		return true
