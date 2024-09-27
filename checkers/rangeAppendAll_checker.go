@@ -68,7 +68,7 @@ func (c *rangeAppendAllChecker) getValidAppendFrom(expr ast.Node) *ast.Ident {
 	if qualifiedName(call.Fun) != "append" {
 		return nil
 	}
-	if c.isFirstArgInitSlice(call.Args[0]) {
+	if c.isSliceLiteral(call.Args[0]) {
 		return nil
 	}
 	appendFrom, ok := call.Args[1].(*ast.Ident)
@@ -78,7 +78,7 @@ func (c *rangeAppendAllChecker) getValidAppendFrom(expr ast.Node) *ast.Ident {
 	return appendFrom
 }
 
-func (c *rangeAppendAllChecker) isFirstArgInitSlice(arg ast.Expr) bool {
+func (c *rangeAppendAllChecker) isSliceLiteral(arg ast.Expr) bool {
 	switch v := arg.(type) {
 	// []T{}, []T{n}
 	case *ast.CompositeLit:
