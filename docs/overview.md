@@ -6,7 +6,7 @@ This page describes checks supported by [go-critic](https://github.com/go-critic
 
 ## Checkers
 
-Total number of checks is 105 :rocket:
+Total number of checks is 106 :rocket:
 
 * :heavy_check_mark: checker is enabled by default.
 * :white_check_mark: checker is disabled by default.
@@ -49,6 +49,7 @@ They also detect code that may be correct, but looks suspicious.
 |:heavy_check_mark:[mapKey](#mapkey)|Detects suspicious map literal keys|
 |:white_check_mark:[nilValReturn](#nilvalreturn)|Detects return statements those results evaluate to nil|
 |:heavy_check_mark:[offBy1](#offby1)|Detects various off-by-one kind of errors|
+|:white_check_mark:[rangeAppendAll](#rangeappendall)|Detects append all its data while range it|
 |:white_check_mark:[regexpPattern](#regexppattern)|Detects suspicious regexp patterns|
 |:white_check_mark:[returnAfterHttpError](#returnafterhttperror)|Detects suspicious http.Error call without following return|
 |:heavy_check_mark:[sloppyLen](#sloppylen)|Detects usage of `len` when result is obvious or doesn't make sense|
@@ -1787,6 +1788,37 @@ func f(m *map[string]int) (*chan *int)
 **After:**
 ```go
 func f(m map[string]int) (chan *int)
+```
+
+
+## rangeAppendAll
+
+[
+  **diagnostic**
+  **experimental** ]
+
+Detects append all its data while range it.
+
+
+
+
+
+**Before:**
+```go
+for _, n := range ns {
+	...
+		rs = append(rs, ns...) // append all slice data
+	}
+}
+```
+
+**After:**
+```go
+for _, n := range ns {
+	...
+		rs = append(rs, n)
+	}
+}
 ```
 
 
