@@ -53,3 +53,11 @@ func justDefer() {
 func noDefers() {
 	println("")
 }
+
+func neverOsExitAndCallADefer() {
+	if true {
+		defer println("I'm deferred and will possibly run")
+	} else {
+		os.Exit(1)
+	}
+}
