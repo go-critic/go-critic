@@ -917,7 +917,7 @@ fmt.Errorf(msg)
 
 **After:**
 ```go
-fmt.Errorf("%s", msg)
+errors.New(mesg) or fmt.Errorf("%s", msg)
 ```
 
 
