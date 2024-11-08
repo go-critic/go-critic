@@ -91,7 +91,7 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 	//
 	// TODO(quasilyte): there are also multi-line deprecation comments.
 
-	for _, comment := range doc.List {
+	for i, comment := range doc.List {
 		if strings.HasPrefix(comment.Text, "/*") {
 			// TODO(quasilyte): handle multi-line doc comments.
 			continue
@@ -101,6 +101,14 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 			continue
 		}
 		l = strings.TrimSpace(l)
+
+		// Check if the notice is separated by an empty line from regular docs.
+		if strings.HasPrefix(l, "Deprecated: ") && i > 0 {
+			prevComment := doc.List[i-1]
+			if prevComment.Text != "//" {
+				c.warnParagraph(comment)
+			}
+		}
 
 		// Check whether someone messed up with a prefix casing.
 		upcase := strings.ToUpper(l)
@@ -153,4 +161,8 @@ func (c *deprecatedCommentChecker) warnComma(cause ast.Node) {
 func (c *deprecatedCommentChecker) warnTypo(cause ast.Node, line string) {
 	word := strings.Split(line, ":")[0]
 	c.ctx.Warn(cause, "typo in `%s`; should be `Deprecated`", word)
+}
+
+func (c *deprecatedCommentChecker) warnParagraph(cause ast.Node) {
+	c.ctx.Warn(cause, "deprecation notices should be separated from existing docs by an empty comment line")
 }
