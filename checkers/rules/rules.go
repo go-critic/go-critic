@@ -728,7 +728,7 @@ func emptyDecl(m dsl.Matcher) {
 //doc:summary Detects suspicious formatting strings usage
 //doc:tags    diagnostic experimental
 //doc:before  fmt.Errorf(msg)
-//doc:after   errors.New(mesg) or fmt.Errorf("%s", msg)
+//doc:after   errors.New(msg) or fmt.Errorf("%s", msg)
 func dynamicFmtString(m dsl.Matcher) {
 	m.Match(`fmt.Errorf($f)`).
 		Where(!m["f"].Const).
