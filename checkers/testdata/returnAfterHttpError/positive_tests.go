@@ -13,6 +13,21 @@ func _(w http.ResponseWriter, err error) {
 		/*! Possibly return is missed after the http.Error call */
 		http.Error(w, "err", 505)
 	}
+
+	func() {
+		/*! Possibly return is missed after the http.Error call */
+		http.Error(w, "err", 503)
+	}()
+
+	foo()
+}
+
+func _(w http.ResponseWriter, err error) {
+	func() {
+		/*! Possibly return is missed after the http.Error call */
+		http.Error(w, "err", 503)
+		foo()
+	}()
 }
 
 func foo() {}
