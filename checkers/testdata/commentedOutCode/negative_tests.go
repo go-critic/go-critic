@@ -6,6 +6,10 @@ func ExampleFoo() {
 	// blah
 }
 
+func ExampleBar() {
+	// Output: {Bar:a}
+}
+
 func permittedComments() {
 	// TODO: foo(1+2)
 
