@@ -40,7 +40,6 @@ func runAnalyzer(pass *analysis.Pass) (interface{}, error) {
 	}
 
 	for _, f := range pass.Files {
-		f := f
 		filename := filepath.Base(pass.Fset.Position(f.Pos()).Filename)
 		ctx.SetFileInfo(filename, f)
 
