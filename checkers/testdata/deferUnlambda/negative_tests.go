@@ -43,6 +43,17 @@ func negativeTests() {
 	defer func() {
 		objects[0].f()
 	}()
+
+	// OK: func foo is reassigned later #1401
+	foo := func() {
+		println("should never print")
+	}
+	defer func() {
+		foo()
+	}()
+	foo = func() {
+		println("should print")
+	}
 }
 
 func todoTests() {
