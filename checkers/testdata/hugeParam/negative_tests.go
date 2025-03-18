@@ -20,3 +20,11 @@ func (x *bigStruct) bigRecvPtr(y *[2]bigStruct) {}
 
 // String must be ignored #1168.
 func (x bigStruct) String() string { return "" }
+
+func genericFunc[T comparable](x T) {}
+
+type Maybe[V any] struct {
+	value V
+}
+
+func (m Maybe[V]) Fn() {}

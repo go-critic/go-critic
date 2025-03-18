@@ -6,6 +6,7 @@
   "linters": {
     "fast": false,
     "enable": [
+      "copyloopvar",
       "errcheck",
       "gosec",
       "gocritic",
@@ -21,6 +22,7 @@
       "unconvert",
       "unparam",
       "unused",
+      "usetesting",
     ],
     "disable": [
       "depguard",
@@ -43,7 +45,10 @@
     },
     "gosec": {
       "excludes": ["G115"]
-    }
+    },
+    "usetesting": {
+      "os-temp-dir": true,
+    },
   },
   "issues": {
     "exclude-dirs": ["checkers/rules"],

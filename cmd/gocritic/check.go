@@ -142,7 +142,6 @@ func (p *program) checkFile(f *ast.File) {
 	wg.Add(len(p.checkers))
 
 	for i := range p.checkers {
-		i := i
 		c := p.checkers[i]
 
 		// All checkers are expected to use *lint.Context

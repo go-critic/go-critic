@@ -382,10 +382,15 @@ func dupArg(m dsl.Matcher) {
 		Report(`suspicious method call with the same argument and receiver`)
 
 	m.Match(`copy($x, $x)`,
+		`cmp.Compare($x, $x)`,
+		`maps.Equal($x, $x)`,
+		`math.Dim($x, $x)`,
 		`math.Max($x, $x)`,
 		`math.Min($x, $x)`,
 		`reflect.Copy($x, $x)`,
 		`reflect.DeepEqual($x, $x)`,
+		`slices.Compare($x, $x)`,
+		`slices.Equal($x, $x)`,
 		`strings.Contains($x, $x)`,
 		`strings.Compare($x, $x)`,
 		`strings.EqualFold($x, $x)`,
