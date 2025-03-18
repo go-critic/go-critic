@@ -1,7 +1,8 @@
 module github.com/go-critic/go-critic
 
-go 1.22.0
-toolchain go1.23.7
+go 1.23.0
+
+toolchain go1.24.0
 
 require (
 	github.com/cristalhq/acmd v0.12.0
