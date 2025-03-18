@@ -2369,7 +2369,7 @@ var PrecompiledRules = &ir.File{
 			DocTags:     []string{"diagnostic", "experimental"},
 			DocSummary:  "Detects suspicious formatting strings usage",
 			DocBefore:   "fmt.Errorf(msg)",
-			DocAfter:    "fmt.Errorf(\"%s\", msg)",
+			DocAfter:    "errors.New(msg) or fmt.Errorf(\"%s\", msg)",
 			Rules: []ir.Rule{
 				{
 					Line:            738,
