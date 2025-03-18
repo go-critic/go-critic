@@ -382,10 +382,15 @@ func dupArg(m dsl.Matcher) {
 		Report(`suspicious method call with the same argument and receiver`)
 
 	m.Match(`copy($x, $x)`,
+		`cmp.Compare($x, $x)`,
+		`maps.Equal($x, $x)`,
+		`math.Dim($x, $x)`,
 		`math.Max($x, $x)`,
 		`math.Min($x, $x)`,
 		`reflect.Copy($x, $x)`,
 		`reflect.DeepEqual($x, $x)`,
+		`slices.Compare($x, $x)`,
+		`slices.Equal($x, $x)`,
 		`strings.Contains($x, $x)`,
 		`strings.Compare($x, $x)`,
 		`strings.EqualFold($x, $x)`,
@@ -728,7 +733,7 @@ func emptyDecl(m dsl.Matcher) {
 //doc:summary Detects suspicious formatting strings usage
 //doc:tags    diagnostic experimental
 //doc:before  fmt.Errorf(msg)
-//doc:after   fmt.Errorf("%s", msg)
+//doc:after   errors.New(msg) or fmt.Errorf("%s", msg)
 func dynamicFmtString(m dsl.Matcher) {
 	m.Match(`fmt.Errorf($f)`).
 		Where(!m["f"].Const).
