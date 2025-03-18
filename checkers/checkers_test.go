@@ -170,21 +170,19 @@ func TestExternal(t *testing.T) {
 	}
 
 	// Build the linter.
-	tmpDir := os.TempDir()
+	tmpDir := t.TempDir()
 	gocriticBin := filepath.Join(tmpDir, "gocritic_external_test.exe")
 	args := []string{"build", "-race", "-o", gocriticBin, "github.com/go-critic/go-critic/cmd/gocritic"}
 	out, err := exec.Command("go", args...).CombinedOutput()
 	if err != nil {
 		t.Fatalf("%v: %s", err, out)
 	}
-	defer os.Remove(gocriticBin)
 
 	externalTests := filepath.Join(tmpDir, "extern-testdata")
 	out, err = exec.Command("git", "clone", "https://github.com/go-critic/extern-testdata.git", externalTests).CombinedOutput()
 	if err != nil {
 		t.Fatalf("%v: %s", err, out)
 	}
-	defer os.RemoveAll(externalTests)
 
 	projects, err := os.ReadDir(filepath.Join(externalTests, "projects"))
 	if err != nil {
