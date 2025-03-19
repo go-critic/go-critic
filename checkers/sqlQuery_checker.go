@@ -125,6 +125,13 @@ func (c *sqlQueryChecker) typeHasExecMethod(typ types.Type) bool {
 				return true
 			}
 		}
+	case *types.Alias:
+		switch typ := typ.Underlying().(type) {
+		case *types.Interface:
+			return c.typeHasExecMethod(typ)
+		default:
+			// TODO(cristaloleg): is there something else to handle?
+		}
 	case *types.Interface:
 		for i := 0; i < typ.NumMethods(); i++ {
 			if c.funcIsExec(typ.Method(i)) {

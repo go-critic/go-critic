@@ -29,3 +29,7 @@ func fixedNewExpressions() {
 	_ = interface{}(nil)
 	_ = examplepkg.InterfaceType(nil)
 }
+
+func genericNew[T any]() T {
+	return *new(T)
+}
