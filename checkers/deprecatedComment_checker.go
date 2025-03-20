@@ -8,6 +8,8 @@ import (
 	"github.com/go-critic/go-critic/linter"
 )
 
+const DeprecatedPrefix = "Deprecated: "
+
 func init() {
 	var info linter.CheckerInfo
 	info.Name = "deprecatedComment"
@@ -97,14 +99,14 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 			continue
 		}
 		l := comment.Text[len("//"):]
-		if len(l) < len("Deprecated: ") {
+		if len(l) < len(DeprecatedPrefix) {
 			continue
 		}
 		l = strings.TrimSpace(l)
 
 		// Check whether someone messed up with a prefix casing.
 		upcase := strings.ToUpper(l)
-		if strings.HasPrefix(upcase, "DEPRECATED: ") && !strings.HasPrefix(l, "Deprecated: ") {
+		if strings.HasPrefix(upcase, "DEPRECATED: ") && !strings.HasPrefix(l, DeprecatedPrefix) {
 			c.warnCasing(comment, l)
 			return
 		}
