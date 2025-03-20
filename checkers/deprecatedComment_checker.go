@@ -8,7 +8,7 @@ import (
 	"github.com/go-critic/go-critic/linter"
 )
 
-const DeprecatedPrefix = "Deprecated: "
+const deprecatedPrefix = "Deprecated: "
 
 func init() {
 	var info linter.CheckerInfo
@@ -103,7 +103,7 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 			// TODO(quasilyte): handle multi-line doc comments.
 			continue
 		}
-		rawLine := comment.Text[len("//"):]
+		rawLine := strings.TrimPrefix(comment.Text, "//")
 		l := strings.TrimSpace(rawLine)
 		if len(rawLine) < len(DeprecatedPrefix) {
 			prev = &l
@@ -143,11 +143,11 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 			}
 		}
 
-		if strings.HasPrefix(l, DeprecatedPrefix) && prev != nil && *prev != "" {
+		if strings.HasPrefix(l, DeprecatedPrefix) && prev != "" {
 			c.warnParagraph(comment)
 			return
 		}
-		prev = &rawLine
+		prev = rawLine
 	}
 }
 
