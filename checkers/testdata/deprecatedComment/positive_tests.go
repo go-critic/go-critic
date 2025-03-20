@@ -208,6 +208,6 @@ type ComponentStatusListBad struct {
 }
 
 // This is a sentence.
-/*! `Deprecated: ` prefix should be at the beginning of a new paragraph */
+/*! `Deprecated: ` notices should be in a dedicated paragraph, separated from the rest */
 // Deprecated: use something else.
 func InSameParagraphAsPreviousSentence() {}
