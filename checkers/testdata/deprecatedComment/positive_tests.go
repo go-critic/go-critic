@@ -206,3 +206,8 @@ type ComponentStatusListBad struct {
 
 	Items []int
 }
+
+// This is a sentence.
+/*! `Deprecated: ` prefix should be at the beginning of a new paragraph */
+// Deprecated: use something else.
+func InSameParagraphAsPreviousSentence() {}

@@ -93,16 +93,22 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 	//
 	// TODO(quasilyte): there are also multi-line deprecation comments.
 
+	// prev stores the previous line after it was trimmed.
+	// It's used to check whether the deprecation prefix is at the beginning of a new paragraph.
+	// It's nil on the first iteration.
+	var prev *string
+
 	for _, comment := range doc.List {
 		if strings.HasPrefix(comment.Text, "/*") {
 			// TODO(quasilyte): handle multi-line doc comments.
 			continue
 		}
-		l := comment.Text[len("//"):]
-		if len(l) < len(DeprecatedPrefix) {
+		rawLine := comment.Text[len("//"):]
+		l := strings.TrimSpace(rawLine)
+		if len(rawLine) < len(DeprecatedPrefix) {
+			prev = &l
 			continue
 		}
-		l = strings.TrimSpace(l)
 
 		// Check whether someone messed up with a prefix casing.
 		upcase := strings.ToUpper(l)
@@ -136,6 +142,12 @@ func (c *deprecatedCommentChecker) VisitDocComment(doc *ast.CommentGroup) {
 				return
 			}
 		}
+
+		if strings.HasPrefix(l, DeprecatedPrefix) && prev != nil && *prev != "" {
+			c.warnParagraph(comment)
+			return
+		}
+		prev = &rawLine
 	}
 }
 
@@ -155,4 +167,8 @@ func (c *deprecatedCommentChecker) warnComma(cause ast.Node) {
 func (c *deprecatedCommentChecker) warnTypo(cause ast.Node, line string) {
 	word := strings.Split(line, ":")[0]
 	c.ctx.Warn(cause, "typo in `%s`; should be `Deprecated`", word)
+}
+
+func (c *deprecatedCommentChecker) warnParagraph(cause ast.Node) {
+	c.ctx.Warn(cause, "`Deprecated: ` prefix should be at the beginning of a new paragraph")
 }
