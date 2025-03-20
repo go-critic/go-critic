@@ -56,3 +56,15 @@ type ComponentStatusList struct {
 
 	Items []ComponentStatus
 }
+
+// SomethingOlder is old
+//
+// Deprecated: This API is deprecated in v1.19+
+//
+// and these are information that are in another paragraph, but not part of the deprecation one
+type SomethingOlder struct{}
+
+// Deprecated: This API is deprecated in v1.19+
+//
+// SomethingLegacy is also old
+type SomethingLegacy struct{}
