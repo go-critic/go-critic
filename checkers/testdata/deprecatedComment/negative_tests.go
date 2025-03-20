@@ -35,6 +35,7 @@ var (
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // ComponentStatus (and ComponentStatus) holds the cluster validation info.
+//
 // Deprecated: This API is deprecated in v1.19+
 type ComponentStatus struct {
 	foo string
@@ -46,6 +47,7 @@ type ComponentStatus struct {
 }
 
 // ComponentStatusList represents the list of component statuses
+//
 // Deprecated: This API is deprecated in v1.19+
 type ComponentStatusList struct {
 	string
@@ -54,3 +56,15 @@ type ComponentStatusList struct {
 
 	Items []ComponentStatus
 }
+
+// SomethingOlder is old
+//
+// Deprecated: This API is deprecated in v1.19+
+//
+// and these are information that are in another paragraph, but not part of the deprecation one
+type SomethingOlder struct{}
+
+// Deprecated: This API is deprecated in v1.19+
+//
+// SomethingLegacy is also old
+type SomethingLegacy struct{}

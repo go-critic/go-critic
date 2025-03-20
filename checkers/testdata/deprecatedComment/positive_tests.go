@@ -206,3 +206,8 @@ type ComponentStatusListBad struct {
 
 	Items []int
 }
+
+// This is a sentence.
+/*! `Deprecated: ` notices should be in a dedicated paragraph, separated from the rest */
+// Deprecated: use something else.
+func InSameParagraphAsPreviousSentence() {}
