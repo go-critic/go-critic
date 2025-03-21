@@ -79,7 +79,7 @@ func (c *dupOptionChecker) getVariadicArgs(call *ast.CallExpr) ([]ast.Expr, type
 	return call.Args[last:], argType
 }
 
-func (a *dupOptionChecker) isOptionType(typeInfo types.Type) bool {
+func (c *dupOptionChecker) isOptionType(typeInfo types.Type) bool {
 	typeInfo = typeInfo.Underlying()
 
 	sign, ok := typeInfo.(*types.Signature)
@@ -94,7 +94,7 @@ func (a *dupOptionChecker) isOptionType(typeInfo types.Type) bool {
 	return true
 }
 
-func (a *dupOptionChecker) findDupArgs(args []ast.Expr) []ast.Expr {
+func (c *dupOptionChecker) findDupArgs(args []ast.Expr) []ast.Expr {
 	codeMap := make(map[string]bool)
 	dupArgs := make([]ast.Expr, 0)
 	for _, arg := range args {
