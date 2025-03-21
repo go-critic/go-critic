@@ -64,7 +64,7 @@ func (c *dupOptionChecker) getVariadicArgs(call *ast.CallExpr) ([]ast.Expr, type
 		return nil, nil
 	}
 
-	funType := c.ctx.TypesInfo.TypeOf(call.Fun)
+	funType := c.ctx.TypeOf(call.Fun)
 	sign, ok := funType.(*types.Signature)
 	if !ok || !sign.Variadic() {
 		return nil, nil
