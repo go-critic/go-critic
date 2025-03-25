@@ -27,6 +27,12 @@ func withWidth(w int) func(c *panel) {
 	}
 }
 
+func withDefaultWidth() func(c *panel) {
+	return withWidth(100)
+}
+
+var defaultWidth = withDefaultWidth()
+
 func withHeight(h int) func(c *panel) {
 	return func(c *panel) {
 		c.height = h
@@ -46,6 +52,38 @@ func withImage(_ any, _ string) exportOpt {
 func export(_ any, _ ...exportOpt) {
 }
 
+type sourceOptions struct{}
+
+type sourceOpt = func(context.Context, *sourceOptions) error
+
+func withGroup(_ string) sourceOpt {
+	return func(_ context.Context, _ *sourceOptions) error {
+		return nil
+	}
+}
+
+func withKey(_ string) sourceOpt {
+	return func(_ context.Context, _ *sourceOptions) error {
+		return nil
+	}
+}
+
+func defaultOpt(_ context.Context, _ *sourceOptions) error {
+	return nil
+}
+
+func newSource(_ any, opts ...sourceOpt) (any, error) {
+	ctx := context.Background()
+	o := &sourceOptions{}
+	for _, opt := range opts {
+		err := opt(ctx, o)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return nil, nil
+}
+
 func doSome1(w, h int) {
 	_ = newPanel("hello",
 		withWidth(w),
@@ -58,5 +96,30 @@ func doSome1(w, h int) {
 		withImage(nil, ""),
 		/*! func arg `withImage(nil, "")` is duplicated */
 		withImage(nil, ""),
+	)
+
+	_ = newPanel("case2",
+		withHeight(h),
+		withDefaultWidth(),
+		/*! func arg `withDefaultWidth()` is duplicated */
+		withDefaultWidth(),
+		defaultWidth,
+		/*! func arg `defaultWidth` is duplicated */
+		defaultWidth,
+	)
+
+	_ = newPanel("case3",
+		withHeight(h),
+		defaultWidth,
+		/*! func arg `defaultWidth` is duplicated */
+		defaultWidth,
+	)
+
+	_, _ = newSource("case4",
+		withGroup(""),
+		withKey("key"),
+		defaultOpt,
+		/*! func arg `defaultOpt` is duplicated */
+		defaultOpt,
 	)
 }
