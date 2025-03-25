@@ -99,11 +99,11 @@ func (c *dupOptionChecker) findDupArgs(args []ast.Expr) []ast.Expr {
 	dupArgs := make([]ast.Expr, 0)
 	for _, arg := range args {
 		code := astfmt.Sprint(arg)
-		if !codeMap[code] {
-			codeMap[code] = true
+		if codeMap[code] {
+			dupArgs = append(dupArgs, arg)
 			continue
 		}
-		dupArgs = append(dupArgs, arg)
+		codeMap[code] = true
 	}
 	return dupArgs
 }
