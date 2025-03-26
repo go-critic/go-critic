@@ -88,30 +88,30 @@ func doSome1(w, h int) {
 	_ = newPanel("hello",
 		withWidth(w),
 		withHeight(h),
-		/*! func arg `withWidth(w)` is duplicated */
+		/*! function argument `withWidth(w)` is duplicated */
 		withWidth(w),
 	)
 
 	export(nil,
 		withImage(nil, ""),
-		/*! func arg `withImage(nil, "")` is duplicated */
+		/*! function argument `withImage(nil, "")` is duplicated */
 		withImage(nil, ""),
 	)
 
 	_ = newPanel("case2",
 		withHeight(h),
 		withDefaultWidth(),
-		/*! func arg `withDefaultWidth()` is duplicated */
+		/*! function argument `withDefaultWidth()` is duplicated */
 		withDefaultWidth(),
 		defaultWidth,
-		/*! func arg `defaultWidth` is duplicated */
+		/*! function argument `defaultWidth` is duplicated */
 		defaultWidth,
 	)
 
 	_ = newPanel("case3",
 		withHeight(h),
 		defaultWidth,
-		/*! func arg `defaultWidth` is duplicated */
+		/*! function argument `defaultWidth` is duplicated */
 		defaultWidth,
 	)
 
@@ -119,7 +119,7 @@ func doSome1(w, h int) {
 		withGroup(""),
 		withKey("key"),
 		defaultOpt,
-		/*! func arg `defaultOpt` is duplicated */
+		/*! function argument `defaultOpt` is duplicated */
 		defaultOpt,
 	)
 }
