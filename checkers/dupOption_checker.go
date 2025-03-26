@@ -109,5 +109,5 @@ func (c *dupOptionChecker) findDupArgs(args []ast.Expr) []ast.Expr {
 }
 
 func (c *dupOptionChecker) warn(arg ast.Node) {
-	c.ctx.Warn(arg, "func arg `%s` is duplicated", arg)
+	c.ctx.Warn(arg, "function argument `%s` is duplicated", arg)
 }
