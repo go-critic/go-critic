@@ -15,7 +15,7 @@ func init() {
 	var info linter.CheckerInfo
 	info.Name = "dupOption"
 	info.Tags = []string{linter.DiagnosticTag, linter.ExperimentalTag}
-	info.Summary = "Detects duplicated option func arg"
+	info.Summary = "Detects duplicated option function arguments in variadic function calls"
 	info.Before = `doSomething(name,
 		withWidth(w),
 		withHeight(h),
