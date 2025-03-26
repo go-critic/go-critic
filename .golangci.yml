@@ -12,6 +12,7 @@
       "gocritic",
       "gofmt",
       "goimports",
+      "goprintffuncname",
       "gosimple",
       "govet",
       "ineffassign",
@@ -51,6 +52,11 @@
     },
   },
   "issues": {
+    "exclude-case-sensitive": true,
     "exclude-dirs": ["checkers/rules"],
+    "exclude-rules": [
+      # Backward compatibility for CheckerContext.Warn, WarnWithPos, WarnFixable, and WarnFixableWithPos
+      {"linters":["goprintffuncname"], "text":"Warn(WithPos|Fixable)?"},
+    ]
   }
 }

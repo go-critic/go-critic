@@ -148,7 +148,7 @@ func (c *badRegexpChecker) walk(e syntax.Expr) {
 
 	case syntax.OpCaret:
 		if !c.isGoodAnchor(e) {
-			c.warn("dangling or redundant ^, maybe \\^ is intended?")
+			c.warnf("dangling or redundant ^, maybe \\^ is intended?")
 		}
 
 	default:
@@ -176,11 +176,11 @@ func (c *badRegexpChecker) updateFlagState(state *regexpFlagState, e syntax.Expr
 
 		if clearing {
 			if !state[ch] {
-				c.warn("clearing unset flag %c in %s", ch, e.Value)
+				c.warnf("clearing unset flag %c in %s", ch, e.Value)
 			}
 		} else {
 			if state[ch] {
-				c.warn("redundant flag %c in %s", ch, e.Value)
+				c.warnf("redundant flag %c in %s", ch, e.Value)
 			}
 		}
 		state[ch] = !clearing
@@ -198,7 +198,7 @@ func (c *badRegexpChecker) checkNestedQuantifier(e syntax.Expr) {
 
 	switch x.Op {
 	case syntax.OpPlus, syntax.OpStar:
-		c.warn("repeated greedy quantifier in %s", e.Value)
+		c.warnf("repeated greedy quantifier in %s", e.Value)
 	}
 }
 
@@ -208,7 +208,7 @@ func (c *badRegexpChecker) checkAltDups(alt syntax.Expr) {
 	set := make(map[string]struct{}, len(alt.Args))
 	for _, a := range alt.Args {
 		if _, ok := set[a.Value]; ok {
-			c.warn("`%s` is duplicated in %s", a.Value, alt.Value)
+			c.warnf("`%s` is duplicated in %s", a.Value, alt.Value)
 		}
 		set[a.Value] = struct{}{}
 	}
@@ -232,7 +232,7 @@ func (c *badRegexpChecker) checkAltAnchor(alt syntax.Expr) {
 			}
 		}
 		if matched {
-			c.warn("^ applied only to `%s` in %s", first.Value[len(`^`):], alt.Value)
+			c.warnf("^ applied only to `%s` in %s", first.Value[len(`^`):], alt.Value)
 		}
 	}
 
@@ -247,7 +247,7 @@ func (c *badRegexpChecker) checkAltAnchor(alt syntax.Expr) {
 			}
 		}
 		if matched {
-			c.warn("$ applied only to `%s` in %s", last.Value[:len(last.Value)-len(`$`)], alt.Value)
+			c.warnf("$ applied only to `%s` in %s", last.Value[:len(last.Value)-len(`$`)], alt.Value)
 		}
 	}
 }
@@ -429,7 +429,7 @@ func (c *badRegexpChecker) isGoodAnchor(e syntax.Expr) bool {
 	return false
 }
 
-func (c *badRegexpChecker) warn(format string, args ...interface{}) {
+func (c *badRegexpChecker) warnf(format string, args ...interface{}) {
 	c.ctx.Warn(c.cause, format, args...)
 }
 
