@@ -46,7 +46,7 @@ func TestCheckers(t *testing.T) {
 
 func TestIntegration(t *testing.T) {
 	cfg := linttest.IntegrationTest{
-		Main: "github.com/go-critic/go-critic/cmd/gocritic",
+		Main: "github.com/go-critic/go-critic/cmd/go-critic",
 		Dir:  "./testdata/_integration",
 	}
 	cfg.Run(t)
@@ -171,8 +171,8 @@ func TestExternal(t *testing.T) {
 
 	// Build the linter.
 	tmpDir := t.TempDir()
-	gocriticBin := filepath.Join(tmpDir, "gocritic_external_test.exe")
-	args := []string{"build", "-race", "-o", gocriticBin, "github.com/go-critic/go-critic/cmd/gocritic"}
+	gocriticBin := filepath.Join(tmpDir, "go-critic_external_test.exe")
+	args := []string{"build", "-race", "-o", gocriticBin, "github.com/go-critic/go-critic/cmd/go-critic"}
 	out, err := exec.Command("go", args...).CombinedOutput()
 	if err != nil {
 		t.Fatalf("%v: %s", err, out)

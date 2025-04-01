@@ -55,13 +55,13 @@ func prepareArchive(platform platformInfo, version string) error {
 		return fmt.Errorf("run %s: %v: %s", buildCmd, err, out)
 	}
 
-	filename := "gocritic"
+	filename := "go-critic"
 	if platform.goos == "windows" {
-		filename = "gocritic.exe"
-		os.Rename(filepath.Join("bin", "gocritic"), filepath.Join("bin", filename))
+		filename = "go-critic.exe"
+		os.Rename(filepath.Join("bin", "go-critic"), filepath.Join("bin", filename))
 	}
 
-	archiveName := "gocritic-" + platform.String() + ".zip"
+	archiveName := "go-critic-" + platform.String() + ".zip"
 	zipCmd := exec.Command("zip", archiveName, filename)
 	zipCmd.Dir = "bin"
 	log.Printf("creating %s archive", archiveName)
