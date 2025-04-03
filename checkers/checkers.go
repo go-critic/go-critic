@@ -1,4 +1,4 @@
-// Package checkers is a gocritic linter main checkers collection.
+// Package checkers is a go-critic linter main checkers collection.
 package checkers
 
 import (

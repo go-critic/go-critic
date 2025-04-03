@@ -1,12 +1,12 @@
 # Project manifest
 
-This document exists to make it clear what fits `gocritic` project and what is not.<br>
+This document exists to make it clear what fits `go-critic` project and what is not.<br>
 In a sense, this manifest describes project philosophy.
 
 This document may change over time.<br>
 Contributors and maintainers are encouraged to discuss it and propose changes.<br>
 
-## What gocritic is
+## What go-critic is
 
 It's hard to classify a particular linter due to similarities between them.
 
@@ -28,10 +28,10 @@ There are at least 4 linters-related categories:
    False positive rate is quite high to make them worthwhile inside CI.
    You don't want to break a build due to the warnings they produce.
    There are advantages of this, see below.
-   Example: [gocritic](https://github.com/go-critic/go-critic).
+   Example: [go-critic](https://github.com/go-critic/go-critic).
 
 The advantages of not being bound to CI and close-to-zero false positive rate requirement is freedom.
 We can find code that looks like a bug or suspicious.
 Some checks can't be done without false positives, but they are still useful.
-You *have* to check most `gocritic` warnings manually, this is why `quickfix`-like features doesn't
-play well with `gocritic`. You may not want to fix issues found by `gocritic` automatically.
+You *have* to check most `go-critic` warnings manually, this is why `quickfix`-like features doesn't
+play well with `go-critic`. You may not want to fix issues found by `go-critic` automatically.

@@ -38,7 +38,7 @@ var registeredCheckers = linter.GetCheckersInfo()
 
 func init() {
 	Analyzer.Flags.BoolVar(&flagDebugInit, "debug-init", false,
-		`print gocritic initialization related debug info`)
+		`print go-critic initialization related debug info`)
 	Analyzer.Flags.BoolVar(&flagEnableAll, "enable-all", false,
 		`identical to -enable with all checkers listed. If true, -enable is ignored`)
 	Analyzer.Flags.StringVar(&flagEnable, "enable", "#diagnostic,#style,#security",

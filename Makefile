@@ -9,7 +9,7 @@ export GO111MODULE := on
 
 build-release:
 	mkdir -p bin
-	go build -o bin/gocritic -ldflags "-X 'main.Version=${GOCRITIC_VERSION}'" ./cmd/gocritic
+	go build -o bin/go-critic -ldflags "-X 'main.Version=${GOCRITIC_VERSION}'" ./cmd/go-critic
 
 test:
 	go test -v -count=1 ./...
@@ -18,7 +18,7 @@ test-checker:
 	go test -v -count=1 -run=/$(filter-out $@,$(MAKECMDGOALS)) ./checkers
 
 test-goroot:
-	go run cmd/gocritic/main.go check-project -enable=$(filter-out $@,$(MAKECMDGOALS)) ${GOROOT}/src
+	go run cmd/go-critic/main.go check-project -enable=$(filter-out $@,$(MAKECMDGOALS)) ${GOROOT}/src
 
 docs:
 	cd ./cmd/makedocs && go run main.go
@@ -44,18 +44,18 @@ ci-linter:
 	@$(GOPATH_DIR)/bin/golangci-lint run
 	# cd tools && go install github.com/quasilyte/go-consistent
 	# @$(GOPATH_DIR)/bin/go-consistent ./...
-	go build -o gocritic ./cmd/gocritic
-	./gocritic check -enableAll ./...
+	go build -o go-critic ./cmd/go-critic
+	./go-critic check -enableAll ./...
 
 cover:
 	cd tools && go install github.com/mattn/goveralls
 	goveralls -package github.com/go-critic/go-critic/checkers -coverprofile=coverage.out -service travis-ci -repotoken ${COVERALLS_TOKEN}
 
-gocritic:
-	go build -o gocritic ./cmd/gocritic
+go-critic:
+	go build -o go-critic ./cmd/go-critic
 
 install:
-	go install ./cmd/gocritic
+	go install ./cmd/go-critic
 
 TEST_DIR=checkers/testdata/$(CHECKER_NAME)
 ifeq ($(CHECKER_TYPE),)

@@ -3,7 +3,7 @@
 *.dll
 *.so
 *.dylib
-/gocritic
+/go-critic
 .idea
 pkg/
 

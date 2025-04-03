@@ -24,7 +24,7 @@ There is never too much static code analysis. Try it out.
 * Almost 100 diagnostics that check for [bugs](https://go-critic.github.io/overview#checkers-from-the-diagnostic-group), [performance](https://go-critic.github.io/overview#checkers-from-the-performance-group) and [style](https://go-critic.github.io/overview#checkers-from-the-style-group) issues
 * Extensible without re-compilation with [dynamic rules](https://quasilyte.dev/blog/post/ruleguard/)
 * Includes `#opinionated` checks with very strict and specific requirements
-* Self-documented: `gocritic doc <checkname>` gives a checker description
+* Self-documented: `go-critic doc <checkname>` gives a checker description
 
 ## Documentation
 
@@ -38,66 +38,66 @@ Precompiled `go-critic` binaries can be found at [releases](https://github.com/g
 
 It can be installed in the usual Go way by running:
 ```bash
-go install -v github.com/go-critic/go-critic/cmd/gocritic@latest
+go install -v github.com/go-critic/go-critic/cmd/go-critic@latest
 ```
 
-To build `go-critic` from sources, clone this repository and run `make gocritic`.
+To build `go-critic` from sources, clone this repository and run `make go-critic`.
 
 On macOS, you can also install `go-critic` using [MacPorts](https://www.macports.org): `sudo port install go-critic`
 
 ## Usage
 
-Be sure `gocritic` executable is under your `$PATH`.
+Be sure `go-critic` executable is under your `$PATH`.
 
-Usage of **gocritic**: `gocritic [sub-command] [sub-command args...]`
-Run `gocritic` without arguments to get help output.
+Usage of **go-critic**: `go-critic [sub-command] [sub-command args...]`
+Run `go-critic` without arguments to get help output.
 
 ```
 Supported sub-commands:
 	check - run linter over specified targets
-		$ gocritic check -help
-		$ gocritic check -v -enable='paramTypeCombine,unslice' strings bytes
-		$ gocritic check -v -enable='#diagnostic' -disable='#experimental,#opinionated' ./...
+		$ go-critic check -help
+		$ go-critic check -v -enable='paramTypeCombine,unslice' strings bytes
+		$ go-critic check -v -enable='#diagnostic' -disable='#experimental,#opinionated' ./...
 	version - print linter version
-		$ gocritic version
+		$ go-critic version
 	doc - get installed checkers documentation
-		$ gocritic doc -help
-		$ gocritic doc
-		$ gocritic doc checkerName
+		$ go-critic doc -help
+		$ go-critic doc
+		$ go-critic doc checkerName
 ```
 
 `check` sub-command examples:
 
 ```bash
 # Runs all stable checkers on `fmt` package:
-gocritic check fmt
+go-critic check fmt
 
 # Run all stable checkers on `pkg1` and `pkg2`
-gocritic check pkg1 pkg2
+go-critic check pkg1 pkg2
 
 # Run all stable checkers on `fmt` package and configure rangeExprCopy checker
-gocritic check -@rangeExprCopy.sizeThreshold 128 fmt
+go-critic check -@rangeExprCopy.sizeThreshold 128 fmt
 
 # Runs specified checkers on `fmt` package:
-gocritic check -enable elseif,paramName fmt
+go-critic check -enable elseif,paramName fmt
 
 # Run all stable checkers on current dir and all its children recursively:
-gocritic check ./...
+go-critic check ./...
 
 # Like above, but without `appendAssign` check:
-gocritic check -disable=appendAssign ./...
+go-critic check -disable=appendAssign ./...
 
 # Run all stable checkers on `foo.go` file:
-gocritic check foo.go
+go-critic check foo.go
 
 # Run stable diagnostics over `strings` package:
-gocritic check -enable='#diagnostic' -disable='#experimental' strings
+go-critic check -enable='#diagnostic' -disable='#experimental' strings
 
 # Run all stable and non-opinionated checks:
-gocritic check -enableAll -disable='#experimental,#opinionated' ./src/...
+go-critic check -enableAll -disable='#experimental,#opinionated' ./src/...
 ```
 
-> To get a list of available checker parameters, run `gocritic doc <checkerName>`.
+> To get a list of available checker parameters, run `go-critic doc <checkerName>`.
 
 In place of a single name, **tag** can be used. Tag is a named checkers group.
 
