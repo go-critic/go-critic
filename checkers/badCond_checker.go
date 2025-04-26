@@ -87,7 +87,8 @@ func (c *badCondChecker) checkExpr(expr ast.Expr) {
 
 func (c *badCondChecker) equalToBoth(lhs, rhs *ast.BinaryExpr) bool {
 	return lhs.Op == token.EQL && rhs.Op == token.EQL &&
-		astequal.Expr(lhs.X, rhs.X)
+		astequal.Expr(lhs.X, rhs.X) &&
+		typep.SideEffectFree(c.ctx.TypesInfo, lhs.Y) && typep.SideEffectFree(c.ctx.TypesInfo, rhs.Y)
 }
 
 func (c *badCondChecker) lessAndGreater(lhs, rhs *ast.BinaryExpr) bool {
