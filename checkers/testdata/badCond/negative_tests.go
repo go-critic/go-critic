@@ -2,6 +2,8 @@ package checker_test
 
 func getIntPtr(v *int) {}
 
+func newError() error { return nil }
+
 func fixed1(retVal []int, start int) {
 	for i := 0; i < start; i++ {
 		retVal[i] = 0
@@ -62,4 +64,8 @@ func fixed3(x int) {
 	// in another way, like `x == 10 && y == 10`.
 	var y int
 	_ = x == 10 && y == 10
+
+	_ = err == nil && err == newError()
+
+	_ = err == newError() && err == nil
 }

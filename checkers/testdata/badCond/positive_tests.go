@@ -1,7 +1,5 @@
 package checker_test
 
-func newError() error { return nil }
-
 func bad1(retVal []int, start int) {
 	/*! `i > start` in loop; probably meant `i < start`? */
 	for i := 0; i > start; i++ {
@@ -36,10 +34,6 @@ func bad3(x int) {
 	_ = x == 10 && (x == 20)
 	/*! `(x == 10) && (x == 20)` condition is suspicious */
 	_ = (x == 10) && (x == 20)
-
-	var err error
-	/*! `err == nil && err == newError()` condition is suspicious */
-	_ = err == nil && err == newError()
 
 	// This one is (probably) not an error, but can be written
 	// in another way, like `x == 10 && y == 10`.
