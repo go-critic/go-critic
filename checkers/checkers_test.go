@@ -143,6 +143,7 @@ func TestStableList(t *testing.T) {
 		"unslice",
 		"valSwap",
 		"wrapperFunc",
+		"zeroByteRepeat",
 	}
 
 	m := make(map[string]bool)

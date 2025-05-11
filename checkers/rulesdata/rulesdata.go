@@ -2521,6 +2521,61 @@ var PrecompiledRules = &ir.File{
 				},
 			},
 		},
+		{
+			Line:        799,
+			Name:        "zeroByteRepeat",
+			MatcherName: "m",
+			DocTags:     []string{"performance"},
+			DocSummary:  "Detects bytes.Repeat with 0 value",
+			DocBefore:   "bytes.Repeat([]byte{0}, x)",
+			DocAfter:    "make([]byte, x)",
+			Rules: []ir.Rule{
+				{
+					Line:            800,
+					SyntaxPatterns:  []ir.PatternString{{Line: 800, Value: "bytes.Repeat([]byte{0}, $x)"}},
+					ReportTemplate:  "avoid bytes.Repeat([]byte{0}, $x); consider using make([]byte, $x) instead",
+					SuggestTemplate: "make([]byte, $x)",
+				},
+				{
+					Line:            805,
+					SyntaxPatterns:  []ir.PatternString{{Line: 805, Value: "bytes.Repeat([]byte{$x}, $n)"}},
+					ReportTemplate:  "avoid bytes.Repeat with a const 0; use make([]byte, $n) instead",
+					SuggestTemplate: "make([]byte, $n)",
+					WhereExpr: ir.FilterExpr{
+						Line: 806,
+						Op:   ir.FilterAndOp,
+						Src:  "m[\"x\"].Const && m[\"x\"].Value.Int() == 0",
+						Args: []ir.FilterExpr{
+							{
+								Line:  806,
+								Op:    ir.FilterVarConstOp,
+								Src:   "m[\"x\"].Const",
+								Value: "x",
+							},
+							{
+								Line: 806,
+								Op:   ir.FilterEqOp,
+								Src:  "m[\"x\"].Value.Int() == 0",
+								Args: []ir.FilterExpr{
+									{
+										Line:  806,
+										Op:    ir.FilterVarValueIntOp,
+										Src:   "m[\"x\"].Value.Int()",
+										Value: "x",
+									},
+									{
+										Line:  806,
+										Op:    ir.FilterIntOp,
+										Src:   "0",
+										Value: int64(0),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 }
 
