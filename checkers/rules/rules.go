@@ -791,3 +791,19 @@ func badSyncOnceFunc(m dsl.Matcher) {
 		Report("possible sync.OnceFunc misuse, consider to assign sync.OnceFunc($x) to a variable").
 		Where(m.GoVersion().GreaterEqThan("1.21"))
 }
+
+//doc:summary Detects bytes.Repeat with 0 value
+//doc:tags    performance
+//doc:before  bytes.Repeat([]byte{0}, x)
+//doc:after   make([]byte, x)
+func zeroByteRepeat(m dsl.Matcher) {
+	m.Match(`bytes.Repeat([]byte{0}, $x)`).
+		Report("avoid bytes.Repeat([]byte{0}, $x); consider using make([]byte, $x) instead").
+		Suggest(`make([]byte, $x)`)
+
+	// Rule 2: const identifier with value 0
+	m.Match(`bytes.Repeat([]byte{$x}, $n)`).
+		Where(m["x"].Const && m["x"].Value.Int() == 0).
+		Report("avoid bytes.Repeat with a const 0; use make([]byte, $n) instead").
+		Suggest(`make([]byte, $n)`)
+}

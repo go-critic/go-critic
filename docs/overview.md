@@ -147,6 +147,7 @@ can make your code run slower than it could be.
 |:white_check_mark:[rangeValCopy](#rangevalcopy)|Detects loops that copy big objects during each iteration|
 |:white_check_mark:[sliceClear](#sliceclear)|Detects slice clear loops, suggests an idiom that is recognized by the Go compiler|
 |:white_check_mark:[stringXbytes](#stringxbytes)|Detects redundant conversions between string and []byte|
+|:white_check_mark:[zeroByteRepeat](#zeroByteRepeat)|Detects bytes.Repeat with 0 value|
 
 ## appendAssign
 
@@ -2351,6 +2352,27 @@ copy(b, []byte(s))
 **After:**
 ```go
 copy(b, s)
+```
+
+## zeroByteRepeat
+
+[
+  **performance** ]
+
+Detects bytes.Repeat with 0 value.
+
+
+
+
+
+**Before:**
+```go
+bytes.Repeat([]byte{0}, x)
+```
+
+**After:**
+```go
+make([]byte, x)
 ```
 
 
