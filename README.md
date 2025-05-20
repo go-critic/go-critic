@@ -38,7 +38,7 @@ Precompiled `go-critic` binaries can be found at [releases](https://github.com/g
 
 It can be installed in the usual Go way by running:
 ```bash
-go install -v github.com/go-critic/go-critic/cmd/go-critic@latest
+go install -v github.com/go-critic/go-critic/cmd/gocritic@latest
 ```
 
 To build `go-critic` from sources, clone this repository and run `make go-critic`.
