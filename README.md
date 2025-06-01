@@ -37,13 +37,26 @@ For most users, using `go-critic` under [golangci-lint](https://github.com/golan
 Precompiled `go-critic` binaries can be found at [releases](https://github.com/go-critic/go-critic/releases) page.
 
 It can be installed in the usual Go way by running:
+
 ```bash
 go install -v github.com/go-critic/go-critic/cmd/go-critic@latest
 ```
 
 To build `go-critic` from sources, clone this repository and run `make go-critic`.
 
-On macOS, you can also install `go-critic` using [MacPorts](https://www.macports.org): `sudo port install go-critic`
+On macOS, you can also install `go-critic` using either Homebrew or MacPorts:
+
+[Homebrew](https://brew.sh)
+
+```zsh
+brew install go-critic
+```
+
+[MacPorts](https://www.macports.org)
+
+```zsh
+sudo port install go-critic
+```
 
 ## Usage
 
@@ -102,6 +115,7 @@ go-critic check -enableAll -disable='#experimental,#opinionated' ./src/...
 In place of a single name, **tag** can be used. Tag is a named checkers group.
 
 Tags:
+
 * `#diagnostic` - kind of checks that detect various errors in code
 * `#style` - kind of checks that find style issues in code
 * `#performance` - kind of checks that detect potential performance issues in code
