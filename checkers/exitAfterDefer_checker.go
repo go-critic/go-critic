@@ -87,6 +87,11 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 					"(*log.Logger).Fatal",
 					"(*log.Logger).Fatalf",
 					"(*log.Logger).Fatalln",
+					"(*go.uber.org/zap.Logger).Fatal",
+					"(*go.uber.org/zap.SugaredLogger).Fatal",
+					"(*go.uber.org/zap.SugaredLogger).Fatalf",
+					"(*go.uber.org/zap.SugaredLogger).Fatalln",
+					"(*go.uber.org/zap.SugaredLogger).Fatalw",
 					"os.Exit":
 					c.warn(n, deferStmt)
 					return false
