@@ -80,7 +80,14 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 				}
 
 				switch fn.FullName() {
-				case "log.Fatal", "log.Fatalf", "log.Fatalln", "os.Exit":
+				case
+					"log.Fatal",
+					"log.Fatalf",
+					"log.Fatalln",
+					"(*log.Logger).Fatal",
+					"(*log.Logger).Fatalf",
+					"(*log.Logger).Fatalln",
+					"os.Exit":
 					c.warn(n, deferStmt)
 					return false
 				}
