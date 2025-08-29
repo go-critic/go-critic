@@ -2,6 +2,7 @@ package checkers
 
 import (
 	"go/ast"
+	"go/types"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/linter"
@@ -68,7 +69,17 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 				return true
 			}
 			if deferStmt != nil {
-				switch qualifiedName(n.Fun) {
+				sel, ok := n.Fun.(*ast.SelectorExpr)
+				if !ok {
+					return true
+				}
+
+				fn, ok := c.ctx.TypesInfo.ObjectOf(sel.Sel).(*types.Func)
+				if !ok {
+					return true
+				}
+
+				switch fn.FullName() {
 				case "log.Fatal", "log.Fatalf", "log.Fatalln", "os.Exit":
 					c.warn(n, deferStmt)
 					return false
