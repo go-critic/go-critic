@@ -3,6 +3,7 @@ package checkers
 import (
 	"go/ast"
 	"go/types"
+	"strings"
 
 	"github.com/go-critic/go-critic/checkers/internal/astwalk"
 	"github.com/go-critic/go-critic/linter"
@@ -16,6 +17,12 @@ func init() {
 	var info linter.CheckerInfo
 	info.Name = "exitAfterDefer"
 	info.Tags = []string{linter.DiagnosticTag}
+	info.Params = linter.CheckerParams{
+		"addFunctions": {
+			Value: "",
+			Usage: "comma-separated list of additional function names to recognize as exit/fatal",
+		},
+	}
 	info.Summary = "Detects calls to exit/fatal inside functions that use defer"
 	info.Before = `
 defer os.Remove(filename)
@@ -30,13 +37,42 @@ if bad {
 }`
 
 	collection.AddChecker(&info, func(ctx *linter.CheckerContext) (linter.FileWalker, error) {
-		return astwalk.WalkerForFuncDecl(&exitAfterDeferChecker{ctx: ctx}), nil
+		exitFunctions := map[string]struct{}{
+			// stdlib log.Fatal and variants
+			"log.Fatal":             {},
+			"log.Fatalf":            {},
+			"log.Fatalln":           {},
+			"(*log.Logger).Fatal":   {},
+			"(*log.Logger).Fatalf":  {},
+			"(*log.Logger).Fatalln": {},
+
+			// zap logger's Fatal and variants
+			"(*go.uber.org/zap.Logger).Fatal":          {},
+			"(*go.uber.org/zap.SugaredLogger).Fatal":   {},
+			"(*go.uber.org/zap.SugaredLogger).Fatalf":  {},
+			"(*go.uber.org/zap.SugaredLogger).Fatalln": {},
+			"(*go.uber.org/zap.SugaredLogger).Fatalw":  {},
+
+			"os.Exit": {},
+		}
+
+		for _, name := range strings.Split(info.Params.String("addFunctions"), ",") {
+			exitFunctions[name] = struct{}{}
+		}
+
+		checker := &exitAfterDeferChecker{
+			ctx:           ctx,
+			exitFunctions: exitFunctions,
+		}
+
+		return astwalk.WalkerForFuncDecl(checker), nil
 	})
 }
 
 type exitAfterDeferChecker struct {
 	astwalk.WalkHandler
-	ctx *linter.CheckerContext
+	ctx           *linter.CheckerContext
+	exitFunctions map[string]struct{}
 }
 
 func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
@@ -79,20 +115,7 @@ func (c *exitAfterDeferChecker) VisitFuncDecl(fn *ast.FuncDecl) {
 					return true
 				}
 
-				switch fn.FullName() {
-				case
-					"log.Fatal",
-					"log.Fatalf",
-					"log.Fatalln",
-					"(*log.Logger).Fatal",
-					"(*log.Logger).Fatalf",
-					"(*log.Logger).Fatalln",
-					"(*go.uber.org/zap.Logger).Fatal",
-					"(*go.uber.org/zap.SugaredLogger).Fatal",
-					"(*go.uber.org/zap.SugaredLogger).Fatalf",
-					"(*go.uber.org/zap.SugaredLogger).Fatalln",
-					"(*go.uber.org/zap.SugaredLogger).Fatalw",
-					"os.Exit":
+				if _, ok := c.exitFunctions[fn.FullName()]; ok {
 					c.warn(n, deferStmt)
 					return false
 				}
