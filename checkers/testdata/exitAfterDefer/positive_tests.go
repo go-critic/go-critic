@@ -1,6 +1,7 @@
 package checker_test
 
 import (
+	"log"
 	"os"
 )
 
@@ -47,4 +48,11 @@ func deferLambda() {
 
 	/*! os.Exit will exit, and `defer func(x int){...}(...)` will not run */
 	os.Exit(0)
+}
+
+func loggerMethods() {
+	defer println("")
+
+	logger := log.Default()
+	logger.Fatal("goodbye")
 }

@@ -61,3 +61,18 @@ func neverOsExitAndCallADefer() {
 		os.Exit(1)
 	}
 }
+
+type exiter struct{}
+
+func (exiter) Exit(code int) {
+
+}
+
+func shadowedOs() {
+	defer println("")
+
+	var os exiter
+
+	// this is not the os.Exit that breaks defers
+	os.Exit(1)
+}
