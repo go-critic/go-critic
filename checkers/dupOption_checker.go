@@ -75,6 +75,11 @@ func (c *dupOptionChecker) getVariadicArgs(call *ast.CallExpr) ([]ast.Expr, type
 	if !ok {
 		return nil, nil
 	}
+
+	if last > len(call.Args) {
+		return nil, nil
+	}
+
 	argType := sliceType.Elem()
 	return call.Args[last:], argType
 }
