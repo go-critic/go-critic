@@ -36,9 +36,7 @@ func (cfg *IntegrationTest) Run(t *testing.T) {
 
 		t.Run(f.Name(), func(t *testing.T) {
 			wd := filepath.Join(absDir, f.Name())
-			if err := os.Chdir(wd); err != nil {
-				t.Fatalf("enter test dir: %v", err)
-			}
+			t.Chdir(wd)
 			cfg.runTest(t, gocritic, wd)
 		})
 	}
