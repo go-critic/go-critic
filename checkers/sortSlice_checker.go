@@ -11,7 +11,6 @@ import (
 	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astequal"
 	"github.com/go-toolsmith/typep"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
@@ -65,7 +64,7 @@ func (c *sortSliceChecker) VisitExpr(expr ast.Expr) {
 	if !ok {
 		return
 	}
-	cmp := astcast.ToBinaryExpr(astutil.Unparen(ret.Results[0]))
+	cmp := astcast.ToBinaryExpr(ast.Unparen(ret.Results[0]))
 	if !typep.SideEffectFree(c.ctx.TypesInfo, cmp) {
 		return
 	}
