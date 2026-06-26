@@ -57,7 +57,7 @@ They also detect code that may be correct, but looks suspicious.
 |:white_check_mark:[sloppyReassign](#sloppyreassign)|Detects suspicious/confusing re-assignments|
 |:heavy_check_mark:[sloppyTypeAssert](#sloppytypeassert)|Detects redundant type assertions|
 |:white_check_mark:[sortSlice](#sortslice)|Detects suspicious sort.Slice calls|
-|:white_check_mark:[sprintfQuotedString](#sprintfquotedstring)|Detects "%s" formatting directives that can be replaced with %q|
+|:white_check_mark:[sprintfQuotedString](#sprintfquotedstring)|Detects manually quoted "%s" directives that can be replaced with %q or %#q|
 |:white_check_mark:[sqlQuery](#sqlquery)|Detects issue in Query() and Exec() calls|
 |:white_check_mark:[syncMapLoadAndDelete](#syncmaploadanddelete)|Detects sync.Map load+delete operations that can be replaced with LoadAndDelete|
 |:white_check_mark:[truncateCmp](#truncatecmp)|Detects potential truncation issues when comparing ints of different sizes|
@@ -2270,7 +2270,7 @@ sort.Slice(kv, func(i, j) bool { return kv[i].key < kv[j].key })
   **diagnostic**
   **experimental** ]
 
-Detects "%s" formatting directives that can be replaced with %q.
+Detects manually quoted "%s" directives that can be replaced with %q or %#q.
 
 
 
