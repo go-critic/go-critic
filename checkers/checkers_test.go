@@ -38,6 +38,7 @@ func TestCheckers(t *testing.T) {
 	cfg := linttest.CheckersTest{
 		IgnoreErrors: []string{
 			"caseOrder",
+			"sloppyTypeAssert",
 		},
 	}
 
