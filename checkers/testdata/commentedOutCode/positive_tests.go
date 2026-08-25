@@ -42,3 +42,17 @@ func multiLineCode() {
 	/*! may want to remove commented-out code */
 	// v := 781
 }
+
+func shortCode() {
+	/*! may want to remove commented-out code */
+	// Baz()
+
+	/*! may want to remove commented-out code */
+	// foo.Bar()
+
+	/*! may want to remove commented-out code */
+	// x := 1
+
+	/*! may want to remove commented-out code */
+	// v := 世界
+}
