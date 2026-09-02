@@ -81,9 +81,9 @@ func (c *boolExprSimplifyChecker) simplifyBool(x ast.Expr) ast.Expr {
 
 func (c *boolExprSimplifyChecker) doubleNegation(cur *astutil.Cursor) bool {
 	neg1 := astcast.ToUnaryExpr(cur.Node())
-	neg2 := astcast.ToUnaryExpr(astutil.Unparen(neg1.X))
+	neg2 := astcast.ToUnaryExpr(ast.Unparen(neg1.X))
 	if neg1.Op == token.NOT && neg2.Op == token.NOT {
-		cur.Replace(astutil.Unparen(neg2.X))
+		cur.Replace(ast.Unparen(neg2.X))
 		return true
 	}
 	return false
@@ -110,7 +110,7 @@ func (c *boolExprSimplifyChecker) invertComparison(cur *astutil.Cursor) bool {
 	}
 
 	neg := astcast.ToUnaryExpr(cur.Node())
-	cmp := astcast.ToBinaryExpr(astutil.Unparen(neg.X))
+	cmp := astcast.ToBinaryExpr(ast.Unparen(neg.X))
 	if neg.Op != token.NOT {
 		return false
 	}
@@ -147,8 +147,8 @@ func (c *boolExprSimplifyChecker) combineChecks(cur *astutil.Cursor) bool {
 		return false
 	}
 
-	lhs := astcast.ToBinaryExpr(astutil.Unparen(or.X))
-	rhs := astcast.ToBinaryExpr(astutil.Unparen(or.Y))
+	lhs := astcast.ToBinaryExpr(ast.Unparen(or.X))
+	rhs := astcast.ToBinaryExpr(ast.Unparen(or.Y))
 
 	if !astequal.Expr(lhs.X, rhs.X) || !astequal.Expr(lhs.Y, rhs.Y) {
 		return false

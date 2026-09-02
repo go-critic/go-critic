@@ -483,7 +483,7 @@ func syncMapLoadAndDelete(m dsl.Matcher) {
 		Report(`use $m.LoadAndDelete to perform load+delete operations atomically`)
 }
 
-//doc:summary Detects "%s" formatting directives that can be replaced with %q
+//doc:summary Detects manually quoted "%s" directives that can be replaced with %q or %#q
 //doc:tags    diagnostic experimental
 //doc:before  fmt.Sprintf(`"%s"`, s)
 //doc:after   fmt.Sprintf(`%q`, s)
@@ -492,6 +492,12 @@ func sprintfQuotedString(m dsl.Matcher) {
 		Where(m["s"].Text.Matches("^`.*\"%s\".*`$") ||
 			m["s"].Text.Matches(`^".*\\"%s\\".*"$`)).
 		Report(`use %q instead of "%s" for quoted strings`)
+
+	// Matches a double-quoted format string containing a backquoted "%s",
+	// e.g. "`%s`".
+	m.Match(`fmt.Sprintf($s, $*_)`).
+		Where(m["s"].Text.Matches("^\".*`%s`.*\"$")).
+		Report("use %#q instead of \"`%s`\" for backquoted strings")
 }
 
 //doc:summary Detects various off-by-one kind of errors

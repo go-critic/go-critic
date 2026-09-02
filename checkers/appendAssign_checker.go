@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-toolsmith/astequal"
 	"github.com/go-toolsmith/astp"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
@@ -93,7 +92,7 @@ func (c *appendAssignChecker) checkAppend(x ast.Expr, call *ast.CallExpr) {
 }
 
 func (c *appendAssignChecker) matchSlices(cause ast.Node, x, y ast.Expr) {
-	if !astequal.Expr(x, astutil.Unparen(y)) {
+	if !astequal.Expr(x, ast.Unparen(y)) {
 		c.warn(cause)
 	}
 }

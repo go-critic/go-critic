@@ -11,7 +11,6 @@ import (
 	"github.com/go-toolsmith/astcast"
 	"github.com/go-toolsmith/astequal"
 	"github.com/go-toolsmith/typep"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
@@ -37,8 +36,8 @@ func (c *weakCondChecker) VisitExpr(expr ast.Expr) {
 	// TODO(Quasilyte): analyze and fix false positives.
 
 	cond := astcast.ToBinaryExpr(expr)
-	lhs := astcast.ToBinaryExpr(astutil.Unparen(cond.X))
-	rhs := astutil.Unparen(cond.Y)
+	lhs := astcast.ToBinaryExpr(ast.Unparen(cond.X))
+	rhs := ast.Unparen(cond.Y)
 
 	// Pattern 1.
 	// `x != nil && usageOf(x[i])`

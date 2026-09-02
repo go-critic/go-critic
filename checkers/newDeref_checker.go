@@ -9,7 +9,6 @@ import (
 	"github.com/go-critic/go-critic/linter"
 
 	"github.com/go-toolsmith/astcast"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 func init() {
@@ -39,7 +38,7 @@ func (c *newDerefChecker) VisitExpr(expr ast.Expr) {
 		if _, ok := typ.(*types.TypeParam); ok {
 			return
 		}
-		zv := lintutil.ZeroValueOf(astutil.Unparen(call.Args[0]), typ)
+		zv := lintutil.ZeroValueOf(ast.Unparen(call.Args[0]), typ)
 		if zv != nil {
 			c.warn(expr, zv)
 		}
