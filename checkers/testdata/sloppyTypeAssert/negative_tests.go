@@ -21,3 +21,12 @@ func noWarnings(eface interface{}, r io.Reader, rc io.ReadCloser) {
 
 	_ = r.(underlyingReader)
 }
+
+func issue1422() {
+	data := undefinedFunc()
+
+	exampleA, ok := data.([]string)
+	_, _ = exampleA, ok
+
+	_ = data.(int)
+}
