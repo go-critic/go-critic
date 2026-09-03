@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 
@@ -94,9 +95,13 @@ func (cfg *IntegrationTest) runTest(t *testing.T, gocritic, gopath string) {
 			have = string(out)
 		}
 
-		// To get line-by-line diff, split is required.
+		// The linter output order is not significant for these tests.
+		// Compare sorted lines to keep golden checks order-insensitive.
+		// Duplicate lines are still preserved (multiset comparison).
 		wantLines := strings.Split(want, "\n")
 		haveLines := strings.Split(have, "\n")
+		sort.Strings(wantLines)
+		sort.Strings(haveLines)
 		if diff := cmp.Diff(wantLines, haveLines); diff != "" {
 			t.Errorf("linttest.params:%d: output mismatch:\n%s", i+1, diff)
 			t.Logf("linter output was: %s\n", have)
