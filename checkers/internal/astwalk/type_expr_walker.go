@@ -95,11 +95,22 @@ func (w *typeExprWalker) walk(x ast.Node) bool {
 	return true
 }
 
+// isRecvOnlyChanType reports whether x is a receive-only channel type, `<-chan T`.
+//
+// The Go spec requires a parenthesis around a conversion type that starts with
+// `*`, `<-`, or the `func` keyword: without it `(<-chan int)(nil)` parses as
+// `<-(chan int(nil))` and does not compile. A send-only `chan<- int(nil)` is
+// unambiguous, so only the receive direction is special here.
+func isRecvOnlyChanType(x ast.Expr) bool {
+	ch, ok := x.(*ast.ChanType)
+	return ok && ch.Dir == ast.RECV
+}
+
 func (w *typeExprWalker) inspectInner(x ast.Expr) bool {
 	parens, ok := x.(*ast.ParenExpr)
 	shouldInspect := ok &&
 		typep.IsTypeExpr(w.info, parens.X) &&
-		(astp.IsStarExpr(parens.X) || astp.IsFuncType(parens.X))
+		(astp.IsStarExpr(parens.X) || astp.IsFuncType(parens.X) || isRecvOnlyChanType(parens.X))
 	if shouldInspect {
 		ast.Inspect(parens.X, w.walk)
 		return false
