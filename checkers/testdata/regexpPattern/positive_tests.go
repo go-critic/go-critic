@@ -10,4 +10,7 @@ func domainDots() {
 
 	/*! '.ru' should probably be '\.ru' */
 	regexp.CompilePOSIX(`yandex.ru|radio.yandex.ru`)
+
+	/*! '.org' should probably be '\.org' */
+	regexp.MustCompilePOSIX(`golang.org`)
 }
