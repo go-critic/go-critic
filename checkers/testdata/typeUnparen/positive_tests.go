@@ -204,3 +204,8 @@ func chanType() {
 	/*! could simplify chan<- (int) to chan<- int */
 	_ = make(chan<- (int))
 }
+
+func convIssue1428SendOnly() {
+	/*! could simplify (chan<- int) to chan<- int */
+	_ = (chan<- int)(nil)
+}

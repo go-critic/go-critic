@@ -100,3 +100,7 @@ func channelIssue1035() {
 func funcIssue1245() {
 	_ = (func())(nil)
 }
+
+func convIssue1428() {
+	_ = (<-chan int)(nil)
+}
