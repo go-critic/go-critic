@@ -8,4 +8,6 @@ func domainDotsEscaped() {
 	regexp.MustCompile(`google\.com`)
 
 	regexp.CompilePOSIX(`yandex\.ru|radio.yandex\.ru`)
+
+	regexp.MustCompilePOSIX(`golang\.org`)
 }
