@@ -75,10 +75,15 @@ func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
 		}
 	}
 
+	stmt := strparse.Stmt(s)
+
 	// Some very short comment that can be skipped.
 	// Usually triggering on these results in false positive.
-	// Unless there is a very popular call like print/println.
+	// Unless there is a very popular call like print/println,
+	// or the comment clearly parses as code (an assignment or a
+	// plain function call) that is unlikely to be prose.
 	cond := utf8.RuneCountInString(s) < c.minLength &&
+		!c.isObviousCode(stmt) &&
 		!strings.Contains(s, "print") &&
 		!strings.Contains(s, "fmt.") &&
 		!strings.Contains(s, "log.")
@@ -96,8 +101,6 @@ func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
 	if c.isExampleOutputComment(s) {
 		return
 	}
-
-	stmt := strparse.Stmt(s)
 
 	if c.isPermittedStmt(stmt) {
 		return
@@ -134,6 +137,28 @@ func (c *commentedOutCodeChecker) VisitLocalComment(cg *ast.CommentGroup) {
 // See https://go.dev/blog/examples
 func (c *commentedOutCodeChecker) isExampleOutputComment(s string) bool {
 	return isExampleTestFunc(c.fn) && strings.Contains(s, "Output:")
+}
+
+// isObviousCode reports whether stmt is a construct that is almost never
+// found in prose comments, so it is worth reporting even for very short
+// comments that the minLength heuristic would otherwise skip. We keep this
+// intentionally narrow (assignments and plain function/method calls) to
+// avoid new false positives on things like "<-ch" or a lone identifier.
+func (c *commentedOutCodeChecker) isObviousCode(stmt ast.Stmt) bool {
+	switch stmt := stmt.(type) {
+	case *ast.AssignStmt:
+		return true
+	case *ast.ExprStmt:
+		call, ok := stmt.X.(*ast.CallExpr)
+		if !ok {
+			return false
+		}
+		switch call.Fun.(type) {
+		case *ast.Ident, *ast.SelectorExpr:
+			return true
+		}
+	}
+	return false
 }
 
 func (c *commentedOutCodeChecker) isPermittedStmt(stmt ast.Stmt) bool {

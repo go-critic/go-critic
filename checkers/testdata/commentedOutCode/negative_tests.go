@@ -82,5 +82,7 @@ func permittedComments() {
 
 	/* CINC/CINV/CNEG */
 
-	// v := 世界
+	// foo ()
+
+	// world
 }
