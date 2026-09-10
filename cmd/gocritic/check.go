@@ -135,6 +135,7 @@ func (p *program) checkPackage(pkg *packages.Package) {
 
 func (p *program) checkFile(f *ast.File) {
 	warnings := make([][]linter.Warning, len(p.checkers))
+	panics := make([]any, len(p.checkers))
 
 	sema := make(chan struct{}, p.concurrency)
 
@@ -150,27 +151,28 @@ func (p *program) checkFile(f *ast.File) {
 
 		go func() {
 			defer func() {
-				wg.Done()
+				if r := recover(); r != nil {
+					panics[i] = r
+				}
 				<-sema
-
-				// Checker signals unexpected error with panic(error).
-				r := recover()
-				if r == nil {
-					return // There were no panic
-				}
-				if err, ok := r.(error); ok {
-					log.Printf("%s: error: %v\n", c.Info.Name, err)
-					panic(err)
-				}
-				// Some other kind of run-time panic.
-				// Undo the recover and resume panic.
-				panic(r)
+				wg.Done()
 			}()
 
 			warnings[i] = append(warnings[i], c.Check(f)...)
 		}()
 	}
 	wg.Wait()
+
+	for i, c := range p.checkers {
+		if p := panics[i]; p != nil {
+			if err, ok := p.(error); ok {
+				log.Printf("%s: error: %v\n", c.Info.Name, err)
+			} else {
+				log.Printf("%s: recovered panic: %v\n", c.Info.Name, p)
+			}
+			panic(p)
+		}
+	}
 
 	for i, c := range p.checkers {
 		for _, warn := range warnings[i] {
