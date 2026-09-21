@@ -45,6 +45,13 @@ func (c *sloppyTypeAssertChecker) VisitExpr(expr ast.Expr) {
 	toType := c.ctx.TypeOf(expr)
 	fromType := c.ctx.TypeOf(assert.X)
 
+	// TypeOf returns the UnknownType sentinel when the type info is missing.
+	// It is a singleton, so types.Identical reports two unknowns as identical
+	// and the check would warn about an assertion it knows nothing about.
+	if toType == linter.UnknownType || fromType == linter.UnknownType {
+		return
+	}
+
 	if types.Identical(toType, fromType) {
 		c.warnIdentical(expr)
 		return
