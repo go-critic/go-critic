@@ -1,62 +1,58 @@
-{
-  "run": {
-    # timeout for analysis, e.g. 30s, 5m, default is 1m
-    "timeout": "3m",
-  },
-  "linters": {
-    "fast": false,
-    "enable": [
-      "copyloopvar",
-      "errcheck",
-      "gosec",
-      "gocritic",
-      "gofmt",
-      "goimports",
-      "goprintffuncname",
-      "gosimple",
-      "govet",
-      "ineffassign",
-      "misspell",
-      "nakedret",
-      "revive",
-      "staticcheck",
-      "unconvert",
-      "unparam",
-      "unused",
-      "usetesting",
-    ],
-    "disable": [
-      "depguard",
-      "dupl",
-      "gocyclo",
-      "lll",
-      "prealloc",
-    ],
-  },
-  "linters-settings": {
-    "gocritic": {
-      "enabled-checks": [
-        "ruleguard",
-      ],
-      "settings": {
-        "ruleguard": {
-          "rules": "rules.go",
-        },
-      },
-    },
-    "gosec": {
-      "excludes": ["G115"]
-    },
-    "usetesting": {
-      "os-temp-dir": true,
-    },
-  },
-  "issues": {
-    "exclude-case-sensitive": true,
-    "exclude-dirs": ["checkers/rules"],
-    "exclude-rules": [
-      # Backward compatibility for CheckerContext.Warn, WarnWithPos, WarnFixable, and WarnFixableWithPos
-      {"linters":["goprintffuncname"], "text":"Warn(WithPos|Fixable)?"},
-    ]
-  }
-}
+version: "2"
+linters:
+  enable:
+    - copyloopvar
+    - gocritic
+    - goprintffuncname
+    - gosec
+    - misspell
+    - nakedret
+    - revive
+    - unconvert
+    - unparam
+    - usetesting
+  disable:
+    - depguard
+    - dupl
+    - gocyclo
+    - lll
+    - prealloc
+  settings:
+    gocritic:
+      enabled-checks:
+        - ruleguard
+      settings:
+        ruleguard:
+          rules: rules.go
+    gosec:
+      excludes:
+        - G115
+    usetesting:
+      os-temp-dir: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - goprintffuncname
+        text: (?i)Warn(WithPos|Fixable)?
+    paths:
+      - checkers/rules
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - checkers/rules
+      - third_party$
+      - builtin$
+      - examples$

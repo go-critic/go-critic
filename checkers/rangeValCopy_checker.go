@@ -53,7 +53,7 @@ type rangeValCopyChecker struct {
 
 func (c *rangeValCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	return fn.Body != nil &&
-		!(c.skipTestFuncs && isUnitTestFunc(c.ctx, fn))
+		(!c.skipTestFuncs || !isUnitTestFunc(c.ctx, fn))
 }
 
 func (c *rangeValCopyChecker) VisitStmt(stmt ast.Stmt) {

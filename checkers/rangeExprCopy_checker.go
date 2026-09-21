@@ -54,7 +54,7 @@ type rangeExprCopyChecker struct {
 
 func (c *rangeExprCopyChecker) EnterFunc(fn *ast.FuncDecl) bool {
 	return fn.Body != nil &&
-		!(c.skipTestFuncs && isUnitTestFunc(c.ctx, fn))
+		(!c.skipTestFuncs || !isUnitTestFunc(c.ctx, fn))
 }
 
 func (c *rangeExprCopyChecker) VisitStmt(stmt ast.Stmt) {

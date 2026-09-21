@@ -68,7 +68,7 @@ func (cfg *IntegrationTest) runTest(t *testing.T, gocritic, gopath string) {
 		if data, ok := goldenDataCache[goldenFile]; ok {
 			want = data
 		} else {
-			data, err := os.ReadFile(goldenFile)
+			data, err := os.ReadFile(goldenFile) //nolint:gosec // path comes from the test's own testdata/.../linttest.params file
 			if err != nil {
 				t.Errorf("read golden file: %v", err)
 			}
