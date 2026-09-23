@@ -14,6 +14,12 @@ func multiPass() {
 	// 2. `(?:[abc])` -> `[abc]`
 	/*! can re-write `(?:a|b|c)` as `[abc]` */
 	regexp.MustCompile(`(?:a|b|c)`)
+
+	/*! can re-write `^(?:|[0-9]+)$` as `^(?:|\d+)$` */
+	regexp.MustCompile(`^(?:|[0-9]+)$`)
+
+	/*! can re-write `^(?:[0-9]+|)$` as `^(?:\d+|)$` */
+	regexp.MustCompile(`^(?:[0-9]+|)$`)
 }
 
 func altCommonPrefixSuffix() {

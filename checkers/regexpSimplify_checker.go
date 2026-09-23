@@ -366,7 +366,8 @@ func (c *regexpSimplifyChecker) canCombine(x, y syntax.Expr) (threshold int, ok 
 }
 
 func (c *regexpSimplifyChecker) concatLiteral(e syntax.Expr) string {
-	if e.Op == syntax.OpConcat && c.allChars(e) {
+	// Empty alternatives can retain the separator in Value.
+	if e.Op == syntax.OpConcat && len(e.Args) != 0 && c.allChars(e) {
 		return e.Value
 	}
 	return ""
@@ -395,8 +396,8 @@ func (c *regexpSimplifyChecker) factorPrefixSuffix(alt syntax.Expr) bool {
 	}
 	x := c.concatLiteral(alt.Args[0])
 	y := c.concatLiteral(alt.Args[1])
-	if x == y {
-		return false // Reject non-literals and identical strings early
+	if x == "" || y == "" || x == y {
+		return false // Reject empty or non-literal alternatives and identical strings
 	}
 
 	// Let x be a shorter string.
