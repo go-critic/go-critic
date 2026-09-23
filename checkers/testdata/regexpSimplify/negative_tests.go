@@ -21,6 +21,17 @@ func noCommonPrefixSuffix() {
 	regexp.MustCompile(`(?:http|https|ftp)://`) // More than 2 alternatives
 }
 
+func emptyAlternatives() {
+	regexp.MustCompile(`(a|)`)
+	regexp.MustCompile(`(|a)`)
+	regexp.MustCompile(`(foo|)`)
+	regexp.MustCompile(`(|foo)`)
+	regexp.MustCompile(`^(?:|\d+)$`)
+	regexp.MustCompile(`^(?:\d+|)$`)
+	regexp.MustCompile(`(?:\.(\d+)|)`)
+	regexp.MustCompile(`|[0-9a-zA-Z]{16}`)
+}
+
 func cantSimplify() {
 	// Most of these patterns come from the projects available at GitHub.
 
