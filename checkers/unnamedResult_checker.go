@@ -37,7 +37,7 @@ type unnamedResultChecker struct {
 }
 
 func (c *unnamedResultChecker) VisitFuncDecl(decl *ast.FuncDecl) {
-	if c.checkExported && !ast.IsExported(decl.Name.Name) {
+	if !c.checkExported && ast.IsExported(decl.Name.Name) {
 		return
 	}
 	results := decl.Type.Results

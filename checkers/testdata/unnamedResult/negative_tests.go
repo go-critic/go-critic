@@ -96,3 +96,12 @@ func namedPointers2() (**namedInt, *namedStruct) {
 func namedPointers3() (**namedInt, ***namedStruct) {
 	return nil, nil
 }
+
+// Exported functions are not checked when checkExported is disabled (the default).
+func ExportedPair() (int, int) {
+	return 0, 0
+}
+
+func (f *foo) ExportedMethod() (float64, float64) {
+	return 0, 0
+}
