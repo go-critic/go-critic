@@ -93,6 +93,8 @@ func (c *unnamedResultChecker) typeName(typ types.Type) string {
 		return c.typeName(typ.Elem())
 	case *types.Named:
 		return typ.Obj().Name()
+	case *types.Alias:
+		return c.typeName(types.Unalias(typ))
 	default:
 		return ""
 	}

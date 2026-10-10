@@ -96,3 +96,44 @@ func namedPointers2() (**namedInt, *namedStruct) {
 func namedPointers3() (**namedInt, ***namedStruct) {
 	return nil, nil
 }
+
+type MyInt = int
+type User = namedStruct
+
+type aliasedNamedInt = namedInt
+type aliasedNamedStruct = namedStruct
+type aliasedNamedIntChain = aliasedNamedInt
+
+func aliasedPointer() (namedInt, *aliasedNamedStruct) {
+	return 0, nil
+}
+
+func aliasedDistinct() (aliasedNamedInt, aliasedNamedStruct) {
+	return 0, aliasedNamedStruct{}
+}
+
+func aliasedTriple() (aliasedNamedInt, aliasedNamedStruct, error) {
+	return 0, aliasedNamedStruct{}, nil
+}
+
+func aliasedSlice() ([]aliasedNamedInt, []aliasedNamedStruct) {
+	return nil, nil
+}
+
+func aliasedChain() (aliasedNamedIntChain, aliasedNamedStruct) {
+	return 0, aliasedNamedStruct{}
+}
+
+func aliasedPrimitiveAndError() (MyInt, error) {
+	return 0, nil
+}
+
+func aliasedPrimitiveAndNamed() (MyInt, User) {
+	return 0, namedStruct{}
+}
+
+func aliasedUserAndError() (User, error) {
+	return namedStruct{}, nil
+}
+
+

@@ -80,3 +80,17 @@ func named3() (namedInt, namedStruct, namedInt) {
 func namedAndPrimitive() (namedInt, int) {
 	return 0, 0
 }
+
+type aliasedSameInt = namedInt
+type aliasedSameStruct = namedStruct
+
+/*! consider giving a name to these results */
+func aliasedSame() (aliasedSameInt, aliasedSameInt) {
+	return 0, 0
+}
+
+/*! consider giving a name to these results */
+func aliasedSameStructResult() (*aliasedSameStruct, *aliasedSameStruct) {
+	return nil, nil
+}
+
