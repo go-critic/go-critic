@@ -61,6 +61,9 @@ func (c *caseOrderChecker) checkTypeSwitch(s *ast.TypeSwitchStmt) {
 				c.warnUnknownType(cc, x)
 				return
 			}
+			if _, ok := typ.(*types.TypeParam); ok {
+				continue
+			}
 			for _, iface := range ifaces {
 				if types.Implements(typ, iface.typ) {
 					c.warnTypeSwitch(cc, x, iface.node)
