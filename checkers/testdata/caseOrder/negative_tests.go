@@ -29,3 +29,11 @@ func goodTypeSwitches(x interface{}) {
 	case reader:
 	}
 }
+
+// Generic type parameters are not interfaces; no case-order warning is valid.
+func genericTypeParamSwitch[T, E comparable](x interface{}) {
+	switch x.(type) {
+	case T:
+	case E:
+	}
+}
