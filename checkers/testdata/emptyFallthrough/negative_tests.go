@@ -57,3 +57,21 @@ func noWarningsNonEmptyFallthroughInNestedSwitch(i, j int) bool {
 		return false
 	}
 }
+
+func noWarningsGroupedCases(ch rune) bool {
+	switch ch {
+	case '+', '-', '!':
+		fallthrough
+	case '*', '/', '%':
+		return true
+	case 'B':
+		fallthrough
+	case 'd', 'D', 's', 'S', 'w', 'W':
+		fallthrough
+	case '\\':
+		fallthrough
+	case 'f', 'n', 'r', 't', 'v':
+		return true
+	}
+	return false
+}
