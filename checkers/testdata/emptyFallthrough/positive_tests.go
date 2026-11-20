@@ -93,3 +93,18 @@ func warningsNestedSwitchMixedFallthroughs(i, j int) bool {
 		return false
 	}
 }
+
+func warningsGroupedCasesToDefault(i int) bool {
+	switch i {
+	case 1:
+		return true
+	case 2, 3:
+		/*! remove empty case containing only fallthrough to default case */
+		fallthrough
+	case 4:
+		/*! remove empty case containing only fallthrough to default case */
+		fallthrough
+	default:
+		return false
+	}
+}

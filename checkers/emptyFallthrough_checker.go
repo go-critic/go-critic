@@ -41,6 +41,7 @@ func (c *emptyFallthroughChecker) VisitStmt(stmt ast.Stmt) {
 	}
 
 	prevCaseDefault := false
+	nextCaseHasSingleValue := false
 	for i := len(ss.Body.List) - 1; i >= 0; i-- {
 		if cc, ok := ss.Body.List[i].(*ast.CaseClause); ok {
 			warn := false
@@ -49,7 +50,7 @@ func (c *emptyFallthroughChecker) VisitStmt(stmt ast.Stmt) {
 					warn = true
 					if prevCaseDefault {
 						c.warnDefault(bs)
-					} else if cc.List != nil {
+					} else if len(cc.List) == 1 && nextCaseHasSingleValue {
 						c.warn(bs)
 					}
 				}
@@ -57,6 +58,7 @@ func (c *emptyFallthroughChecker) VisitStmt(stmt ast.Stmt) {
 			if !warn {
 				prevCaseDefault = cc.List == nil
 			}
+			nextCaseHasSingleValue = len(cc.List) == 1
 		}
 	}
 }
