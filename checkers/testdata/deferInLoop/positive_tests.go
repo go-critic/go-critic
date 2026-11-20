@@ -370,3 +370,58 @@ func funcArgs() {
 }
 
 func (x x) closureExec(f func()) { f() }
+
+func continueAfterDefer(retry bool) {
+	for {
+		/*! Possible resource leak, 'defer' is called in the 'for' loop */
+		defer println("retry")
+		if retry {
+			continue
+		}
+		defer println("done")
+		return
+	}
+}
+
+func deferredClosureWithLoop(items []int) {
+	for {
+		defer func() {
+			for _, item := range items {
+				/*! Possible resource leak, 'defer' is called in the 'for' loop */
+				defer println(item)
+				if item == 0 {
+					break
+				}
+			}
+		}()
+		return
+	}
+}
+
+func jumpAfterDefer(retry bool) {
+	for {
+	again:
+		/*! Possible resource leak, 'defer' is called in the 'for' loop */
+		defer println("again")
+		if retry {
+			goto again
+		}
+		return
+	}
+}
+
+func innerLoopBeforeReturn(items []int) {
+outer:
+	for {
+		/*! Possible resource leak, 'defer' is called in the 'for' loop */
+		defer println("outer")
+		for _, item := range items {
+			/*! Possible resource leak, 'defer' is called in the 'for' loop */
+			defer println(item)
+			if item == 0 {
+				continue outer
+			}
+		}
+		return
+	}
+}

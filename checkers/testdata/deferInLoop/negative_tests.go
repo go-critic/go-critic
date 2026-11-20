@@ -231,3 +231,38 @@ func negativeFuncArgs() {
 		})
 	}
 }
+
+func returnsAfterDefer(retry bool, items []int) {
+	for {
+		if retry {
+			continue
+		}
+		defer println("done")
+	inner:
+		for _, item := range items {
+			switch {
+			case item == 0:
+				break
+			case item < 0:
+				continue
+			}
+			if item == 1 {
+				break
+			}
+			if item == 2 {
+				break inner
+			}
+			println(item)
+		}
+		return
+	}
+}
+
+func returnsFromRange(items []int) {
+	for _, item := range items {
+		if item > 0 {
+			defer println(item)
+			return
+		}
+	}
+}
